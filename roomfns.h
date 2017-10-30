@@ -1,0 +1,92 @@
+#pragma once
+
+// This header is auto-generated. Do not edit.
+#include "defs.h"
+namespace room_funcs {
+    bool bats_room();
+    bool bdoor_function();
+    bool bkbox_room();
+    bool boom_room();
+    bool caged_room();
+    bool carousel_room();
+    bool cave2_room();
+    bool cell_room();
+    bool cellar();
+    bool clearing();
+    bool cliff_function();
+    bool cmach_room();
+    bool cp_room();
+    bool cpout_room();
+    bool crypt_function();
+    bool cyclops_room();
+    bool dam_room();
+    bool dome_room();
+    bool east_house();
+    bool echo_room();
+    bool falls_room();
+    bool fdoor_function();
+    bool forest_room();
+    bool glacier_room();
+    bool guardians();
+    bool inslide();
+    bool kitchen();
+    bool ledge_function();
+    bool living_room();
+    bool lld2_room();
+    bool lld_room();
+    bool machine_room();
+    bool magic_mirror();
+    bool magnet_room();
+    bool maint_room();
+    bool maze_11();
+    bool mirror_room();
+    bool mraew();
+    bool mraf();
+    bool mrbew();
+    bool mrbf();
+    bool mrcew();
+    bool mrcf();
+    bool mrdf();
+    bool mreye_room();
+    bool ncell_room();
+    bool ncorr_room();
+    bool nirvana();
+    bool no_objs();
+    bool over_falls();
+    bool palantir_room();
+    bool parapet();
+    bool pcell_room();
+    bool prm_room();
+    bool reservoir();
+    bool reservoir_north();
+    bool reservoir_south();
+    bool rivr4_room();
+    bool safe_room();
+    bool scorr_room();
+    bool sledg_room();
+    bool slide_room();
+    bool teller_room();
+    bool time();
+    bool tomb_function();
+    bool torch_room();
+    bool treasure_room();
+    bool tree_room();
+}
+
+namespace exit_funcs {
+    ExitFuncVal bkleavee();
+    ExitFuncVal bkleavew();
+    ExitFuncVal carousel_exit();
+    ExitFuncVal carousel_out();
+    ExitFuncVal chimney_function();
+    ExitFuncVal coffin_cure();
+    ExitFuncVal cpenter();
+    ExitFuncVal cpexit();
+    ExitFuncVal magnet_room_exit();
+    ExitFuncVal maybe_door();
+    ExitFuncVal mirin();
+    ExitFuncVal mirout();
+    ExitFuncVal mrgo();
+    ExitFuncVal slide_exit();
+}
+
