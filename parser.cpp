@@ -409,6 +409,7 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
             pv[0] = find_verb("WALK");
             pv[1] = as_pvv(aval);
             cont_proc = false;
+            RETURN(true);
         }
         else if (as_word(aval = plookup(x, words)))                 // 166
         {
@@ -790,7 +791,7 @@ bool ortell(VargP varg, ActionP action, ObjectP gwim, OrphanSlotType slot2)
     else if (slot2.index() == kos_phrase)
     {
         tell(action->vstr() + " what ", 0);
-        tell(prfunny(as_phrase(slot2)->prep()) + " the " + as_phrase(slot2)->obj()->odesc2(), 0);
+        tell(prfunny(std::get<kos_phrase>(slot2)->prep()) + " the " + std::get<kos_phrase>(slot2)->obj()->odesc2(), 0);
         tell("?");
     }
     else

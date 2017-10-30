@@ -295,12 +295,6 @@ inline VerbP as_verb(const ParseVecVal &a)
     return std::get<kpv_verb>(a);
 }
 
-inline PhraseP as_phrase(const std::any &a)
-{
-    _ASSERT(a.type() == typeid(PhraseP));
-    return std::any_cast<PhraseP>(a);
-}
-
 inline std::string as_string(const std::any &a)
 {
     _ASSERT(a.type() == typeid(std::string));

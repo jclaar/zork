@@ -866,6 +866,7 @@ void init_dung()
     dsynonym("WEST", "W");
     dsynonym("UP", "U");
     dsynonym("DOWN", "D");
+    dsynonym("ENTER", "IN");
     dsynonym("EXIT", { "OUT", "LEAVE" });
     dsynonym("CROSS", "TRAVE");
 
