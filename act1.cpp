@@ -2872,7 +2872,7 @@ namespace obj_funcs
             else
             {
                 rv = tell("With a great effort, the rug is moved to one side of the room.\n"
-                    "With the rug moved, the dusty cover of a closed trap - door appears.", long_tell1);
+                    "With the rug moved, the dusty cover of a closed trap-door appears.", long_tell1);
                 tro(sfind_obj("DOOR"), ovison);
                 flags()[rug_moved] = true;
             }

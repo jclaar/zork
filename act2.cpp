@@ -1184,7 +1184,7 @@ namespace obj_funcs
                     // Make the pot of gold visible.
                     tro(sfind_obj("POT"), ovison);
                     tell("Suddenly, the rainbow appears to become solid and, I venture,\n"
-                        "walkable(I think the giveaway was the stairs and bannister).");
+                        "walkable (I think the giveaway was the stairs and bannister).");
                     flags()[rainbow] = true;
                 }
                 else

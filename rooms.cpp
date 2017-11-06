@@ -1529,11 +1529,16 @@ bool feech()
     return true;
 }
 
-bool finish(bool ask)
+bool finish(RecOutQuit ask)
 {
+    bool askq;
+    if (ask.index() == kroq_string)
+        askq = false;
+    else
+        askq = std::get<kroq_bool>(ask);
     no_tell = 0;
-    int scor = score(ask);
-    if (ask && tell("Do you wish to leave the game? (Y is affirmative): ") && yes_no() || !ask)
+    int scor = score(askq);
+    if (askq && tell("Do you wish to leave the game? (Y is affirmative): ") && yes_no() || !askq)
     {
         record(scor, moves, deaths, ask, here);
         quit();

@@ -1879,8 +1879,7 @@ namespace exit_funcs
             }
             else
             {
-                mirblock(dir, mdir);
-                return ExitFuncVal();
+                return mirblock(dir, mdir);
             }
         }
         return ExitFuncVal();

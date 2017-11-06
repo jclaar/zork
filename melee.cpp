@@ -381,7 +381,6 @@ bool blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::o
                 att = -2;
             tbl = &def3_res[att + 3-1];
         }
-        _ASSERT(tbl != nullptr);
         res = (*tbl)[(rand() % 9)];
 
         if (out.has_value())

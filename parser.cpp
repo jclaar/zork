@@ -409,7 +409,10 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
             pv[0] = find_verb("WALK");
             pv[1] = as_pvv(aval);
             cont_proc = false;
-            RETURN(true);
+            // Advance pvr one since the direction is now put into the direct object.
+            // This is not done in the MDL code, but seems to be necessary in case
+            // the user supplies an object. (Like "go in house")
+            pvr = rest(pvr);
         }
         else if (as_word(aval = plookup(x, words)))                 // 166
         {
@@ -456,7 +459,8 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
                 }
             }
         }
-        else if ((aval = plookup(x, objob)).has_value() &&
+        if (cont_proc &&
+            (aval = plookup(x, objob)).has_value() &&
             !std::any_cast<ObjList>(aval).empty())      // 190
         {
             const ObjList &aval_objs = std::any_cast<ObjList>(aval);

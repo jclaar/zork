@@ -65,9 +65,13 @@ bool quit();
 void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
 // recout's quit parameter can be a boolean or a string. If it's a string,
 // print that instead of Quit or Died.
-typedef std::variant<bool, const char *> RecOutQuit;
+typedef std::variant<bool, std::string> RecOutQuit;
 enum { kroq_bool, kroq_string };
 void record(int score, int moves, int deaths, RecOutQuit quit, RoomP loc);
+inline void record(int score, int moves, int deaths, const char *quit, RoomP loc)
+{
+    record(score, moves, deaths, std::string(quit), loc);
+}
 void recout(int score, int moves, int deaths, RecOutQuit quit, RoomP loc);
 bool room_obj();
 bool room_name();
@@ -103,7 +107,9 @@ bool doc();
 bool dropper();
 bool end_game_herald();
 bool feech();
-bool finish(bool ask);
+bool finish(RecOutQuit ask);
+inline bool finish(const char *ask) { return finish(std::string(ask)); }
+inline bool finish(bool ask) { return finish(RecOutQuit(ask)); }
 inline bool finish() { return finish(true); }
 bool frob_lots(Iterator<ObjVector> uv);
 bool help();

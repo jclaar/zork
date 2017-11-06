@@ -98,8 +98,10 @@ void dump_robber(archive &ar)
     // Save the head of the first room he's heading to.
     ar & robber->hrooms().front()->rid();
     ar & robber->hroom()->rid();
-    ar & robber->hflag();
-    ar & (robber->haction() ? true : false);
+    bool temp = robber->hflag();
+    ar & temp;
+    temp = (robber->haction() ? true : false);
+    ar & temp;
 }
 
 template <class archive>
@@ -234,7 +236,8 @@ bool save_game(const std::string &f)
     dump_objects(oa);
     dump_rooms(oa);
     dump_robber(oa);
-    oa & (sword_demon->haction() ? true : false);
+    bool temp = (sword_demon->haction() ? true : false);
+    oa & temp;
     dump_clockers(oa);
     dump_winners(oa);
     // Save various globals (from MGVALS in dung.mud)
