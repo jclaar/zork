@@ -1307,8 +1307,8 @@ namespace room_funcs
             else
             {
                 tro(hobj, fightbit);
-                thief_in_treasure(hobj);
             }
+            thief_in_treasure(hobj);
         }
         return rv;
     }
@@ -1847,7 +1847,7 @@ namespace obj_funcs
         ObjectP chali = sfind_obj("CHALI");
         bool rv = true;
 
-        if (verbq("FIGHT"))
+        if (verbq("FGHT?"))
         {
             if ((st = sfind_obj("STILL"))->ocan() == t)
             {

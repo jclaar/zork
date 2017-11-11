@@ -1686,9 +1686,29 @@ bool brief()
 
 bool bugger(bool feech)
 {
-    tell("This software was ported in someone's spare time, for free.\n"
-        "How could there possibly be a bug in it?  Or, if there is,\n"
-        "why would you think that this person would want to hear about it?");
+    if (feech)
+    {
+        time_t t;
+        time(&t);
+        auto tm = localtime(&t);
+        std::stringstream ss;
+        ss << "This software was feature-complete approximately ";
+        ss << (tm->tm_year + 1900) - 1981 << " years ago.\n";
+        ss << "Perhaps you can contact the original authors to see if there\n";
+        ss << "is an interest in adding any new features.";
+        tell(ss.str());
+    }
+    else
+    {
+        tell("This software was ported in someone's spare time, for free.\n"
+            "How could there possibly be a bug in it?  Or, if there is,\n"
+            "why would you think that this person would want to hear about it?");
+        tell("Be proactive, fix it yourself and submit a pull request.  Have fun", pre_crlf | post_crlf);
+        tell("and learn at the same time!  Make sure to inform the author of his poor");
+        tell("coding style, and remind him that C++ is a horrible language while you're\nat it!");
+        tell("\nPlease be sure to include your opinion on spaces vs. tabs, and advise on");
+        tell("what is the best source code editor.");
+    }
     return true;
 }
 
@@ -2059,10 +2079,6 @@ bool restart()
             // Reassign standard handles to the defaults. Otherwise it appears
             // that the new process inherits this process's handles, which then
             // go away when the process exits.
-            si.dwFlags |= STARTF_USESTDHANDLES;
-            si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-            si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-            si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
             PROCESS_INFORMATION pi;
             launched = CreateProcessA(nullptr, file, nullptr, nullptr, TRUE, 0, nullptr,
                 nullptr, &si, &pi);

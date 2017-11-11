@@ -234,7 +234,6 @@ void Object::restore(const Object &o)
     _ofval = o._ofval;
     _osize = o._osize;
     _ocapac = o._ocapac;
-    _olint = o._olint;
     _omatch = o._omatch;
     _ostrength = o._ostrength;
     contents = o.contents;

@@ -20,7 +20,7 @@ public:
 
     const std::string &cid() const { return _cid; }
 
-    void restore(CEvent &src)
+    void restore(const CEvent &src)
     {
         _ctick = src.ctick();
         _cflag = src.cflag();

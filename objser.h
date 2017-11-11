@@ -16,7 +16,6 @@ void Object::save(archive &ar, const unsigned int version) const
     ar & _ofval;
     ar & _osize;
     ar & _ocapac;
-    ar & _olint;
     ar & _omatch;
     ar & _ostrength;
     std::list<std::string> conts;
@@ -43,7 +42,6 @@ void Object::load(archive &ar, const unsigned int version)
     ar & _ofval;
     ar & _osize;
     ar & _ocapac;
-    ar & _olint;
     ar & _omatch;
     ar & _ostrength;
     std::list<std::string> conts;

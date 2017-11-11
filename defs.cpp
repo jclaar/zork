@@ -73,6 +73,8 @@ bool apply_random(hackfn fcn, HackP demon)
 bool tell(const std::string &s, uint32_t flags)
 {
     ::flags()[tell_flag] = true;
+    if (flags & pre_crlf)
+        tty << std::endl;
     tty << s;
     if (flags & post_crlf)
         tty << std::endl;

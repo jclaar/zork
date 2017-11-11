@@ -25,7 +25,7 @@ typedef SV::iterator SVI;
 
 namespace
 {
-    const int save_version = -1;
+    const int save_version = 1;
     RoomP room_from_str(const std::string &s)
     {
         return (s.empty() ? RoomP() : sfind_room(s));
