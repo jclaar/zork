@@ -19,8 +19,12 @@
 #include "dung.h"
 #include "rooms.h"
 
+std::string pw(Iterator<std::string> unm, Iterator<std::string> key);
+std::string username();
+
 int main()
 {
+    std::cerr << "Hello : " << pw(username(), std::string("HELLO")) << std::endl;
 	init_dung();
 
     save_it(true);

@@ -337,6 +337,8 @@ namespace
         sadd_action("CURSE", curses);
         vsynonym("CURSE", { "SHIT", "FUCK", "DAMN" });
 
+        oneadd_action("DEFLA", "Deflate", deflater);
+
         sadd_action("DEAD!", room_funcs::time);
 
         add_action("DESTR", "Destroy", ActionVec{

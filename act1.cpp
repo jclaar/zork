@@ -1055,7 +1055,7 @@ bool eat()
     {
         if (!prsoo->oglobal().empty() || (nobj = prsoo->ocan()) && memq(nobj, aobjs) && trnn(nobj, openbit))
         {
-            tell("Thank you very much. I was rather thirsty (from all this talking\nprobably.");
+            tell("Thank you very much. I was rather thirsty (from all this talking\nprobably.)");
             if (nobj)
             {
                 remove_from(nobj, prsoo);

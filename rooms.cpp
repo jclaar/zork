@@ -685,6 +685,8 @@ void rdcom(Iterator<ParseContV> ivec)
                     {
                         if (ivec)
                             break;
+                        // Action was handled. Just get the next one.
+                        continue;
                     }
                 }
                 if ((av = winner->avehicle()) &&

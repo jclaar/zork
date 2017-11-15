@@ -513,15 +513,7 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
                 }
                 else if (prep == plookup("OF", words))      // 223
                 {
-                    prep.reset();
-                    if (as_obj(pv[1]) == obj.first)
-                    {
-                    }
-                    else
-                    {
-                        vb || tell("That doesn't make sense!");
-                        //return(false);
-                    }
+                    _ASSERT(0);
                 }
                 else if (os = stuff_obj(obj.first, prep, prepvec, pvr, vb))  // 228
                 {

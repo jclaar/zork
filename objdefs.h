@@ -1,4 +1,4 @@
-// Generated at 11-11-17 07:07:41
+// Generated at 11-13-17 16:32:04
 make_obj({ "BUTTO" }, {  }, "", { }),
 make_obj({ "!!!!!" }, {  }, "", { }),
 make_obj({ "GHOST", "SPIRI", "FIEND" }, {  }, "number of ghosts", { ovison, vicbit } , obj_funcs::ghost_function),

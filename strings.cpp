@@ -260,7 +260,7 @@ const std::vector<std::vector<std::string>> &troll_melee()
         {
             "The troll strikes at your unconscious form, but misses in his rage.",
             "The troll hesitates, fingering his axe.",
-            "The troll scratches his head ruminatively:  Might you be magically\nprotected, he wonders ? ",
+            "The troll scratches his head ruminatively:  Might you be magically\nprotected, he wonders? ",
             "The troll seems afraid to approach your crumpled form."
         },
         {
