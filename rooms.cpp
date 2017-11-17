@@ -611,7 +611,8 @@ void rdcom(Iterator<ParseContV> ivec)
         else if (!ivec)
         {
             flags()[tell_flag] = false;
-            inplen = readst(inbuf, ">");
+            static const std::string prompt = ">";
+            inplen = readst(inbuf, prompt);
             if (inplen > 0 && inbuf[0] == ';' || inplen == 0)
                 continue;
 
@@ -1263,7 +1264,7 @@ bool do_save()
 {
     if (rtrnn(sfind_room("TSTRS"), rseenbit))
     {
-        tell("Saves not permitted from endgame.");
+        tell("Saves not permitted from end game.");
     }
     else
     {

@@ -247,10 +247,16 @@ const Ex *memq(RoomP p, const std::vector<Ex> &exits)
     {
         // This is limited to specific circumstances, namely
         // when all exits are open in the endgame. 
-        _ASSERT(std::get<1>(e).index() == ket_string);
-        auto rid = std::get<ket_string>(std::get<1>(e));
-        if (p->rid() == rid)
-            return &e;
+        // It is also only concerned with string exits
+        // (type ket_string) when determining if the dungeon
+        // master is going to follow. (He does not enter the
+        // cell or leave the dungeon.)
+        if (std::get<1>(e).index() == ket_string)
+        {
+            auto rid = std::get<ket_string>(std::get<1>(e));
+            if (p->rid() == rid)
+                return &e;
+        }
     }
     return nullptr;
 }

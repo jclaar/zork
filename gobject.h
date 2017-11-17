@@ -1,4 +1,4 @@
-// Generated at 11-13-17 16:32:04
+// Generated at 11-17-17 08:41:44
 make_gobj(std::string(), { "IT", "THAT", "THIS", "HIM" }, {  }, "random object", { ovison, ndescbit } ),
 make_gobj(std::string(), { "GBROC", "BROCH", "MAIL" }, { "FREE" }, "free brochure", { ovison } , obj_funcs::brochure),
 make_gobj(std::string(), { "#####", "ME", "CRETI", "MYSEL", "SELF" }, {  }, "cretin", { ovison, villain } , obj_funcs::cretin, { }, { OP(ksl_oglobal, 0), OP(ksl_oactor, oa_player) }),

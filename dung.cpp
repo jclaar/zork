@@ -665,6 +665,7 @@ namespace
         sadd_action("RNAME", room_name);
         sadd_action("ROOM", room_room);
         oneadd_action("RUB", "Rub", rubber);
+        vsynonym("RUB", { "CARES", "TOUCH", "FEEL", "FONDL" });
         sadd_action("SAVE", do_save);
         sadd_action("SCORE", score);
         sadd_action("SCRIP", do_script);

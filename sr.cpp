@@ -226,48 +226,55 @@ bool save_game(const std::string &f)
 {
     auto h = robber_demon;
     std::ofstream sf(f);
-    boost::archive::text_oarchive oa(sf);
+    if (sf)
+    {
+        boost::archive::text_oarchive oa(sf);
 
-    oa.register_type<Object>();
-    oa.register_type<GObject>();
+        oa.register_type<Object>();
+        oa.register_type<GObject>();
 
-    const std::string emp;
-    oa << save_version;
-    dump_objects(oa);
-    dump_rooms(oa);
-    dump_robber(oa);
-    bool temp = (sword_demon->haction() ? true : false);
-    oa & temp;
-    dump_clockers(oa);
-    dump_winners(oa);
-    // Save various globals (from MGVALS in dung.mud)
-    oa & flags();
-    oa & (binf ? binf->oid() : emp);
-    oa & (btie ? btie->oid() : emp);
-    oa & light_shaft;
-    oa & played_time;
-    oa & moves;
-    oa & raw_score;
-    oa & deaths;
-    oa & water_level;
-    oa & cyclowrath;
-    oa & eg_score;
-    oa & beach_dig;
-    oa & cphere;
+        const std::string emp;
+        oa << save_version;
+        dump_objects(oa);
+        dump_rooms(oa);
+        dump_robber(oa);
+        bool temp = (sword_demon->haction() ? true : false);
+        oa & temp;
+        dump_clockers(oa);
+        dump_winners(oa);
+        // Save various globals (from MGVALS in dung.mud)
+        oa & flags();
+        oa & (binf ? binf->oid() : emp);
+        oa & (btie ? btie->oid() : emp);
+        oa & light_shaft;
+        oa & played_time;
+        oa & moves;
+        oa & raw_score;
+        oa & deaths;
+        oa & water_level;
+        oa & cyclowrath;
+        oa & eg_score;
+        oa & beach_dig;
+        oa & cphere;
 
-    // Save room globals (RMGVALS)
-    oa & (bloc ? bloc->rid() : emp);
-    oa & (here ? here->rid() : emp);
-    oa & (scol_room ? scol_room->rid() : emp);
-    oa & (scol_active ? scol_active->rid() : emp);
+        // Save room globals (RMGVALS)
+        oa & (bloc ? bloc->rid() : emp);
+        oa & (here ? here->rid() : emp);
+        oa & (scol_room ? scol_room->rid() : emp);
+        oa & (scol_active ? scol_active->rid() : emp);
 
-    // OBJGVALS
-    oa & (matobj ? matobj->oid() : emp);
-    oa & (timber_tie ? timber_tie->oid() : emp);
+        // OBJGVALS
+        oa & (matobj ? matobj->oid() : emp);
+        oa & (timber_tie ? timber_tie->oid() : emp);
 
-    save_puzzle(oa);
+        save_puzzle(oa);
 
-    tell("Done.");
+        tell("Done.");
+    }
+    else
+    {
+        tell("Unable to open save file " + f);
+    }
 
     return true;
 }

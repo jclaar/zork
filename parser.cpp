@@ -1112,7 +1112,7 @@ std::string lcify(std::string str, size_t len)
     auto iter = str.begin();
     auto end = (len == std::string::npos) ? str.end() : (iter + len);
     std::transform(iter, end, iter, [](char c) { return tolower(c); });
-    return str;
+    return std::string(str.begin(), end);
 }
 
 bool syn_match(ParseVec pv)
