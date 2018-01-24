@@ -404,11 +404,11 @@ void vsynonym(const char *verb, const char *syn)
 void vsynonym(const char *verb, const std::initializer_list<const char *> &syns)
 {
     auto vp = actions_pobl[verb];
-    for (auto &s : syns)
+    std::for_each(syns.begin(), syns.end(), [vp](const char *syn)
     {
-        _ASSERT(strlen(s) <= 5);
-        actions_pobl[s] = vp;
-    }
+        _ASSERT(strlen(syn) <= 5);
+        actions_pobl[syn] = vp;
+    });
 }
 
 void add_inqobj(ObjectP obj)

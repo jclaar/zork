@@ -95,7 +95,6 @@ extern int cphere;
 extern std::vector<ObjList> cpobjs;
 extern std::vector<int> cpuvec;
 typedef std::tuple<ObjectP, int> cpwall_val;
-cpwall_val memq(ObjectP obj, const std::vector<cpwall_val> &v);
 extern std::vector<cpwall_val> cpwalls;
 std::bitset<num_flag_bits> &flags();
 

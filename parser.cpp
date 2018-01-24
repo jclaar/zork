@@ -10,6 +10,7 @@
 #include "objfns.h"
 #include "rooms.h"
 #include "adv.h"
+#include "memq.h"
 
 const char *brks = "\"' 	:.,?!\n";
 OrphanP orphans = std::make_shared<Orphans>();
@@ -513,7 +514,20 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
                 }
                 else if (prep == plookup("OF", words))      // 223
                 {
-                    _ASSERT(0);
+                    prep.reset();
+                    // Simple check to make sure that the direct object is actually an
+                    // object. Technically more checks should be done here, in particular
+                    // is should check that the object specified corresponds to something
+                    // in the direct object. (e.g. "get bottle of water"). This code just
+                    // ignores anything after "of", so even something ridiculous like
+                    // "get bottle of sack" will parse to "get bottle".
+                    if (pv[1].index() == kpv_object)
+                    {
+                    }
+                    else if (vb || tell("That doesn't make sense!"))
+                    {
+                        RETURN(false);
+                    }
                 }
                 else if (os = stuff_obj(obj.first, prep, prepvec, pvr, vb))  // 228
                 {
@@ -1506,17 +1520,3 @@ bool bunchem()
     return true;
 }
 
-Iterator<ParseVec> memq(ObjectP o, ParseVec pv)
-{
-    Iterator<ParseVec> i(pv, pv.begin());
-    while (i.cur() != i.end())
-    {
-        if (i[0].index() == kpv_object)
-        {
-            if (as_obj(i[0]) == o)
-                return i;
-        }
-        ++i;
-    }
-    return i;
-}

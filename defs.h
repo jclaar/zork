@@ -188,12 +188,6 @@ public:
 };
 typedef std::shared_ptr<adjective> AdjectiveP;
 
-inline bool memq(AdjectiveP adj, const std::vector<std::string> &adjs)
-{
-    return std::find(adjs.begin(), adjs.end(), adj->w()) != adjs.end();
-}
-
-
 typedef std::shared_ptr<word> WordP;
 
 

@@ -33,6 +33,7 @@
     <ClCompile Include="makstr.cpp" />
     <ClCompile Include="mdlfun.cpp" />
     <ClCompile Include="melee.cpp" />
+    <ClCompile Include="memq.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="room.cpp" />
@@ -70,6 +71,7 @@
     <ClInclude Include="info.h" />
     <ClInclude Include="makstr.h" />
     <ClInclude Include="melee.h" />
+    <ClInclude Include="memq.h" />
     <ClInclude Include="objdefs.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="objfns.h" />

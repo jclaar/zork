@@ -199,22 +199,6 @@ RoomP find_room(const std::string &rid);
 RoomP sfind_room(const std::string &s);
 std::list<RoomP> &rooms();
 std::map<std::string, RoomP> &room_map();
-const Ex *memq(RoomP p, const std::vector<Ex> &exits);
-const Ex *memq(direction dir, const std::vector<Ex> &rexits);
-inline bool memq(direction dir, const std::initializer_list<direction> &dirs)
-{
-    for (auto d : dirs)
-    {
-        if (d == dir)
-            return true;
-    }
-    return false;
-}
-
-inline std::list<RoomP>::iterator memq(RoomP rm, std::list<RoomP> &lst)
-{
-    return std::find(lst.begin(), lst.end(), rm);
-}
 
 inline std::list<RoomP>::iterator rest(std::list<RoomP>::iterator i, int count = 1)
 {

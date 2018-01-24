@@ -41,14 +41,6 @@ inline const char *member(const std::string &subst, const std::string &str)
     std::string::size_type pos = str.find(subst, 0);
     return (pos == std::string::npos) ? nullptr : &str[pos];
 }
-inline bool memq(char c, const std::string &s) { return s.find(c) != std::string::npos; }
-
-// Generic memq for string containers
-template <typename T>
-bool memq(const std::string &s, const T &c)
-{
-    return std::find(c.begin(), c.end(), s) != c.end();
-}
 
 inline char *rest(char *s, size_t len) { return s + len; }
 const char *rest(const char *s, size_t len);

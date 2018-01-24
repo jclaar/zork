@@ -469,7 +469,7 @@ ObjectP find_obj(const std::string &name, bool check_correctness)
         _ASSERT(iter != Objects().end());
         _ASSERT(iter->second.size() == 1 || iter->second.front()->onames()[0] == name);
     }
-    return iter->second.front();
+    return iter == Objects().end() ? ObjectP() : iter->second.front();
 }
 
 ObjectP sfind_obj(const std::string &name)
@@ -477,42 +477,3 @@ ObjectP sfind_obj(const std::string &name)
     return find_obj(name);
 }
 
-bool memq(ObjectP op, const std::list<std::any> &l)
-{
-    for (std::any a : l)
-    {
-        if (a.type() == typeid(ObjectP))
-        {
-            if (std::any_cast<ObjectP>(a) == op)
-                return true;
-        }
-    }
-    return false;
-}
-
-bool memq(ObjectP op, const ObjList &ol)
-{
-    return std::find(ol.begin(), ol.end(), op) != ol.end();
-}
-
-bool memq(ObjectP op, Iterator<ObjVector> ol)
-{
-    while (ol.cur() != ol.end())
-    {
-        if (ol[0] == op)
-            return true;
-        ol = rest(ol);
-    }
-    return false;
-}
-
-bool memq(ObjectP op, Iterator<ObjList> ol)
-{
-    while (ol.cur() != ol.end())
-    {
-        if (ol[0] == op)
-            return true;
-        ol = rest(ol);
-    }
-    return false;
-}

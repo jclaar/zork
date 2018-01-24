@@ -16,6 +16,7 @@
 #include <sstream>
 #include "adv.h"
 #include "objfns.h"
+#include "memq.h"
 
 std::optional<int> acell; // Cell player is in
 std::optional<int> dcell;

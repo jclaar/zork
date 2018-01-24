@@ -8,6 +8,7 @@
 #include "makstr.h"
 #include "cevent.h"
 #include "ZorkException.h"
+#include "memq.h"
 
 namespace
 {

@@ -11,6 +11,7 @@
 #include "zstring.h"
 #include "cevent.h"
 #include "adv.h"
+#include "memq.h"
 
 namespace
 {
@@ -1885,7 +1886,7 @@ namespace obj_funcs
         bool rv = false;
         if (verbq({ "THROW", "MUNG" }))
         {
-            tell("Congratulations!You've managed to break all those bottles.\n"
+            tell("Congratulations!  You've managed to break all those bottles.\n"
                 "Fortunately for your feet, they were made of magic glass and disappear\n"
                 "immediately.", long_tell1);
             ObjectP prsio = prsi();

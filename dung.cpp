@@ -482,6 +482,9 @@ namespace
         });
         vsynonym("JUMP", { "LEAP" });
 
+        oneadd_action("KICK", "Taunt", kicker);
+        vsynonym("KICK", { "BITE", "TAUNT" });
+
         add_action("KILL", "Kill", ActionVec{
             AnyV{ AL{ villain, robjs(), reach() }, "WITH", AL{ weaponbit, aobjs(), have() }, AVSyntax("KILL", killer) }
         });
@@ -799,6 +802,54 @@ namespace
         sadd_action("TERMI", terminal);
 
 #ifdef _DEBUG
+        // Handy function to locate any object.
+        sadd_action("LOCAT", [] {
+            std::string obj;
+            std::cout << "Locate what? ";
+            std::cin >> obj;
+            std::transform(obj.begin(), obj.end(), obj.begin(), toupper);
+            obj = obj.substr(0, 5);
+            ObjectP objp = find_obj(obj, false);
+            if (objp)
+            {
+                if (objp->oroom())
+                {
+                    tell("The " + objp->odesc2() + " is in " + objp->oroom()->rid());
+                }
+                else
+                {
+                    tell("The " + objp->odesc2() + " is nowhere.");
+                }
+           }
+            else
+            {
+                tell("Unknown object");
+            }
+
+            return true;
+        });
+
+        // Function to list all treasures and their locations.
+        sadd_action("LISTT", [] {
+            auto &op = object_pobl();
+            for (auto o : op)
+            {
+                ObjectP obj = *o.second.begin();
+                if (obj->otval() > 0)
+                {
+                    std::string loc;
+                    if (obj->oroom())
+                        loc = obj->oroom()->rid();
+                    else if (obj->ocan())
+                        loc = obj->ocan()->oid();
+                    else
+                        loc = "unknown";
+                    tell("Obj " + obj->odesc2() + " is in " + loc);
+                }
+            }
+            return true;
+        });
+
         sadd_action("RMID", []() { return tell("Room: " + here->rid()); });
 
         // Function to display where the thief is, and is going to be, for debugging.
@@ -848,26 +899,6 @@ namespace
         add_question("In which room is 'Hello Sailor!' useful?", { "NONE", "NOWHE" });
     }
 
-}
-
-const ScolRooms &memq(direction dir, const ScolRoomsV &c)
-{
-    auto iter = std::find_if(c.begin(), c.end(), [dir](const ScolRooms &sc)
-    {
-        return sc.dir == dir;
-    });
-    if (iter == c.end())
-        error("Invalid direction specified.");
-    return *iter;
-}
-
-BestWeaponsP memq(ObjectP v, const BestWeaponsList &bwl)
-{
-    auto iter = std::find_if(bwl.begin(), bwl.end(), [&v](const BestWeaponsP &bw)
-    {
-        return v == bw->villain;
-    });
-    return (iter == bwl.end()) ? BestWeaponsP() : *iter;
 }
 
 void init_dung()

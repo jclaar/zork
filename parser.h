@@ -87,13 +87,6 @@ inline Iterator<ObjVector> put(Iterator<ObjVector> a, int index, ObjectP o)
     return a;
 }
 
-template <typename T>
-inline VerbP memq(VerbP v, const T &vl)
-{
-    auto iter = std::find(vl.begin(), vl.end(), v);
-    return (iter == vl.end()) ? VerbP() : *iter;
-}
-
 inline Iterator<ParseContV> member(const std::string &s, Iterator<ParseContV> pv)
 {
     while (pv.cur() != pv.end())
@@ -105,8 +98,6 @@ inline Iterator<ParseContV> member(const std::string &s, Iterator<ParseContV> pv
     }
     return pv;
 }
-
-Iterator<ParseVec> memq(ObjectP o, ParseVec pv);
 
 extern ParseVec prsvec;
 extern PrepVec prepvec;

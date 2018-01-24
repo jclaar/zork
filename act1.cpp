@@ -14,7 +14,7 @@
 #include "rooms.h"
 #include "adv.h"
 #include "cevent.h"
-
+#include "memq.h"
 namespace
 {
     // Number of times the player has said "Hello, Sailor"
@@ -1321,7 +1321,7 @@ namespace room_funcs
             rv = true;
             if (flags()[glacier_flag])
             {
-                tell(gladesc, long_tell);
+                tell(gladesc, long_tell1);
                 tell("There is a large passageway leading westward.");
             }
             else
@@ -1360,7 +1360,7 @@ namespace room_funcs
             water_level = lev = water_level + 1;
             if (here)
             {
-                tell("The water level is now " + std::string(drownings[lev / 2]), 1);
+                tell("The water level is now " + drownings[lev / 2], 1);
             }
             if (lev > 16)
             {
@@ -1865,7 +1865,7 @@ namespace obj_funcs
         {
             if (!empty(dem->hobjs_ob()))
             {
-                tell("His booty remains.");
+                tell("  His booty remains.");
                 for (ObjectP x : dem->hobjs_ob())
                 {
                     insert_object(x, here);
@@ -2858,7 +2858,7 @@ namespace obj_funcs
     bool rug()
     {
         bool rv = false;
-        if (verbq("LIFT"))
+        if (verbq("RAISE"))
         {
             rv = tell("The rug is too heavy to lift, but in trying to take it you have\n"
                 "noticed an irregularity beneath it.", long_tell1);

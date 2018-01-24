@@ -12,6 +12,7 @@
 #include "parser.h"
 #include "adv.h"
 #include "makstr.h"
+#include "memq.h"
 
 int beach_dig = 0;
 namespace
@@ -801,7 +802,7 @@ namespace obj_funcs
             else if (verbq("LOOK"))
             {
                 tell("You are inside a barrel.  Congratulations.  Etched into the side of the\n"
-                    "barrel is the word 'Geronimo!'.From your position, you cannot see\n"
+                    "barrel is the word 'Geronimo!'.  From your position, you cannot see\n"
                     "the falls.");
             }
             else if (verbq("TAKE"))

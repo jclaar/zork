@@ -82,12 +82,3 @@ void load_max(int new_load)
     max_load = new_load;
 }
 
-cpwall_val memq(ObjectP obj, const std::vector<cpwall_val> &v)
-{
-    auto iter = std::find_if(v.begin(), v.end(), [obj](const cpwall_val &w)
-    {
-        return obj == std::get<0>(w);
-    });
-    _ASSERT(iter != v.end());
-    return *iter;
-}

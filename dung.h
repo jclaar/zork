@@ -49,29 +49,11 @@ extern int played_time;
 
 typedef std::pair<ObjectP, int> NumObjs;
 extern std::vector<NumObjs> numobjs;
-inline std::vector<NumObjs>::const_iterator memq(ObjectP o, const std::vector<NumObjs> &nm)
-{
-    for (auto iter = nm.begin(); iter != nm.end(); ++iter)
-    {
-        if (iter->first == o)
-            return iter;
-    }
-    return nm.end();
-}
 
 // Direction vector for mirror
 typedef std::pair<direction, int> DVPair;
 typedef std::vector<DVPair> DirVec;
 extern DirVec dirvec;
-inline const DVPair *memq(direction d, const DirVec &dv)
-{
-    for (const DVPair &dvp : dv)
-    {
-        if (dvp.first == d)
-            return &dvp;
-    }
-    return nullptr;
-}
 
 class hack
 {
@@ -157,16 +139,6 @@ private:
     }
 };
 
-inline bool memq(CEventP ev, const EventList &hobjs)
-{
-    for (auto hobj : hobjs)
-    {
-        if (ev == hobj)
-            return true;
-    }
-    return false;
-}
-
 typedef std::shared_ptr<hack> HackP;
 
 // Puzzle room
@@ -177,10 +149,6 @@ struct CpExit
 };
 typedef std::vector<CpExit> CpExitV;
 extern CpExitV cpexits;
-inline CpExitV::iterator memq(direction d, CpExitV &v)
-{
-    return std::find_if(v.begin(), v.end(), [d](const CpExit &e) { return e.dir == d; });
-}
 
 // Bank puzzle
 extern RoomP scol_room;
@@ -202,7 +170,6 @@ typedef std::vector<ScolWalls> ScolWallsV;
 
 extern ScolRoomsV scol_rooms;
 extern ScolWallsV scol_walls;
-const ScolRooms &memq(direction dir, const ScolRoomsV &cont);
 
 extern const ObjList villains;
 extern ObjList oppv;
@@ -220,7 +187,6 @@ struct BestWeapons
 typedef std::shared_ptr<BestWeapons> BestWeaponsP;
 typedef std::vector<BestWeaponsP> BestWeaponsList;
 extern const BestWeaponsList best_weapons;
-BestWeaponsP memq(ObjectP v, const BestWeaponsList &bwl);
 
 // Parse vector is defined in parser.mud. It is a 3-element vector,
 // containing various items:
@@ -302,3 +268,4 @@ inline std::string as_string(const std::any &a)
 }
 
 void init_dung();
+

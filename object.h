@@ -73,15 +73,12 @@ private:
     ObjectSlots sl;
     PropVal val;
 };
-//typedef std::tuple<ObjectSlots, std::any> OP;
 
 class Object
 {
 public:
 
     Object() {}
-	//Object(const vector<string> &syns, const vector<string> &adj, const string &description,
-	//	const list<Bits> &bits);
 
     Object(const std::initializer_list<std::string> &syns, const std::initializer_list<std::string> &adj = {}, const std::string &desc = "",
         const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr, const std::initializer_list<ObjectP> &contents = {},
@@ -131,14 +128,6 @@ public:
 
     VerbP obverb() const { return _obverb; }
     void obverb(VerbP v) { _obverb = v; }
-
-	bool call_fn()
-	{
-		bool rv = objfn != nullptr;
-		if (rv)
-			rv = (*objfn)();
-		return rv;
-	}
 
     void restore(const Object &o);
 
@@ -202,9 +191,6 @@ private:
 void init_objects();
 void init_gobjects();
 void init_synonyms();
-bool memq(ObjectP op, const ObjList &ol);
-bool memq(ObjectP op, Iterator<ObjVector> ol);
-bool memq(ObjectP op, Iterator<ObjList> ol);
 
 inline int length(const ObjList &ol) { return (int)ol.size(); }
 

@@ -5,6 +5,7 @@
 #include "rooms.h"
 #include "parser.h"
 #include "dung.h"
+#include "memq.h"
 
 bool always_lit = false;
 

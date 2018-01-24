@@ -87,6 +87,9 @@
     <ClCompile Include="zstring.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="memq.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="act1.h">
@@ -177,6 +180,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="zstring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memq.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

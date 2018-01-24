@@ -18,6 +18,7 @@
 #include "funcs.h"
 #include "cevent.h"
 #include "info.h"
+#include "memq.h"
 
 bool running = true;
 ObjVector obj_uv_b(20);
@@ -54,13 +55,7 @@ void excruciatingly_untasteful_code()
 std::string remarkably_disgusting_code()
 {
     std::string s = "This Zork created ";
-    time_t t;
-    time(&t);
-    tm *tm = localtime(&t);
-
-    char buff[80];
-    strftime(buff, 80, "%m-%d-%Y", tm);
-    s += buff;
+    s += __DATE__;
     s += ".";
     return s;
 }
@@ -1696,21 +1691,29 @@ bool bugger(bool feech)
         auto tm = localtime(&t);
         std::stringstream ss;
         ss << "This software was feature-complete approximately ";
-        ss << (tm->tm_year + 1900) - 1981 << " years ago.\n";
+        ss << (tm->tm_year - 81) << " years ago.\n";
         ss << "Perhaps you can contact the original authors to see if there\n";
         ss << "is an interest in adding any new features.";
         tell(ss.str());
     }
     else
     {
-        tell("This software was ported in someone's spare time, for free.\n"
-            "How could there possibly be a bug in it?  Or, if there is,\n"
-            "why would you think that this person would want to hear about it?");
-        tell("Be proactive, fix it yourself and submit a pull request.  Have fun", pre_crlf | post_crlf);
-        tell("and learn at the same time!  Make sure to inform the author of his poor");
-        tell("coding style, and remind him that C++ is a horrible language while you're\nat it!");
-        tell("\nPlease be sure to include your opinion on spaces vs. tabs, and advise on");
-        tell("what is the best source code editor.");
+        const char *tell_str = 
+        "This software was ported in someone's spare time, for free.\n"
+        "How could there possibly be a bug in it?  Or, if there is,\n"
+        "why would you think that this person would want to hear about it?\n\n"
+        "Be proactive, fix it yourself and submit a pull request.  Have fun\n"
+        "and learn at the same time!\n\n"
+            "In your request, be sure to include:\n"
+            "    - A description of the bug.\n"
+            "    - A brief description of the fix.\n"
+            "    - Snide comments on the author's poor coding style.\n"
+            "    - Snide comments on why C++ is a horrible language.\n"
+            "       (Make sure your primary reason is \"because Linus said so\".)\n"
+            "    - Snide comments asking why this software was primarily developed\n"
+            "      on Windows instead of Linux.\n"
+            "    - Snide comments about the author using spaces instead of tabs.\n";
+        tell(tell_str);
     }
     return true;
 }

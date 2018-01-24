@@ -24,8 +24,9 @@ std::string username();
 
 int main()
 {
-    std::cerr << "Hello : " << pw(username(), std::string("HELLO")) << std::endl;
-	init_dung();
+    // Option to print incantation to skip directly to the endgame.
+    //std::cerr << "Hello : " << pw(username(), std::string("HELLO")) << std::endl;
+    init_dung();
 
     save_it(true);
 

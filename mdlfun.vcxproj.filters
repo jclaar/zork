@@ -102,6 +102,9 @@
     <ClInclude Include="objser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="memq.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -174,6 +177,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="info.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="memq.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
