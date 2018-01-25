@@ -409,10 +409,9 @@ bool cliff_function()
 
 void fweep(int num, int slp)
 {
-    // Not sure what this function does, to be honest...
-    // Maybe display some sort of ascii image? In any case,
-    // in doesn't really seem to DO anything, at least in 
-    // regard to the gameplay.
+    // This function uses the "IMAGE 7" command apparently to ring
+    // the terminal bell. Since that will be annoying, to say the
+    // least, it just doesn't do anything.
 }
 
 namespace obj_funcs
@@ -1149,8 +1148,14 @@ namespace obj_funcs
     bool fly_me()
     {
         const std::vector<std::string> &bat_drops = ::bat_drops;
+        // The fweep function apparently rang the terminal bell, so
+        // instead just print what Zork I does.
         fweep(4, 1);
-        tell("A deranged giant vampire bat (a reject from WUMPUS) swoops down\n"
+        for (size_t i = 0; i < 3; ++i)
+        {
+            tell("    Fweep!");
+        }
+        tell("\nA deranged giant vampire bat (a reject from WUMPUS) swoops down\n"
             "from his belfry and lifts you away....");
         goto_(find_room(pick_one(bat_drops)));
         prsvec[1] = std::monostate();
