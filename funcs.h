@@ -18,11 +18,13 @@ const uint32_t post_crlf = 0x00000001;
 const uint32_t no_crlf = 0x00000000;
 const uint32_t long_tell1 = long_tell | post_crlf;
 
+bool tell(const char *msg, uint32_t flags = post_crlf);
 bool tell(const std::string &msg, uint32_t flags = post_crlf);
 inline void crlf() { tty << std::endl; }
 void princ(char c);
 void princ(int i);
 void princ(const std::string &msg);
+void princ(const char *msg);
 void prin1(int val);
 inline void printstring(const char *str) { tty << str; }
 

@@ -29,6 +29,11 @@ void princ(int i)
 
 void princ(const std::string &msg)
 {
+    princ(msg.c_str());
+}
+
+void princ(const char *msg)
+{
     tty << msg;
 }
 
@@ -44,12 +49,7 @@ bool verbq(const char *al)
 
 bool verbq(const std::initializer_list<const char*> &verbs)
 {
-    for (const char *v : verbs)
-    {
-        if (prsa()->w() == v)
-            return true;
-    }
-    return false;
+    return std::find(verbs.begin(), verbs.end(), prsa()->w()) != verbs.end();
 }
 
 bool apply_random(rapplic fcn, std::optional<ApplyRandomArg> arg)
@@ -72,6 +72,11 @@ bool apply_random(hackfn fcn, HackP demon)
 
 bool tell(const std::string &s, uint32_t flags)
 {
+    return tell(s.c_str(), flags);
+}
+
+bool tell(const char *s, uint32_t flags)
+{
     ::flags()[tell_flag] = true;
     if (flags & pre_crlf)
         tty << std::endl;
@@ -81,42 +86,39 @@ bool tell(const std::string &s, uint32_t flags)
     return true;
 }
 
-bool describable(ObjectP obj)
+bool describable(const ObjectP &obj)
 {
     return !obj->oflags()[ndescbit];
 }
 
-bool see_inside(ObjectP op)
+bool see_inside(const ObjectP &op)
 {
     return trnn(op, ovison) && (trnn(op, transbit) || trnn(op, openbit));
 }
 
-bool apply_object(ObjectP op)
+bool apply_object(const ObjectP &op)
 {
-    bool rv = false;
+    bool rv;
     auto fn = op->oaction();
-    if (fn != nullptr)
+    if (rv = (fn != nullptr))
         rv = (*fn)();
     return rv;
 }
 
-bool trnn(ObjectP op, const std::bitset<numbits> &bits_to_check)
+bool trnn(const ObjectP &op, const std::bitset<numbits> &bits_to_check)
 {
     // returns true if any bits in the bits_to_check are set in op->oflags
     return (op->oflags() & bits_to_check).any();
 }
 
-bool trnn(ObjectP op, const std::initializer_list<Bits> &bits_to_check)
+bool trnn(const ObjectP &op, const std::initializer_list<Bits> &bits_to_check)
 {
-    for (Bits b : bits_to_check)
-    {
-        if (trnn(op, b))
-            return true;
-    }
-    return false;
+    return std::find_if(bits_to_check.begin(),
+        bits_to_check.end(),
+        [op](Bits b) { return trnn(op, b); }) != bits_to_check.end();
 }
 
-bool trnn(ObjectP op, Bits b)
+bool trnn(const ObjectP &op, Bits b)
 {
     _ASSERT(op);
     return op->oflags()[b] != 0;
@@ -127,22 +129,18 @@ bool strnn(SyntaxP syn, SyntaxBits b)
     return syn->sflags[b] != 0;
 }
 
-bool rtrnn(RoomP p, const std::initializer_list<Bits> &bits)
+bool rtrnn(const RoomP &p, const std::initializer_list<Bits> &bits)
 {
-    for (Bits b : bits)
-    {
-        if (rtrnn(p, b))
-            return true;
-    }
-    return false;
+    return std::find_if(bits.begin(), bits.end(),
+        [p](Bits b) { return rtrnn(p, b); }) != bits.end();
 }
 
-bool rtrnn(RoomP p, Bits b)
+bool rtrnn(const RoomP &p, Bits b)
 {
     return p->rbits()[b] != 0;
 }
 
-bool gtrnn(RoomP p, const std::string &b)
+bool gtrnn(const RoomP &p, const std::string &b)
 {
     return std::find(p->rglobal().begin(), p->rglobal().end(), b) != p->rglobal().end();
 }
@@ -154,10 +152,7 @@ void rtro(RoomP p, Bits b)
 
 bool rtrz(RoomP p, const std::initializer_list<Bits> &bits)
 {
-    for (Bits b : bits)
-    {
-        rtrz(p, b);
-    }
+    std::for_each(bits.begin(), bits.end(), [&p](Bits b) { rtrz(p, b); });
     return true;
 }
 
@@ -169,10 +164,7 @@ bool rtrz(RoomP p, Bits b)
 
 void tro(ObjectP op, const std::initializer_list<Bits> &bits)
 {
-    for (Bits b : bits)
-    {
-        tro(op, b);
-    }
+    std::for_each(bits.begin(), bits.end(), [op](Bits b) { tro(op, b); });
 }
 
 ObjectP tro(ObjectP op, Bits b)
@@ -188,10 +180,7 @@ int trz(ObjectP op, Bits b)
 
 void trz(ObjectP op, const std::initializer_list<Bits> &bl)
 {
-    for (Bits b : bl)
-    {
-        trz(op, b);
-    }
+    std::for_each(bl.begin(), bl.end(), [op](Bits b) { trz(op, b); });
 }
 
 void trc(ObjectP op, Bits b)

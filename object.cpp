@@ -90,60 +90,73 @@ Object::Object(const std::initializer_list<std::string> &syns, const std::initia
 
     for (auto obj_prop : props)
     {
-        if (obj_prop.slot() == ksl_oread)
+        switch (obj_prop.slot())
+        {
+        case ksl_oread:
         {
             _ASSERT(obj_prop.value().index() == OP::kPV_string);
             _oread = std::get<OP::kPV_string>(obj_prop.value());
+            break;
         }
-        else if (obj_prop.slot() == ksl_odesco)
+        case ksl_odesco:
         {
             _ASSERT(obj_prop.value().index() == OP::kPV_string);
             _odesco = std::get<OP::kPV_string>(obj_prop.value());
+            break;
         }
-        else if (obj_prop.slot() == ksl_odesc1)
+        case ksl_odesc1:
         {
             _ASSERT(obj_prop.value().index() == OP::kPV_string);
             _odesc1 = std::get<OP::kPV_string>(obj_prop.value());
+            break;
         }
-        else if (obj_prop.slot() == ksl_otval)
+        case ksl_otval:
         {
             _ASSERT(obj_prop.value().index() == OP::kPV_int);
             _otval = std::get<OP::kPV_int>(obj_prop.value());
+            break;
         }
-        else if (obj_prop.slot() == ksl_ofval)
+        case ksl_ofval:
         {
             _ASSERT(obj_prop.value().index() == OP::kPV_int);
             _ofval = std::get<OP::kPV_int>(obj_prop.value());
+            break;
         }
-        else if (obj_prop.slot() == ksl_olint)
+        case ksl_olint:
         {
             _ASSERT(obj_prop.value().index() == OP::kPV_olint);
             _olint = std::make_shared<olint_t>(std::get<OP::kPV_olint>(obj_prop.value()));
             clock_disable(clock_int(_olint->ev(), _olint->ev()->ctick()));
+            break;
         }
-        else if (obj_prop.slot() == ksl_ostrength)
+        case ksl_ostrength:
         {
             _ASSERT(obj_prop.value().index() == OP::kPV_int);
             _ostrength = std::get<OP::kPV_int>(obj_prop.value());
+            break;
         }
-        else if (obj_prop.slot() == ksl_osize)
+        case ksl_osize:
         {
             _ASSERT(obj_prop.value().index() == OP::kPV_int);
             _osize = std::get<OP::kPV_int>(obj_prop.value());
+            break;
         }
-        else if (obj_prop.slot() == ksl_omatch)
+        case ksl_omatch:
         {
             _ASSERT(obj_prop.value().index() == OP::kPV_int);
             _omatch = std::get<OP::kPV_int>(obj_prop.value());
+            break;
         }
-        else if (obj_prop.slot() == ksl_ocapac)
+        case ksl_ocapac:
         {
             _ASSERT(obj_prop.value().index() == OP::kPV_int);
             _ocapac = std::get<OP::kPV_int>(obj_prop.value());
+            break;
         }
-        else
+        default:
         {
             prop_map[obj_prop.slot()] = obj_prop.value();
+        }
         }
     }
 }
@@ -475,5 +488,10 @@ ObjectP find_obj(const std::string &name, bool check_correctness)
 ObjectP sfind_obj(const std::string &name)
 {
     return find_obj(name);
+}
+
+ObjectP sfind_obj(const char *name)
+{
+    return sfind_obj(std::string(name));
 }
 

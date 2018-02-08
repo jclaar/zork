@@ -978,16 +978,14 @@ bool leave()
 
 bool leaves_appear()
 {
-    bool rv = false;
     ObjectP grate = sfind_obj("GRATE");
     if (!(trnn(grate, openbit)) && !(flags()[grate_revealed]))
     {
         tell("A grating appears on the ground.");
         tro(grate, ovison);
         flags()[grate_revealed] = true;
-        rv = true;
     }
-    return rv;
+    return false;
 }
 
 void light_int(ObjectP obj, CEventP cev, const std::vector<int> &tick, const std::vector<std::string> &tell)
@@ -2842,10 +2840,13 @@ namespace obj_funcs
             {
                 tell("Done.");
                 leaves_appear();
+                rv = true;
             }
             else
-                leaves_appear();
-            rv = true;
+            {
+                rv = leaves_appear();
+                // Returns false so take will run.
+            }
         }
         else if (verbq("LKUND") && !flags()[grate_revealed])
         {

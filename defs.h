@@ -353,9 +353,9 @@ private:
 };
 typedef std::shared_ptr<Orphans> OrphanP;
 
-bool apply_object(ObjectP op);
-bool describable(ObjectP op);
-bool see_inside(ObjectP op);
+bool apply_object(const ObjectP &op);
+bool describable(const ObjectP &op);
+bool see_inside(const ObjectP &op);
 
 extern int no_tell;
 extern int eg_score;
@@ -378,14 +378,14 @@ bool apply_random(hackfn fcn, HackP demon);
 // oflags, rflags testers and setter
 
 // Check status of specific bit in object or room.
-bool trnn(ObjectP op, Bits b);
-bool trnn(ObjectP op, const std::initializer_list<Bits> &bits_to_check);
-bool trnn(ObjectP op, const std::bitset<numbits> &bits_to_check);
+bool trnn(const ObjectP &op, Bits b);
+bool trnn(const ObjectP &op, const std::initializer_list<Bits> &bits_to_check);
+bool trnn(const ObjectP &op, const std::bitset<numbits> &bits_to_check);
 void trc(ObjectP op, Bits b);
 bool strnn(SyntaxP syn, SyntaxBits b);
-bool rtrnn(RoomP p, Bits b);
-bool rtrnn(RoomP p, const std::initializer_list<Bits> &bits);
-bool gtrnn(RoomP, const std::string &);
+bool rtrnn(const RoomP &p, Bits b);
+bool rtrnn(const RoomP &p, const std::initializer_list<Bits> &bits);
+bool gtrnn(const RoomP &, const std::string &);
 // Set or 0 room bit
 void rtro(RoomP p, Bits b);
 bool rtrz(RoomP p, Bits b);

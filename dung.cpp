@@ -120,21 +120,21 @@ int cyclowrath = 0;
 
 // Cells for endgame
 std::array<ObjList, 8> cells;
-ObjList cobjs = { get_obj("CDOOR"), get_obj("ODOOR") };
-ObjList nobjs = { get_obj("MDOOR"), get_obj("ODOOR") };
-ObjList pobjs = { get_obj("LDOOR") };
+const ObjList cobjs = { get_obj("CDOOR"), get_obj("ODOOR") };
+const ObjList nobjs = { get_obj("MDOOR"), get_obj("ODOOR") };
+const ObjList pobjs = { get_obj("LDOOR") };
 const ObjList weapons{ get_obj("STICK"), get_obj("KNIFE"), get_obj("SWORD"), get_obj("RKNIF") };
 const ObjList villains{ get_obj("TROLL"), get_obj("THIEF"), get_obj("CYCLO") };
 ObjList oppv(villains.size());
 std::vector<int> villain_probs(villains.size());
-ObjList small_papers = { get_obj("BLABE"), get_obj("LABEL"), get_obj("CARD"), get_obj("WARNI"), get_obj("PAPER"), get_obj("GUIDE") };
-ObjList palobjs = { get_obj("SCREW"), get_obj("KEYS"), get_obj("STICK"), get_obj("PKEY") };
+const ObjList small_papers = { get_obj("BLABE"), get_obj("LABEL"), get_obj("CARD"), get_obj("WARNI"), get_obj("PAPER"), get_obj("GUIDE") };
+const ObjList palobjs = { get_obj("SCREW"), get_obj("KEYS"), get_obj("STICK"), get_obj("PKEY") };
 ObjList inqobjs;
-RoomList random_list = { get_room("LROOM"), get_room("KITCH"), get_room("CLEAR"), get_room("FORE3"), get_room("FORE2"),
+const RoomList random_list = { get_room("LROOM"), get_room("KITCH"), get_room("CLEAR"), get_room("FORE3"), get_room("FORE2"),
     get_room("SHOUS"), get_room("FORE2"), get_room("KITCH"), get_room("EHOUS") };
 RoomP northend = get_room("MRD");
 RoomP mloc = get_room("MRB");
-RoomP startroom = mloc;
+const RoomP startroom = mloc;
 RoomP bloc = get_room("VLBOT");
 RoomP southend = get_room("MRA");
 VerbP buncher;
@@ -537,6 +537,9 @@ namespace
 
         oneadd_action("LOWER", "Lower", r_l);
 
+        oneadd_action("MAKE", "Make", maker);
+        vsynonym("MAKE", "BUILD");
+
         add_action("LUBRI", "Lubricate", ActionVec{
             AnyV{ obj(), "WITH", AL{ -1, aobjs(), reach() }, AVSyntax("OIL", oil) }
         });
@@ -567,10 +570,8 @@ namespace
         oneadd_action("OOPS", "Oops", oops);
 
         add_action("OPEN", "Open", ActionVec{
-            AnyV{
-            AL{ std::list<Bits>{doorbit, contbit}, reach(), aobjs(), robjs() }, AVSyntax("OPEN", opener), driver(),
-        }
-
+            AnyV{AL{ std::list<Bits>{doorbit, contbit}, reach(), aobjs(), robjs() }, AVSyntax("OPEN", opener), driver() },
+            AnyV{AL{ std::list<Bits>{doorbit, contbit}, reach(), aobjs(), robjs()}, "WITH", AL{weaponbit, toolbit, robjs(), aobjs(), have()}, AVSyntax("OPEN", opener)}
         });
 
         sadd_action("OUT!", room_funcs::time);

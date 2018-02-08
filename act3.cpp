@@ -102,7 +102,7 @@ bool maker()
     ObjectP coins = sfind_obj("BAGCO");
     if (prso() == sfind_obj("WISH"))
     {
-        if (here == sfind_room("WELL") &&
+        if (here == sfind_room("BWELL") &&
             (memq(coins, here->robjs()) || memq(coins = sfind_obj("COINS"), here->robjs())))
         {
             tell("A whispering voice replies: 'Water makes the bucket go'\n"
@@ -2333,7 +2333,7 @@ namespace exit_funcs
         ExitFuncVal rv = true;
         direction dir = as_dir(prsvec[1]);
         int rm = cphere;
-        const std::vector<int> &uvec = cpuvec;
+        const auto &uvec = cpuvec;
         int fx;
         CpExitV::const_iterator m;
         if (dir == find_dir("UP"))

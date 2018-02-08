@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "info.h"
 
-const std::string info_str = "Welcome to Dungeon!\n\n"
+const std::string info_str = "Welcome to Zork!\n\n"
 "You are near a large dungeon, which is reputed to contain vast\n"
 "quantities of treasure.  Naturally, you wish to acquire some of it.\n"
 "In order to do so, you must of course remove it from the dungeon.  To\n"

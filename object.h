@@ -206,5 +206,6 @@ ObjList &global_objects();
 typedef std::map<std::string, ObjList> ObjectPobl;
 const ObjectPobl &object_pobl();
 ObjectP find_obj(const std::string &name, bool correctness = true);
+ObjectP sfind_obj(const char *name);
 ObjectP sfind_obj(const std::string &name);
 

@@ -877,7 +877,7 @@ bool jigs_up(const std::string &desc, bool player)
     }
 
     ObjList::iterator x = winner->aobjs().begin();
-    RoomList::iterator y = random_list.begin();
+    RoomList::const_iterator y = random_list.begin();
     for (; x != winner->aobjs().end() && y != random_list.end(); ++x, ++y)
     {
         insert_object(*x, *y);
@@ -1708,11 +1708,13 @@ bool bugger(bool feech)
             "    - A description of the bug.\n"
             "    - A brief description of the fix.\n"
             "    - Snide comments on the author's poor coding style.\n"
-            "    - Snide comments on why C++ is a horrible language.\n"
+            "    - Disparaging remarks on why C++ is a horrible language.\n"
             "       (Make sure your primary reason is \"because Linus said so\".)\n"
-            "    - Snide comments asking why this software was primarily developed\n"
+            "    - Sneering wisecracks asking why this software was primarily developed\n"
             "      on Windows instead of Linux.\n"
-            "    - Snide comments about the author using spaces instead of tabs.\n";
+            "    - Spiteful criticism about the author using spaces instead of tabs.\n\n"
+        "The less C++-inclined can also submit an issue to\n"
+        "https://bitbucket.org/jclaar3/zork/issues.\n";
         tell(tell_str);
     }
     return true;
@@ -2056,10 +2058,14 @@ bool move()
         {
             rv = tell("Moving the " + prsoo->odesc2() + " reveals nothing.", post_crlf);
         }
-        else if (!empty(prsoo))
+        else
         {
-            rv = tell("I can't get to that to move it.");
+            rv = tell("You can't move the " + prsoo->odesc2() + ".", post_crlf);
         }
+    }
+    else if (!empty(prsoo))
+    {
+        rv = tell("I can't get to that to move it.");
     }
     return rv;
 }

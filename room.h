@@ -197,6 +197,7 @@ void init_rooms();
 RoomP get_room(const char *rid, RoomP init_val = RoomP());
 RoomP find_room(const std::string &rid);
 RoomP sfind_room(const std::string &s);
+RoomP sfind_room(const char *s);
 std::list<RoomP> &rooms();
 std::map<std::string, RoomP> &room_map();
 

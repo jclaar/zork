@@ -224,7 +224,7 @@ bool rise_and_shine(ObjectP ball)
             if (in)
             {
                 jigs_up("Your balloon has hit the rim of the volcano, ripping the cloth and\n"
-                    "causing you a 500 foot drop.Did you get your flight insurance ? ");
+                    "causing you a 500 foot drop.  Did you get your flight insurance?");
             }
             else if (here == sfind_room("VLBOT"))
             {

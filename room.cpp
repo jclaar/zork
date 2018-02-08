@@ -227,3 +227,7 @@ RoomP sfind_room(const std::string &rid)
     return find_room(rid);
 }
 
+RoomP sfind_room(const char *rid)
+{
+    return sfind_room(std::string(rid));
+}
