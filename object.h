@@ -200,6 +200,7 @@ inline bool empty(ObjectP op)
 }
 
 size_t obj_count();
+ObjectP get_obj(const char *name, ObjectP init_val = nullptr);
 ObjectP get_obj(const std::string &name, ObjectP init_val = nullptr);
 ObjList &global_objects();
 

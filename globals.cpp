@@ -23,11 +23,12 @@ namespace
         fl[folflag] = true;
         return fl;
     }
+
+    std::bitset<num_flag_bits> fl = init_flags();
 }
 
 std::bitset<num_flag_bits> &flags()
 {
-    static std::bitset<num_flag_bits> fl = init_flags();
     return fl;
 }
 

@@ -23,7 +23,9 @@ void add_inqobj(ObjectP obj);
 void add_question(const char *str, const std::initializer_list<QuestionValue> &vector);
 void add_demon(HackP x);
 
+PrepP find_prep(const char *prep);
 PrepP find_prep(const std::string &prep);
+VerbP find_verb(const char *verb);
 VerbP find_verb(const std::string &verb);
 ActionP find_action(const std::string &action);
 AdjectiveP find_adj(const std::string &adj);

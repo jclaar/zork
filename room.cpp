@@ -8,7 +8,7 @@
 #include "ZorkException.h"
 
 // These are all exit definitions in the original MDL code.
-#define notree_FORE1 NExit("There is no tree here suitable for climbing")
+#define notree_FORE1 NExit("There is no tree here suitable for climbing.")
 #define notree_FORE2 notree_FORE1
 #define notree_FORE4 notree_FORE1
 #define notree_FORE5 notree_FORE1
@@ -79,13 +79,20 @@ std::map<std::string, RoomP> &room_map()
 
 namespace
 {
-    RoomP mr(const std::string &id, const std::string &d1, const std::string &d2, const std::initializer_list<Ex> &exits,
+    RoomP mr(const char *id, const char *d1, const char *d2, const std::initializer_list<Ex> &exits,
         const std::initializer_list<ObjectP> &contents = {}, rapplic roomf = nullptr,
         const std::initializer_list<Bits> &rb = { rlandbit },
         const std::initializer_list<RP> &props = {})
     {
-        RoomP rp = RoomP(new Room(id, d1, d2, exits, contents, roomf, rb, props));
-        return rp;
+        return std::make_shared<Room>(id, d1, d2, exits, contents, roomf, rb, props);
+    }
+
+    RoomP mr(const char *id, const std::string &d1, const std::string &d2, const std::initializer_list<Ex> &exits,
+        const std::initializer_list<ObjectP> &contents = {}, rapplic roomf = nullptr,
+        const std::initializer_list<Bits> &rb = { rlandbit },
+        const std::initializer_list<RP> &props = {})
+    {
+        return std::make_shared<Room>(id, d1, d2, exits, contents, roomf, rb, props);
     }
 
     std::tuple<RoomP*, RoomP*> get_rooms()
@@ -146,7 +153,7 @@ Room::Room(const std::string &rid, const std::string &d1, const std::string &d2,
                 _rglobal = rg;
             }
             else
-                throw ZorkException("Bad rglobal flags.");
+                error("Bad rglobal flags");
             break;
         }
         case ksl_rval:

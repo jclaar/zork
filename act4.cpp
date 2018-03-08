@@ -130,7 +130,8 @@ bool member(const std::string &s1, const std::vector<QuestionValue> &qv)
 {
     for (QuestionValue q : qv)
     {
-        if (q.index() == kqv_string && std::get<kqv_string>(q) == s1)
+        std::string *s;
+        if ((s = std::get_if<std::string>(&q)) && *s == s1)
         {
             return true;
         }
@@ -161,7 +162,7 @@ bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue> &correct
     }
 
     bool rv = false;
-    if (onecorr.index() == kqv_string)
+    if (std::get_if<std::string>(&onecorr))
     {
         return member(ans[0]->s1, correct);
     }
@@ -182,7 +183,8 @@ bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue> &correct
             }
             if (act = plookup(str, actions))
             {
-                return onecorr.index() == kqv_action && act == std::get<kqv_action>(onecorr);
+                ActionP *qact = std::get_if<ActionP>(&onecorr);
+                return qact && *qact == act;
             }
             else if (w = plookup(str, words))
             {
@@ -194,7 +196,8 @@ bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue> &correct
                 ObjectP obj;
                 if (obj = search_list(str, inqobjs, adj).first)
                 {
-                    return onecorr.index() == kqv_object && obj == std::get<kqv_object>(onecorr);
+                    ObjectP *qo = std::get_if<ObjectP>(&onecorr);
+                    return qo && *qo == obj;
                 }
             }
             lv = rest(lv);
@@ -598,11 +601,12 @@ bool look_to(const std::string &nstr,
     LookToVal stell,
     bool htell)
 {
-    bool north;
+    bool north, *p;
     bool mir;
     bool m1 = false;
     RoomP nrm, srm;
     std::string dir;
+    const char **s;
 
     if (!nstr.empty())
         nrm = find_room(nstr);
@@ -612,21 +616,21 @@ bool look_to(const std::string &nstr,
     if (htell)
         tell(hallway, long_tell1);
 
-    if (ntell.index() == kltv_bool && std::get<kltv_bool>(ntell))
+    if ((p = std::get_if<bool>(&ntell)) && *p)
     {
         tell(std::string("Somewhat to the north") + guardstr, long_tell1);
     }
-    else if (ntell.index() == kltv_string)
+    else if (s = std::get_if<const char *>(&ntell))
     {
-        tell(std::get<kltv_string>(ntell));
+        tell(*s);
     }
-    if (stell.index() == kltv_bool && std::get<kltv_bool>(stell))
+    if ((p = std::get_if<bool>(&stell)) && *p)
     {
         tell(std::string("Somewhat to the south") + guardstr, long_tell1);
     }
-    else if (stell.index() == kltv_string)
+    else if (s = std::get_if<const char *>(&stell))
     {
-        tell(std::get<kltv_string>(stell));
+        tell(*s);
     }
 
     auto prog = [&]() ->bool
@@ -668,15 +672,17 @@ bool look_to(const std::string &nstr,
 
     if (htell)
     {
-        if (ntell.index() == kltv_none && stell.index() == kltv_none)
+        std::monostate *nm = std::get_if<std::monostate>(&ntell);
+        std::monostate *sm = std::get_if<std::monostate>(&stell);
+        if (nm && sm)
         {
             tell("The corridor continues north and south.");
         }
-        else if (ntell.index() == kltv_none)
+        else if (nm)
         {
             tell("The corridor continues north.");
         }
-        else if (stell.index() == kltv_none)
+        else if (sm)
         {
             tell("The corridor continues south.");  
         }
@@ -1478,7 +1484,7 @@ namespace room_funcs
         {
             rv = true;
             ewtell(here);
-            tell("Somewhat to the north" + std::string(guardstr), long_tell1);
+            tell("Somewhat to the north" + guardstr, long_tell1);
         }
         return rv;
     }

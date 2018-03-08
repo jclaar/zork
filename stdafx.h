@@ -11,8 +11,6 @@
 
 #ifdef _MSC_VER
 #include <crtdbg.h>
-#define NOMINMAX
-#include <windows.h>
 #endif
 
 #if !defined(_ASSERT)

@@ -43,6 +43,7 @@ typedef std::vector<ParseContP> ParseContV;
 
 extern Iterator<ParseContV> parse_cont;
 
+bool restart_flag(); // On exit, returns true to restart, false to quit.
 std::string unspeakable_code();
 std::string remarkably_disgusting_code();
 void start(const std::string &rm, const std::string &st = std::string());
@@ -66,7 +67,6 @@ void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
 // recout's quit parameter can be a boolean or a string. If it's a string,
 // print that instead of Quit or Died.
 typedef std::variant<bool, std::string> RecOutQuit;
-enum { kroq_bool, kroq_string };
 void record(int score, int moves, int deaths, RecOutQuit quit, RoomP loc);
 inline void record(int score, int moves, int deaths, const char *quit, RoomP loc)
 {

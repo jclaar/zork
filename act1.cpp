@@ -1838,7 +1838,6 @@ namespace obj_funcs
     bool robber_function()
     {
         auto dem = get_demon("THIEF");
-        RoomP here = ::here;
         bool flg = false;
         ObjectP st;
         ObjectP t = dem->hobj();
@@ -3397,7 +3396,7 @@ namespace room_funcs
         bool rv = false;
         if (verbq("LOOK"))
         {
-            rv = tell(lld_desc + std::string(flags()[on_pole] ? lld_desc1 : ""), long_tell1);
+            rv = tell(lld_desc + (flags()[on_pole] ? ("\n" + lld_desc1) : ""), long_tell1);
         }
         return rv;
     }

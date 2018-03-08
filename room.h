@@ -36,7 +36,6 @@ class CExit
 {
 public:
     typedef std::variant<FlagId, rapplic> FlagVar;
-    enum { kFV_FlagId, kFV_rapplic };
 
     CExit(FlagVar flag_name, const std::string &rmid, const std::string &desc = "", bool flag = false, ex_rapplic fn = nullptr) :
         _flid(flag_name),
@@ -56,9 +55,9 @@ public:
     const std::string &cxstr() const { return _desc; }
 
     bool cxflag() const {
-        if (_flid.index() == kFV_FlagId)
+        if (auto fid = std::get_if<FlagId>(&_flid))
         {
-            return flags()[std::get<FlagId>(_flid)];
+            return flags()[*fid];
         }
         return false;
     }

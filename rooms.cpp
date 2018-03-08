@@ -37,6 +37,8 @@ std::unique_ptr<std::ofstream> script_channel;
 
 namespace
 {
+    bool f_restart = false;
+
     void flush_cin()
     {
         // Remove all characters from cin. This is useful when prompting for
@@ -45,6 +47,11 @@ namespace
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
+}
+
+bool restart_flag()
+{
+    return f_restart;
 }
 
 void excruciatingly_untasteful_code()
@@ -392,7 +399,7 @@ bool room_info(std::optional<int> full)
     {
         tell("I can't see anything.");
     }
-    else if (!full && !flags()[no_obj_print] || !((full.value() & 1) == 0))
+    else if (!full && !flags()[no_obj_print] || full && !((full.value() & 1) == 0))
     {
         for (ObjectP x : rm->robjs())
         {
@@ -765,16 +772,16 @@ void score_bless()
 
 void score_upd(int num)
 {
-if (flags()[end_game_flag])
-{
-    eg_score += num;
-}
-else
-{
-    raw_score += num;
-    winner->ascore(winner->ascore() + num);
-    score_bless();
-}
+    if (flags()[end_game_flag])
+    {
+        eg_score += num;
+    }
+    else
+    {
+        raw_score += num;
+        winner->ascore(winner->ascore() + num);
+        score_bless();
+    }
 }
 
 bool jigs_up(const std::string &desc, bool player)
@@ -1393,7 +1400,7 @@ bool dropper()
         {
 
         }
-        else if (verbq("DROP"))
+        else if (verbq({ "DROP", "POUR" }))
         {
             tell("Dropped.");
         }
@@ -1530,10 +1537,10 @@ bool feech()
 bool finish(RecOutQuit ask)
 {
     bool askq;
-    if (ask.index() == kroq_string)
+    if (std::get_if<std::string>(&ask))
         askq = false;
     else
-        askq = std::get<kroq_bool>(ask);
+        askq = *std::get_if<bool>(&ask);
     no_tell = 0;
     int scor = score(askq);
     if (askq && tell("Do you wish to leave the game? (Y is affirmative): ") && yes_no() || !askq)
@@ -1546,7 +1553,7 @@ bool finish(RecOutQuit ask)
 
 bool quit()
 {
-    exit(0);
+    running = false;
     return true;
 }
 
@@ -1584,16 +1591,17 @@ void recout(int score, int moves, int deaths, RecOutQuit quit, RoomP loc)
         princ("s. ");
     princ(" In ");
     princ(loc->rdesc2());
-    if (quit.index() == kroq_bool)
+    bool *bquit;
+    if (bquit = std::get_if<bool>(&quit))
     {
-        if (std::get<kroq_bool>(quit))
+        if (*bquit)
             princ(". Quit.");
         else
             princ(". Died.");
     }
     else
     {
-        princ(std::get<kroq_string>(quit));
+        princ(*std::get_if<std::string>(&quit));
     }
     crlf();
 }
@@ -2079,36 +2087,10 @@ bool restart()
     {
         record(scor, moves, deaths, ". Restart.", here);
         tell("Restarting.");
-        // Just relaunch the application and quit. As far as I know,
-        // there is no portable way to do this in C++.
-        bool launched = false;
-#ifdef _WIN32
-        char file[MAX_PATH];
-        if (GetModuleFileNameA(nullptr, file, MAX_PATH) > 0)
-        {
-            STARTUPINFOA si;
-            GetStartupInfoA(&si);
-            // Reassign standard handles to the defaults. Otherwise it appears
-            // that the new process inherits this process's handles, which then
-            // go away when the process exits.
-            PROCESS_INFORMATION pi;
-            launched = CreateProcessA(nullptr, file, nullptr, nullptr, TRUE, 0, nullptr,
-                nullptr, &si, &pi);
-            if (launched)
-            {
-                CloseHandle(pi.hThread);
-                CloseHandle(pi.hProcess);
-            }
-        }
-#endif
-        if (launched)
-        {
-            exit(0);
-        }
-        else
-        {
-            tell("Sorry, the dungeon isn't where I thought it was.  You'll have to get\nthe program again.");
-        }
+        // Set the restart flag and quit. The outer shell will
+        // handle the restart.
+        f_restart = true;
+        running = false;
     }
     return false;
 }

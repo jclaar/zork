@@ -24,6 +24,7 @@
     <ClCompile Include="act3.cpp" />
     <ClCompile Include="act4.cpp" />
     <ClCompile Include="adv.cpp" />
+    <ClCompile Include="b.cpp" />
     <ClCompile Include="cevent.cpp" />
     <ClCompile Include="defs.cpp" />
     <ClCompile Include="dung.cpp" />
@@ -61,6 +62,7 @@
     <ClInclude Include="act3.h" />
     <ClInclude Include="act4.h" />
     <ClInclude Include="adv.h" />
+    <ClInclude Include="b.h" />
     <ClInclude Include="cevent.h" />
     <ClInclude Include="clock.h" />
     <ClInclude Include="defs.h" />

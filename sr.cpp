@@ -1,10 +1,11 @@
 #include "stdafx.h"
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/vector.hpp>
-#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/array.hpp>
 #include <algorithm>
 #include "sr.h"
 #include "act1.h"
@@ -25,7 +26,7 @@ typedef SV::iterator SVI;
 
 namespace
 {
-    const int save_version = 1;
+    const int save_version = 3;
     RoomP room_from_str(const std::string &s)
     {
         return (s.empty() ? RoomP() : sfind_room(s));
@@ -247,7 +248,6 @@ bool save_game(const std::string &f)
         oa & (binf ? binf->oid() : emp);
         oa & (btie ? btie->oid() : emp);
         oa & light_shaft;
-        oa & played_time;
         oa & moves;
         oa & raw_score;
         oa & deaths;
@@ -321,7 +321,6 @@ bool restore_game(const std::string &f)
                 ia & temp;
                 btie = obj_from_str(temp);
                 ia & light_shaft;
-                ia & played_time;
                 ia & moves;
                 ia & raw_score;
                 ia & deaths;

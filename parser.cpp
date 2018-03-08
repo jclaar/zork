@@ -456,7 +456,8 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
                 adj = std::dynamic_pointer_cast<adjective>(as_word(aval));
                 if (orfl && !as_string(aval = orph->oname()).empty())    // 186
                 {
-                    x = y = as_string(adj->w());
+                    x = y = as_string(aval);
+                    cont_proc = true;
                 }
             }
         }
@@ -1000,7 +1001,6 @@ Nefals get_object(const std::string &objnam, AdjectiveP adj)
 {
     ObjectP obj;
     ObjectP oobj;
-    RoomP here = ::here;
     ObjectP av = winner->avehicle();
     bool chomp = false;
     bool lit = ::lit(here);
@@ -1385,7 +1385,17 @@ bool orfeo(int slot, const VargP &syn, ParseVec objs)
         return false;
 
     _ASSERT(slot == 1 || slot == 2);
-    auto orphan = (slot == 1) ? orph->oslot1() : orph->oslot2();
+    OrphanSlotType orphan;
+    switch (slot)
+    {
+    case 1:
+        if (orph->oslot1())
+            orphan = orph->oslot1();
+        break;
+    case 2:
+        orphan = orph->oslot2();
+        break;
+    }
     // The slot is a one-based index in MDL, so subtract one for C++;
     return syn_equal(syn, orphan) && put(objs, slot-1, std::get<kos_object>(orphan));
 }
@@ -1398,8 +1408,8 @@ bool orfeo(int slot, const VargP &syn, ParseVec objs)
 // -------------------------------------------------------------------- - 
 
 // GWIM-SLOT -- 'get what i mean' for one slot of the parse-vector.  takes
-// a slot number, a syntax spec, an action, and the parse - vector.returns
-// the object, if it won.seems a lot of pain for so little, eh ? 
+// a slot number, a syntax spec, an action, and the parse-vector.  returns
+// the object, if it won.  seems a lot of pain for so little, eh ? 
 ObjectP gwim_slot(int fx, const VargP &varg, ParseVec &objs)
 {
     _ASSERT(fx == 0 || fx == 1);

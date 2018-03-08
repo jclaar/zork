@@ -42,8 +42,8 @@ int villain_strength(ObjectP villain)
         {
             trnn(prsi(), weaponbit);
             BestWeaponsP wv = memq(villain, best_weapons);
-            if (wv && wv->weapon == prsi())
-                od = std::max(1, (od - wv->value));
+            if (wv && wv->weapon() == prsi())
+                od = std::max(1, (od - wv->value()));
         }
     }
     return od;

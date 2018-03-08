@@ -272,7 +272,6 @@ typedef std::vector<PhraseP> PrepVecV;
 PhraseP make_phrase(const WordP &p, ObjectP op);
 
 typedef std::variant<std::string, ObjectP, ActionP> QuestionValue;
-enum { kqv_string, kqv_object, kqv_action };
 
 struct question
 {

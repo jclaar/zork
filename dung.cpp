@@ -14,6 +14,7 @@
 #include "adv.h"
 #include "parser.h"
 #include "ZorkException.h"
+#include "b.h"
 
 namespace
 {
@@ -48,10 +49,7 @@ namespace
 }
 
 // Global objects
-int64_t star_bits = 0;
 int64_t glohi = 1;
-
-int played_time = 0;
 
 // Bunch vector.
 ObjVector bunch_cont()
@@ -69,13 +67,19 @@ Iterator<ObjVector> bunch(bunuvec);
 WordsPobl words_pobl;
 
 // Globals from dung.mud appear here.
-PhraseVecV prepvecb = std::vector<PhraseP>({
-    make_phrase(find_prep("WITH"), get_obj("#####")),
-    make_phrase(find_prep("WITH"), get_obj("#####")),
-    make_phrase(find_prep("WITH"), get_obj("#####")),
-    make_phrase(find_prep("WITH"), get_obj("#####")),
-    make_phrase(find_prep("WITH"), get_obj("#####")),
-});
+PhraseVecV make_prepvec()
+{
+    auto with_prep = find_prep("WITH");
+    auto cretin = get_obj("#####");
+    PhraseVecV pvv;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        pvv.push_back(make_phrase(with_prep, cretin));
+    }
+    return pvv;
+}
+
+PhraseVecV prepvecb = make_prepvec();
 
 PrepVec prepvec(prepvecb);
 
@@ -132,11 +136,11 @@ const ObjList palobjs = { get_obj("SCREW"), get_obj("KEYS"), get_obj("STICK"), g
 ObjList inqobjs;
 const RoomList random_list = { get_room("LROOM"), get_room("KITCH"), get_room("CLEAR"), get_room("FORE3"), get_room("FORE2"),
     get_room("SHOUS"), get_room("FORE2"), get_room("KITCH"), get_room("EHOUS") };
-RoomP northend = get_room("MRD");
+const RoomP northend = get_room("MRD");
 RoomP mloc = get_room("MRB");
 const RoomP startroom = mloc;
 RoomP bloc = get_room("VLBOT");
-RoomP southend = get_room("MRA");
+const RoomP southend = get_room("MRA");
 VerbP buncher;
 ObjectP bunch_obj = get_obj("*BUN*");
 GObjectPtr it_object;
@@ -161,8 +165,8 @@ RoomP scol_active;
 ScolWallsV scol_walls;
 
 int cphere;
-std::vector<ObjList> cpobjs(64);
-std::vector<int> cpuvec({
+std::array<ObjList, 64> cpobjs;
+std::array<int, 64> cpuvec = {
     1,  1,  1,  1,  1,  1,  1,  1,
     1,  0, -1,  0,  0, -1,  0,  1,
     1, -1,  0,  1,  0, -2,  0,  1,
@@ -170,7 +174,7 @@ std::vector<int> cpuvec({
     1, -3,  0,  0, -1, -1,  0,  1,
     1,  0,  0, -1,  0,  0,  0,  1,
     1,  1,  1,  0,  0,  0,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1 });
+    1,  1,  1,  1,  1,  1,  1,  1 };
 CpExitV cpexits;
 
 std::vector<cpwall_val> cpwalls;
@@ -803,6 +807,20 @@ namespace
         sadd_action("TERMI", terminal);
 
 #ifdef _DEBUG
+        // Displays room bits
+        sadd_action("RBITS", []
+        {
+            if (!bit_info(here))
+            {
+                tell("No bit information available.");
+            }
+            else
+            {
+                flags()[tell_flag] = true;
+            }
+            return true;
+        });
+
         // Handy function to locate any object.
         sadd_action("LOCAT", [] {
             std::string obj;
@@ -904,8 +922,6 @@ namespace
 
 void init_dung()
 {
-    std::string with = ("WITH");
-    std::string player = "#####";
     buncher = std::make_shared<verb>("BUNCH", bunchem);
     words_pobl["BUNCH"] = buncher;
 

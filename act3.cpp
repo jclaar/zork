@@ -1672,7 +1672,6 @@ namespace obj_funcs
         bool rv = true;
         RoomP droom = sfind_room("DOME");
         RoomP sroom = sfind_room("SLIDE");
-        RoomP here = ::here;
         ObjectP rope = sfind_obj("ROPE");
         ObjectP ttie = timber_tie;
         ObjectP coffin = sfind_obj("COFFI");
@@ -1894,7 +1893,7 @@ namespace obj_funcs
             {
                 remove_object(prsio);
                 ObjectP prsoo = prso();
-                tell("Somehow, the " + prsoo->odesc2() + "\nmanaged to disappear as well.", post_crlf);
+                tell("Somehow, the " + prsoo->odesc2() + " managed to disappear as well.", post_crlf);
                 remove_object(prsoo);
             }
             rv = true;

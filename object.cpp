@@ -31,34 +31,36 @@ namespace
         const std::initializer_list<Bits> &bits, rapplic obj_fun = nullptr, const std::initializer_list<ObjectP> &contents = {},
         const std::initializer_list<OP> &props = {})
     {
-        return ObjectP(new Object(syns, adj, desc, bits, obj_fun, contents, props));
+        return std::make_shared<Object>(syns, adj, desc, bits, obj_fun, contents, props);
     }
 
     GObjectPtr make_gobj(const std::string &name, const std::initializer_list<std::string> &syns, const std::initializer_list<std::string> &adj, const std::string &desc,
         const std::initializer_list<Bits> &bits, rapplic obj_fun = nullptr, const std::initializer_list<ObjectP> &contents = {},
         const std::initializer_list<OP> &props = {})
     {
-        return GObjectPtr(new GObject(name, syns, adj, desc, bits, obj_fun, contents, props));
+        return std::make_shared<GObject>(name, syns, adj, desc, bits, obj_fun, contents, props);
     }
 
     // List of all global objects.
-    std::tuple<const GObjectPtr *, const GObjectPtr*> get_gobjects()
+    typedef std::vector<GObjectPtr>::iterator GObjectIter;
+    std::tuple<GObjectIter, GObjectIter> get_gobjects()
     {
-        static const GObjectPtr objs[] =
+        static std::vector<GObjectPtr> objs =
         {
 #include "gobject.h"
         };
-        return std::tuple<const GObjectPtr*, const GObjectPtr*>(objs, objs + ARRSIZE(objs));
+        return std::tuple<GObjectIter, GObjectIter>(objs.begin(), objs.end());
     }
 
     // List of all objects
-    std::tuple<const ObjectP*, const ObjectP*> get_objects()
+    typedef std::vector<ObjectP>::iterator ObjectIter;
+    std::tuple<ObjectIter, ObjectIter> get_objects()
     {
-        static const ObjectP objs[] =
+        static std::vector<ObjectP> objs =
         {
 #include "objdefs.h"
         };
-        return std::tuple<const ObjectP*, const ObjectP*>(objs, objs + ARRSIZE(objs));
+        return std::tuple<ObjectIter, ObjectIter>(objs.begin(), objs.end());
     }
 }
 
@@ -307,7 +309,6 @@ Object(syns, adj, desc, _bits, obj_fun, contents, props)
     else
     {
         glohi = bits = glohi * 2;
-        star_bits = star_bits + bits;
     }
     flags.set(::oglobal);
 }
@@ -434,6 +435,11 @@ void init_gobjects()
 size_t obj_count()
 {
     return Objects().size();
+}
+
+ObjectP get_obj(const char *name, ObjectP init_val)
+{
+    return get_obj(std::string(name), init_val);
 }
 
 ObjectP get_obj(const std::string &name, ObjectP init_val)

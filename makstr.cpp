@@ -97,6 +97,11 @@ AdjectiveP find_adj(const std::string &sadj)
     return adj;
 }
 
+VerbP find_verb(const char *verbo)
+{
+    return find_verb(std::string(verbo));
+}
+
 VerbP find_verb(const std::string &verbo)
 {
     if (words_pobl.find(verbo) == words_pobl.end())
@@ -120,6 +125,11 @@ ActionP find_action(const std::string &act)
     return iter->second;
 }
 
+PrepP find_prep(const char *prep)
+{
+    return find_prep(std::string(prep));
+}
+
 PrepP find_prep(const std::string &prepo)
 {
     // Is the preposition already in the list?
@@ -140,8 +150,7 @@ void add_directions(const std::initializer_list<std::tuple<const char*, directio
 {
     for (const std::tuple<const char*, direction> &d : nms)
     {
-        std::string s = std::get<0>(d);
-        directions_pobl[s] = std::get<1>(d);
+        directions_pobl[std::get<0>(d)] = std::get<1>(d);
     }
 }
 
@@ -420,8 +429,8 @@ void add_question(const char *str, const std::initializer_list<QuestionValue> &v
 {
     auto qp = std::make_shared<question>(str, vector);
     qvec.push_back(qp);
-    if ((*vector.begin()).index() == kqv_object)
+    if (const ObjectP *o = std::get_if<ObjectP>(vector.begin()))
     {
-        add_inqobj(std::get<kqv_object>(*vector.begin()));
+        add_inqobj(*o);
     }
 }

@@ -84,7 +84,7 @@ BestWeaponsP memq(ObjectP v, const BestWeaponsList &bwl)
 {
     auto iter = std::find_if(bwl.begin(), bwl.end(), [&v](const BestWeaponsP &bw)
     {
-        return v == bw->villain;
+        return v == bw->villain();
     });
     return (iter == bwl.end()) ? BestWeaponsP() : *iter;
 }

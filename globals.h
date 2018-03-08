@@ -92,8 +92,8 @@ enum FlagId
 
 // Puzzle room
 extern int cphere;
-extern std::vector<ObjList> cpobjs;
-extern std::vector<int> cpuvec;
+extern std::array<ObjList, 64> cpobjs;
+extern std::array<int, 64> cpuvec;
 typedef std::tuple<ObjectP, int> cpwall_val;
 extern std::vector<cpwall_val> cpwalls;
 std::bitset<num_flag_bits> &flags();

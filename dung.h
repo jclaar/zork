@@ -12,7 +12,6 @@ typedef std::pair<std::string, WordP> WordsPoblPair;
 typedef std::map<std::string, direction> DirectionsPobl;
 typedef std::map<std::string, ActionP> ActionsPobl;
 
-extern int64_t star_bits;
 extern int64_t glohi;
 extern WordsPobl words_pobl;
 extern DirectionsPobl directions_pobl;
@@ -39,13 +38,12 @@ extern std::vector<VerbP> robot_actions;
 extern std::vector<VerbP> master_actions;
 extern RoomP bloc;
 extern const RoomP startroom;
-extern RoomP northend;
-extern RoomP southend;
+extern const RoomP northend;
+extern const RoomP southend;
 extern const ObjList cobjs;
 extern const ObjList nobjs;
 extern const ObjList pobjs;
 extern std::array<ObjList, 8> cells;
-extern int played_time;
 
 typedef std::pair<ObjectP, int> NumObjs;
 extern std::vector<NumObjs> numobjs;
@@ -61,11 +59,8 @@ class hack
     enum { kho_event, kho_object };
 public:
     hack(hackfn ha, const ObjList &ho, const std::list<RoomP> &hr, RoomP rm, ObjectP obj) :
-        _haction(ha), _room(rm), _hobj(obj)
+        _haction(ha), _room(rm), _hobj(obj), _hobjs_ob(ho), _hrooms(hr), _hflag(false)
     {
-        _hobjs_ob = ho;
-        _hrooms = hr;
-        _hflag = false;
     }
 
     hack(const hack &h)
@@ -176,13 +171,19 @@ extern ObjList oppv;
 extern std::vector<int> villain_probs;
 
 extern const ObjList weapons;
-struct BestWeapons
+class BestWeapons
 {
-    BestWeapons(ObjectP v, ObjectP w, int val) :
-        villain(v), weapon(w), value(val) {}
-    ObjectP villain;
-    ObjectP weapon;
-    int value;
+public:
+    BestWeapons(ObjectP v, ObjectP w, int va) :
+        vill(v), weap(w), val(va) {}
+
+    ObjectP villain() const { return vill; }
+    ObjectP weapon() const { return weap; }
+    int value() const { return val; }
+private:
+    ObjectP vill;
+    ObjectP weap;
+    int val;
 };
 typedef std::shared_ptr<BestWeapons> BestWeaponsP;
 typedef std::vector<BestWeaponsP> BestWeaponsList;
