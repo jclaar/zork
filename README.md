@@ -20,5 +20,21 @@ platforms. It also makes extensive use of C++-17 features, and thus a C++-17-com
 is required. 
 
 Build requirements:
+
 Boost (www.boost.org) - Requires the program\_options and the serialization libraries. This build used
-version 1.65.1, which added Visual Studio 2017 support. 
+version 1.66.0.
+
+Individual modules:
+
+gobj\_parse: Early on, it became apparent that manually defining rooms, objects and strings was time-consuming
+and error prone. gobj_parse automates this by parsing dung.mud (where all items in the dungeon are defined)
+and generating various headers and C++ modules. See the post-build step in the project file or the makefile
+for more information. Suffice it to say that this executable needs to be built and run first.
+
+func\_dump: Once gobj\_parse has run and generated the header files, func\_dump runs and generates
+header files defining the room and object functions.
+
+mdlfun: This is the main game implementation. Modules almost entirely correspond to their respective
+MDL sources. Functions and variables are named the same, except they are lowercase and an underscore
+replaces the hyphen. For example, the POUR-ON function in act1.mud is equivalent to the pour_on
+function in act1.cpp.
