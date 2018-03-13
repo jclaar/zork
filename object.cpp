@@ -96,63 +96,53 @@ Object::Object(const std::initializer_list<std::string> &syns, const std::initia
         {
         case ksl_oread:
         {
-            _ASSERT(obj_prop.value().index() == OP::kPV_string);
-            _oread = std::get<OP::kPV_string>(obj_prop.value());
+            _oread = std::get<std::string>(obj_prop.value());
             break;
         }
         case ksl_odesco:
         {
-            _ASSERT(obj_prop.value().index() == OP::kPV_string);
-            _odesco = std::get<OP::kPV_string>(obj_prop.value());
+            _odesco = std::get<std::string>(obj_prop.value());
             break;
         }
         case ksl_odesc1:
         {
-            _ASSERT(obj_prop.value().index() == OP::kPV_string);
-            _odesc1 = std::get<OP::kPV_string>(obj_prop.value());
+            _odesc1 = std::get<std::string>(obj_prop.value());
             break;
         }
         case ksl_otval:
         {
-            _ASSERT(obj_prop.value().index() == OP::kPV_int);
-            _otval = std::get<OP::kPV_int>(obj_prop.value());
+            _otval = std::get<int>(obj_prop.value());
             break;
         }
         case ksl_ofval:
         {
-            _ASSERT(obj_prop.value().index() == OP::kPV_int);
-            _ofval = std::get<OP::kPV_int>(obj_prop.value());
+            _ofval = std::get<int>(obj_prop.value());
             break;
         }
         case ksl_olint:
         {
-            _ASSERT(obj_prop.value().index() == OP::kPV_olint);
-            _olint = std::make_shared<olint_t>(std::get<OP::kPV_olint>(obj_prop.value()));
+            _olint = std::make_shared<olint_t>(std::get<olint_t>(obj_prop.value()));
             clock_disable(clock_int(_olint->ev(), _olint->ev()->ctick()));
             break;
         }
         case ksl_ostrength:
         {
-            _ASSERT(obj_prop.value().index() == OP::kPV_int);
-            _ostrength = std::get<OP::kPV_int>(obj_prop.value());
+            _ostrength = std::get<int>(obj_prop.value());
             break;
         }
         case ksl_osize:
         {
-            _ASSERT(obj_prop.value().index() == OP::kPV_int);
-            _osize = std::get<OP::kPV_int>(obj_prop.value());
+            _osize = std::get<int>(obj_prop.value());
             break;
         }
         case ksl_omatch:
         {
-            _ASSERT(obj_prop.value().index() == OP::kPV_int);
-            _omatch = std::get<OP::kPV_int>(obj_prop.value());
+            _omatch = std::get<int>(obj_prop.value());
             break;
         }
         case ksl_ocapac:
         {
-            _ASSERT(obj_prop.value().index() == OP::kPV_int);
-            _ocapac = std::get<OP::kPV_int>(obj_prop.value());
+            _ocapac = std::get<int>(obj_prop.value());
             break;
         }
         default:
@@ -170,8 +160,7 @@ AdvP Object::oactor() const
     auto i = prop_map.find(ksl_oactor);
     if (i != prop_map.end())
     {
-        _ASSERT(i->second.index() == OP::kPV_int);
-        int v = std::get<OP::kPV_int>(i->second);
+        int v = std::get<int>(i->second);
         _ASSERT(v >= 0 && v <= oa_none);
         e = (e_oactor)v;
         if (e != oa_none)
@@ -188,8 +177,7 @@ Bits Object::ovtype() const
     auto i = prop_map.find(ksl_ovtype);
     if (i != prop_map.end())
     {
-        _ASSERT(i->second.index() == OP::kPV_int);
-        int v = std::get<OP::kPV_int>(i->second);
+        int v = std::get<int>(i->second);
         _ASSERT(v >= 0 && v < numbits);
         b = (Bits)v;
     }
@@ -263,8 +251,7 @@ const tofmsgs *Object::ofmsgs() const
     if (i != prop_map.end())
     {
         typedef const tofmsgs &(*ofmsgf)();
-        _ASSERT(i->second.index() == OP::kPV_meleefunc);
-        ofmsgf fn = std::get<OP::kPV_meleefunc>(i->second);
+        ofmsgf fn = std::get<OP::melee_func>(i->second);
         ofmsg = &fn();
     }
     return ofmsg;

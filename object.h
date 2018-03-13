@@ -65,7 +65,6 @@ class OP
 public:
     typedef const std::vector<std::vector<std::string>> &(*melee_func)();
     typedef std::variant<int, std::string, melee_func, olint_t> PropVal;
-    enum { kPV_int, kPV_string, kPV_meleefunc, kPV_olint };
     OP(ObjectSlots os, const PropVal &v) : sl(os), val(v) {}
     ObjectSlots slot() const { return sl; }
     const PropVal &value() { return val; }

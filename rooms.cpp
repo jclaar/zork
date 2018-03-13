@@ -811,13 +811,14 @@ bool jigs_up(const std::string &desc, bool player)
             "to say my abilities are not equal to dealing with your present state\n"
             "of disrepair.  Permit me to express my profoundest regrets.");
         finish(false);
-        
+        return true;
     }
 
     if (deaths > 2)
     {
         tell(suicidal, long_tell1);
         finish(false);
+        return true;
     }
 
     ++deaths;
