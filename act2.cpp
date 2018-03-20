@@ -591,7 +591,7 @@ namespace obj_funcs
             ObjectP prso = ::prso();
             if (prso->otval() != 0)
             {
-                tell("Thank you very  much for the " + prso->odesc2() + ".  I don't believe \n"
+                tell("Thank you very much for the " + prso->odesc2() + ".  I don't believe \n"
                     "I've ever seen one as beautiful. 'Follow me', he says, and a door\n"
                     "appears on the west end of the ledge.Through the door, you can see\n"
                     "a narrow chimney sloping steeply downward.The gnome moves quickly,\n"

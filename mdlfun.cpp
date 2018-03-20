@@ -41,21 +41,21 @@ int main(int argc, char *argv[])
         // restarts.
         intptr_t status = 1;
 #ifdef __GNUC__
-	while (status == 1)
-	{
-            pid_t pid = fork();
-            if (pid == 0)
-            {
-                rv = run_zork();
-                break;
-            }
-            else
-            {
-                int istatus;
-                waitpid(pid, &istatus, 0);
-                status = istatus != 0;
-            }
-	}
+	    while (status == 1)
+	    {
+                pid_t pid = fork();
+                if (pid == 0)
+                {
+                    rv = run_zork();
+                    break;
+                }
+                else
+                {
+                    int istatus;
+                    waitpid(pid, &istatus, 0);
+                    status = istatus != 0;
+                }
+	    }
 #else
         while (status == 1)
         {
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-	rv = run_zork();
+	    rv = run_zork();
     }
 
     return rv;

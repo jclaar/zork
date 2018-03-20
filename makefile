@@ -1,5 +1,5 @@
 CC=gcc-7
-CFLAGS=--std=c++1z -O3
+CFLAGS=--std=c++1z -Os
 CDEFINES=-D__STDC_WANT_LIB_EXT1__=1
 BOOSTLIB=$(BOOST)/stage/lib/libboost_serialization.a
 

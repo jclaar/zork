@@ -12,6 +12,8 @@
 #include "makstr.h"
 #include "dung.h"
 #include "ZorkException.h"
+#include "objdefs.h"
+#include "gobject.h"
 
 ObjList &global_objects()
 {
@@ -27,14 +29,14 @@ namespace
         return obj;
     }
 
-    ObjectP make_obj(const std::initializer_list<std::string> &syns, const std::initializer_list<std::string> &adj, const std::string &desc,
+    ObjectP make_obj(const StringList &syns, const StringList &adj, const char *desc,
         const std::initializer_list<Bits> &bits, rapplic obj_fun = nullptr, const std::initializer_list<ObjectP> &contents = {},
         const std::initializer_list<OP> &props = {})
     {
         return std::make_shared<Object>(syns, adj, desc, bits, obj_fun, contents, props);
     }
 
-    GObjectPtr make_gobj(const std::string &name, const std::initializer_list<std::string> &syns, const std::initializer_list<std::string> &adj, const std::string &desc,
+    GObjectPtr make_gobj(const std::string &name, const StringList &syns, const StringList &adj, const char *desc,
         const std::initializer_list<Bits> &bits, rapplic obj_fun = nullptr, const std::initializer_list<ObjectP> &contents = {},
         const std::initializer_list<OP> &props = {})
     {
@@ -42,32 +44,47 @@ namespace
     }
 
     // List of all global objects.
-    typedef std::vector<GObjectPtr>::iterator GObjectIter;
-    std::tuple<GObjectIter, GObjectIter> get_gobjects()
+	typedef std::array<GObjectPtr, sizeof(gobjects) / sizeof(gobjects[0])> GObjectArray;
+	GObjectArray load_gobjects()
+	{
+		GObjectArray o;
+		std::transform(std::begin(gobjects), std::end(gobjects), o.begin(), [](const GObjectDefinition &od)
+		{
+			return make_gobj(od.name, od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
+		});
+		return o;
+	}
+
+	GObjectArray &get_gobjects()
     {
-        static std::vector<GObjectPtr> objs =
+		static GObjectArray objs = load_gobjects();
+        return objs;
+    }
+    // List of all objects
+
+	typedef std::array<ObjectP, sizeof(objects) / sizeof(objects[0])> ObjectArray;
+	ObjectArray load_objects()
+    {
+		ObjectArray o;
+        std::transform(std::begin(objects), std::end(objects), o.begin(), [](const ObjectDefinition &od)
         {
-#include "gobject.h"
-        };
-        return std::tuple<GObjectIter, GObjectIter>(objs.begin(), objs.end());
+            return make_obj(od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
+        });
+
+        return o;
     }
 
-    // List of all objects
-    typedef std::vector<ObjectP>::iterator ObjectIter;
-    std::tuple<ObjectIter, ObjectIter> get_objects()
+	ObjectArray &get_objects()
     {
-        static std::vector<ObjectP> objs =
-        {
-#include "objdefs.h"
-        };
-        return std::tuple<ObjectIter, ObjectIter>(objs.begin(), objs.end());
+        static ObjectArray objs = load_objects();
+		return objs;
     }
 }
 
 // last_it must be defined after Objects.
 ObjectP last_it(get_obj("#####"));
 
-Object::Object(const std::initializer_list<std::string> &syns, const std::initializer_list<std::string> &adj, const std::string &description,
+Object::Object(const std::initializer_list<const char *> &syns, const std::initializer_list<const char *> &adj, const char *description,
     const std::initializer_list<Bits> &bits, rapplic objfun, const std::initializer_list<ObjectP> &cntnts, 
     const std::initializer_list<OP> &props) :
     synonyms(syns.begin(), syns.end()),
@@ -269,10 +286,9 @@ const std::string &Object::oread() const
 
 std::map<std::string, int64_t> gobject_map;
 
-GObject::GObject(const std::string &name, const std::initializer_list<std::string> &syns, const std::initializer_list<std::string> &adj,
-    const std::string &desc, const std::initializer_list<Bits> &_bits, rapplic obj_fun,
-const std::initializer_list<ObjectP> &contents,
-const std::initializer_list<OP> &props) :
+GObject::GObject(const std::string &name, const StringList &syns, const StringList &adj,
+    const char *desc, const std::initializer_list<Bits> &_bits, rapplic obj_fun,
+const std::initializer_list<ObjectP> &contents, const std::initializer_list<OP> &props) :
 Object(syns, adj, desc, _bits, obj_fun, contents, props)
 {
     int64_t bits;
@@ -303,10 +319,10 @@ Object(syns, adj, desc, _bits, obj_fun, contents, props)
 void init_objects()
 {
     // Just add all objects to the map, based on the first item in the object names.
-    auto objs = get_objects();
-    while (std::get<0>(objs) != std::get<1>(objs))
+    auto &objs = get_objects();
+	auto cur = objs.begin();
+    while (cur != objs.end())
     {
-        auto cur = std::get<0>(objs);
         auto p = get_obj((*cur)->oid(), *cur);
         // Empty objects may have been added already, so we need to initialize them
         // if so.
@@ -326,14 +342,14 @@ void init_objects()
             o->ocan(p);
         }
 
-        std::get<0>(objs)++;
+		++cur;
     }
 
 }
 
 void init_synonyms()
 {
-    auto objs = get_objects();
+    auto &objs = get_objects();
     // At this point, all global and regular objects have been added. This assumes that
     // all names are unique. 
 #if _DEBUG
@@ -345,10 +361,9 @@ void init_synonyms()
 #endif
 
     // Store all synonyms in the map. Do this after all "real" objects have been created.
-    objs = get_objects();
-    while (std::get<0>(objs) != std::get<1>(objs))
+	auto cur = objs.begin();
+    while (cur != objs.end())
     {
-        auto cur = std::get<0>(objs);
         auto p = get_obj((*cur)->oid());
         _ASSERT(p);
         if (p->onames().size() > 1)
@@ -358,15 +373,16 @@ void init_synonyms()
                 Objects()[*iter].push_back(p);
             }
         }
-        std::get<0>(objs)++;
+		++cur;
     }
 
     // Do the same for the global objects.
-    auto gobjs = get_gobjects();
-    while (std::get<0>(gobjs) != std::get<1>(gobjs))
+    auto &gobjs = get_gobjects();
+	auto gobj_iter = gobjs.begin();
+	while (gobj_iter != gobjs.end())
     {
-        auto cur = std::get<0>(gobjs);
-        auto p = get_obj((*cur)->oid());
+        auto cur = *gobj_iter;
+        auto p = get_obj(cur->oid());
         _ASSERT(p);
         if (p->onames().size() > 1)
         {
@@ -375,34 +391,35 @@ void init_synonyms()
                 Objects()[*iter].push_back(p);
             }
         }
-        std::get<0>(gobjs)++;
+		++gobj_iter;
     }
 }
 
 void init_gobjects()
 {
-    auto objs = get_gobjects();
+    auto &objs = get_gobjects();
+	auto objs_iter = objs.begin();
     ObjectPobl &obj_pobl = Objects();
-    while (std::get<0>(objs) != std::get<1>(objs))
+    while (objs_iter != objs.end())
     {
-        auto cur = std::get<0>(objs);
+        auto cur = *objs_iter;
         // Make sure this object is not already in the global list.
         auto &gl = global_objects();
         if (std::find_if(gl.begin(), gl.end(), [cur](ObjectP p)
         {
-            return p->oid() == (*cur)->oid();
+            return p->oid() == cur->oid();
         }) != gl.end())
         {
             error("Duplicate gobject added.");
         }
-        gl.push_back(*cur);
+        gl.push_back(cur);
 
         // Make sure that this is the correct object in the object list.
-        auto p = get_obj((*cur)->oid(), *cur);
-        if (p.get() != cur->get())
+        auto p = get_obj(cur->oid(), cur);
+        if (p.get() != cur.get())
         {
             _ASSERT(obj_pobl[p->oid()].size() == 1);
-            *(p.get()) = *cur->get();
+            *(p.get()) = *cur;
         }
         
         if (obj_pobl[p->oid()].empty())
@@ -410,7 +427,7 @@ void init_gobjects()
             // Insert into the object list.
             obj_pobl[p->oid()].push_front(p);
         }
-        std::get<0>(objs)++;
+		++objs_iter;
     }
 
     ObjList::iterator it = std::find_if(global_objects().begin(), global_objects().end(), [](ObjectP p) { return p->oid() == "IT"; });

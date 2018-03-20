@@ -165,7 +165,7 @@ RoomP scol_active;
 ScolWallsV scol_walls;
 
 int cphere;
-std::array<ObjList, 64> cpobjs;
+PuzzleContents cpobjs;
 std::array<int, 64> cpuvec = {
     1,  1,  1,  1,  1,  1,  1,  1,
     1,  0, -1,  0,  0, -1,  0,  1,

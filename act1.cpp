@@ -34,7 +34,6 @@ int water_level = 0;
 bool robber(HackP hack)
 {
     RoomP rm = hack->hroom();
-    ObjList robj;
     bool seenq = rtrnn(rm, rseenbit);
     AdvP win = player();
     RoomP wroom = ::here;
@@ -54,7 +53,6 @@ bool robber(HackP hack)
         {
             rm = hereq;
         }
-        robj = rm->robjs();
         ObjList objt = hh;
 
         if (rm == treas && rm != wroom)

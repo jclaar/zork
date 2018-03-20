@@ -193,7 +193,7 @@ void save_puzzle(archive &oa)
 template <class archive>
 void restore_puzzle(archive &ia)
 {
-    std::vector<ObjList> cpo;
+    PuzzleContents cpo;
     ia & cpo;
     // Restore all objects into cpobjs.
     _ASSERT(cpo.size() == cpobjs.size());
