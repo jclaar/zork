@@ -34,7 +34,6 @@ int water_level = 0;
 bool robber(HackP hack)
 {
     RoomP rm = hack->hroom();
-    ObjList robj;
     bool seenq = rtrnn(rm, rseenbit);
     AdvP win = player();
     RoomP wroom = ::here;
@@ -54,7 +53,6 @@ bool robber(HackP hack)
         {
             rm = hereq;
         }
-        robj = rm->robjs();
         ObjList objt = hh;
 
         if (rm == treas && rm != wroom)
@@ -231,7 +229,7 @@ bool robber(HackP hack)
         else if (seenq) // Hack the adventurer's belongings.
         {
             hack->hobjs(hh = rob_room(rm, hh, 75));
-            if (rm->rdesc2() == mazedesc && wroom->rdesc2() == mazedesc)
+            if (rm->rdesc2() == smazedesc && wroom->rdesc2() == smazedesc)
             {
                 for (ObjectP x : rm->robjs())
                 {

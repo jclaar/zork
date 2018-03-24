@@ -79,7 +79,7 @@ public:
 
     Object() {}
 
-    Object(const std::initializer_list<std::string> &syns, const std::initializer_list<std::string> &adj = {}, const std::string &desc = "",
+    Object(const std::initializer_list<const char*> &syns, const std::initializer_list<const char *> &adj = {}, const char *desc = "",
         const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr, const std::initializer_list<ObjectP> &contents = {},
         const std::initializer_list<OP> &props = {});
 
@@ -167,8 +167,8 @@ protected:
 class GObject : public Object
 {
 public:
-    GObject(const std::string &name, const std::initializer_list<std::string> &syns, const std::initializer_list<std::string> &adj = {},
-        const std::string & = "", const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr,
+    GObject(const std::string &name, const std::initializer_list<const char *> &syns, const std::initializer_list<const char *> &adj = {},
+        const char * = "", const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr,
         const std::initializer_list<ObjectP> &contents = {},
         const std::initializer_list<OP> &props = { OP(ksl_oglobal, 0) });
 
