@@ -229,7 +229,7 @@ bool robber(HackP hack)
         else if (seenq) // Hack the adventurer's belongings.
         {
             hack->hobjs(hh = rob_room(rm, hh, 75));
-            if (rm->rdesc2() == mazedesc && wroom->rdesc2() == mazedesc)
+            if (rm->rdesc2() == smazedesc && wroom->rdesc2() == smazedesc)
             {
                 for (ObjectP x : rm->robjs())
                 {

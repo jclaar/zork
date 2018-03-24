@@ -8,15 +8,15 @@ OBJS=act1.o act2.o act3.o act4.o adv.o cevent.o defs.o dung.o\
 	funcs.o globals.o info.o makstr.o mdlfun.o melee.o memq.o object.o\
 	parser.o room.o roomfns.o rooms.o sr.o strings.o util.o zstring.o
 
-all: zork_cpp
+all: zork_linux
 
 clean:
 	rm *.o
-	rm zork_cpp
+	rm zork_linux
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) $(CDEFINES) -c -o $@ $<
 
-zork_cpp: $(OBJS)
+zork_linux: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ -lstdc++ $(BOOSTLIB)
 
