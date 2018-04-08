@@ -12,7 +12,7 @@
 #include "dung.h"
 #include "rooms.h"
 
-std::string pw(Iterator<std::string> unm, Iterator<std::string> key);
+std::string pw(SIterator unm, SIterator key);
 std::string username();
 
 int run_zork()
@@ -33,14 +33,12 @@ int main(int argc, char *argv[])
     int rv = 0;
     if (argc == 1)
     {
-        // If no arguments are passed, spawn the same process
-        // with the "-go" parameter. This allows restarts to
-        // happen easily. If the child process returns 1, 
-        // a restart will occur. If it returns 0 the shell will
-        // exit. This allows a simple, portable method to handle
-        // restarts.
         intptr_t status = 1;
 #ifdef __GNUC__
+		// Linux: Just fork and run Zork using the run_zork function.
+		// This allows a simple method to handle restarts. If run_zork
+		// returns 1, then the user wants to restart. Otherwise,
+		// just quit.
 	    while (status == 1)
 	    {
                 pid_t pid = fork();
@@ -57,7 +55,12 @@ int main(int argc, char *argv[])
                 }
 	    }
 #else
-        while (status == 1)
+		// Win32: If no arguments are passed, spawn the same process
+		// with the "-go" parameter. This allows restarts to
+		// happen easily. If the child process returns 1, 
+		// a restart will occur. If it returns 0 the shell will
+		// exit.
+		while (status == 1)
         {
             status = _spawnl(P_WAIT, argv[0], argv[0], "-go", nullptr);
         }

@@ -193,7 +193,7 @@ void init_synonyms();
 
 inline int length(const ObjList &ol) { return (int)ol.size(); }
 
-inline bool empty(ObjectP op)
+inline bool empty(const ObjectP &op)
 {
     return !op;
 }

@@ -707,20 +707,21 @@ bool brush()
 {
     if (prso() == sfind_obj("TEETH"))
     {
-        if (prsi() == sfind_obj("PUTTY") && memq(prsi(), winner->aobjs()))
+		ObjectP prsi = ::prsi();
+        if (prsi == sfind_obj("PUTTY") && memq(prsi, winner->aobjs()))
         {
             jigs_up("Well, you seem to have been bruhing your teeth with some sort of\n"
                 "glue. As a result, your mouth gets glued together (with your nose)\n"
                 "and you die of respiratory failure.");
         }
-        else if (empty(prsi()))
+        else if (empty(prsi))
         {
             tell("Dental hygiene is highly recommended, but I'm not sure what you want\n"
                 "to brush them with.");
         }
         else
         {
-            tell("A nice idea, but with a " + prsi()->odesc2() + "?");
+            tell("A nice idea, but with a " + prsi->odesc2() + "?");
         }
     }
     else
@@ -1477,7 +1478,7 @@ namespace room_funcs
                 rapplic random_action;
                 l = readst(b, "");
                 moves++;
-                if ((v = lex(Iterator<std::string>(b, b.begin()), Iterator<std::string>(b, b.end()))) &&
+                if ((v = lex(SIterator(b, b.begin()), SIterator(b, b.end()))) &&
                     eparse(v, true) &&
                     (prsvec[0].index() != kpv_none && prsa() == walk) &&
                     !empty(prso()) &&
@@ -2610,7 +2611,7 @@ namespace obj_funcs
                 if (prsoo == sfind_obj("KNIFE"))
                 {
                     tell("and being for the moment sated, throws it back.  Fortunately, the\n"
-                        "troll has poor control, and the knife falls to the floor.He does\n"
+                        "troll has poor control, and the knife falls to the floor.  He does\n"
                         "not look pleased.", long_tell1);
                     tro(t, fightbit);
                 }

@@ -44,9 +44,6 @@ inline const char *member(const std::string &subst, const std::string &str)
     return (pos == std::string::npos) ? nullptr : &str[pos];
 }
 
-inline char *rest(char *s, size_t len) { return s + len; }
-const char *rest(const char *s, size_t len);
-std::string rest(const std::string &s, size_t len = 1);
 inline int length(const char *s) { return (int) strlen(s); }
 inline int length(const std::string &s) { return (int)s.size(); }
 
@@ -66,11 +63,6 @@ public:
     Iterator(const Iterator<T> &o) : c(o.c), p(o.p) {}
 
     explicit operator bool() const { return is_init() && cur() != end(); }
-    operator std::string() const
-    {
-        _ASSERT(typeid(T) == typeid(std::string));
-        return std::string(cur(), end());
-    }
     bool is_init() const { return c != nullptr; }
     bool empty() const { return c->empty(); }
     void clear()
@@ -179,6 +171,22 @@ private:
     //friend bool operator!=(const Iterator<T> &a, const Iterator<T> &b);
 };
 
+class SIterator : public Iterator<std::string>
+{
+    typedef Iterator<std::string> Base;
+public:
+    SIterator() : Base() {}
+    SIterator(std::string &container) : Base(container) {}
+    SIterator(std::string &container, iterator i) : Base(container, i) {}
+    SIterator(std::string *container, iterator i) : Base(container, i) {}
+    SIterator(const SIterator &o) : Base(o) {}
+
+    operator std::string() const
+    {
+        return std::string(cur(), end());
+    }
+};
+
 template <typename T>
 inline bool operator!=(const Iterator<T> &a, const Iterator<T> &b)
 {
@@ -186,17 +194,17 @@ inline bool operator!=(const Iterator<T> &a, const Iterator<T> &b)
     return a.cont() != b.cont() || a.cur() != b.cur();
 }
 
-inline bool operator==(const Iterator<std::string> &a, const char *b)
+inline bool operator==(const SIterator &a, const char *b)
 {
     return std::string(a.cur(), a.end()) == b;
 }
 
-inline bool operator!= (const Iterator<std::string> &a, const Iterator<std::string> &b)
+inline bool operator!= (const SIterator &a, const SIterator &b)
 {
     return !(a == b);
 }
 
-inline bool operator!=(const Iterator<std::string> &a, const char *b)
+inline bool operator!=(const SIterator &a, const char *b)
 {
     return std::string(a.cur(), a.end()) != b;
 }
@@ -223,14 +231,21 @@ Iterator<T> top(Iterator<T> it)
 }
 
 template <typename T>
-Iterator<T> rest(Iterator<T> it, int offset = 1)
+T rest(T it, int offset = 1)
 {
     it.advance(offset);
     return it;
 }
 
+template <>
+inline char *rest(char *s, int len) { return s + len; }
+template <>
+inline const char *rest(const char *s, int len) { return s + len; }
+inline std::string rest(const std::string &s, int len = 1) { return s.substr(len); }
+
+
 template <typename T>
-Iterator<T> back(Iterator<T> it, int offset = 1)
+T back(T it, int offset = 1)
 {
     it.advance(-offset);
     return it;
@@ -242,9 +257,9 @@ int length(const Iterator<T> &it)
     return (int)it.size();
 }
 
-Iterator<std::string> uppercase(Iterator<std::string> src);
+SIterator uppercase(SIterator src);
 
-inline Iterator<std::string> substruc(Iterator<std::string> src, int start, int end, Iterator<std::string> dest)
+inline SIterator substruc(SIterator src, int start, int end, SIterator dest)
 {
     _ASSERT(start == 0);
     for (int i = start; i < end; ++i)
@@ -254,7 +269,7 @@ inline Iterator<std::string> substruc(Iterator<std::string> src, int start, int 
     return dest;
 }
 
-inline Iterator<std::string> substruc(const char *msg, int start, int end, Iterator<std::string> dest)
+inline SIterator substruc(const char *msg, int start, int end, SIterator dest)
 {
     _ASSERT(start == 0);
     for (int i = start; i < end; ++i)

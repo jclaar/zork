@@ -98,7 +98,7 @@ bool fighting(HackP dem)
                     {
                         o->ostrength(-s);
                         *vout = 0;
-                        random_action && perform(random_action, find_verb("!IN"));
+                        random_action && perform(random_action, find_verb("IN!"));
                     }
                     else
                     {
@@ -192,7 +192,8 @@ bool fighting(HackP dem)
                 else
                 {
                     out = out.value() - 1;
-                    break;
+					if (out == 0)
+						break;
                 }
             }
         }
@@ -302,12 +303,13 @@ bool pres(const std::vector<std::string> &tab, const std::string &a, const std::
     return true;
 }
 
-bool blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::optional<int> out)
+std::optional<attack_state> blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::optional<int> out)
 {
     ObjectP dweapon;
     std::string vdesc = villain->odesc2();
-    int att, def, oa, od, res;
-    std::vector<int> *tbl = nullptr;
+    int att, def, oa, od;
+	std::optional<attack_state> res;
+    std::vector<attack_state> *tbl = nullptr;
     ObjectP nweapon;
     rapplic random_action;
 
@@ -318,17 +320,18 @@ bool blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::o
         {
             tell("You are still recovering from that last blow, so your attack is\n"
                 "ineffective.");
-            return true;
+            return res;
         }
         oa = att = std::max(1, fight_strength(hero));
         if ((od = def = villain_strength(villain)) == 0)
         {
             if (villain == sfind_obj("#####"))
             {
-                return jigs_up("Well, you really did it that time.  Is suicide painless?");
+                jigs_up("Well, you really did it that time.  Is suicide painless?");
+				return res;
             }
             tell("Attacking the " + vdesc + " is pointless.", 1);
-            return true;
+            return res;
         }
 
         if (!empty(villain->ocontents()))
@@ -343,12 +346,12 @@ bool blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::o
         {
             tell("The " + vdesc + " slowly regains his feet.", 1);
             trz(villain, staggered);
-            return true;
+            return res;
         }
 
         oa = att = villain_strength(villain);
         if ((def = fight_strength(hero)) <= 0)
-            return false;
+            return res;
         od = fight_strength(hero, false);
         dweapon = fwim(weaponbit, hero->aobjs(), true).first;
     }
@@ -358,8 +361,8 @@ bool blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::o
         if (heroq)
         {
             tell("The unconscious " + vdesc + " cannot defend himself: He dies.");
-            res = killed;
         }
+        res = killed;
     }
     else
     {
@@ -396,7 +399,7 @@ bool blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::o
             res = lose_weapon;
         }
 
-        pres((*remarks)[res], heroq ? "Adventurer" : vdesc, heroq ? vdesc : "Adventurer", dweapon ? dweapon->odesc2() : std::optional<std::string>());
+        pres((*remarks)[res.value()], heroq ? "Adventurer" : vdesc, heroq ? vdesc : "Adventurer", dweapon ? dweapon->odesc2() : std::optional<std::string>());
     }
 
     if (res == missed || res == hesitate)
@@ -464,7 +467,7 @@ bool blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::o
             hero->astrength(1 - fight_strength(hero));
             jigs_up("It appears that that last blow was too much for you.  I'm afraid you\n"
                 "are dead.");
-            return false;
+            return res;
         }
     }
     else
@@ -492,5 +495,5 @@ bool blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::o
         }
     }
 
-    return true;
+    return res;
 }

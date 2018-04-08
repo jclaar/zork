@@ -6,6 +6,7 @@
 #include "defs.h"
 #include "room.h"
 #include "funcs.h"
+#include "melee.h"
 
 typedef std::map<std::string, WordP> WordsPobl;
 typedef std::pair<std::string, WordP> WordsPoblPair;
@@ -21,7 +22,7 @@ extern const ObjList palobjs;
 extern const RoomList random_list;
 extern ObjList inqobjs;
 extern ObjectP bunch_obj;
-extern Iterator<std::string> indentstr;
+extern SIterator indentstr;
 extern RoomP mloc;
 extern GObjectPtr it_object;
 extern int deaths;
@@ -30,9 +31,9 @@ extern HackP sword_demon;
 extern HackP fight_demon;
 extern HackP clocker;
 extern VerbP buncher;
-extern std::vector<std::vector<int>> def1_res;
-extern std::vector<std::vector<int>> def2_res;
-extern std::vector<std::vector<int>> def3_res;
+extern std::vector<std::vector<attack_state>> def1_res;
+extern std::vector<std::vector<attack_state>> def2_res;
+extern std::vector<std::vector<attack_state>> def3_res;
 extern int cyclowrath;
 extern std::vector<VerbP> robot_actions;
 extern std::vector<VerbP> master_actions;

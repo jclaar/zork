@@ -98,17 +98,7 @@ bool frobozz()
     return true;
 }
 
-const char *rest(const char *s, size_t len)
-{
-    return s + len;
-}
-
-std::string rest(const std::string &s, size_t len)
-{
-    return s.substr(len);
-}
-
-Iterator<std::string> uppercase(Iterator<std::string> src)
+SIterator uppercase(SIterator src)
 {
     std::transform(src.begin(), src.end(), src.begin(), [](char c) { return toupper(c); });
     return src;

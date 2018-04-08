@@ -26,12 +26,12 @@ struct ParseCont
 {
     ParseCont() : s1b("     "), s2b(" "), i1(0)
     {
-        s1 = Iterator<std::string>(s1b, s1b.end());
-        s2 = Iterator<std::string>(s2b);
+        s1 = SIterator(s1b, s1b.end());
+        s2 = SIterator(s2b);
     }
 
-    Iterator<std::string> s1;
-    Iterator<std::string> s2;
+    SIterator s1;
+    SIterator s2;
     int i1;
 
 private:
@@ -61,7 +61,7 @@ bool kill_cints();
 bool invent(AdvP win);
 inline bool invent() { return invent(winner); }
 void print_contents(const ObjList &olst);
-void print_cont(ObjectP obj, ObjectP av, ObjectP win, Iterator<std::string> indent, bool cse = true);
+void print_cont(ObjectP obj, ObjectP av, ObjectP win, SIterator indent, bool cse = true);
 bool quit();
 void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
 // recout's quit parameter can be a boolean or a string. If it's a string,

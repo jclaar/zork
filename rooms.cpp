@@ -483,7 +483,7 @@ bool invent(AdvP win)
     return true;
 }
 
-void print_cont(ObjectP obj, ObjectP av, ObjectP winobj, Iterator<std::string> indent, bool caseq)
+void print_cont(ObjectP obj, ObjectP av, ObjectP winobj, SIterator indent, bool caseq)
 {
     const ObjList &cont = obj->ocontents();
     bool tobj = false;
@@ -667,7 +667,7 @@ void rdcom(Iterator<ParseContV> ivec)
                 continue;
             }
 
-            vc = lex(Iterator<std::string>(inbuf, inbuf.begin()), Iterator<std::string>(inbuf, inbuf.end()));
+            vc = lex(SIterator(inbuf, inbuf.begin()), SIterator(inbuf, inbuf.end()));
         }
         if (inplen > 0)
         {
@@ -800,6 +800,7 @@ bool jigs_up(const std::string &desc, bool player)
         tell("The " + winner->aobj()->odesc2() + " has died.");
         remove_object(winner->aobj());
         winner->aroom(sfind_room("FCHMP"));
+		return false;
     }
 
     score_upd(-10);

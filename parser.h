@@ -24,7 +24,7 @@ typedef Iterator<ParseVecA> ParseVec;
 extern Iterator<ObjVector> bunuvec;
 extern Iterator<ObjVector> bunch;
 extern std::list<VerbP> bunchers;
-extern Iterator<std::string> scrstr;
+extern SIterator scrstr;
 
 // Specialization for ParseVec
 inline ParseVec put(ParseVec a, int index, nullptr_t val)
@@ -197,7 +197,7 @@ typedef std::unique_ptr<StuffVec> StuffVecP;
 
 typedef std::optional<const std::vector<std::string>*> Globals;
 
-Iterator<ParseContV> lex(Iterator<std::string> s, Iterator<std::string> sx = Iterator<std::string>());
+Iterator<ParseContV> lex(SIterator s, SIterator sx = SIterator());
 bool eparse(Iterator<ParseContV> pv, bool vb);
 std::any sparse(Iterator<ParseContV> sv, bool vb);
 Nefals search_list(const std::string objname, const ObjList &slist, AdjectiveP adj, bool first = true, const Globals &global = Globals());

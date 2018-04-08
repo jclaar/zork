@@ -1151,14 +1151,14 @@ namespace obj_funcs
             }
             else
             {
-                trz(sfind_obj("SPHERE"), ovison);
+                trz(sfind_obj("SPHER"), ovison);
                 mung_room(sfind_room("CAGER"), "You are stopped by a cloud of poisonous gas.");
                 jigs_up(poison, true);
             }
         }
         else if (fl)
         {
-            trz(sfind_obj("SPHERE"), ovison);
+            trz(sfind_obj("SPHER"), ovison);
             jigs_up(robot_crush);
             remove_object(r);
             trz(prso(), ovison);

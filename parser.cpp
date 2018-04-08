@@ -29,7 +29,7 @@ class win
 };
 
 std::string ostringb = "     ";
-Iterator<std::string> ostring(ostringb, ostringb.begin() + ostringb.size());
+SIterator ostring(ostringb, ostringb.begin() + ostringb.size());
 
 // Takes an input string and lowercases it.
 // first implies that the first letter will remain the same (if it's uppercase)
@@ -91,7 +91,7 @@ void swap_em()
     std::swap(lexv, lexv1);
 }
 
-Iterator<ParseContV> lex(Iterator<std::string> s, Iterator<std::string> sx)
+Iterator<ParseContV> lex(SIterator s, SIterator sx)
 {
     if (!sx.is_init())
     {
@@ -104,8 +104,8 @@ Iterator<ParseContV> lex(Iterator<std::string> s, Iterator<std::string> sx)
     bool quot = false;
     char brk = ' ';
     int cnt;
-    Iterator<std::string> t;
-    Iterator<std::string> then_str;
+    SIterator t;
+    SIterator then_str;
     Iterator<ParseContV> rv;
     Iterator<ParseContV> then_vec;
 
@@ -115,7 +115,7 @@ Iterator<ParseContV> lex(Iterator<std::string> s, Iterator<std::string> sx)
     while (vv.cur() != vv.end() - 1)
     {
         // Reset the parse vector.
-        vv[0]->s1 = Iterator<std::string>(vv[0]->s1.cont(), vv[0]->s1.end());
+        vv[0]->s1 = SIterator(vv[0]->s1.cont(), vv[0]->s1.end());
         ++vv;
     }
 
@@ -1160,6 +1160,11 @@ bool syn_match(ParseVec pv)
         {
             if (syn_equal(syn->syn[1], as_ost(o2)))
             {
+				if (strnn(syn, sflip))
+				{
+					objs[0] = o2;
+					objs[1] = o1;
+				}
                 // Syntax a winner, try taking objects.
                 return take_it_or_leave_it(syn, put(pv, 0, syn->sfcn));
             }

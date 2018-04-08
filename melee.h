@@ -27,7 +27,7 @@ enum attack_state
 };
 
 
-bool blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool bhero, std::optional<int> out);
+std::optional<attack_state> blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool bhero, std::optional<int> out);
 bool cure_clock();
 bool diagnose();
 int fight_strength(AdvP hero, bool adjust = true);

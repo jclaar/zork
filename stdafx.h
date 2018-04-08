@@ -17,9 +17,3 @@
 #define _ASSERT assert
 #endif
 
-template <typename T, size_t sz>
-size_t ARRSIZE(const T(&)[sz])
-{
-    return sz;
-}
-

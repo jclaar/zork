@@ -12,8 +12,27 @@
 #include "makstr.h"
 #include "dung.h"
 #include "ZorkException.h"
-#include "objdefs.h"
-#include "gobject.h"
+typedef std::initializer_list<const char *> StringList;
+struct ObjectDefinition {
+    StringList syns;
+    StringList adj;
+    const char *desc;
+    std::initializer_list<Bits> bits;
+    rapplic obj_fun;
+    std::initializer_list<ObjectP> contents;
+    std::initializer_list<OP> props;
+};
+
+struct GObjectDefinition {
+    const char *name;
+    StringList syns;
+    StringList adj;
+    const char *desc;
+    std::initializer_list<Bits> bits;
+    rapplic obj_fun;
+    std::initializer_list<ObjectP> contents;
+    std::initializer_list<OP> props;
+};
 
 ObjList &global_objects()
 {
@@ -44,11 +63,13 @@ namespace
     }
 
     // List of all global objects.
-	typedef std::array<GObjectPtr, sizeof(gobjects) / sizeof(gobjects[0])> GObjectArray;
+	typedef std::vector<GObjectPtr> GObjectArray;
 	GObjectArray load_gobjects()
 	{
+#include "gobject.h"
 		GObjectArray o;
-		std::transform(std::begin(gobjects), std::end(gobjects), o.begin(), [](const GObjectDefinition &od)
+        o.reserve(std::distance(std::begin(gobjects), std::end(gobjects)));
+		std::transform(std::begin(gobjects), std::end(gobjects), std::back_inserter(o), [](const GObjectDefinition &od)
 		{
 			return make_gobj(od.name, od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
 		});
@@ -62,11 +83,13 @@ namespace
     }
     // List of all objects
 
-	typedef std::array<ObjectP, sizeof(objects) / sizeof(objects[0])> ObjectArray;
+	typedef std::vector<ObjectP> ObjectArray;
 	ObjectArray load_objects()
     {
+#include "objdefs.h"
 		ObjectArray o;
-        std::transform(std::begin(objects), std::end(objects), o.begin(), [](const ObjectDefinition &od)
+        o.reserve(std::distance(std::begin(objects), std::end(objects)));
+        std::transform(std::begin(objects), std::end(objects), std::back_inserter(o), [](const ObjectDefinition &od)
         {
             return make_obj(od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
         });

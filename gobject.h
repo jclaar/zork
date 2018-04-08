@@ -1,21 +1,5 @@
-// Generated at 03-23-18 18:09:09
+// Generated at 04-08-18 07:12:19
 #pragma once
-#include "objdefs.h"
-
-#include <initializer_list>
-#include <string>
-typedef std::initializer_list<const char *> StringList;
-struct GObjectDefinition {
-    const char *name;
-    StringList syns;
-    StringList adj;
-    const char *desc;
-    std::initializer_list<Bits> bits;
-    rapplic obj_fun;
-    std::initializer_list<ObjectP> contents;
-    std::initializer_list<OP> props;
-};
-
 const GObjectDefinition gobjects[] = {
 {"", { "IT", "THAT", "THIS", "HIM" }, {  }, "random object", { ovison, ndescbit } },
 {"", { "GBROC", "BROCH", "MAIL" }, { "FREE" }, "free brochure", { ovison } , obj_funcs::brochure},

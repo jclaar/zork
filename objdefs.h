@@ -1,19 +1,5 @@
-// Generated at 03-23-18 18:09:09
+// Generated at 04-08-18 07:12:19
 #pragma once
-#include <initializer_list>
-#include <string>
-typedef std::initializer_list<const char *> StringList;
-struct ObjectDefinition {
-    StringList syns;
-    StringList adj;
-    const char *desc;
-    std::initializer_list<Bits> bits;
-    rapplic obj_fun;
-    std::initializer_list<ObjectP> contents;
-    std::initializer_list<OP> props;
-};
-
-
 const ObjectDefinition objects[] = {
 {{ "BUTTO" }, {  }, "", { }},
 {{ "!!!!!" }, {  }, "", { }},

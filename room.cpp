@@ -95,13 +95,15 @@ namespace
         return std::make_shared<Room>(id, d1, d2, exits, contents, roomf, rb, props);
     }
 
-    std::tuple<RoomP*, RoomP*> get_rooms()
+	typedef std::vector<RoomP> RoomVector;
+
+    const RoomVector &get_rooms()
     {
-        static RoomP rooms[] =
+        static const RoomVector rooms =
         {
 #include "roomdefs.h"
         };
-        return std::tuple<RoomP*, RoomP*>(rooms, rooms + ARRSIZE(rooms));
+		return rooms;
     }
 }
 
@@ -186,29 +188,34 @@ void Room::rval(int new_val)
 
 RoomP get_room(const char *cid, RoomP init_val)
 {
+	return get_room(std::string(cid), init_val);
+}
+
+RoomP get_room(const std::string &sid, RoomP init_val)
+{
     RoomP p;
-    std::string sid = cid;
     auto iter = room_map().find(sid);
     if (iter == room_map().end())
     {
         // Add an empty room to the list, or add the init_val.
         if (!init_val)
         {
-            init_val = mr(cid, "", "", {});
+            init_val = mr(sid.c_str(), "", "", {});
         }
         iter = room_map().insert(std::pair<std::string, RoomP>(sid, init_val)).first;
         rooms().push_front(init_val);
     }
     p = iter->second;
-    return room_map()[cid];
+    return room_map()[sid];
 }
 
 void init_rooms()
 {
-    auto rooms = get_rooms();
-    while (std::get<0>(rooms) != std::get<1>(rooms))
+    auto &rooms = get_rooms();
+	auto cur_iter = rooms.begin();
+	while (cur_iter != rooms.end())
     {
-        RoomP cur_room = *std::get<0>(rooms);
+        RoomP cur_room = *cur_iter++;
         RoomP p = get_room(cur_room->rid().c_str(), cur_room);
         if (p.get() != cur_room.get())
         {
@@ -220,7 +227,6 @@ void init_rooms()
         {
             op->oroom(p);
         }
-        std::get<0>(rooms)++;
     }
 }
 

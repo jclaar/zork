@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <map>
 #include "dung.h"
+#include "memq.h"
 #include "makstr.h"
 #include "funcs.h"
 #include "object.h"
@@ -84,39 +85,39 @@ PhraseVecV prepvecb = make_prepvec();
 PrepVec prepvec(prepvecb);
 
 // Attacking things...
-const std::vector<int> def1 = { missed, missed, missed, missed,
+const std::vector<attack_state> def1 = { missed, missed, missed, missed,
     stagger, stagger,
     unconscious, unconscious,
     killed, killed, killed, killed, killed };
-const std::vector<int> def2a = { missed, missed, missed, missed, missed,
+const std::vector<attack_state> def2a = { missed, missed, missed, missed, missed,
     stagger, stagger,
     light_wound, light_wound,
     unconscious };
-const std::vector<int> def2b = { missed, missed, missed,
+const std::vector<attack_state> def2b = { missed, missed, missed,
     stagger, stagger,
     light_wound, light_wound, light_wound,
     unconscious,
     killed, killed, killed };
-const std::vector<int> def3a = { missed, missed, missed, missed, missed,
+const std::vector<attack_state> def3a = { missed, missed, missed, missed, missed,
     stagger, stagger,
     light_wound, light_wound,
     serious_wound, serious_wound };
-const std::vector<int> def3b = { missed, missed, missed,
+const std::vector<attack_state> def3b = { missed, missed, missed,
     stagger, stagger,
     light_wound, light_wound, light_wound,
     serious_wound, serious_wound, serious_wound };
-const std::vector<int> def3c = { missed,
+const std::vector<attack_state> def3c = { missed,
     stagger, stagger,
     light_wound, light_wound, light_wound, light_wound,
     serious_wound, serious_wound, serious_wound };
-std::vector<std::vector<int>> def1_res = { def1,{ def1.begin() + 1, def1.end() },{ def1.begin() + 2, def1.end() } };
-std::vector<std::vector<int>> def2_res = { def2a, def2b, {def2b.begin() + 1, def2b.end()}, {def2b.begin() + 2, def2b.end()} };
-std::vector<std::vector<int>> def3_res = { def3a, { def3a.begin() + 1, def3a.end()}, def3b, { def3b.begin() + 1, def3b.end() }, def3c };
+std::vector<std::vector<attack_state>> def1_res = { def1,{ def1.begin() + 1, def1.end() },{ def1.begin() + 2, def1.end() } };
+std::vector<std::vector<attack_state>> def2_res = { def2a, def2b, {def2b.begin() + 1, def2b.end()}, {def2b.begin() + 2, def2b.end()} };
+std::vector<std::vector<attack_state>> def3_res = { def3a, { def3a.begin() + 1, def3a.end()}, def3b, { def3b.begin() + 1, def3b.end() }, def3c };
 
 ActionsPobl actions_pobl;
 std::map<std::string, direction> directions_pobl;
 std::string indentstrb = "        ";
-Iterator<std::string> indentstr(indentstrb, indentstrb.end());
+SIterator indentstr(indentstrb, indentstrb.end());
 ParseVecA prsveca;
 ParseVec prsvec(prsveca);
 
@@ -835,6 +836,10 @@ namespace
                 {
                     tell("The " + objp->odesc2() + " is in " + objp->oroom()->rid());
                 }
+				else if (memq(objp, player()->aobjs()))
+				{
+					tell("You're holding it, dummy.");
+				}
                 else
                 {
                     tell("The " + objp->odesc2() + " is nowhere.");
@@ -851,19 +856,24 @@ namespace
         // Function to list all treasures and their locations.
         sadd_action("LISTT", [] {
             auto &op = object_pobl();
+			std::set<ObjectP> dups;
             for (auto o : op)
             {
                 ObjectP obj = *o.second.begin();
                 if (obj->otval() > 0)
                 {
-                    std::string loc;
-                    if (obj->oroom())
-                        loc = obj->oroom()->rid();
-                    else if (obj->ocan())
-                        loc = obj->ocan()->oid();
-                    else
-                        loc = "unknown";
-                    tell("Obj " + obj->odesc2() + " is in " + loc);
+					if (dups.find(obj) == dups.end())
+					{
+						std::string loc;
+						if (obj->oroom())
+							loc = obj->oroom()->rid();
+						else if (obj->ocan())
+							loc = obj->ocan()->oid();
+						else
+							loc = "unknown";
+						tell("Obj " + obj->odesc2() + " is in " + loc);
+						dups.insert(obj);
+					}
                 }
             }
             return true;

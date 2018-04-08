@@ -383,14 +383,14 @@ namespace
     std::string str("     ");
 }
 
-std::string pw(Iterator<std::string> unm, Iterator<std::string> key)
+std::string pw(SIterator unm, SIterator key)
 {
     Iterator<std::array<int, 5>> su = swu;
     Iterator<std::array<int, 5>> ku = kwu;
-    Iterator<std::string> str = ::str;
+    SIterator str = ::str;
     int usum;
 
-    auto fn = [&](Iterator<std::string> s, Iterator<std::array<int, 5>> su, Iterator<std::string> k, Iterator<std::array<int, 5>> ku) -> bool
+    auto fn = [&](SIterator s, Iterator<std::array<int, 5>> su, SIterator k, Iterator<std::array<int, 5>> ku) -> bool
     {
         while (1)
         {
@@ -417,7 +417,7 @@ std::string pw(Iterator<std::string> unm, Iterator<std::string> key)
 
     std::fill(str.begin(), str.end(), 0);
 
-    auto fn2 = [&usum](Iterator<std::array<int, 5>> su, Iterator<std::array<int, 5>> ku, Iterator<std::string> str)
+    auto fn2 = [&usum](Iterator<std::array<int, 5>> su, Iterator<std::array<int, 5>> ku, SIterator str)
     {
         _ASSERT(su.size() == ku.size());
         _ASSERT(su.size() == str.size());
@@ -458,7 +458,7 @@ bool incantation(Iterator<ParseContV> lv)
         }
         else if (incant_ok && flags()[end_game_flag])
         {
-            w2 = pw(Iterator<std::string>(unm), Iterator<std::string>(w1));
+            w2 = pw(SIterator(unm), SIterator(w1));
             tell("A hollow voice replies: \"" + w1 + " ", 0);
             tell(w2 + "\".", 1);
             spell_flag = w1;
@@ -468,8 +468,8 @@ bool incantation(Iterator<ParseContV> lv)
             tell("That spell has no obvious effect.");
         }
     }
-    else if (w1 == pw(Iterator<std::string>(unm), Iterator<std::string>(w2)) ||
-        w2 == pw(Iterator<std::string>(unm), Iterator<std::string>(w1)))
+    else if (w1 == pw(SIterator(unm), SIterator(w2)) ||
+        w2 == pw(SIterator(unm), SIterator(w1)))
     {
         tell("As the last syllable of your spell fades into silence, darkness\n"
             "envelops you, and the earth shakes briefly.  Then all is quiet.");

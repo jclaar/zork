@@ -989,7 +989,7 @@ namespace obj_funcs
 
     bool ground_function()
     {
-        bool rv;
+        bool rv = false;
         if (here == sfind_room("BEACH"))
         {
             rv = sand_function();

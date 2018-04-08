@@ -25,6 +25,9 @@ namespace
     }
 
     std::bitset<num_flag_bits> fl = init_flags();
+
+    int score_max_ = 0;
+    int max_load = 100;
 }
 
 std::bitset<num_flag_bits> &flags()
@@ -32,10 +35,6 @@ std::bitset<num_flag_bits> &flags()
     return fl;
 }
 
-namespace
-{
-    int score_max_ = 0;
-}
 int eg_score_max = 0;
 
 int score_max()
@@ -48,31 +47,6 @@ void inc_score_max(int inc)
     score_max_ += inc;
 }
 
-const std::vector<std::string> &months()
-{
-    static const std::vector<std::string> m(
-        {
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
-        }
-    );
-    return m;
-}
-
-namespace
-{
-    int max_load = 100;
-}
 int load_max()
 {
     return max_load;
