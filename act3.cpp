@@ -23,7 +23,7 @@ ObjectP timber_tie;
 
 bool climb_down()
 {
-    return climb_up(find_dir("DOWN"));
+    return climb_up(Down);
 }
 
 void cp_corner(int locn, int col, int row)
@@ -141,7 +141,7 @@ void pcheck()
     ObjectP lid = plid();
     ObjectP mat = sfind_obj("MAT");
     const ObjList &objs = palobjs;
-    if (prsvec[1].index() == kpv_none)
+    if (is_empty(prsvec[1]))
         return;
     flags()[plook] = false;
     if (verbq("TAKE") && memq(prso(), objs))
@@ -505,12 +505,12 @@ bool climb_up(direction dir, bool noobj)
 
 bool climb_up()
 {
-    return climb_up(find_dir("UP"), false);
+    return climb_up(Up, false);
 }
 
 bool climb_foo()
 {
-    return climb_up(find_dir("UP"), true);
+    return climb_up(Up, true);
 }
 
 bool count()
@@ -573,7 +573,7 @@ bool count()
 bool enter()
 {
     ParseVec pv = prsvec;
-    put(pv, 1, find_dir("ENTER"));
+    put(pv, 1, Enter);
     put(pv, 0, find_verb("WALK"));
     return walk();
 }
@@ -708,7 +708,7 @@ bool zgnome_init()
 int cpnext(int rm, ObjectP obj)
 {
     auto m = memq(obj, cpwalls);
-    return rm + std::get<1>(m);
+    return rm + std::get<1>(*m);
 }
 
 bool cpgoto(int fx)
@@ -992,7 +992,7 @@ namespace obj_funcs
     {
         bool rv = true;
         ObjectP stamp = sfind_obj("STAMP");
-        ObjectP prso = (::prso().index() != kprso_none) ? ::prso() : ObjectP();
+        ObjectP prso = !is_empty(::prso()) ? ::prso() : ObjectP();
         if (prso == stamp)
         {
             if (verbq("TAKE"))
@@ -2233,7 +2233,7 @@ namespace room_funcs
         bool rv = true;
         if (verbq("GO-IN"))
         {
-            cphere = (fromdir == find_dir("DOWN")) ? 10 : 52;
+            cphere = (fromdir == Down) ? 10 : 52;
         }
         else if (verbq("LOOK"))
         {
@@ -2268,9 +2268,9 @@ namespace exit_funcs
             else
                 return sfind_room("ALICE");
         }
-        else if (dir == find_dir("E"))
+        else if (dir == East)
             return sfind_room("CMACH");
-        else if (dir == find_dir("SE") || dir == find_dir("OUT"))
+        else if (dir == Se || dir == Out)
             return sfind_room("ALICE");
         return std::monostate();
     }
@@ -2335,7 +2335,7 @@ namespace exit_funcs
         const auto &uvec = cpuvec;
         int fx;
         CpExitV::const_iterator m;
-        if (dir == find_dir("UP"))
+        if (dir == Up)
         {
             if (rm == 10)
             {
@@ -2351,14 +2351,14 @@ namespace exit_funcs
             }
             return rv;
         }
-        else if (rm == 52 && dir == find_dir("WEST") && flags()[cpout])
+        else if (rm == 52 && dir == West && flags()[cpout])
         {
             goto_(find_room("CPOUT"));
             rtrz(find_room("CP"), rseenbit);
             room_info();
             return rv;
         }
-        else if (rm == 52 && dir == find_dir("WEST"))
+        else if (rm == 52 && dir == West)
         {
             tell("The metal door bars the way.");
             return rv;
@@ -2462,9 +2462,9 @@ namespace actor_funcs
             // Special case for dark_room. Kind of kludgy...
             if (m)
             {
-                if (std::get<1>(*m).index() == ket_setgexit)
+                if (auto *sgp = std::get_if<SetgExitP>(&std::get<1>(*m)))
                 {
-                    SetgExitP sgx = std::get<ket_setgexit>(std::get<1>(*m));
+                    SetgExitP sgx = *sgp;
                     if (sgx->name() == "dark_room")
                     {
                         tell("You cannot enter in your condition.");

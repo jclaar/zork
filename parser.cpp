@@ -51,19 +51,10 @@ std::string foostr(std::string nam, bool first, bool lc)
 ObjectP prsi()
 {
     ObjectP rv;
-    switch (prsvec[2].index())
-    {
-    case kpv_none:
-        break;
-    case kpv_object:
-        rv = std::get<kpv_object>(prsvec[2]);
-        break;
-    case kpv_phrase:
-        rv = std::get<kpv_phrase>(prsvec[2])->obj();
-        break;
-    default:
-        _ASSERT(0);
-    }
+    if (ObjectP *op = std::get_if<ObjectP>(&prsvec[2]))
+        rv = *op;
+    else if (PhraseP *pp = std::get_if<PhraseP>(&prsvec[2]))
+        rv = (*pp)->obj();
     return rv;
 }
 
@@ -266,7 +257,8 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
             {
                 if (val.type() == typeid(ParseVec))
                 {
-                    ActionP act = (std::any_cast<ParseVec>(val)[0].index() == kpv_action) ? std::get<kpv_action>(std::any_cast<ParseVec>(val)[0]) : ActionP();
+                    ActionP *pact;
+                    ActionP act = (pact = std::get_if<ActionP>(&(std::any_cast<ParseVec>(val)[0]))) ? *pact : ActionP();
                     if (act)
                     {
                         std::any_cast<ParseVec>(val)[0] = act->vdecl()[0]->sfcn;
@@ -284,14 +276,14 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
             {
                 rv = true;
                 orphan();
-                if ((obj = std::any_cast<ParseVec>(val)[1]).index() == kpv_object)
+                if (ObjectP *op = std::get_if<ObjectP>(&(obj = std::any_cast<ParseVec>(val)[1])))
                 {
-                    if (std::get<kpv_object>(obj) == bobj)
+                    if (*op == bobj)
                         last_it = bunch[0];
                     else
                         last_it = as_obj(obj);
                 }
-                if (obj.index() != kpv_none && trnn(as_obj(obj), bunchbit))
+                if (!is_empty(obj) && trnn(as_obj(obj), bunchbit))
                 {
                     if (memq(as_verb(std::any_cast<ParseVec>(val)[0]), bunchers))
                     {
@@ -522,7 +514,7 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
                     // in the direct object. (e.g. "get bottle of water"). This code just
                     // ignores anything after "of", so even something ridiculous like
                     // "get bottle of sack" will parse to "get bottle".
-                    if (pv[1].index() == kpv_object)
+                    if (std::get_if<ObjectP>(&pv[1]))
                     {
                     }
                     else if (vb || tell("That doesn't make sense!"))
@@ -542,7 +534,7 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
                 }
             }
             else if (!orph->oname().empty() &&                     // 233
-                back(pvr)[0].index() == kpv_object && (nobj = as_obj(back(pvr)[0])) &&
+                std::get_if<ObjectP>(&back(pvr)[0]) && (nobj = as_obj(back(pvr)[0])) &&
                 this_it(x, nobj, nullptr, std::optional<std::vector<std::string>*>()))
             {
                 // NOP
@@ -648,7 +640,7 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
         bunch = bobjs;
     }
 
-    if (pv[0].index() != kpv_none && as_verb(pv[0]) == find_verb("WALK"))
+    if (!is_empty(pv[0]) && as_verb(pv[0]) == find_verb("WALK"))
         return win();
 
     _ASSERT(val.type() == typeid(bool));
@@ -679,28 +671,23 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
             if (!vb)
             {
                 // No verb.
-                if (pv[1].index() == kpv_object)
+                if (ObjectP *op = std::get_if<ObjectP>(&pv[1]))
                 {
-                    tell("What should I do with the " + as_obj(pv[1])->odesc2() + "?");
+                    tell("What should I do with the " + (*op)->odesc2() + "?");
                 }
                 else
                 {
                     tell("Huh?");
                 }
             }
-            switch (pv[1].index())
-            {
-            case kpv_object:
-                orphan(true, nullptr, as_obj(pv[1]));
-                break;
-            case kpv_phrase:
-                orphan(true, nullptr, std::get<kpv_phrase>(pv[1]));
-                break;
-            }
+            if (ObjectP *op = std::get_if<ObjectP>(&pv[1]))
+                orphan(true, nullptr, *op);
+            else if (PhraseP *pp = std::get_if<PhraseP>(&pv[1]))
+                orphan(true, nullptr, *pp);
             return std::any();
         }
 
-        if (put(pv, 0, action) && pv[1].index() != kpv_none && adj)   // 332
+        if (put(pv, 0, action) && !is_empty(pv[1]) && adj)   // 332
         {
             if (!vb)
             {
@@ -708,14 +695,14 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
             }
         }
 
-        if (orfl && (nprep = orphans->oprep()) && pv[2].index() == kpv_none &&
+        if (orfl && (nprep = orphans->oprep()) && is_empty(pv[2]) &&
             !prep &&
-            std::get<kpv_action>(pv[0]) == orph->overb())
+            std::get<ActionP>(pv[0]) == orph->overb())
         {
-            if (pv[1].index() == kpv_object)
-                obj.first = std::get<kpv_object>(pv[1]);
+            if (ObjectP *op = std::get_if<ObjectP>(&pv[1]))
+                obj.first = *op;
             else
-                obj.first = std::get<kpv_phrase>(pv[1])->obj();
+                obj.first = std::get<PhraseP>(pv[1])->obj();
             (pprep = prepvec[0])->prep(nprep);
             pprep->obj(obj.first);
             ::prepvec = prepvec = (length(prepvec) == 1) ? top(prepvec) : rest(prepvec);
@@ -807,10 +794,10 @@ bool ortell(VargP varg, ActionP action, ObjectP gwim, OrphanSlotType slot2)
         }
         rv = tell(prfunny(prep) + " what?", 1);
     }
-    else if (slot2.index() == kos_phrase)
+    else if (auto pp = std::get_if<PhraseP>(&slot2))
     {
         tell(action->vstr() + " what ", 0);
-        tell(prfunny(std::get<kos_phrase>(slot2)->prep()) + " the " + std::get<kos_phrase>(slot2)->obj()->odesc2(), 0);
+        tell(prfunny((*pp)->prep()) + " the " + (*pp)->obj()->odesc2(), 0);
         tell("?");
     }
     else
@@ -827,8 +814,7 @@ StuffVecP stuff_obj(ObjectP obj, PrepP prep, PrepVec prepvec, ParseVec pvr, bool
     if (prep == plookup("OF", words_pobl))
     {
         ParseVecVal &a = back(pvr, 1)[0];
-        _ASSERT(a.index() == kpv_object);
-        if (std::get<kpv_object>(a) == obj)
+        if (std::get<ObjectP>(a) == obj)
         {
             stuff = std::make_unique<StuffVec>();
             stuff->iprepvec = prepvec;
@@ -1131,7 +1117,7 @@ std::string lcify(std::string str, size_t len)
 
 bool syn_match(ParseVec pv)
 {
-    ActionP action = std::get<kpv_action>(pv[0]);
+    ActionP action = std::get<ActionP>(pv[0]);
     ParseVec objs = rest(pv);
     ParseVecVal o1 = objs[0];
     ParseVecVal o2 = objs[1];
@@ -1146,7 +1132,7 @@ bool syn_match(ParseVec pv)
     {
         auto cond2 = [&]()
         {
-            if (o2.index() == kpv_none && syn_equal(syn->syn[1], as_ost(o1)))
+            if (is_empty(o2) && syn_equal(syn->syn[1], as_ost(o1)))
             {
                 put(objs, 1, o1);
                 o2 = o1;
@@ -1168,7 +1154,7 @@ bool syn_match(ParseVec pv)
                 // Syntax a winner, try taking objects.
                 return take_it_or_leave_it(syn, put(pv, 0, syn->sfcn));
             }
-            else if (o2.index() == kpv_none)
+            else if (is_empty(o2))
             {
                 // No indirect object. Still might be ok.
                 if (strnn(syn, sdriver))
@@ -1181,7 +1167,7 @@ bool syn_match(ParseVec pv)
                 }
             }
         }
-        else if (cond2() || o1.index() == kpv_none)
+        else if (cond2() || is_empty(o1))
         {
             if (strnn(syn, sdriver))
                 dforce = syn;
@@ -1193,17 +1179,17 @@ bool syn_match(ParseVec pv)
     bool rv;
     if (drive = dforce ? dforce : drive)
     {
-        if ((synn = drive->syn[0]) && (o1.index() == kpv_none) && !synn->vbit.none() &&
+        if ((synn = drive->syn[0]) && (is_empty(o1)) && !synn->vbit.none() &&
             !orfeo(1, synn, objs) &&
-            (o1 = (gwim = gwim_slot(0, synn, objs)) ? gwim : ParseVecVal()).index() == kpv_none)
+            is_empty((o1 = (gwim = gwim_slot(0, synn, objs)) ? gwim : ParseVecVal())))
         {
             orphan(true, action, OrphanSlotType(), synn->vprep, std::string(), as_ost(objs[1]));
             rv = ortell(synn, action, gwim, as_ost(objs[1]));
         }
-        else if ((synn = drive->syn[1]) && o2.index() == kpv_none && !synn->vbit.none() &&
+        else if ((synn = drive->syn[1]) && is_empty(o2) && !synn->vbit.none() &&
             !orfeo(2, synn, objs) && !gwim_slot(1, synn, objs))
         {
-            orphan(true, action, (o1.index() != kpv_none) ? as_ost(o1) : orph->oslot1(), synn->vprep);
+            orphan(true, action, (!is_empty(o1)) ? as_ost(o1) : orph->oslot1(), synn->vprep);
             rv = ortell(synn, action, gwim);
         }
         else
@@ -1224,9 +1210,9 @@ bool syn_match(ParseVec pv)
 bool syn_equal(VargP varg, OrphanSlotType pobj)
 {
     bool rv = false;
-    if (pobj.index() == kos_phrase)
+    if (auto pp = std::get_if<PhraseP>(&pobj))
     {
-        PhraseP pobjp = std::get<kos_phrase>(pobj);
+        PhraseP pobjp = *pp;
         if (varg->vprep == pobjp->prep() &&
             trnn(pobjp->obj(), varg->vbit))
         {
@@ -1234,14 +1220,14 @@ bool syn_equal(VargP varg, OrphanSlotType pobj)
         }
     }
 
-    if (pobj.index() == kos_object)
+    if (auto *op = std::get_if<ObjectP>(&pobj))
     {
-        ObjectP pobjo = std::get<kos_object>(pobj);
+        ObjectP pobjo = *op;
         if (!varg->vprep && trnn(pobjo, varg->vbit))
             rv = true;
     }
 
-    if (pobj.index() == kpv_none && (!varg || varg->vbit.none()))
+    if (is_empty(pobj) && (!varg || varg->vbit.none()))
         rv = true;
 
     return rv;
@@ -1253,13 +1239,13 @@ bool take_it_or_leave_it(SyntaxP syn, ParseVec pv)
     ParseVecVal pv2 = pv[2];
     ObjectP obj;
 
-    if (pv1.index() == kpv_object)
+    if (ObjectP *op = std::get_if<ObjectP>(&pv1))
     {
-        obj = as_obj(pv1);
+        obj = *op;
     }
-    else if (pv1.index() == kpv_phrase)
+    else if (PhraseP *pp = std::get_if<PhraseP>(&pv1))
     {
-        obj = std::get<kpv_phrase>(pv1)->obj();
+        obj = (*pp)->obj();
     }
 
     pv[1] = obj ? obj : ParseVecVal();
@@ -1274,10 +1260,10 @@ bool take_it_or_leave_it(SyntaxP syn, ParseVec pv)
             return false;
     }
 
-    if (pv2.index() == kpv_object)
-        obj = as_obj(pv2);
-    else if (pv2.index() == kpv_phrase)
-        obj = std::get<kpv_phrase>(pv2)->obj();
+    if (ObjectP *op = std::get_if<ObjectP>(&pv2))
+        obj = *op;
+    else if (PhraseP *pp = std::get_if<PhraseP>(&pv2))
+        obj = (*pp)->obj();
     else
         obj.reset();
     if (obj)
@@ -1402,7 +1388,7 @@ bool orfeo(int slot, const VargP &syn, ParseVec objs)
         break;
     }
     // The slot is a one-based index in MDL, so subtract one for C++;
-    return syn_equal(syn, orphan) && put(objs, slot-1, std::get<kos_object>(orphan));
+    return syn_equal(syn, orphan) && put(objs, slot-1, std::get<ObjectP>(orphan));
 }
 
 // ---------------------------------------------------------------------

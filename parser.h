@@ -103,13 +103,9 @@ extern ParseVec prsvec;
 extern PrepVec prepvec;
 inline VerbP prsa()
 {
-    _ASSERT(prsvec[0].index() == kpv_verb);
-    return std::get<kpv_verb>(prsvec[0]);
+    return std::get<VerbP>(prsvec[0]);
 }
 
-//typedef std::variant<std::monostate, ObjectP, direction>  PrsoVariant;
-
-enum { kprso_none, kprso_object, kprso_direction };
 template <class... Types>
 class PrsoTypeT : public std::variant<Types...>
 {
@@ -124,48 +120,36 @@ public:
 
     operator ObjectP()
     {
-        _ASSERT(this->index() == kprso_object);
-        return std::get<kprso_object>(*this);
+        return std::get<ObjectP>(*this);
     }
 
     operator direction()
     {
-        _ASSERT(this->index() == kprso_direction);
-        return std::get<kprso_direction>(*this);
+        return std::get<direction>(*this);
     }
 };
 typedef PrsoTypeT<std::monostate, ObjectP, direction> PrsoType;
 
-inline bool empty(PrsoType val)
-{
-    return val.index() == kprso_none;
-}
-
 inline PrsoType prso()
 {
     PrsoType rv;
-    switch (prsvec[1].index())
+    ObjectP *op;
+    direction *d;
+    if (op = std::get_if<ObjectP>(&prsvec[1]))
     {
-    case kpv_none:
-        rv = std::monostate();
-        break;
-    case kpv_object:
-        rv = std::get<kpv_object>(prsvec[1]);
-        break;
-    case kpv_direction:
-        rv = std::get<kpv_direction>(prsvec[1]);
-        break;
-    default:
-        _ASSERT(0); // Should never happen.
+        rv = *op;
+    }
+    else if (d = std::get_if<direction>(&prsvec[1]))
+    {
+        rv = *d;
     }
     return rv;
 }
 
 inline bool operator==(PrsoType prso, ObjectP obj)
 {
-    if (prso.index() != kprso_object)
-        return false;
-    return std::get<kprso_object>(prso) == obj;
+    ObjectP *op = std::get_if<ObjectP>(&prso);
+    return op ? (*op == obj) : false;
 }
 
 inline bool operator==(ObjectP obj, PrsoType prso)

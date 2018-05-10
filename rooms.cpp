@@ -250,9 +250,8 @@ bool object_action()
     {
         rv = apply_object(prsi());
     }
-    if (!rv && prso().index() != kprso_none)
+    if (!rv && !is_empty(prso()))
     {
-        _ASSERT(prso().index() == kprso_object);
         ObjectP op = prso();
         if (op)
         {
@@ -339,9 +338,9 @@ bool room_info(std::optional<int> full)
     bool first = true;
     rapplic ra;
 
-    if (prso.index() == kpv_direction)
+    if (direction *d = std::get_if<direction>(&prso))
     {
-        fromdir = std::get<kpv_direction>(prso);
+        fromdir = *d;
         prso = ParseVecVal();
         prsvec[1] = ParseVecVal();
     }
@@ -357,14 +356,14 @@ bool room_info(std::optional<int> full)
             tell("Done.");
             return true;
         }
-        else if (prso.index() != kprso_none)
+        else if (!is_empty(prso))
         {
             if (object_action())
             {
             }
             else
             {
-                tell("I see nothing special about the " + std::get<kpv_object>(prso)->odesc2() + ".");
+                tell("I see nothing special about the " + std::get<ObjectP>(prso)->odesc2() + ".");
             }
             return true;
         }
@@ -677,7 +676,7 @@ void rdcom(Iterator<ParseContV> ivec)
                 rv = ivec ? ivec : (pc ? pc : vc);
                 return (rv &&
                     eparse(rv, false) &&
-                    (cv = (rvec = prsvec)[0]).index() == kpv_verb);
+                    std::get_if<VerbP>(&(cv = (rvec = prsvec)[0])));
             };
             if (flags()[parse_won] = pfn())   // 728
             {
@@ -699,7 +698,7 @@ void rdcom(Iterator<ParseContV> ivec)
                 }
 
                 no_tell = false;        // 739
-                if (vval && (random_action = std::get<kpv_verb>(cv)->vfcn()) && apply_random(random_action))  // 740
+                if (vval && (random_action = std::get<VerbP>(cv)->vfcn()) && apply_random(random_action))  // 740
                 {
                     no_tell = false;
                     // If the room has changed due to the open, display the room info.
@@ -1781,37 +1780,38 @@ bool walk()
 
     if (nrm = memq(where_, rm->rexits()))
     {
+        CExitPtr *cep = nullptr;
+        SetgExitP *setg = nullptr;
         leavings = std::get<1>(*nrm);
-        if (leavings.index() == ket_string)
+        if (auto sp = std::get_if<std::string>(&leavings))
         {
-            const std::string &rid = std::get<ket_string>(leavings);
+            const std::string &rid = *sp;
             _ASSERT(room_map().find(rid) != room_map().end());
             leavings = sfind_room(rid);
         }
-        else if (leavings.index() == ket_cexit ||
-            leavings.index() == ket_setgexit)
+        else if ((cep = std::get_if<CExitPtr>(&leavings)) ||
+            (setg = std::get_if<SetgExitP>(&leavings)))
         {
             CExitPtr ce;
-            if (leavings.index() == ket_setgexit)
+            if (setg)
             {
-                SetgExitP sg = std::get<ket_setgexit>(leavings);
-                ce = sg->cexit();
+                ce = (*setg)->cexit();
             }
             else
-                ce = std::get<ket_cexit>(leavings);
+                ce = *cep;
             
-            _ASSERT(nl.index() == kefv_none);
+            _ASSERT(is_empty(nl));
             
-            (random_action = ce->cxaction()) && ((nl = apply_random(random_action)).index() != kefv_none);
-            if (nl.index() == kefv_none)
+            (random_action = ce->cxaction()) && (!is_empty(nl = apply_random(random_action)));
+            if (is_empty(nl))
             {
                 if (ce->cxflag())
                     nl = ce->cxroom();
             }
 
-            if (nl.index() == kefv_roomp)
+            if (RoomP *rp = std::get_if<RoomP>(&nl))
             {
-                leavings = std::get<kefv_roomp>(nl);
+                leavings = *rp;
             }
             else
             {
@@ -1819,18 +1819,18 @@ bool walk()
                 leavings = std::monostate();
             }
         }
-        else if (leavings.index() == ket_dexit)
+        else if (auto dep = std::get_if<DoorExitPtr>(&leavings))
         {
-            DoorExitPtr dleavings = std::get<ket_dexit>(leavings);
-            (random_action = dleavings->daction()) && ((nl = apply_random(random_action)).index() != kefv_none);
-            if (nl.index() == kefv_none && trnn(dleavings->dobj(), openbit))
+            DoorExitPtr dleavings = *dep;
+            (random_action = dleavings->daction()) && (!is_empty(nl = apply_random(random_action)));
+            if (is_empty(nl) && trnn(dleavings->dobj(), openbit))
             {
                 nl = get_door_room(rm, dleavings);
             }
 
-            if (nl.index() == kefv_roomp)
+            if (RoomP *rp = std::get_if<RoomP>(&nl))
             {
-                leavings = std::get<kefv_roomp>(nl);
+                leavings = *rp;
             }
             else
             {
@@ -1840,20 +1840,19 @@ bool walk()
         }
         else
         {
-            _ASSERT(leavings.index() == ket_nexit);
-            losstr = std::get<ket_nexit>(leavings).desc();
+            losstr = std::get<NExit>(leavings).desc();
             leavings = std::monostate();
         }
     }
 
     bool rv = false;
-    if (nrm && leavings.index() != ket_none && (lit(rm) || lit(std::get<ket_room>(leavings))))
+    if (nrm && !is_empty(leavings) && (lit(rm) || lit(std::get<RoomP>(leavings))))
     {
-        rv = goto_(std::get<ket_room>(leavings)) && room_info();
+        rv = goto_(std::get<RoomP>(leavings)) && room_info();
     }
     else if (me == player() && (dark = !lit(rm)) && prob(25, 50))
     {
-        if (nl.index() == kefv_none)
+        if (is_empty(nl))
         {
             if (nrm)
                 rv = nogo(losstr, where_);
@@ -1870,7 +1869,7 @@ bool walk()
         {
             rv = jigs_up("Oh no!  You walked into the slavering fangs of a lurking grue!");
         }
-        else if (nl.index() == kefv_none)  // 1403
+        else if (is_empty(nl))  // 1403
         {
             rv = nogo("", where_);
         }
@@ -1882,7 +1881,7 @@ bool walk()
         {
             jigs_up("Oh, no!  A fearsome grue slithered into the room and devoured you.");
         }
-        else if (nl.index() != kefv_none)
+        else if (!is_empty(nl))
         {
             parse_cont.clear();
         }
@@ -1903,11 +1902,11 @@ bool nogo(const std::string &str, direction dir)
         tell(str);
     else if (!rtrnn(here, rnwallbit))
     {
-        if (dir == find_dir("UP"))
+        if (dir == Up)
         {
             tell("There is no way up.");
         }
-        else if (dir == find_dir("DOWN"))
+        else if (dir == Down)
         {
             tell("There is no way down.");
         }

@@ -86,17 +86,6 @@ void synonym(const char *n1, const std::initializer_list<std::string> &n2)
     }
 }
 
-AdjectiveP find_adj(const std::string &sadj)
-{
-    auto iter = words_pobl.find(sadj);
-    if (iter == words_pobl.end())
-        error("Unable to find adjective.");
-    AdjectiveP adj = std::dynamic_pointer_cast<adjective>(iter->second);
-    if (!adj)
-        error("Looked up and adjective that is not an adjective.");
-    return adj;
-}
-
 VerbP find_verb(const char *verbo)
 {
     return find_verb(std::string(verbo));
@@ -144,14 +133,6 @@ PrepP find_prep(const std::string &prepo)
     if (pp.get() == nullptr)
         error("Requested preposition that wasn't a preposition");
     return pp;
-}
-
-void add_directions(const std::initializer_list<std::tuple<const char*, direction>> &nms)
-{
-    for (const std::tuple<const char*, direction> &d : nms)
-    {
-        directions_pobl[std::get<0>(d)] = std::get<1>(d);
-    }
 }
 
 direction find_dir(const std::string &dir)

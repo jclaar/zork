@@ -83,7 +83,7 @@ bool follow()
         clock_int(folin, -1);
         tell("The dungeon master answers, 'I will follow.'");
     }
-    else if (prsvec[1].index() != kpv_none)
+    else if (!is_empty(prsvec[1]))
     {
         ObjectP prso = ::prso();
         if (trnn(prso, villain))
@@ -102,24 +102,11 @@ bool follow()
     return true;
 }
 
-bool mrgo()
-{
-    if (prso().index() != kprso_direction)
-        error("mrgo called with non-direction");
-
-    direction d = std::get<kpv_direction>(prsvec[1]);
-
-    const Ex *ex = memq(d, here->rexits());
-
-    
-    return true;
-}
-
 RoomP go_e_w(RoomP rm, direction dir)
 {
     const std::string &spr = rm->rid();
     std::string str = mrestr;
-    if (dir != find_dir("NE") && dir != find_dir("SE"))
+    if (dir != Ne && dir != Se)
     {
         str = mrwstr;
     }
@@ -573,19 +560,21 @@ bool n_s(int dir)
 
 std::optional<int> mirror_dir(direction dir, RoomP rm)
 {
-    const Ex * mex = memq(find_dir("NORTH"), rm->rexits());
+    const Ex * mex = memq(North, rm->rexits());
     CExitPtr m;
     if (mex)
     {
-        if (std::get<1>(*mex).index() != ket_cexit)
+        const CExitPtr *cep;
+        if (!(cep = std::get_if<CExitPtr>(&std::get<1>(*mex))))
             return std::optional<int>();
-        m = std::get<ket_cexit>(std::get<1>(*mex));
+        _ASSERT(cep != nullptr);
+        m = *cep;
     }
 
     if (m && mloc == m->cxroom())
     {
-        if ((dir == find_dir("NORTH") && mdir > 180 && mdir < 360) ||
-            dir == find_dir("SOUTH") && mdir > 0 && mdir < 180)
+        if ((dir == North && mdir > 180 && mdir < 360) ||
+            dir == South && mdir > 0 && mdir < 180)
         {
             return 1;
         }
@@ -672,8 +661,8 @@ bool look_to(const std::string &nstr,
 
     if (htell)
     {
-        std::monostate *nm = std::get_if<std::monostate>(&ntell);
-        std::monostate *sm = std::get_if<std::monostate>(&stell);
+        bool nm = is_empty(ntell);
+        bool sm = is_empty(stell);
         if (nm && sm)
         {
             tell("The corridor continues north and south.");
@@ -738,22 +727,22 @@ RoomP mirns(bool northq, bool exitq)
     {
         return RoomP();
     }
-    else if (m = memq(northq ? find_dir("NORTH") : find_dir("SOUTH"), rex))
+    else if (m = memq(northq ? North : South, rex))
     {
         ExitType exit = std::get<1>(*m);
-        if (exit.index() == ket_cexit)
-            return std::get<ket_cexit>(exit)->cxroom();
-        else if (exit.index() == ket_room)
-            return std::get<ket_room>(exit);
-        else if (exit.index() == ket_string)
-            return sfind_room(std::get<ket_string>(exit));
+        if (auto cep = std::get_if<CExitPtr>(&exit))
+            return (*cep)->cxroom();
+        else if (auto roomp = std::get_if<RoomP>(&exit))
+            return *roomp;
+        else if (auto sp = std::get_if<std::string>(&exit))
+            return sfind_room(*sp);
     }
     return nullptr;
 }
 
 bool mirblock(direction dir, int mdir)
 {
-    if (dir == find_dir("SOUTH"))
+    if (dir == South)
     {
         mdir = (mdir + 180) % 360;
     }
@@ -785,12 +774,12 @@ std::optional<int> mirror_here(RoomP rm)
     {
         // Returns empty
     }
-    else if (rv = mirror_dir(find_dir("NORTH"), rm))
+    else if (rv = mirror_dir(North, rm))
     {
 
     }
     else 
-        rv = mirror_dir(find_dir("SOUTH"), rm);
+        rv = mirror_dir(South, rm);
     return rv;
 }
 
@@ -1401,7 +1390,7 @@ namespace obj_funcs
         RoomP here = ::here;
         if (flags()[end_game_flag] &&
             n_s(mdir) &&
-            (north = mirror_dir(find_dir("NORTH"), here) || mirror_dir(find_dir("SOUTH"), here)))
+            (north = mirror_dir(North, here) || mirror_dir(South, here)))
         {
             if (verbq("PUSH"))
             {
@@ -1553,7 +1542,7 @@ namespace room_funcs
         if (verbq("LOOK"))
         {
             rv = true;
-            tell(parapet_desc + std::string(nums[pnumb - 1]) + "'.'", long_tell1);
+            tell(parapet_desc + std::string(nums[pnumb - 1]) + "'.", long_tell1);
         }
         return rv;
     }
@@ -1795,14 +1784,14 @@ namespace exit_funcs
         RoomP rm;
         int mdir = ::mdir;
         std::variant<bool, direction, int> dir;
-        if (as_dir(prsvec[1]) == find_dir("EXIT"))
+        if (as_dir(prsvec[1]) == Exit)
         {
             dir = true;
         }
         else
         {
             auto dvp = memq(as_dir(prsvec[1]), dirvec);
-            _ASSERT(dvp != nullptr);
+            _ASSERT(dvp != dirvec.end());
             dir = dvp->second;
         }
         if (flags()[mirror_open])
@@ -1828,7 +1817,7 @@ namespace exit_funcs
                     tell("As you leave, the door swings shut.");
                     flags()[wood_open] = false;
                 }
-                rv = rm;;
+                rv = rm;
             }
         }
         return rv;
@@ -1856,12 +1845,11 @@ namespace exit_funcs
     {
         direction dir = as_dir(prsvec[1]);
         const Ex *nrm = memq(dir, here->rexits());
-        _ASSERT(std::get<1>(*nrm).index() == ket_cexit);
-        auto cex = std::get<ket_cexit>(std::get<1>(*nrm));
+        auto cex = std::get<CExitPtr>(std::get<1>(*nrm));
         RoomP torm = cex->cxroom();
         int mdir = ::mdir;
 
-        if (memq(dir, { find_dir("NORTH"), find_dir("SOUTH") }))
+        if (memq(dir, { North, South }))
         {
             if (mloc == torm)
             {
@@ -1906,8 +1894,8 @@ namespace actor_funcs
         else if (verbq("WALK"))
         {
             direction prso = as_dir(prsvec[1]);
-            if ((prso == find_dir("SOUTH") || prso == find_dir("ENTER")) && here == sfind_room("NCORR") ||
-                (prso == find_dir("NORTH") || prso == find_dir("ENTER")) && here == sfind_room("SCORR"))
+            if ((prso == South || prso == Enter) && here == sfind_room("NCORR") ||
+                (prso == North || prso == Enter) && here == sfind_room("SCORR"))
             {
                 tell("'I am not permitted to enter the prison cell.'");
             }

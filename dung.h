@@ -52,12 +52,11 @@ extern std::vector<NumObjs> numobjs;
 // Direction vector for mirror
 typedef std::pair<direction, int> DVPair;
 typedef std::vector<DVPair> DirVec;
-extern DirVec dirvec;
+extern const DirVec dirvec;
 
 class hack
 {
     typedef std::variant<CEventP, ObjectP> HobjsValue;
-    enum { kho_event, kho_object };
 public:
     hack(hackfn ha, const ObjList &ho, const std::list<RoomP> &hr, RoomP rm, ObjectP obj) :
         _haction(ha), _room(rm), _hobj(obj), _hobjs_ob(ho), _hrooms(hr), _hflag(false)
@@ -144,7 +143,7 @@ struct CpExit
     int offset;
 };
 typedef std::vector<CpExit> CpExitV;
-extern CpExitV cpexits;
+extern const CpExitV cpexits;
 
 // Bank puzzle
 extern RoomP scol_room;
@@ -196,7 +195,6 @@ extern const BestWeaponsList best_weapons;
 // 1: ObjectP or direction
 // 2: ObjectP or nothing
 typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction> ParseVecVal;
-enum { kpv_none, kpv_action, kpv_verb, kpv_object, kpv_phrase, kpv_direction };
 typedef std::array<ParseVecVal, 3> ParseVecA;
 
 inline ParseVecVal as_pvv(std::any a)
@@ -218,32 +216,24 @@ inline ParseVecVal as_pvv(std::any a)
 inline OrphanSlotType as_ost(ParseVecVal pv)
 {
     OrphanSlotType ost;
-    switch (pv.index())
-    {
-    case kpv_object:
-        ost = std::get<kpv_object>(pv);
-        break;
-    case kpv_phrase:
-        ost = std::get<kpv_phrase>(pv);
-        break;
-    case kpv_none:
-        break;
-    default:
-        _ASSERT(0);
-    }
+    ObjectP *op;
+    PhraseP *pp;
+    if (op = std::get_if<ObjectP>(&pv))
+        ost = *op;
+    else if (pp = std::get_if<PhraseP>(&pv))
+        ost = *pp;
     return ost;
 }
 
 inline direction as_dir(const ParseVecVal &a)
 {
-    _ASSERT(a.index() == kpv_direction);
-    return std::get<kpv_direction>(a);
+    return std::get<direction>(a);
 }
 
 inline ObjectP as_obj(ParseVecVal pvv)
 {
-    _ASSERT(pvv.index() == kpv_object || pvv.index() == kpv_none);
-    return (pvv.index() == kpv_object) ? std::get<kpv_object>(pvv) : ObjectP();
+    ObjectP *op = std::get_if<ObjectP>(&pvv);
+    return op ? *op : ObjectP();
 }
 
 inline std::any as_any(ObjectP op)
@@ -259,8 +249,7 @@ inline WordP as_word(const std::any &a)
 
 inline VerbP as_verb(const ParseVecVal &a)
 {
-    _ASSERT(a.index() == kpv_verb);
-    return std::get<kpv_verb>(a);
+    return std::get<VerbP>(a);
 }
 
 inline std::string as_string(const std::any &a)

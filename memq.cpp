@@ -9,27 +9,20 @@ std::vector<NumObjs>::const_iterator memq(ObjectP o, const std::vector<NumObjs> 
     });
 }
 
-const DVPair *memq(direction d, const DirVec &dv)
+DirVec::const_iterator memq(direction d, const DirVec &dv)
 {
-    for (const DVPair &dvp : dv)
+    return std::find_if(dv.begin(), dv.end(), [d](const DVPair &dvp)
     {
-        if (dvp.first == d)
-            return &dvp;
-    }
-    return nullptr;
+        return dvp.first == d;
+    });
 }
 
 bool memq(CEventP ev, const EventList &hobjs)
 {
-    for (auto hobj : hobjs)
-    {
-        if (ev == hobj)
-            return true;
-    }
-    return false;
+    return std::find(hobjs.begin(), hobjs.end(), ev) != hobjs.end();
 }
 
-CpExitV::iterator memq(direction d, CpExitV &v)
+CpExitV::const_iterator memq(direction d, const CpExitV &v)
 {
     return std::find_if(v.begin(), v.end(), [d](const CpExit &e) { return e.dir == d; });
 }
@@ -44,24 +37,20 @@ bool memq(char c, const std::string &s)
     return s.find(c) != std::string::npos;
 }
 
-cpwall_val memq(ObjectP obj, const std::vector<cpwall_val> &v)
+cpwall_vec::const_iterator memq(ObjectP obj, const std::vector<cpwall_val> &v)
 {
     auto iter = std::find_if(v.begin(), v.end(), [obj](const cpwall_val &w)
     {
         return obj == std::get<0>(w);
     });
+
     _ASSERT(iter != v.end());
-    return *iter;
+    return iter;
 }
 
 bool memq(direction dir, const std::initializer_list<direction> &dirs)
 {
-    for (auto d : dirs)
-    {
-        if (d == dir)
-            return true;
-    }
-    return false;
+    return std::find(dirs.begin(), dirs.end(), dir) != dirs.end();
 }
 
 std::list<RoomP>::iterator memq(RoomP rm, std::list<RoomP> &lst)
@@ -89,19 +78,6 @@ BestWeaponsP memq(ObjectP v, const BestWeaponsList &bwl)
     return (iter == bwl.end()) ? BestWeaponsP() : *iter;
 }
 
-bool memq(ObjectP op, const std::list<std::any> &l)
-{
-    for (std::any a : l)
-    {
-        if (a.type() == typeid(ObjectP))
-        {
-            if (std::any_cast<ObjectP>(a) == op)
-                return true;
-        }
-    }
-    return false;
-}
-
 bool memq(ObjectP op, const ObjList &ol)
 {
     return std::find(ol.begin(), ol.end(), op) != ol.end();
@@ -118,25 +94,14 @@ bool memq(ObjectP op, Iterator<ObjVector> ol)
     return false;
 }
 
-bool memq(ObjectP op, Iterator<ObjList> ol)
-{
-    while (ol.cur() != ol.end())
-    {
-        if (ol[0] == op)
-            return true;
-        ol = rest(ol);
-    }
-    return false;
-}
-
 Iterator<ParseVec> memq(ObjectP o, ParseVec pv)
 {
     Iterator<ParseVec> i(pv, pv.begin());
     while (i.cur() != i.end())
     {
-        if (i[0].index() == kpv_object)
+        if (ObjectP *op = std::get_if<ObjectP>(&i[0]))
         {
-            if (as_obj(i[0]) == o)
+            if (*op == o)
                 return i;
         }
         ++i;
@@ -147,18 +112,14 @@ Iterator<ParseVec> memq(ObjectP o, ParseVec pv)
 const Ex *memq(direction dir, const std::vector<Ex> &ex)
 {
     const Ex *p = nullptr;
-    for (const Ex &e : ex)
+    auto exi = std::find_if(ex.begin(), ex.end(), [dir](const Ex &e)
     {
-        if (std::get<0>(e) == dir)
-        {
-            p = &e;
-            break;
-        }
-    }
-    return p;
+        return std::get<0>(e) == dir;
+    });
+    return exi == ex.end() ? nullptr : &(*exi);
 }
 
-const Ex *memq(RoomP p, const std::vector<Ex> &exits)
+bool memq(RoomP p, const std::vector<Ex> &exits)
 {
     // This is limited to specific circumstances, namely
     // when all exits are open in the endgame. 
@@ -168,13 +129,8 @@ const Ex *memq(RoomP p, const std::vector<Ex> &exits)
     // cell or leave the dungeon.)
     auto iter = std::find_if(exits.begin(), exits.end(), [&p](const Ex &e)
     {
-        bool rv = false;
-        if (std::get<1>(e).index() == ket_string)
-        {
-            auto rid = std::get<ket_string>(std::get<1>(e));
-            rv = p->rid() == rid;
-        }
-        return rv;
+        auto rid = std::get_if<std::string>(&std::get<1>(e));
+        return rid ? (*rid == p->rid()) : false;
     });
-    return (iter == exits.end()) ? nullptr : &*iter;
+    return iter != exits.end();
 }

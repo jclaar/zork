@@ -41,22 +41,6 @@ bool digger()
     return true;
 }
 
-bool grue_function()
-{
-    bool rv = true;
-    if (verbq("EXAMI"))
-    {
-        tell(grue_desc1, long_tell1);
-    }
-    else if (verbq("FIND"))
-    {
-        tell(grue_desc2, long_tell1);
-    }
-    else
-        rv = false;
-    return rv;
-}
-
 bool ledge_mung()
 {
     RoomP rm = sfind_room("LEDG4");
@@ -674,8 +658,11 @@ namespace obj_funcs
                     {
                         ExitType rex = std::get<1>(*m);
                         RoomP r;
-                        _ASSERT(rex.index() != ket_room);
-                        (rex.index() == ket_string) && (r = sfind_room(std::get<ket_string>(rex))) && (bloc = r);
+                        _ASSERT(!std::get_if<RoomP>(&rex));
+                        std::string *sp;
+                        (sp = std::get_if<std::string>(&rex)) &&
+                            (r = sfind_room(*sp)) &&
+                            (bloc = r);
                         clock_int(bint, 3);
                         return false;
                     }
@@ -894,7 +881,6 @@ namespace obj_funcs
 
     bool machine_function()
     {
-        const std::vector<std::string> &dummy = ::dummy;
         ObjectP mach = sfind_obj("MACHI");
         bool rv = false;
         if (here == sfind_room("MACHI"))
@@ -1090,7 +1076,6 @@ namespace obj_funcs
         RoomP bot = sfind_room("BSHAF");
         ObjectP fb = sfind_obj("FBASK");
         bool ct = flags()[cage_top];
-        const std::vector<std::string> &dummy = ::dummy;
         bool lit = ::lit(here);
 
         bool rv = true;
@@ -1147,7 +1132,6 @@ namespace obj_funcs
 
     bool fly_me()
     {
-        const std::vector<std::string> &bat_drops = ::bat_drops;
         // The fweep function apparently rang the terminal bell, so
         // instead just print what Zork I does.
         fweep(4, 1);

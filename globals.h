@@ -95,7 +95,8 @@ typedef std::array<ObjList, 64> PuzzleContents;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
 typedef std::tuple<ObjectP, int> cpwall_val;
-extern std::vector<cpwall_val> cpwalls;
+typedef std::vector<cpwall_val> cpwall_vec;
+extern cpwall_vec cpwalls;
 std::bitset<num_flag_bits> &flags();
 
 int load_max();

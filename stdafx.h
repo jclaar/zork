@@ -17,3 +17,7 @@
 #define _ASSERT assert
 #endif
 
+#include <vector>
+#include <array>
+#include <optional>
+#include <map>

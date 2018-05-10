@@ -136,9 +136,14 @@ typedef std::shared_ptr<Adv> AdvP;
 class hack;
 typedef std::shared_ptr<hack> HackP;
 
+template <typename T>
+bool is_empty(const T &v)
+{
+    return std::get_if<std::monostate>(&v) != nullptr;
+}
+
 // Values that can be returned from an exit function.
 typedef std::variant<std::monostate, bool, RoomP> ExitFuncVal;
-enum { kefv_none, kefv_bool, kefv_roomp };
 
 typedef bool(*rapplic)(); // Action functions
 typedef ExitFuncVal(*ex_rapplic)(); // Exit functions
@@ -297,7 +302,6 @@ inline bool vtrnn(const VargP &va, vword_flag bit)
 
 // ORPHANS -- mysterious vector of orphan data
 typedef std::variant<std::monostate, ObjectP, PhraseP> OrphanSlotType;
-enum { kos_none, kos_object, kos_phrase };
 class Orphans
 {
 public:
@@ -305,10 +309,10 @@ public:
         const std::string &nm = std::string()) :
         _oflag(oflg), _overb(vrb), _oprep(prep), _oname(nm)
     {
-        if (slot1.index() == kos_object)
-            _oslot1 = std::get<kos_object>(slot1);
-        else if (slot1.index() == kos_phrase)
-            _oslot1 = std::get<kos_phrase>(slot1)->obj();
+        if (auto op = std::get_if<ObjectP>(&slot1))
+            _oslot1 = *op;
+        else if (auto pp = std::get_if<PhraseP>(&slot1))
+            _oslot1 = (*pp)->obj();
     }
 
     bool oflag() const { return _oflag; }
@@ -325,18 +329,13 @@ public:
 
     const ObjectP &oslot1() const { return _oslot1; }
     void oslot1(const OrphanSlotType &a) {
-        switch (a.index())
-        {
-        case kos_none:
+        static_assert(std::variant_size<OrphanSlotType>() == 3);
+        if (is_empty(a))
             _oslot1.reset();
-            break;
-        case kos_object:
-            _oslot1 = std::get<kos_object>(a);
-            break;
-        case kos_phrase:
-            _oslot1 = std::get<kos_phrase>(a)->obj();
-            break;
-        }
+        else if (auto op = std::get_if<ObjectP>(&a))
+            _oslot1 = *op;
+        else
+            _oslot1 = std::get<PhraseP>(a)->obj();
     }
 
     const OrphanSlotType &oslot2() const { return _oslot2; }

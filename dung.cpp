@@ -115,7 +115,24 @@ std::vector<std::vector<attack_state>> def2_res = { def2a, def2b, {def2b.begin()
 std::vector<std::vector<attack_state>> def3_res = { def3a, { def3a.begin() + 1, def3a.end()}, def3b, { def3b.begin() + 1, def3b.end() }, def3c };
 
 ActionsPobl actions_pobl;
-std::map<std::string, direction> directions_pobl;
+std::map<std::string, direction> directions_pobl = {
+    { "#!#!#", NullExit },
+    { "NORTH", North },
+    { "SOUTH", South },
+    { "EAST", East },
+    { "WEST", West },
+    { "LAUNC", Launc },
+    { "LAND", Land },
+    { "SE", Se },
+    { "SW", Sw },
+    { "NE", Ne },
+    { "NW", Nw },
+    { "UP", Up },
+    { "DOWN", Down },
+    { "ENTER", Enter },
+    { "EXIT", Exit },
+    { "CROSS", Cross }
+};
 std::string indentstrb = "        ";
 SIterator indentstr(indentstrb, indentstrb.end());
 ParseVecA prsveca;
@@ -157,7 +174,16 @@ std::vector<VerbP> robot_actions;
 std::vector<VerbP> master_actions;
 
 std::vector<NumObjs> numobjs;
-DirVec dirvec;
+const DirVec dirvec = {
+    DVPair(North, 0),
+    DVPair(Ne, 45),
+    DVPair(East, 90),
+    DVPair(Se, 135),
+    DVPair(South, 180),
+    DVPair(Sw, 225),
+    DVPair(West, 270),
+    DVPair(Nw, 315),
+};
 
 RoomP scol_room = get_room("BKVW");
 // This gets initialized after directions are set up.
@@ -176,9 +202,18 @@ std::array<int, 64> cpuvec = {
     1,  0,  0, -1,  0,  0,  0,  1,
     1,  1,  1,  0,  0,  0,  1,  1,
     1,  1,  1,  1,  1,  1,  1,  1 };
-CpExitV cpexits;
+const CpExitV cpexits = {
+    { North, -8 },
+    { South, 8 },
+    { East, 1 },
+    { West, -1 },
+    { Ne, -7 },
+    { Nw, -9 },
+    { Se, 9 },
+    { Sw, 7 },
+};
 
-std::vector<cpwall_val> cpwalls;
+cpwall_vec cpwalls;
 
 namespace
 {
@@ -187,10 +222,10 @@ namespace
     {
         std::vector<ScolRooms> sc =
         {
-            {find_dir("EAST"), get_room("BKVE")},
-            {find_dir("WEST"), get_room("BKVW")},
-            {find_dir("NORTH"), get_room("BKTWI")},
-            {find_dir("SOUTH"), get_room("BKVAU")}
+            {East, get_room("BKVE")},
+            {West, get_room("BKVW")},
+            {North, get_room("BKTWI")},
+            {South, get_room("BKVAU")}
         };
         scol_rooms.swap(sc);
         scol_active = find_room("FCHMP");
@@ -205,17 +240,6 @@ namespace
 
     void init_endgame()
     {
-        dirvec = {
-            DVPair(find_dir("NORTH"), 0),
-            DVPair(find_dir("NE"), 45),
-            DVPair(find_dir("EAST"), 90),
-            DVPair(find_dir("SE"), 135),
-            DVPair(find_dir("SOUTH"), 180),
-            DVPair(find_dir("SW"), 225),
-            DVPair(find_dir("WEST"), 270),
-            DVPair(find_dir("NW"), 315),
-        };
-
         numobjs = {
             NumObjs(get_obj("ONE"), 1),
             NumObjs(get_obj("TWO"), 2),
@@ -240,16 +264,6 @@ namespace
             cpwall_val(get_obj("CPNWL"), -8),
             cpwall_val(get_obj("CPEWL"), 1),
             cpwall_val(get_obj("CPWWL"), -1)
-        };
-        cpexits = {
-            { find_dir("NORTH"), -8 },
-            { find_dir("SOUTH"), 8 },
-            { find_dir("EAST"), 1 },
-            { find_dir("WEST"), -1 },
-            { find_dir("NE"), -7 },
-            { find_dir("NW"), -9 },
-            { find_dir("SE"), 9 },
-            { find_dir("SW"), 7 },
         };
     }
 
@@ -939,24 +953,6 @@ void init_dung()
     add_demon(clocker = std::make_shared<hack>(clock_demon, ObjList(), std::list<RoomP>(), RoomP(), ObjectP()));
 
     typedef std::tuple<const char*, direction> DP;
-    add_directions({
-        {"#!#!#", NullExit},
-        {"NORTH", North},
-        { "SOUTH", South},
-        {"EAST", East },
-        {"WEST", West },
-        {"LAUNC", Launc},
-        { "LAND", Land},
-        {"SE", Se},
-        { "SW", Sw },
-        { "NE", Ne },
-        { "NW", Nw },
-        { "UP", Up },
-        { "DOWN", Down },
-        { "ENTER", Enter },
-        { "EXIT", Exit },
-        { "CROSS", Cross }
-    });
     dsynonym("NORTH", "N");
     dsynonym("SOUTH", "S");
     dsynonym("EAST", "E");

@@ -28,8 +28,6 @@ PrepP find_prep(const std::string &prep);
 VerbP find_verb(const char *verb);
 VerbP find_verb(const std::string &verb);
 ActionP find_action(const std::string &action);
-AdjectiveP find_adj(const std::string &adj);
-void add_directions(const std::initializer_list<std::tuple<const char*, direction>> &nms);
 direction find_dir(const std::string &dir);
 void dsynonym(const char *dir, const char *syn);
 void dsynonym(const char *dir, const std::initializer_list<const char*> &syns);

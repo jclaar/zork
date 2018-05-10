@@ -348,25 +348,25 @@ bool sword_glow(HackP dem)
             for (const Ex &e : here->rexits())
             {
                 ExitType ex = std::get<1>(e);
-                if (ex.index() == ket_string)
+                if (auto sp = std::get_if<std::string>(&ex))
                 {
-                    if (infested(find_room(std::get<ket_string>(ex))))
+                    if (infested(find_room(*sp)))
                     {
                         found = true;
                         break;
                     }
                 }
-                else if (ex.index() == ket_cexit)
+                else if (auto *cep = std::get_if<CExitPtr>(&ex))
                 {
-                    if (infested(std::get<ket_cexit>(ex)->cxroom()))
+                    if (infested((*cep)->cxroom()))
                     {
                         found = true;
                         break;
                     }
                 }
-                else if (ex.index() == ket_dexit)
+                if (auto *dep = std::get_if<DoorExitPtr>(&ex))
                 {
-                    if (infested(get_door_room(here, std::get<ket_dexit>(ex))))
+                    if (infested(get_door_room(here, *dep)))
                     {
                         found = true;
                         break;
@@ -777,10 +777,11 @@ bool burner()
 bool hello()
 {
     int amt;
+    PrsoType prso_type;
 
-    if (prso().index() == kprso_object)
+    if (ObjectP *opp = std::get_if<ObjectP>(&(prso_type = prso())))
     {
-        ObjectP prso = ::prso();
+        ObjectP prso = *opp;
         if (prso == sfind_obj("SAILO"))
         {
             amt = ++hs;
@@ -863,10 +864,11 @@ void dput(const std::string &str)
     ObjectP prso = ::prso();
     for (const Ex &ex : here->rexits())
     {
-        if (std::get<1>(ex).index() == ket_dexit &&
-            std::get<ket_dexit>(std::get<1>(ex))->dobj() == prso)
+        const DoorExitPtr *dep;
+        if ((dep = std::get_if<DoorExitPtr>(&std::get<1>(ex))) &&
+            (*dep)->dobj() == prso)
         {
-            std::get<ket_dexit>(std::get<1>(ex))->dstr(str);
+            (*dep)->dstr(str);
             break;
         }
     }
@@ -878,9 +880,10 @@ bool leaper()
     RoomP rm = ::here;
     const std::vector<Ex> &exits = rm->rexits();
     const Ex *m;
-    if (prso().index() == kprso_object)
+    PrsoType prso_type;
+    if (ObjectP *opp = std::get_if<ObjectP>(&(prso_type = prso())))
     {
-        ObjectP prsoo = prso();
+        ObjectP prsoo = *opp;
         if (memq(prsoo, rm->robjs()))
         {
             if (trnn(prsoo, villain))
@@ -897,10 +900,11 @@ bool leaper()
             tell("That would be a good trick.");
         }
     }
-    else if (m = memq(find_dir("DOWN"), exits))
+    else if (m = memq(Down, exits))
     {
-        if (std::get<1>(*m).index() == ket_nexit ||
-            std::get<1>(*m).index() == ket_cexit && !std::get<ket_cexit>(std::get<1>(*m))->cxflag())
+        const CExitPtr *cep;
+        if (std::get_if<NExit>(&std::get<1>(*m)) ||
+            (cep = std::get_if<CExitPtr>(&std::get<1>(*m))) && !(*cep)->cxflag())
         {
             jigs_up(pick_one(jumploss));
         }
@@ -970,7 +974,7 @@ bool open_close(ObjectP obj, const std::string &stropn, const std::string &strcl
 bool leave()
 {
     auto pv = prsvec;
-    pv[1] = find_dir("EXIT");
+    pv[1] = Exit;
     pv[0] = find_verb("WALK");
     return walk();
 }
@@ -1255,8 +1259,7 @@ namespace exit_funcs
     {
         _ASSERT(here->rexits().size() >= 8);
         const Ex &cx = here->rexits()[rand() % 8];
-        _ASSERT(std::get<1>(cx).index() == ket_cexit);
-        return std::get<ket_cexit>(std::get<1>(cx))->cxroom();
+        return std::get<CExitPtr>(std::get<1>(cx))->cxroom();
     }
 
     ExitFuncVal carousel_exit()
@@ -1480,7 +1483,7 @@ namespace room_funcs
                 moves++;
                 if ((v = lex(SIterator(b, b.begin()), SIterator(b, b.end()))) &&
                     eparse(v, true) &&
-                    (prsvec[0].index() != kpv_none && prsa() == walk) &&
+                    (!is_empty(prsvec[0]) && prsa() == walk) &&
                     !empty(prso()) &&
                     memq(as_dir(prsvec[1]), rm->rexits()))
                 {
@@ -1489,11 +1492,11 @@ namespace room_funcs
                     return true;
                 }
 
-                if (prsvec[0].index() != kpv_none && prsa() == bug)
+                if (!is_empty(prsvec[0]) && prsa() == bug)
                 {
                     tell("Feature");
                 }
-                else if (prsvec[0].index() != kpv_none && prsa() == feature)
+                else if (!is_empty(prsvec[0]) && prsa() == feature)
                 {
                     tell("That's right.");
                 }
@@ -1842,6 +1845,8 @@ namespace obj_funcs
         ObjectP t = dem->hobj();
         ObjectP chali = sfind_obj("CHALI");
         bool rv = true;
+        ObjectP *opp = nullptr;
+        PrsoType prso_type;
 
         if (verbq("FGHT?"))
         {
@@ -1941,7 +1946,7 @@ namespace obj_funcs
                 tro(t, fightbit);
             }
         }
-        else if (verbq({ "THROW", "GIVE" }) && prso().index() == kprso_object && ((ObjectP)prso()) != dem->hobj())
+        else if (verbq({ "THROW", "GIVE" }) && (opp = std::get_if<ObjectP>(&(prso_type = prso()))) && *opp != dem->hobj())
         {
             if (t->ostrength() < 0)
             {

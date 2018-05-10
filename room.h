@@ -115,7 +115,6 @@ private:
 typedef std::shared_ptr<SetgExit> SetgExitP;
 
 typedef std::variant<std::monostate, NExit, CExitPtr, DoorExitPtr, SetgExitP, std::string, RoomP> ExitType;
-enum { ket_none, ket_nexit, ket_cexit, ket_dexit, ket_setgexit, ket_string, ket_room };
 typedef std::tuple<direction, ExitType> Ex;
 
 class Room
