@@ -747,7 +747,6 @@ bool burner()
         }
         else if (trnn(prso, burnbit))
         {
-            ObjectP prso = ::prso();
             if (memq(prso, winner->aobjs()))
             {
                 tell("The " + prso->odesc2() + " catches fire.");
@@ -1505,7 +1504,7 @@ namespace room_funcs
                     printstring(b.c_str());
                     flags()[tell_flag] = true;
                     crlf();
-                    std::transform(b.begin(), b.end(), b.begin(), [](char c) { return toupper(c); });
+                    std::transform(b.begin(), b.end(), b.begin(), [](char c) { return (char) toupper(c); });
                     if (b.find("ECHO") != std::string::npos)
                     {
                         tell("The acoustics of the room change subtly.");

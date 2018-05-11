@@ -68,9 +68,9 @@ void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
 // print that instead of Quit or Died.
 typedef std::variant<bool, std::string> RecOutQuit;
 void record(int score, int moves, int deaths, RecOutQuit quit, RoomP loc);
-inline void record(int score, int moves, int deaths, const char *quit, RoomP loc)
+inline void record(int score, int movs, int deaths, const char *quit, RoomP loc)
 {
-    record(score, moves, deaths, std::string(quit), loc);
+    record(score, movs, deaths, std::string(quit), loc);
 }
 void recout(int score, int moves, int deaths, RecOutQuit quit, RoomP loc);
 bool room_obj();

@@ -27,7 +27,7 @@ extern std::list<VerbP> bunchers;
 extern SIterator scrstr;
 
 // Specialization for ParseVec
-inline ParseVec put(ParseVec a, int index, nullptr_t val)
+inline ParseVec put(ParseVec a, int index, nullptr_t)
 {
     a[index] = std::monostate();
     return a;
@@ -183,7 +183,14 @@ typedef std::optional<const std::vector<std::string>*> Globals;
 
 Iterator<ParseContV> lex(SIterator s, SIterator sx = SIterator());
 bool eparse(Iterator<ParseContV> pv, bool vb);
-std::any sparse(Iterator<ParseContV> sv, bool vb);
+
+// Generic class to return WIN from parse.
+class cwin
+{
+};
+
+typedef std::variant<std::monostate, cwin, ParseVec, bool> SParseVal;
+SParseVal sparse(Iterator<ParseContV> sv, bool vb);
 Nefals search_list(const std::string objname, const ObjList &slist, AdjectiveP adj, bool first = true, const Globals &global = Globals());
 bool this_it(const std::string &objname, ObjectP obj, AdjectiveP adj, Globals global);
 Nefals get_object(const std::string &objnam, AdjectiveP adj);

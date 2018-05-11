@@ -42,13 +42,17 @@ public:
         _rmid(rmid),
         _desc(desc),
         _fn(fn)
-    {}
+    {
+        flag; 
+    }
     CExit(FlagVar flag_name, const std::string &rmid, const std::string &(*desc)(), bool flag = false, ex_rapplic fn = nullptr) :
         _flid(flag_name),
         _rmid(rmid),
         _desc(desc()),
         _fn(fn)
-    {}
+    {
+        flag;
+    }
 
     ex_rapplic cxaction() const { return _fn; }
     RoomP cxroom() const;

@@ -391,7 +391,7 @@ bool cliff_function()
     return flags()[deflate];
 }
 
-void fweep(int num, int slp)
+void fweep(int, int)
 {
     // This function uses the "IMAGE 7" command apparently to ring
     // the terminal bell. Since that will be annoying, to say the
@@ -569,7 +569,6 @@ namespace obj_funcs
     {
         ObjectP gnome = sfind_obj("GNOME");
         ObjectP brick;
-        bool rv = true;
         if (verbq({ "GIVE", "THROW" }))
         {
             ObjectP prso = ::prso();
@@ -622,7 +621,6 @@ namespace obj_funcs
         ObjectP ball = sfind_obj("BALLO");
         ObjectP cont = sfind_obj("RECEP");
         ObjectP binf = ::binf;
-        bool rv = true;
         if (arg == read_out)
         {
             if (verbq("LOOK"))

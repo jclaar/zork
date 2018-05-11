@@ -23,11 +23,6 @@ SyntaxP bunch_syn;
 bool gwim_disable = false;
 std::list<VerbP> bunchers;
 
-// Generic class to return WIN from parse.
-class win
-{
-};
-
 std::string ostringb = "     ";
 SIterator ostring(ostringb, ostringb.begin() + ostringb.size());
 
@@ -250,15 +245,15 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
     }
     else
     {
-        std::any val;
-        if ((val = sparse(pv, vb)).has_value())
+		SParseVal val;
+		if (!is_empty(val = sparse(pv, vb)))
         {
             if (vb)
             {
-                if (val.type() == typeid(ParseVec))
+				if (auto pvp = std::get_if<ParseVec>(&val))
                 {
                     ActionP *pact;
-                    ActionP act = (pact = std::get_if<ActionP>(&(std::any_cast<ParseVec>(val)[0]))) ? *pact : ActionP();
+                    ActionP act = (pact = std::get_if<ActionP>(&((*pvp)[0]))) ? *pact : ActionP();
                     if (act)
                     {
                         std::any_cast<ParseVec>(val)[0] = act->vdecl()[0]->sfcn;
@@ -267,16 +262,16 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
                 }
                 rv = true;
             }
-            else if (val.type() == typeid(win))
+            else if (std::get_if<cwin>(&val))
             {
                 orphan();
                 rv = true;
             }
-            else if (syn_match(std::any_cast<ParseVec>(val)))
+            else if (syn_match(std::get<ParseVec>(val)))
             {
                 rv = true;
                 orphan();
-                if (ObjectP *op = std::get_if<ObjectP>(&(obj = std::any_cast<ParseVec>(val)[1])))
+                if (ObjectP *op = std::get_if<ObjectP>(&(obj = std::get<ParseVec>(val)[1])))
                 {
                     if (*op == bobj)
                         last_it = bunch[0];
@@ -285,19 +280,19 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
                 }
                 if (!is_empty(obj) && trnn(as_obj(obj), bunchbit))
                 {
-                    if (memq(as_verb(std::any_cast<ParseVec>(val)[0]), bunchers))
+                    if (memq(as_verb(std::get<ParseVec>(val)[0]), bunchers))
                     {
                         if (as_obj(obj) == bobj)
                         {
-                            as_obj(obj)->obverb(as_verb(std::any_cast<ParseVec>(val)[0]));
-                            put(std::any_cast<ParseVec>(val), 0, buncher);
+                            as_obj(obj)->obverb(as_verb(std::get<ParseVec>(val)[0]));
+                            put(std::get<ParseVec>(val), 0, buncher);
                         }
                         rv = true;
                     }
                     else
                     {
                         vb || tell("Multiple inputs cannot be used with " +
-                            lcify(as_verb(std::any_cast<ParseVec>(val)[0])->w()) + ".", 1);
+                            lcify(as_verb(std::get<ParseVec>(val)[0])->w()) + ".", 1);
                         rv = false;
                     }
                 }
@@ -315,7 +310,7 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
 // Duplicates a MDL return statement from a REPEAT
 #define RETURN(b) { val = b; break; }
 
-std::any sparse(Iterator<ParseContV> sv, bool vb)
+SParseVal sparse(Iterator<ParseContV> sv, bool vb)
 {
     StuffVecP os;
     const WordsPobl &words = words_pobl;
@@ -342,12 +337,12 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
     Nefals obj;
     ObjectP lobj;
     ObjectP nobj;
-    std::any aval;
-    std::any pobj;
+    ParseAval aval;
+    static const std::string walk_str("WALK");
 
     pv[0] = ParseVecVal();
 
-    std::any val;
+    SParseVal val;
 
     auto vv = sv;
     while (1)
@@ -388,18 +383,20 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
 
         bool cont_proc = true;
 
-        if (!action && std::any_cast<ActionP>(aval = plookup(x, actions))) // 156
+        ActionP *ap = nullptr;
+        direction *dp;
+        if (!action && (ap = std::get_if<ActionP>(&(aval = plookup(x, actions)))) && *ap) // 156
         {
             orph->overb(nullptr);
-            action = std::any_cast<ActionP>(aval);
+            action = *ap;
             cont_proc = false;
         }
-        else if ((!action || (action == plookup("WALK", actions) && !prep)) &&
-            std::any_cast<direction>(aval = plookup(x, dirs)) &&            // 161
+        else if ((!action || (action == plookup(walk_str, actions) && !prep)) &&
+            (dp = std::get_if<direction>(&(aval = plookup(x, dirs)))) && *dp &&            // 161
             !(orfl && !orph->oname().empty() && plookup(x, words)))
         {
-            action = find_action("WALK");
-            pv[0] = find_verb("WALK");
+            action = find_action(walk_str);
+            pv[0] = find_verb(walk_str);
             pv[1] = as_pvv(aval);
             cont_proc = false;
             // Advance pvr one since the direction is now put into the direct object.
@@ -446,20 +443,20 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
             else if (std::dynamic_pointer_cast<adjective>(as_word(aval)))   // 184
             {
                 adj = std::dynamic_pointer_cast<adjective>(as_word(aval));
-                if (orfl && !as_string(aval = orph->oname()).empty())    // 186
+                if (orfl && !std::get<std::string>(aval = orph->oname()).empty())    // 186
                 {
-                    x = y = as_string(aval);
+                    x = y = std::get<std::string>(aval);
                     cont_proc = true;
                 }
             }
         }
+        const ObjList *aval_objs = nullptr;
         if (cont_proc &&
-            (aval = plookup(x, objob)).has_value() &&
-            !std::any_cast<ObjList>(aval).empty())      // 190
+            (aval_objs = std::get_if<ObjList>(&(aval = plookup(x, objob)))) &&
+            !(*aval_objs).empty())      // 190
         {
-            const ObjList &aval_objs = std::any_cast<ObjList>(aval);
             cont_proc = false;
-            if (aval_objs.front() == it_object)              // 193
+            if (aval_objs->front() == it_object)              // 193
             {
                 if (lit(here))
                 {
@@ -588,16 +585,17 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
                 else
                 {
                     aval = action ? action : ((orfl && orph->overb()) ? orph->overb() : ActionP());
+                    ActionP the_action = std::get<ActionP>(aval);
                     orphan(true,
-                        std::any_cast<ActionP>(aval),
+                        the_action,
                         as_obj(pv[1]), prep, y.substr(0, 5));
                     if (!vb)
                     {
                         tell("Which ", 0);
                         tell(lcify(vv[0]->s2, vv[0]->i1), 0); // Check this
-                        if (aval.has_value())
+                        if (the_action)
                         {
-                            tell(" should I " + prlcstr(std::any_cast<ActionP>(aval)->vstr()) + "?", 1);
+                            tell(" should I " + prlcstr(the_action->vstr()) + "?", 1);
                         }
                         else
                         {
@@ -640,13 +638,13 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
         bunch = bobjs;
     }
 
-    if (!is_empty(pv[0]) && as_verb(pv[0]) == find_verb("WALK"))
-        return win();
+    if (!is_empty(pv[0]) && as_verb(pv[0]) == find_verb(walk_str))
+        return cwin();
 
-    _ASSERT(val.type() == typeid(bool));
-    if (std::any_cast<bool>(val))                            // 308
+	_ASSERT(std::get_if<bool>(&val));
+    if (std::get<bool>(val))                            // 308
     {
-        val.reset();
+        val = std::monostate();
         bool proc = false;
         if (adj)
         {
@@ -662,7 +660,7 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
             else if (obj.first || vb)
             {
                 tell("I can't see any " + lcify(adj->w()) + " here.");
-                return std::any();
+                return SParseVal();
             }
         }
 
@@ -684,7 +682,7 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
                 orphan(true, nullptr, *op);
             else if (PhraseP *pp = std::get_if<PhraseP>(&pv[1]))
                 orphan(true, nullptr, *pp);
-            return std::any();
+            return SParseVal();
         }
 
         if (put(pv, 0, action) && !is_empty(pv[1]) && adj)   // 332
@@ -720,7 +718,7 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
 
         if (prep)  // 352 - Change pick frob up to pick up frob
         {
-            if ((pobj = back(pvr)[0]).type() == typeid(ObjectP))
+            if (std::get_if<ObjectP>(&back(pvr)[0]))
             {
                 pprep = prepvec[0];
                 ::prepvec = prepvec = (length(prepvec) < 1 ? top(prepvec) : rest(prepvec));
@@ -735,14 +733,14 @@ std::any sparse(Iterator<ParseContV> sv, bool vb)
             }
         }
         else
-            val = std::any(pv);
+            val = pv;
     }
     else
     {
-        val.reset();
+        val = std::monostate();
     }
 
-    _ASSERT(!val.has_value() || val.type() == typeid(ParseVec));
+    _ASSERT(is_empty(val) || std::get_if<ParseVec>(&val));
     return val;
 }
 

@@ -196,21 +196,24 @@ extern const BestWeaponsList best_weapons;
 // 2: ObjectP or nothing
 typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction> ParseVecVal;
 typedef std::array<ParseVecVal, 3> ParseVecA;
+typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction, WordP, std::string, ObjList> ParseAval;
 
-inline ParseVecVal as_pvv(std::any a)
+inline ParseVecVal as_pvv(const ParseAval &pv)
 {
-    if (a.type() == typeid(ActionP))
-        return std::any_cast<ActionP>(a);
-    else if (a.type() == typeid(VerbP))
-        return std::any_cast<VerbP>(a);
-    else if (a.type() == typeid(ObjectP))
-        return std::any_cast<ObjectP>(a);
-    else if (a.type() == typeid(PhraseP))
-        return std::any_cast<PhraseP>(a);
-    else if (a.type() == typeid(direction))
-        return std::any_cast<direction>(a);
-    _ASSERT(0);
-    return ParseVecVal();
+    ParseVecVal pvv;
+    if (auto ap = std::get_if<ActionP>(&pv))
+        pvv = *ap;
+    else if (auto vp = std::get_if<VerbP>(&pv))
+        pvv = *vp;
+    else if (auto op = std::get_if<ObjectP>(&pv))
+        pvv = *op;
+    else if (auto pp = std::get_if<PhraseP>(&pv))
+        pvv = *pp;
+    else if (auto dp = std::get_if<direction>(&pv))
+        pvv = *dp;
+    else
+        error("Invalid parse vector value");
+    return pvv;
 }
 
 inline OrphanSlotType as_ost(ParseVecVal pv)
@@ -241,21 +244,14 @@ inline std::any as_any(ObjectP op)
     return op ? std::any(op) : std::any();
 }
 
-inline WordP as_word(const std::any &a)
+inline WordP as_word(const ParseAval &a)
 {
-    _ASSERT(a.type() == typeid(WordP));
-    return std::any_cast<WordP>(a);
+    return std::get<WordP>(a);
 }
 
 inline VerbP as_verb(const ParseVecVal &a)
 {
     return std::get<VerbP>(a);
-}
-
-inline std::string as_string(const std::any &a)
-{
-    _ASSERT(a.type() == typeid(std::string));
-    return std::any_cast<std::string>(a);
 }
 
 void init_dung();
