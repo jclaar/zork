@@ -115,9 +115,6 @@ enum direction
     NumDirs
 };
 
-typedef int pstring;
-typedef int noffset;
-
 class Object;
 typedef std::shared_ptr<Object> ObjectP;
 typedef std::list<ObjectP> ObjList;
@@ -131,7 +128,7 @@ class CEvent;
 typedef std::shared_ptr<CEvent> CEventP;
 typedef std::list<CEventP> EventList;
 class Adv;
-typedef std::shared_ptr<Adv> AdvP;
+typedef std::unique_ptr<Adv> AdvP;
 
 class hack;
 typedef std::shared_ptr<hack> HackP;
@@ -147,7 +144,7 @@ typedef std::variant<std::monostate, bool, RoomP> ExitFuncVal;
 
 typedef bool(*rapplic)(); // Action functions
 typedef ExitFuncVal(*ex_rapplic)(); // Exit functions
-typedef bool(*hackfn)(HackP demon);
+typedef bool(*hackfn)(const HackP &demon);
 
 // Flags in vword of a varg
 enum vword_flag
@@ -273,8 +270,7 @@ private:
 };
 typedef std::shared_ptr<phrase> PhraseP;
 typedef std::vector<PhraseP> PhraseVecV;
-typedef std::vector<PhraseP> PrepVecV;
-PhraseP make_phrase(const WordP &p, ObjectP op);
+PhraseP make_phrase(const WordP &p, const ObjectP &op);
 
 typedef std::variant<std::string, ObjectP, ActionP> QuestionValue;
 
@@ -318,11 +314,11 @@ public:
     bool oflag() const { return _oflag; }
     void oflag(bool f) { _oflag = f; }
 
-    ActionP overb() const { return _overb; }
-    void overb(ActionP p) { _overb = p; }
+    const ActionP &overb() const { return _overb; }
+    void overb(const ActionP &p) { _overb = p; }
 
-    PrepP oprep() const { return _oprep; }
-    void oprep(PrepP prep) { _oprep = prep; }
+    const PrepP &oprep() const { return _oprep; }
+    void oprep(const PrepP &prep) { _oprep = prep; }
 
     const std::string &oname() const { return _oname; }
     void oname(const std::string &name) { _oname = name; }
@@ -339,7 +335,7 @@ public:
     }
 
     const OrphanSlotType &oslot2() const { return _oslot2; }
-    void oslot2(OrphanSlotType a) { _oslot2 = a; }
+    void oslot2(const OrphanSlotType &a) { _oslot2 = a; }
 
 private:
     bool _oflag;
@@ -371,7 +367,7 @@ enum ApplyRandomArg
 extern std::optional<ApplyRandomArg> arg;
 bool apply_random(rapplic fcn, std::optional<ApplyRandomArg> arg = std::optional<ApplyRandomArg>());
 ExitFuncVal apply_random(ex_rapplic fcn);
-bool apply_random(hackfn fcn, HackP demon);
+bool apply_random(hackfn fcn, const HackP &demon);
 
 // oflags, rflags testers and setter
 
@@ -379,27 +375,27 @@ bool apply_random(hackfn fcn, HackP demon);
 bool trnn(const ObjectP &op, Bits b);
 bool trnn(const ObjectP &op, const std::initializer_list<Bits> &bits_to_check);
 bool trnn(const ObjectP &op, const std::bitset<numbits> &bits_to_check);
-void trc(ObjectP op, Bits b);
-bool strnn(SyntaxP syn, SyntaxBits b);
+void trc(const ObjectP &op, Bits b);
+bool strnn(const SyntaxP &syn, SyntaxBits b);
 bool rtrnn(const RoomP &p, Bits b);
 bool rtrnn(const RoomP &p, const std::initializer_list<Bits> &bits);
-bool gtrnn(const RoomP &, const std::string &);
+bool gtrnn(const RoomP &, Bits);
 // Set or 0 room bit
-void rtro(RoomP p, Bits b);
-bool rtrz(RoomP p, Bits b);
-bool rtrz(RoomP p, const std::initializer_list<Bits> &bits);
+bool rtro(RoomP &p, Bits b);
+bool rtrz(RoomP &p, Bits b);
+bool rtrz(RoomP &p, const std::initializer_list<Bits> &bits);
 // Set or 0 object bit or bits.
-ObjectP tro(ObjectP op, Bits b);
-void tro(ObjectP op, const std::initializer_list<Bits> &b);
-int trz(ObjectP op, Bits b);
-void trz(ObjectP op, const std::initializer_list<Bits> &b);
-void rtrc(RoomP p, Bits b);
+const ObjectP &tro(const ObjectP &op, Bits b);
+void tro(const ObjectP &op, const std::initializer_list<Bits> &b);
+int trz(const ObjectP &op, Bits b);
+void trz(const ObjectP &op, const std::initializer_list<Bits> &b);
+void rtrc(const RoomP &p, Bits b);
 
-inline bool openable(ObjectP op)
+inline bool openable(const ObjectP &op)
 {
     return trnn(op, { doorbit, contbit });
 }
 
 inline int length(const RoomList &rl) { return (int)rl.size(); }
 
-bool flaming(ObjectP obj);
+bool flaming(const ObjectP &obj);

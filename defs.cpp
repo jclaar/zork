@@ -12,29 +12,9 @@ int no_tell = 0;
 int eg_score = 0;
 std::optional<ApplyRandomArg> arg;
 
-PhraseP make_phrase(const WordP &p, ObjectP op)
+PhraseP make_phrase(const WordP &p, const ObjectP &op)
 {
     return std::make_shared<phrase>(p, op);
-}
-
-void princ(char c)
-{
-    tty << c;
-}
-
-void princ(int i)
-{
-    tty << i;
-}
-
-void princ(const std::string &msg)
-{
-    princ(msg.c_str());
-}
-
-void princ(const char *msg)
-{
-    tty << msg;
 }
 
 void prin1(int val)
@@ -65,25 +45,21 @@ ExitFuncVal apply_random(ex_rapplic fcn)
     return (*fcn)();
 }
 
-bool apply_random(hackfn fcn, HackP demon)
+bool apply_random(hackfn fcn, const HackP &demon)
 {
     return (*fcn)(demon);
 }
 
-bool tell(const std::string &s, uint32_t flags)
+void tell_pre(uint32_t flags)
 {
-    return tell(s.c_str(), flags);
-}
-
-bool tell(const char *s, uint32_t flags)
-{
-    ::flags()[tell_flag] = true;
+    ::flags.set(tell_flag);
     if (flags & pre_crlf)
         tty << std::endl;
-    tty << s;
+}
+void tell_post(uint32_t flags)
+{
     if (flags & post_crlf)
         tty << std::endl;
-    return true;
 }
 
 bool describable(const ObjectP &obj)
@@ -115,18 +91,18 @@ bool trnn(const ObjectP &op, const std::initializer_list<Bits> &bits_to_check)
 {
     return std::find_if(bits_to_check.begin(),
         bits_to_check.end(),
-        [op](Bits b) { return trnn(op, b); }) != bits_to_check.end();
+        [&op](Bits b) { return trnn(op, b); }) != bits_to_check.end();
 }
 
 bool trnn(const ObjectP &op, Bits b)
 {
     _ASSERT(op);
-    return op->oflags()[b] != 0;
+    return op->oflags().test(b);
 }
 
-bool strnn(SyntaxP syn, SyntaxBits b)
+bool strnn(const SyntaxP &syn, SyntaxBits b)
 {
-    return syn->sflags[b] != 0;
+    return syn->sflags.test(b);
 }
 
 bool rtrnn(const RoomP &p, const std::initializer_list<Bits> &bits)
@@ -137,63 +113,73 @@ bool rtrnn(const RoomP &p, const std::initializer_list<Bits> &bits)
 
 bool rtrnn(const RoomP &p, Bits b)
 {
-    return p->rbits()[b] != 0;
+    return p->rbits().test(b);
 }
 
-bool gtrnn(const RoomP &p, const std::string &b)
+bool gtrnn(const RoomP &p, Bits b)
 {
     return std::find(p->rglobal().begin(), p->rglobal().end(), b) != p->rglobal().end();
 }
 
-void rtro(RoomP p, Bits b)
+bool rtro(RoomP &p, Bits b)
 {
-    p->rbits()[b] = 1;
-}
-
-bool rtrz(RoomP p, const std::initializer_list<Bits> &bits)
-{
-    std::for_each(bits.begin(), bits.end(), [&p](Bits b) { rtrz(p, b); });
+    p->rbits().set(b);
     return true;
 }
 
-bool rtrz(RoomP p, Bits b)
+bool rtrz(RoomP &p, const std::initializer_list<Bits> &bits)
 {
-    p->rbits()[b] = 0;
+    for (auto b : bits)
+    {
+        rtrz(p, b);
+    }
     return true;
 }
 
-void tro(ObjectP op, const std::initializer_list<Bits> &bits)
+bool rtrz(RoomP &p, Bits b)
 {
-    std::for_each(bits.begin(), bits.end(), [op](Bits b) { tro(op, b); });
+    p->rbits().reset(b);
+    return true;
 }
 
-ObjectP tro(ObjectP op, Bits b)
+void tro(const ObjectP &op, const std::initializer_list<Bits> &bits)
+{
+    for (auto b : bits)
+    {
+        tro(op, b);
+    }
+}
+
+const ObjectP &tro(const ObjectP &op, Bits b)
 {
     op->oflags()[b] = 1;
     return op;
 }
 
-int trz(ObjectP op, Bits b)
+int trz(const ObjectP &op, Bits b)
 {
     return op->oflags()[b] = 0;
 }
 
-void trz(ObjectP op, const std::initializer_list<Bits> &bl)
+void trz(const ObjectP &op, const std::initializer_list<Bits> &bl)
 {
-    std::for_each(bl.begin(), bl.end(), [op](Bits b) { trz(op, b); });
+    for (Bits b : bl)
+    {
+        trz(op, b);
+    }
 }
 
-void trc(ObjectP op, Bits b)
+void trc(const ObjectP &op, Bits b)
 {
     op->oflags()[b].flip();
 }
 
-void rtrc(RoomP p, Bits b)
+void rtrc(const RoomP &p, Bits b)
 {
     p->rbits()[b].flip();
 }
 
-bool flaming(ObjectP obj)
+bool flaming(const ObjectP &obj)
 {
     // True if any of the light-giving bits are set.
     return trnn(obj, { flamebit, onbit, lightbit });

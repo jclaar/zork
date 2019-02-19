@@ -31,7 +31,7 @@ void cp_corner(int locn, int col, int row)
     const char *s;
     if (col != 0 && row != 0)
         s = "??";
-    else if ((col = cpuvec[locn - 1]) == 0)
+    else if ((col = cpuvec[size_t(locn) - 1]) == 0)
         s = "  ";
     else if (col == 1)
         s = "MM";
@@ -43,12 +43,17 @@ void cp_corner(int locn, int col, int row)
 void cp_ortho(int contents)
 {
     const char *ss;
-    if (contents == 0)
+    switch (contents)
+    {
+    case 0:
         ss = "  ";
-    else if (contents == 1)
+        break;
+    case 1:
         ss = "MM";
-    else
+        break;
+    default:
         ss = "SS";
+    }
     tell(ss, no_crlf);
 }
 
@@ -56,10 +61,10 @@ bool cpwhere()
 {
     int here = cphere;
     auto &uvec = cpuvec;
-    int n = uvec[here - 8 - 1];
-    int s = uvec[here + 8 - 1];
-    int e = uvec[here + 1 - 1];
-    int w = uvec[here - 1 - 1];
+    int n = uvec[size_t(here) - 8 - 1];
+    int s = uvec[size_t(here) + 8 - 1];
+    int e = uvec[size_t(here) + 1 - 1];
+    int w = uvec[size_t(here) - 1 - 1];
 
     tell("      |", no_crlf);
     cp_corner(here - 9, n, w);
@@ -85,7 +90,7 @@ bool cpwhere()
     else if (here == 37)
         tell("The center of the floor here is noticeably depressed.");
     else if (here == 52)
-        tell("The west wall here has a large " + std::string(flags()[cpout] ? "opening" : "steel door") + " at its center.  On one\n"
+        tell("The west wall here has a large " + std::string(flags[cpout] ? "opening" : "steel door") + " at its center.  On one\n"
             "side of the door is a small slit.", 1);
 
     if (e == -2)
@@ -98,7 +103,6 @@ bool cpwhere()
 bool maker()
 {
     bool rv = false;
-    RoomP here = ::here;
     ObjectP coins = sfind_obj("BAGCO");
     if (prso() == sfind_obj("WISH"))
     {
@@ -143,22 +147,22 @@ void pcheck()
     const ObjList &objs = palobjs;
     if (is_empty(prsvec[1]))
         return;
-    flags()[plook] = false;
+    flags[plook] = false;
     if (verbq("TAKE") && memq(prso(), objs))
     {
         trnn(lid, openbit);
-        if (flags()[ptouch])
+        if (flags[ptouch])
         {
             tell("The lid falls to cover the keyhole.");
             trz(lid, openbit);
         }
         else
         {
-            flags()[ptouch] = true;
+            flags[ptouch] = true;
         }
     }
 
-    for (ObjectP obj : objs)
+    for (const ObjectP &obj : objs)
     {
         if (memq(obj, sfind_obj("PKH1")->ocontents()) || memq(obj, sfind_obj("PKH2")->ocontents()))
         {
@@ -172,10 +176,10 @@ void pcheck()
 
     if (!mat->oroom() || mat->ocan())
     {
-        flags()[mud] = false;
+        flags[mud] = false;
     }
 
-    if (flags()[mud])
+    if (flags[mud])
     {
         remove_object(mat);
         insert_object(mat, here);
@@ -189,8 +193,8 @@ void pcheck()
 
 bool pdoor(const std::string &str, ObjectP lid, ObjectP keyhole)
 {
-    if (flags()[plook])
-        return flags()[plook] = false;
+    if (flags[plook])
+        return flags[plook] = false;
     tell("On the " + str + pal_door, 1);
     if (!trnn(lid, openbit))
     {
@@ -202,7 +206,7 @@ bool pdoor(const std::string &str, ObjectP lid, ObjectP keyhole)
         tell("A " + keyhole->ocontents().front()->odesc2() + " is in place within the keyhole.", 1);
     }
 
-    if (flags()[mud])
+    if (flags[mud])
     {
         tell("The edge of a welcome mat is visible under the door.");
         if (matobj)
@@ -250,14 +254,15 @@ bool play()
     return rv;
 }
 
-ObjectP plid(ObjectP obj1, ObjectP obj2)
+const ObjectP &plid(const ObjectP &obj1, const ObjectP &obj2)
 {
     return memq(obj1, here->robjs()) ? obj1 : obj2;
 }
 
-void plookat(RoomP rm)
+void plookat(const RoomP &rm)
 {
     RoomP here = ::here;
+    // go_and_look changes ::here
     go_and_look(rm);
     goto_(here);
 }
@@ -276,7 +281,7 @@ bool put_under()
     return true;
 }
 
-bool rope_away(ObjectP rope, RoomP rm)
+bool rope_away(const ObjectP &rope, const RoomP &rm)
 {
     tro(rope, { climbbit, ndescbit });
     if (!rope->oroom())
@@ -304,7 +309,7 @@ bool scol_obj(ObjectP obj, int cint, RoomP rm)
     return true;
 }
 
-bool scol_through(int cint, RoomP rm)
+bool scol_through(int cint, const RoomP &rm)
 {
     clock_int(sclin, cint);
     goto_(rm);
@@ -328,7 +333,7 @@ bool sender()
     return true;
 }
 
-bool slider(ObjectP obj)
+bool slider(const ObjectP &obj)
 {
     if (trnn(obj, takebit))
     {
@@ -434,7 +439,7 @@ bool through(ObjectP obj)
 bool untie_from()
 {
     bool rv = false;
-    if ((prso() == sfind_obj("ROPE") && ((flags()[dome_flag] && prsi() == sfind_obj("RAILI")) || prsi() == timber_tie)) ||
+    if ((prso() == sfind_obj("ROPE") && ((flags[dome_flag] && prsi() == sfind_obj("RAILI")) || prsi() == timber_tie)) ||
         (prso() == sfind_obj("BROPE") && btie))
     {
         rv = perform(untie, find_verb("UNTIE"), prso());
@@ -515,6 +520,7 @@ bool climb_foo()
 
 bool count()
 {
+    const AdvP &winner = *::winner;
     const ObjList &objs = winner->aobjs();
     int cnt;
     ObjectP prso = ::prso();
@@ -588,8 +594,9 @@ ScolWalls get_wall(RoomP rm)
     return ScolWalls();
 }
 
-bool pass_the_bucket(RoomP r, ObjectP b)
+bool pass_the_bucket(const RoomP &r, const ObjectP &b)
 {
+    const AdvP &winner = *::winner;
     auto prso = ::prso();
     prsvec[1] = std::monostate();
     remove_object(b);
@@ -619,9 +626,10 @@ bool go_and_look(RoomP rm)
     return true;
 }
 
-bool held(ObjectP obj)
+bool held(const ObjectP &obj)
 {
-    ObjectP can = obj->ocan();
+    const ObjectP &can = obj->ocan();
+    const AdvP &winner = *::winner;
     return memq(obj, winner->aobjs()) || can && held(can);
 }
 
@@ -676,14 +684,14 @@ bool scol_clock()
         jigs_up(alarm_voice);
     else if (here == sfind_room("BKTWI"))
     {
-        if (flags()[zgnome])
+        if (flags[zgnome])
         {
 
         }
         else
         {
             clock_int(zgnin, 5);
-            flags()[zgnome] = true;
+            flags[zgnome] = true;
         }
     }
     return true;
@@ -715,9 +723,9 @@ bool cpgoto(int fx)
 {
     RoomP here = ::here;
     rtrz(here, rseenbit);
-    cpobjs[cphere - 1] = here->robjs();
+    cpobjs[size_t(cphere) - 1] = here->robjs();
     cphere = fx;
-    here->robjs() = cpobjs[fx - 1];
+    here->robjs() = cpobjs[size_t(fx) - 1];
     perform(room_desc, find_verb("LOOK"));
     return true;
 }
@@ -735,18 +743,17 @@ namespace obj_funcs
     bool canary_object()
     {
         bool rv = false;
-        RoomP here = ::here;
-        RoomP tree = sfind_room("TREE");
         if (verbq("WIND"))
         {
             rv = true;
             ObjectP prso = ::prso();
             if (prso == sfind_obj("GCANA"))
             {
-                if (!flags()[sing_song] && (member("FORE", here->rid()) || here == tree))
+                const RoomP &tree = sfind_room("TREE");
+                if (!flags[sing_song] && (member("FORE", here->rid()) || here == tree))
                 {
                     tell(opera);
-                    flags()[sing_song] = true;
+                    flags[sing_song] = true;
                     insert_object(sfind_obj("BAUBL"), here == tree ? sfind_room("FORE3") : here);
                 }
                 else
@@ -844,7 +851,7 @@ namespace obj_funcs
     bool cretin()
     {
         bool rv = true;
-        AdvP me = player();
+        const AdvP &me = player();
         if (verbq("GIVE") && !trnn(prso(), no_check_bit))
         {
             remove_object(prso());
@@ -991,7 +998,7 @@ namespace obj_funcs
     bool brochure()
     {
         bool rv = true;
-        ObjectP stamp = sfind_obj("STAMP");
+        ObjectP stamp = sfind_obj("DSTMP");
         ObjectP prso = !is_empty(::prso()) ? ::prso() : ObjectP();
         if (prso == stamp)
         {
@@ -1006,19 +1013,19 @@ namespace obj_funcs
             tell(bro1 + username() + bro2);
             stamp->ocan() && tell("Affixed loosely to the brochure is a small stamp.");
         }
-        else if (verbq("FIND") && flags()[brflag1])
+        else if (verbq("FIND") && flags[brflag1])
         {
             tell("It's probably on its way.");
         }
         else if (verbq("SEND"))
         {
-            if (flags()[brflag2])
+            if (flags[brflag2])
                 tell("Why? Do you need another one?");
-            else if (flags()[brflag1])
+            else if (flags[brflag1])
                 tell("It's probably on the way.");
             else
             {
-                flags()[brflag1] = true;
+                flags[brflag1] = true;
                 tell("Ok, but you know the postal service...");
             }
         }
@@ -1026,7 +1033,7 @@ namespace obj_funcs
         {
             tell("There is a knocking sound from the front of the house.");
             insert_into(sfind_obj("MAILB"), sfind_obj("BROCH"));
-            flags()[brflag2] = true;
+            flags[brflag2] = true;
         }
         else if (prso == sfind_obj("GBROC"))
         {
@@ -1047,7 +1054,7 @@ namespace obj_funcs
             remove_object(prso);
             if (prso == sfind_obj("GCARD"))
             {
-                flags()[cpout] = true;
+                flags[cpout] = true;
                 tell(confiscate);
             }
             else if (trnn(prso, { vicbit, villain }))
@@ -1066,14 +1073,15 @@ namespace obj_funcs
     {
         bool flg = false;
         int here = cphere;
-        if ((cpuvec[here + 1 - 1] == -2) && (flg = true) ||
-            cpuvec[here - 1 - 1] == -3)
+#pragma warning(suppress: 6282)
+        if ((cpuvec[size_t(here) + 1 - 1] == -2) && (flg = true) ||
+            cpuvec[size_t(here) - 1 - 1] == -3)
         {
             if (verbq({ "CLUP", "CLUDG" }))
             {
                 if (flg && here == 10)
                 {
-                    flags()[cpsolve] = true;
+                    flags[cpsolve] = true;
                     go_and_look(find_room("CPANT"));
                 }
                 else
@@ -1104,23 +1112,23 @@ namespace obj_funcs
         {
             ObjectP prso = ::prso();
             nxt = cpnext(here, prso);
-            wl = uvec[nxt - 1];
+            wl = uvec[size_t(nxt) - 1];
             if (wl == 0)
             {
                 tell("There is only a passage in that direction.");
             }
-            else if (wl == 1 || (nnxt = cpnext(nxt, prso)) && !((nwl = uvec[nnxt - 1]) == 0))
+            else if (wl == 1 || (nnxt = cpnext(nxt, prso)) && !((nwl = uvec[size_t(nnxt) - 1]) == 0))
             {
                 tell("The wall does not budge.");
             }
             else
             {
                 tell("The wall slides forward and you follow it", no_crlf);
-                tell(flags()[cppush] ? " to this position." : complex_desc);
-                flags()[cppush] = true;
-                uvec[nxt - 1] = 0;
-                uvec[nnxt - 1] = wl;
-                nnxt == 10 && (flags()[cpblock] = true);
+                tell(flags[cppush] ? " to this position." : complex_desc);
+                flags[cppush] = true;
+                uvec[size_t(nxt) - 1] = 0;
+                uvec[size_t(nnxt) - 1] = wl;
+                nnxt == 10 && (flags[cpblock] = true);
                 cpgoto(nxt);
             }
         }
@@ -1135,9 +1143,8 @@ namespace obj_funcs
         ObjectP r = sfind_obj("ROBOT");
         RoomP c;
         bool fl;
-        AdvP ract;
-        fl = !flags()[cage_solve] && verbq("TAKE");
-        if (fl && player() == winner)
+        fl = !flags[cage_solve] && verbq("TAKE");
+        if (fl && player() == *winner)
         {
             tell(cagestr, long_tell1);
             if (r->oroom() == here)
@@ -1145,7 +1152,7 @@ namespace obj_funcs
                 goto_(c = sfind_room("CAGED"));
                 remove_object(r);
                 insert_object(r, c);
-                (ract = r->oactor())->aroom(c);
+                (*r->oactor())->aroom(c);
                 tro(r, ndescbit);
                 sphere_clock = clock_int(sphin, 10);
             }
@@ -1185,25 +1192,25 @@ namespace obj_funcs
         if (verbq("PUSH"))
         {
             ObjectP prso = ::prso();
-            if (winner == player())
+            if (*winner == player())
             {
                 jigs_up("There is a giant spark and you are fried to a crisp.");
             }
             else if (prso == sfind_obj("SQBUT"))
             {
-                if (flags()[carousel_zoom])
+                if (flags[carousel_zoom])
                     tell("Nothing seems to happen.");
                 else
                 {
-                    flags()[carousel_zoom] = true;
+                    flags[carousel_zoom] = true;
                     tell("The whirring increases in intensity slightly.");
                 }
             }
             else if (prso == sfind_obj("RNBUT"))
             {
-                if (flags()[carousel_zoom])
+                if (flags[carousel_zoom])
                 {
-                    flags()[carousel_zoom] = false;
+                    flags[carousel_zoom] = false;
                     tell("The whirring decreases in intensity slightly.");
                 }
                 else
@@ -1213,13 +1220,16 @@ namespace obj_funcs
             }
             else if (prso == sfind_obj("TRBUT"))
             {
-                flags()[carousel_flip] = !flags()[carousel_flip];
+                flags[carousel_flip] = !flags[carousel_flip];
                 if ((i = sfind_obj("IRBOX"))->oroom() == sfind_room("CAROU"))
                 {
                     tell("A dull thump is heard in the distance.");
                     trc(i, ovison);
-                    if (trnn(i, ovison))
-                        rtrz(sfind_room("CAROU"), rseenbit);
+					if (trnn(i, ovison))
+					{
+						RoomP carou = sfind_room("CAROU");
+						rtrz(carou, rseenbit);
+					}
                 }
                 else
                 {
@@ -1237,12 +1247,11 @@ namespace obj_funcs
     bool robot_function()
     {
         bool rv = true;
-        AdvP aa;
         ObjectP rr;
         if (verbq("GIVE"))
         {
             ObjectP prso = ::prso();
-            aa = prsi()->oactor();
+            const AdvP &aa = *prsi()->oactor();
             remove_object(prso);
             aa->aobjs().push_front(prso);
             tell("The robot gladly takes the " + prso->odesc2() + "\nand nods his head-like appendage in thanks.", 1);
@@ -1260,8 +1269,8 @@ namespace obj_funcs
 
     bool bucket()
     {
-        ObjectP w = sfind_obj("WATER");
-        ObjectP buck = sfind_obj("BUCKE");
+        const ObjectP &w = sfind_obj("WATER");
+        const ObjectP &buck = sfind_obj("BUCKE");
         bool rv = true;
 
         if (arg == read_in)
@@ -1293,18 +1302,18 @@ namespace obj_funcs
         }
         else if (::arg == read_out)
         {
-            if (w->ocan() == buck && !flags()[bucket_top])
+            if (w->ocan() == buck && !flags[bucket_top])
             {
                 tell("The bucket rises and comes to a stop.");
-                flags()[bucket_top] = true;
+                flags[bucket_top] = true;
                 pass_the_bucket(sfind_room("TWELL"), buck);
                 clock_int(bckin, 100);
                 rv = true;
             }
-            else if (flags()[bucket_top] && w->ocan() != buck)
+            else if (flags[bucket_top] && w->ocan() != buck)
             {
                 tell("The bucket descends and comes to a stop.");
-                flags()[bucket_top] = false;
+                flags[bucket_top] = false;
                 pass_the_bucket(sfind_room("BWELL"), buck);
             }
         }
@@ -1347,7 +1356,6 @@ namespace obj_funcs
 
     bool slide_cint()
     {
-        RoomP here = ::here;
         if (here == sfind_room("SLIDE") ||
             !member("SLID", here->rid()))
         {
@@ -1376,8 +1384,8 @@ namespace obj_funcs
         ObjectP obj;
         RoomP here = ::here;
         RoomP rm;
-        HackP thief;
         ObjectP prso = ::prso();
+        const AdvP &winner = *::winner;
         bool rv = false;
 
         if (verbq("LKIN"))
@@ -1397,7 +1405,7 @@ namespace obj_funcs
 
             if (!rm ||
                 !lit(rm) ||
-                memq(obj, (thief = get_demon("ROBBE"))->hobjs_ob()) ||
+                memq(obj, (get_demon("ROBBE"))->hobjs_ob()) ||
                 obj->ocan() && !see_inside(obj->ocan()))
             {
                 tell("You see only darkness.");
@@ -1423,7 +1431,7 @@ namespace obj_funcs
         bool rv = true;
         if (verbq("LKIN"))
         {
-            flags()[plook] = true;
+            flags[plook] = true;
             if (trnn(sfind_obj("PDOOR"), openbit))
             {
                 tell("The door is open, dummy.");
@@ -1449,7 +1457,7 @@ namespace obj_funcs
     bool bills_object()
     {
         bool rv = false;
-        flags()[bank_solve] = true;
+        flags[bank_solve] = true;
         if (verbq("BURN"))
         {
             tell("Nothing like having money to burn!");
@@ -1465,8 +1473,6 @@ namespace obj_funcs
 
     bool scolwall()
     {
-        RoomP here = ::here;
-
         bool rv = false;
         if (here == scol_active && prso() == get_wall(here).obj)
         {
@@ -1478,8 +1484,8 @@ namespace obj_funcs
 
     bool head_function()
     {
-        ObjectP lcase = sfind_obj("LCASE");
-        ObjList nl;
+        const AdvP &winner = *::winner;
+        const ObjectP &lcase = sfind_obj("LCASE");
         bool rv = true;
         if (verbq("HELLO"))
         {
@@ -1488,7 +1494,7 @@ namespace obj_funcs
         else if (verbq({ "DESTR", "KICK", "POKE", "ATTAC", "KILL", "RUB", "OPEN", "TAKE", "BURN" }))
         {
             tell(headstr1, long_tell1);
-            nl = rob_adv(winner, nl);
+            ObjList nl = rob_adv(winner, ObjList());
             nl = rob_room(here, nl, 100);
             if (!empty(nl))
             {
@@ -1509,7 +1515,7 @@ namespace obj_funcs
         bool rv = false;
         if (verbq("TURN"))
         {
-            if (flags()[punlock])
+            if (flags[punlock])
             {
                 rv = perform(locker, find_verb("LOCK"), sfind_obj("PDOOR"), prso());
             }
@@ -1556,7 +1562,7 @@ namespace obj_funcs
                         tell("There is a faint noise from behind the door and a small cloud of\n"
                             "dust rises from beneath it.");
                         remove_from(kh, obj = kh->ocontents().front());
-                        flags()[mud] && (matobj = obj);
+                        flags[mud] && (matobj = obj);
                     }
                     else
                         rv = false;
@@ -1607,7 +1613,7 @@ namespace obj_funcs
         ObjectP pkey = sfind_obj("PKEY");
         RoomP rm;
 
-        if (verbq("LKUND") && flags()[mud])
+        if (verbq("LKUND") && flags[mud])
         {
             tell("The welcome mat is under the door.");
         }
@@ -1622,7 +1628,7 @@ namespace obj_funcs
                 else
                 {
                     tell("The door is now unlocked.");
-                    flags()[punlock] = true;
+                    flags[punlock] = true;
                 }
             }
             else if (prsi() == sfind_obj("KEYS"))
@@ -1639,7 +1645,7 @@ namespace obj_funcs
             if (prsi() == pkey)
             {
                 tell("The door is locked.");
-                flags()[punlock] = false;
+                flags[punlock] = false;
             }
             else
             {
@@ -1655,7 +1661,7 @@ namespace obj_funcs
         }
         else if (verbq({ "OPEN", "CLOSE" }))
         {
-            if (flags()[punlock])
+            if (flags[punlock])
             {
                 open_close(prso(), "The door is now open.", "The door is now closed.");
             }
@@ -1670,18 +1676,18 @@ namespace obj_funcs
     bool rope_function()
     {
         bool rv = true;
-        RoomP droom = sfind_room("DOME");
-        RoomP sroom = sfind_room("SLIDE");
-        ObjectP rope = sfind_obj("ROPE");
-        ObjectP ttie = timber_tie;
-        ObjectP coffin = sfind_obj("COFFI");
-        ObjectP timber = sfind_obj("TIMBE");
+        const RoomP &droom = sfind_room("DOME");
+        const RoomP &sroom = sfind_room("SLIDE");
+        auto &rope = sfind_obj("ROPE");
+        auto &ttie = timber_tie;
+        auto &coffin = sfind_obj("COFFI");
+        auto &timber = sfind_obj("TIMBE");
 
         if (here != droom &&
             (!empty(prsi()) && prsi() != timber && prsi() != coffin) &&
             here != sroom)
         {
-            flags()[dome_flag] = false;
+            flags[dome_flag] = false;
             timber_tie = nullptr;
             trz(timber, ndescbit);
             trz(coffin, ndescbit);
@@ -1711,14 +1717,14 @@ namespace obj_funcs
         {
             if (prsi() == sfind_obj("RAILI"))
             {
-                if (flags()[dome_flag])
+                if (flags[dome_flag])
                 {
                     tell("The rope is already attached.");
                 }
                 else
                 {
                     tell("The rope drops over the side and comes within ten feet of the floor.");
-                    flags()[dome_flag] = true;
+                    flags[dome_flag] = true;
                     rope_away(rope, droom);
                 }
             }
@@ -1764,7 +1770,7 @@ namespace obj_funcs
         }
         else if (verbq("UNTIE"))
         {
-            if (ttie || flags()[dome_flag])
+            if (ttie || flags[dome_flag])
             {
                 if (ttie)
                 {
@@ -1778,7 +1784,7 @@ namespace obj_funcs
                         timber->odesc1(timber_untied);
                     }
                 }
-                flags()[dome_flag] = false;
+                flags[dome_flag] = false;
                 timber_tie.reset();
                 trz(rope, { climbbit, ndescbit });
                 tell("The rope is now untied.");
@@ -1788,7 +1794,7 @@ namespace obj_funcs
                 tell("It is not tied to anything.");
             }
         }
-        else if (verbq("DROP") && here == droom && !flags()[dome_flag])
+        else if (verbq("DROP") && here == droom && !flags[dome_flag])
         {
             remove_object(rope);
             insert_object(rope, sfind_room("MTORC"));
@@ -1796,7 +1802,7 @@ namespace obj_funcs
         }
         else if (verbq("TAKE"))
         {
-            if (flags()[dome_flag])
+            if (flags[dome_flag])
             {
                 tell("The rope is tied to the railing.");
             }
@@ -1812,7 +1818,7 @@ namespace obj_funcs
         return rv;
     }
 
-    bool scol_object(ObjectP obj)
+    bool scol_object(const ObjectP &obj)
     {
         bool rv = false;
         if (verbq({ "PUSH", "MOVE", "TAKE", "RUB" }))
@@ -1866,7 +1872,7 @@ namespace obj_funcs
             tell("The mat fits easily under the door.");
             remove_object(prsoo);
             insert_object(prsoo, here);
-            flags()[mud] = true;
+            flags[mud] = true;
         }
         else if (verbq({ "TAKE", "MOVE", "PULL" }) && obj)
         {
@@ -1985,7 +1991,7 @@ namespace room_funcs
         {
             rv = true;
             tell("You are in a room with an exit to the north and a " +
-                std::string(flags()[cpout] ? "passage" : "metal door") + " to the east.", 1);
+                std::string(flags[cpout] ? "passage" : "metal door") + " to the east.", 1);
         }
         return rv;
     }
@@ -1995,7 +2001,7 @@ namespace room_funcs
         bool rv;
         if (rv = verbq("GO-IN"))
         {
-            flags()[slide_solve] = true;
+            flags[slide_solve] = true;
             clock_disable(sldin);
         }
         return rv;
@@ -2003,7 +2009,7 @@ namespace room_funcs
 
     bool inslide()
     {
-        for (ObjectP o : here->robjs())
+        for (const ObjectP &o : here->robjs())
         {
             slider(o);
         }
@@ -2020,7 +2026,7 @@ namespace room_funcs
         }
         else if (verbq("GO-IN"))
         {
-            flags()[palan_solve] = true;
+            flags[palan_solve] = true;
         }
         else
             rv = false;
@@ -2075,7 +2081,7 @@ namespace room_funcs
         if (verbq("LOOK"))
         {
             rv = tell(teller_desc +
-                std::string((here == sfind_room("BKTW") ? "west" : "east")) +
+                (here == sfind_room("BKTW") ? "west" : "east") +
                 " side of room, above an open door, is a sign reading\n\n"
                 "		BANK PERSONNEL ONLY\n", 1);
         }
@@ -2106,28 +2112,9 @@ namespace room_funcs
         return rv;
     }
 
-    void mapr_fn(ObjList::const_iterator y, const ObjList &ol)
-    {
-        princ("a ");
-        princ((*y)->odesc2());
-        if (std::distance(y, ol.cend()) > 2)
-        {
-            princ(", ");
-        }
-        else if (std::distance(y, ol.cend()) == 2)
-        {
-            princ(", and ");
-        }
-        ++y;
-        if (y != ol.cend())
-            mapr_fn(y, ol);
-    };
-
     bool tree_room()
     {
-        RoomP here = ::here;
-        ObjectP egg, ttree, nest;
-        RoomP fore3 = sfind_room("FORE3");
+        auto &fore3 = sfind_room("FORE3");
         ObjList robjs;
 
         bool rv = false;
@@ -2138,7 +2125,24 @@ namespace room_funcs
             {
                 tell("On the ground below you can see:  ", 0);
                 remove_object(sfind_obj("FTREE"));
-                mapr_fn(fore3->robjs().cbegin(), fore3->robjs());
+                auto fn = [&fore3](ObjList::const_iterator y)
+                {
+                    princ("a ");
+                    princ((*y)->odesc2());
+                    if (std::distance(y, fore3->robjs().cend()) > 2)
+                    {
+                        princ(", ");
+                    }
+                    else if (std::distance(y, fore3->robjs().cend()) == 2)
+                    {
+                        princ(", and ");
+                    }
+                };
+                auto iter = fore3->robjs().cbegin();
+                while (iter != fore3->robjs().cend())
+                {
+                    fn(iter++);
+                }
                 tell(".");
                 insert_object(sfind_obj("FTREE"), fore3);
             }
@@ -2154,11 +2158,11 @@ namespace room_funcs
             // Anything that is dropped in the tree falls down,
             // except for the tree itself, and the nest.
             rv = true;
-            ttree = sfind_obj("TTREE");
-            nest = sfind_obj("NEST");
-            egg = sfind_obj("EGG");
+            auto &ttree = sfind_obj("TTREE");
+            auto &nest = sfind_obj("NEST");
+            auto egg = sfind_obj("EGG");
 
-            for (ObjectP x : robjs)
+            for (const ObjectP &x : robjs)
             {
                 if (x == egg)
                 {
@@ -2192,11 +2196,11 @@ namespace room_funcs
             tell("You are in a room with a low ceiling which is circular in shape.\n"
                 "There are exits to the east and the southeast.");
         }
-        else if (verbq("GO-IN") && flags()[carousel_flip])
+        else if (verbq("GO-IN") && flags[carousel_flip])
         {
-            if (flags()[carousel_zoom])
+            if (flags[carousel_zoom])
             {
-                jigs_up(player() == winner ? spindizzy : spinrobot);
+                jigs_up(player() == *winner ? spindizzy : spinrobot);
             }
             else
             {
@@ -2220,8 +2224,8 @@ namespace room_funcs
 
     bool caged_room()
     {
-        bool rv = flags()[cage_solve];
-        if (flags()[cage_solve])
+        bool rv = flags[cage_solve];
+        if (flags[cage_solve])
         {
             here = sfind_room("CAGER");
         }
@@ -2237,7 +2241,7 @@ namespace room_funcs
         }
         else if (verbq("LOOK"))
         {
-            if (flags()[cppush])
+            if (flags[cppush])
             {
                 cpwhere();
             }
@@ -2260,7 +2264,7 @@ namespace exit_funcs
     {
         auto pv = prsvec;
         direction dir = as_dir(pv[1]);
-        if (flags()[carousel_flip])
+        if (flags[carousel_flip])
         {
             tell("You cannot get your bearings.");
             if (prob(50))
@@ -2278,6 +2282,7 @@ namespace exit_funcs
     ExitFuncVal slide_exit()
     {
         RoomP rm;
+        const AdvP &winner = *::winner;
         int w = weight(winner->aobjs());
         if (timber_tie)
         {
@@ -2292,13 +2297,9 @@ namespace exit_funcs
         return rm;
     }
 
-    RoomP bkleavee(RoomP rm)
+    RoomP bkleavee(const RoomP &rm)
     {
-        if (held(sfind_obj("BILLS")) || held(sfind_obj("PORTR")))
-        {
-            rm.reset();
-        }
-        return rm;
+        return (held(sfind_obj("BILLS")) || held(sfind_obj("PORTR"))) ? RoomP() : rm;
     }
 
     ExitFuncVal bkleavee()
@@ -2321,9 +2322,9 @@ namespace exit_funcs
     {
         RoomP here = ::here;
         rtrz(here, rseenbit);
-        cpobjs[cphere - 1] = here->robjs();
+        cpobjs[size_t(cphere) - 1] = here->robjs();
         cphere = fx;
-        here->robjs() = cpobjs[fx - 1];
+        here->robjs() = cpobjs[size_t(fx) - 1];
         return perform(room_desc, find_verb("LOOK"));
     }
 
@@ -2351,10 +2352,11 @@ namespace exit_funcs
             }
             return rv;
         }
-        else if (rm == 52 && dir == West && flags()[cpout])
+        else if (rm == 52 && dir == West && flags[cpout])
         {
             goto_(find_room("CPOUT"));
-            rtrz(find_room("CP"), rseenbit);
+			RoomP cp = find_room("CP");
+            rtrz(cp, rseenbit);
             room_info();
             return rv;
         }
@@ -2364,8 +2366,9 @@ namespace exit_funcs
             return rv;
         }
 
-        ((m = memq(dir, cpexits)) != cpexits.end()) && (fx = m->offset);
+        m = memq(dir, cpexits);
         _ASSERT(m != cpexits.end());
+        fx = std::get<1>(*m);
 
         if ((abs(fx) >= 1 && abs(fx) <= 8) ||
             (fx > 0 && (uvec[rm + 8 - 1] == 0 || uvec[rm + (fx - 8) - 1] == 0)) ||
@@ -2387,7 +2390,7 @@ namespace exit_funcs
     ExitFuncVal cpenter()
     {
         ExitFuncVal rv;
-        if (flags()[cpblock])
+        if (flags[cpblock])
         {
             tell("The way is blocked by sandstone.");
         }
@@ -2410,14 +2413,14 @@ namespace actor_funcs
         RoomP c;
         ObjectP cage;
         ObjectP r = sfind_obj("ROBOT");
-        AdvP ract;
+        const AdvP *ract;
         bool rv = true;
 
         if (verbq("RAISE") && prso() == sfind_obj("CAGE"))
         {
             tell("The cage shakes and is hurled across the room.");
             clock_disable(sphere_clock);
-            winner = player();
+            winner = &player();
             goto_(c = sfind_room("CAGER"));
             insert_object(cage = sfind_obj("CAGE"), c);
             tro(cage, takebit);
@@ -2426,9 +2429,9 @@ namespace actor_funcs
             tro(sfind_obj("SPHER"), takebit);
             remove_object(r);
             insert_object(r, c);
-            (ract = r->oactor())->aroom(c);
+            (*(ract = r->oactor()))->aroom(c);
             winner = ract;
-            flags()[cage_solve] = true;
+            flags[cage_solve] = true;
         }
         else if (verbq({ "EAT", "DRINK" }))
         {
@@ -2532,7 +2535,7 @@ namespace actor_funcs
                 player()->aaction(nullptr);
                 gwim_disable = false;
                 always_lit = false;
-                flags()[dead] = false;
+                flags[dead] = false;
                 tell(life);
             }
             else

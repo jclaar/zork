@@ -7,6 +7,7 @@
 #include <cstring>
 #include <sstream>
 #include <streambuf>
+#include <string_view>
 #include "ZorkException.h"
 
 extern std::ostream tty;
@@ -18,13 +19,24 @@ const uint32_t post_crlf = 0x00000001;
 const uint32_t no_crlf = 0x00000000;
 const uint32_t long_tell1 = long_tell | post_crlf;
 
-bool tell(const char *msg, uint32_t flags = post_crlf);
-bool tell(const std::string &msg, uint32_t flags = post_crlf);
+void tell_pre(uint32_t flags);
+void tell_post(uint32_t flags);
+
+template <typename T>
+bool tell(const T &s, uint32_t flags = post_crlf)
+{
+    tell_pre(flags);
+    tty << s;
+    tell_post(flags);
+    return true;
+}
+
 inline void crlf() { tty << std::endl; }
-void princ(char c);
-void princ(int i);
-void princ(const std::string &msg);
-void princ(const char *msg);
+template <typename T>
+void princ(const T &v)
+{
+    tty << v;
+}
 void prin1(int val);
 inline void printstring(const char *str) { tty << str; }
 
@@ -36,7 +48,7 @@ bool frobozz();
 
 // Various MDL functions mapped to C++ equivalents
 //inline char *back(char *s, size_t count) { return s - count; }
-std::string &substruc(std::string src, size_t start, size_t end, std::string &dest);
+std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest);
 char *substruc(const char *src, size_t start, size_t end, char *dest);
 inline const char *member(const std::string &subst, const std::string &str)
 {
@@ -175,6 +187,12 @@ class SIterator : public Iterator<std::string>
 {
     typedef Iterator<std::string> Base;
 public:
+    typedef std::string value_type;
+    typedef int32_t difference_type;
+    typedef std::string *pointer;
+    typedef std::string &reference;
+    typedef std::random_access_iterator_tag iterator_category;
+
     SIterator() : Base() {}
     SIterator(std::string &container) : Base(container) {}
     SIterator(std::string &container, iterator i) : Base(container, i) {}
@@ -214,15 +232,6 @@ bool empty(const Iterator<T> &it)
 {
     return !it.is_init() || it.cur() == it.end();
 }
-
-#if 0
-template <typename T>
-Iterator<T> put(Iterator<T> a, int index, typename T::value_type val)
-{
-    a[index] = val;
-    return a;
-}
-#endif
 
 template <typename T>
 Iterator<T> top(Iterator<T> it)
@@ -272,10 +281,8 @@ inline SIterator substruc(SIterator src, int start, int end, SIterator dest)
 inline SIterator substruc(const char *msg, int start, int end, SIterator dest)
 {
     _ASSERT(start == 0);
-    for (int i = start; i < end; ++i)
-    {
-        dest[i] = msg[i];
-    }
+#pragma warning(suppress: 26444)
+    std::copy(msg + start, msg + end, dest);
     return dest;
 }
 

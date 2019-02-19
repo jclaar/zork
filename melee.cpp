@@ -17,7 +17,7 @@ namespace
     const int cure_wait = 30;
 }
 
-int fight_strength(AdvP hero, bool adjust)
+int fight_strength(const AdvP &hero, bool adjust)
 {
     int s, smax = strength_max, smin = strength_min;
     float f = float(hero->ascore()) / float(score_max());
@@ -28,28 +28,28 @@ int fight_strength(AdvP hero, bool adjust)
     return adjust ? (s + hero->astrength()) : s;
 }
 
-int villain_strength(ObjectP villain)
+int villain_strength(const ObjectP &villain)
 {
     int od = villain->ostrength();
     if (od > 0)
     {
-        if (villain == sfind_obj("THIEF") && flags()[thief_engrossed])
+        if (villain == sfind_obj("THIEF") && flags[thief_engrossed])
         {
             od = std::min(od, 2);
-            flags()[thief_engrossed] = 0;
+            flags[thief_engrossed] = 0;
         }
-        if (prsi())
+        if (auto prsi = ::prsi())
         {
-            trnn(prsi(), weaponbit);
-            BestWeaponsP wv = memq(villain, best_weapons);
-            if (wv && wv->weapon() == prsi())
-                od = std::max(1, (od - wv->value()));
+            trnn(prsi, weaponbit);
+            auto wv = memq(villain, best_weapons);
+            if (wv != best_weapons.end() && (*wv)->weapon() == prsi)
+                od = std::max(1, (od - (*wv)->value()));
         }
     }
     return od;
 }
 
-bool winning(ObjectP v, AdvP h)
+bool winning(const ObjectP &v, const AdvP &h)
 {
     int vs = v->ostrength();
     int ps = vs - fight_strength(h);
@@ -65,11 +65,10 @@ bool winning(ObjectP v, AdvP h)
         return prob(10, 0);
 }
 
-bool fighting(HackP dem)
+bool fighting(const HackP &dem)
 {
-    RoomP here = ::here;
     auto opps = oppv.begin();
-    AdvP hero = player();
+    const AdvP &hero = player();
     bool fight = false;
     ObjectP thief = sfind_obj("THIEF");
     ObjList::const_iterator oo = villains.begin();
@@ -77,20 +76,20 @@ bool fighting(HackP dem)
     auto vout = villain_probs.begin();
     rapplic random_action;
 
-    if (flags()[parse_won] && !flags()[dead])
+    if (flags[parse_won] && !flags[dead])
     {
         while (oo != villains.end())
         {
             ObjectP o = *oo;
-            *ov = ObjectP();
+			(*ov).reset();
             random_action = o->oaction();
             int s = o->ostrength();
 
             if (here == o->oroom())
             {
-                if (o == thief && flags()[thief_engrossed])
+                if (o == thief && flags[thief_engrossed])
                 {
-                    flags()[thief_engrossed] = false;
+                    flags[thief_engrossed] = false;
                 }
                 else if (s < 0)
                 {
@@ -133,7 +132,7 @@ bool fighting(HackP dem)
 
                 if (o == thief)
                 {
-                    flags()[thief_engrossed] = false;
+                    flags[thief_engrossed] = false;
                 }
 
                 atrz(hero, astaggered);
@@ -203,7 +202,7 @@ bool fighting(HackP dem)
 
 bool cure_clock()
 {
-    AdvP hero = player();
+    const AdvP &hero = player();
     int s = hero->astrength();
     CEventP i = curin;
     if (s > 0)
@@ -227,7 +226,7 @@ bool cure_clock()
 
 bool diagnose()
 {
-    AdvP w = winner;
+    const AdvP &w = *winner;
     int ms = fight_strength(w);
     int wd = w->astrength();
     int rs = ms + wd;
@@ -279,7 +278,7 @@ bool diagnose()
     return true;
 }
 
-bool pres(const std::vector<std::string> &tab, const std::string &a, const std::string &d, const std::optional<std::string> &w)
+bool pres(const tofmsg &tab, const std::string &a, const std::string &d, const std::optional<std::string> &w)
 {
     int l = (int) tab.size();
     // Replace a %D% with the name.
@@ -303,13 +302,13 @@ bool pres(const std::vector<std::string> &tab, const std::string &a, const std::
     return true;
 }
 
-std::optional<attack_state> blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::optional<int> out)
+std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::optional<int> out)
 {
     ObjectP dweapon;
-    std::string vdesc = villain->odesc2();
+    const std::string &vdesc = villain->odesc2();
     int att, def, oa, od;
 	std::optional<attack_state> res;
-    std::vector<attack_state> *tbl = nullptr;
+    const std::vector<attack_state> *tbl = nullptr;
     ObjectP nweapon;
     rapplic random_action;
 
@@ -370,20 +369,20 @@ std::optional<attack_state> blow(AdvP hero, ObjectP villain, const tofmsgs *rema
         {
             if (att > 2)
                 att = 3;
-            tbl = &def1_res[att-1];
+            tbl = &def1_res[size_t(att)-1];
         }
         else if (def == 2)
         {
             if (att > 3)
                 att = 4;
-            tbl = &def2_res[att-1];
+            tbl = &def2_res[size_t(att)-1];
         }
         else if (def > 2)
         {
             att = att - def;
             if (att < -1)
                 att = -2;
-            tbl = &def3_res[att + 3-1];
+            tbl = &def3_res[size_t(att) + 3-1];
         }
         res = (*tbl)[(rand() % 9)];
 

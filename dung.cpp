@@ -49,16 +49,10 @@ namespace
 
 }
 
-// Global objects
-int64_t glohi = 1;
-
 // Bunch vector.
 ObjVector bunch_cont()
 {
-    ObjVector ov;
-    ov.reserve(8);
-    ObjectP self = get_obj("#####");
-    std::generate_n(std::back_inserter(ov), 8, [self]() { return self; });
+    ObjVector ov(8, get_obj("#####"));
     return ov;
 }
 ObjVector bunuvec_cont = bunch_cont();
@@ -73,10 +67,7 @@ PhraseVecV make_prepvec()
     auto with_prep = find_prep("WITH");
     auto cretin = get_obj("#####");
     PhraseVecV pvv;
-    for (size_t i = 0; i < 5; ++i)
-    {
-        pvv.push_back(make_phrase(with_prep, cretin));
-    }
+    std::generate_n(std::back_inserter(pvv), 5, [&with_prep, &cretin]() { return make_phrase(with_prep, cretin); });
     return pvv;
 }
 
@@ -110,9 +101,9 @@ const std::vector<attack_state> def3c = { missed,
     stagger, stagger,
     light_wound, light_wound, light_wound, light_wound,
     serious_wound, serious_wound, serious_wound };
-std::vector<std::vector<attack_state>> def1_res = { def1,{ def1.begin() + 1, def1.end() },{ def1.begin() + 2, def1.end() } };
-std::vector<std::vector<attack_state>> def2_res = { def2a, def2b, {def2b.begin() + 1, def2b.end()}, {def2b.begin() + 2, def2b.end()} };
-std::vector<std::vector<attack_state>> def3_res = { def3a, { def3a.begin() + 1, def3a.end()}, def3b, { def3b.begin() + 1, def3b.end() }, def3c };
+const std::vector<std::vector<attack_state>> def1_res = { def1,{ def1.begin() + 1, def1.end() },{ def1.begin() + 2, def1.end() } };
+const std::vector<std::vector<attack_state>> def2_res = { def2a, def2b, {def2b.begin() + 1, def2b.end()}, {def2b.begin() + 2, def2b.end()} };
+const std::vector<std::vector<attack_state>> def3_res = { def3a, { def3a.begin() + 1, def3a.end()}, def3b, { def3b.begin() + 1, def3b.end() }, def3c };
 
 ActionsPobl actions_pobl;
 std::map<std::string, direction> directions_pobl = {
@@ -154,11 +145,11 @@ const ObjList palobjs = { get_obj("SCREW"), get_obj("KEYS"), get_obj("STICK"), g
 ObjList inqobjs;
 const RoomList random_list = { get_room("LROOM"), get_room("KITCH"), get_room("CLEAR"), get_room("FORE3"), get_room("FORE2"),
     get_room("SHOUS"), get_room("FORE2"), get_room("KITCH"), get_room("EHOUS") };
-const RoomP northend = get_room("MRD");
+const RoomP &northend = get_room("MRD");
 RoomP mloc = get_room("MRB");
 const RoomP startroom = mloc;
 RoomP bloc = get_room("VLBOT");
-const RoomP southend = get_room("MRA");
+const RoomP &southend = get_room("MRA");
 VerbP buncher;
 ObjectP bunch_obj = get_obj("*BUN*");
 GObjectPtr it_object;
@@ -173,7 +164,7 @@ const BestWeaponsList best_weapons = {
 std::vector<VerbP> robot_actions;
 std::vector<VerbP> master_actions;
 
-std::vector<NumObjs> numobjs;
+std::array<NumObjs, 8> numobjs;
 const DirVec dirvec = {
     DVPair(North, 0),
     DVPair(Ne, 45),
@@ -240,16 +231,15 @@ namespace
 
     void init_endgame()
     {
-        numobjs = {
-            NumObjs(get_obj("ONE"), 1),
-            NumObjs(get_obj("TWO"), 2),
-            NumObjs(get_obj("THREE"), 3),
-            NumObjs(get_obj("FOUR"), 4),
-            NumObjs(get_obj("FIVE"), 5),
-            NumObjs(get_obj("SIX"), 6),
-            NumObjs(get_obj("SEVEN"), 7),
-            NumObjs(get_obj("EIGHT"), 8),
+        static const char *num[] =
+        {
+            "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT"
         };
+        static_assert(sizeof(num) / sizeof(num[0]) == numobjs.size(), "Array sizes do not match");
+        for (int i = 0; i < numobjs.size(); ++i)
+        {
+            numobjs[i] = NumObjs(get_obj(num[i]), i + 1);
+        }
     }
 
     // Puzzle rooms
@@ -270,7 +260,7 @@ namespace
     void init_object_locs()
     {
         // A few object locations from dung.mud.
-        RoomP cp = get_room("CP");
+        const RoomP &cp = get_room("CP");
         sfind_obj("CPSLT")->oroom(cp);
         sfind_obj("CPDOR")->oroom(cp);
         sfind_obj("GCARD")->oroom(cp);
@@ -511,7 +501,7 @@ namespace
         add_action("KNOCK", "Knock", ActionVec{
             AnyV{ "AT", obj(), AVSyntax("KNOCK", knock), driver() },
             AnyV{ "ON", obj(), AVSyntax("KNOCK", knock) },
-            AnyV{ "DOWN", AL{ vicbit, vicbit, reach(), robjs() }, AVSyntax("ATTAC", attacker) }
+            AnyV{ "DOWN", AL{ vicbit, reach(), robjs() }, AVSyntax("ATTAC", attacker) }
         });
         vsynonym("KNOCK", { "RAP" });
 
@@ -831,7 +821,7 @@ namespace
             }
             else
             {
-                flags()[tell_flag] = true;
+                flags[tell_flag] = true;
             }
             return true;
         });
@@ -843,22 +833,22 @@ namespace
             std::cin >> obj;
             std::transform(obj.begin(), obj.end(), obj.begin(), toupper);
             obj = obj.substr(0, 5);
-            ObjectP objp = find_obj(obj, false);
-            if (objp)
+            if (is_obj(obj))
             {
+                ObjectP objp = find_obj(obj);
                 if (objp->oroom())
                 {
                     tell("The " + objp->odesc2() + " is in " + objp->oroom()->rid());
                 }
-				else if (memq(objp, player()->aobjs()))
-				{
-					tell("You're holding it, dummy.");
-				}
+                else if (memq(objp, player()->aobjs()))
+                {
+                    tell("You're holding it, dummy.");
+                }
                 else
                 {
                     tell("The " + objp->odesc2() + " is nowhere.");
                 }
-           }
+            }
             else
             {
                 tell("Unknown object");
@@ -944,6 +934,26 @@ namespace
 
 }
 
+void dir_syns()
+{
+    const std::pair<const char*, const char*> ds[] = {
+        std::make_pair("NORTH", "N"),
+        std::make_pair("SOUTH", "S"),
+        std::make_pair("EAST", "E"),
+        std::make_pair("WEST", "W"),
+        std::make_pair("UP", "U"),
+        std::make_pair("DOWN", "D"),
+        std::make_pair("ENTER", "IN"),
+        std::make_pair("CROSS", "TRAVE"),
+    };
+    for (auto &d : ds)
+    {
+        dsynonym(d.first, d.second);
+    }
+
+    dsynonym("EXIT", { "OUT", "LEAVE" });
+}
+
 void init_dung()
 {
     buncher = std::make_shared<verb>("BUNCH", bunchem);
@@ -952,16 +962,7 @@ void init_dung()
     init_gobjects();
     add_demon(clocker = std::make_shared<hack>(clock_demon, ObjList(), std::list<RoomP>(), RoomP(), ObjectP()));
 
-    typedef std::tuple<const char*, direction> DP;
-    dsynonym("NORTH", "N");
-    dsynonym("SOUTH", "S");
-    dsynonym("EAST", "E");
-    dsynonym("WEST", "W");
-    dsynonym("UP", "U");
-    dsynonym("DOWN", "D");
-    dsynonym("ENTER", "IN");
-    dsynonym("EXIT", { "OUT", "LEAVE" });
-    dsynonym("CROSS", "TRAVE");
+    dir_syns();
 
 	init_objects();
     init_synonyms();

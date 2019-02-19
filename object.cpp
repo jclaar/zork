@@ -19,18 +19,18 @@ struct ObjectDefinition {
     const char *desc;
     std::initializer_list<Bits> bits;
     rapplic obj_fun;
-    std::initializer_list<ObjectP> contents;
+    std::initializer_list<const char*> contents;
     std::initializer_list<OP> props;
 };
 
 struct GObjectDefinition {
-    const char *name;
+    Bits gbits;
     StringList syns;
     StringList adj;
     const char *desc;
     std::initializer_list<Bits> bits;
     rapplic obj_fun;
-    std::initializer_list<ObjectP> contents;
+    std::initializer_list<const char *> contents;
     std::initializer_list<OP> props;
 };
 
@@ -49,17 +49,17 @@ namespace
     }
 
     ObjectP make_obj(const StringList &syns, const StringList &adj, const char *desc,
-        const std::initializer_list<Bits> &bits, rapplic obj_fun = nullptr, const std::initializer_list<ObjectP> &contents = {},
+        const std::initializer_list<Bits> &bits, rapplic obj_fun = nullptr, const std::initializer_list<const char*> &contents = {},
         const std::initializer_list<OP> &props = {})
     {
         return std::make_shared<Object>(syns, adj, desc, bits, obj_fun, contents, props);
     }
 
-    GObjectPtr make_gobj(const std::string &name, const StringList &syns, const StringList &adj, const char *desc,
-        const std::initializer_list<Bits> &bits, rapplic obj_fun = nullptr, const std::initializer_list<ObjectP> &contents = {},
+    GObjectPtr make_gobj(Bits gbits, const StringList &syns, const StringList &adj, const char *desc,
+        const std::initializer_list<Bits> &bits, rapplic obj_fun = nullptr, const std::initializer_list<const char *> &contents = {},
         const std::initializer_list<OP> &props = {})
     {
-        return std::make_shared<GObject>(name, syns, adj, desc, bits, obj_fun, contents, props);
+        return std::make_shared<GObject>(gbits, syns, adj, desc, bits, obj_fun, contents, props);
     }
 
     // List of all global objects.
@@ -71,7 +71,7 @@ namespace
         o.reserve(std::distance(std::begin(gobjects), std::end(gobjects)));
 		std::transform(std::begin(gobjects), std::end(gobjects), std::back_inserter(o), [](const GObjectDefinition &od)
 		{
-			return make_gobj(od.name, od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
+			return make_gobj(od.gbits, od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
 		});
 		return o;
 	}
@@ -108,29 +108,33 @@ namespace
 ObjectP last_it(get_obj("#####"));
 
 Object::Object(const std::initializer_list<const char *> &syns, const std::initializer_list<const char *> &adj, const char *description,
-    const std::initializer_list<Bits> &bits, rapplic objfun, const std::initializer_list<ObjectP> &cntnts, 
+    const std::initializer_list<Bits> &bits, rapplic objfun, const std::initializer_list<const char*> &cntnts, 
     const std::initializer_list<OP> &props) :
     synonyms(syns.begin(), syns.end()),
     adjec(adj.begin(), adj.end()),
     desc(description),
-    objfn(objfun),
-    contents(cntnts)
+    objfn(objfun)
 {
+	std::transform(cntnts.begin(), cntnts.end(), std::back_inserter(contents),
+		[](const char *obj)
+	{
+		return get_obj(obj);
+	});
     // All objects must at least have an id in syns[0].
     _ASSERT(syns.size() > 0);
     for (Bits b : bits)
     {
         // The Bits enum corresponds to a bit in flags.
-        flags[b] = true;
+        flags.set(b);
     }
 
     // Add all adjectives to the main word list.
     for (const std::string &adj : adjec)
     {
-        add_zork(kAdj, { adj });
+        add_zork(kAdj, adj);
     }
 
-    for (auto obj_prop : props)
+    for (const OP &obj_prop : props)
     {
         switch (obj_prop.slot())
         {
@@ -185,43 +189,42 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
             _ocapac = std::get<int>(obj_prop.value());
             break;
         }
+        case ksl_oglobal:
+            _oglobal = (Bits) std::get<int>(obj_prop.value());
+            break;
+        case ksl_oactor:
+            _oactor = (e_oactor)std::get<int>(obj_prop.value());
+            break;
+        case ksl_ovtype:
+            _ovtype = (Bits)std::get<int>(obj_prop.value());
+            break;
+        case ksl_ofmsgs:
+            _melee_func = std::get<OP::melee_func>(obj_prop.value());
+            break;
+        case ksl_obverb:
+            // Never used? Just ignore.
+            break;
         default:
         {
-            prop_map[obj_prop.slot()] = obj_prop.value();
+            _ASSERT(0);
         }
         }
     }
 }
 
-AdvP Object::oactor() const
+const AdvP *Object::oactor() const
 {
-    AdvP actor;
-    e_oactor e = oa_none;
-    auto i = prop_map.find(ksl_oactor);
-    if (i != prop_map.end())
+    AdvP *actor = nullptr;
+    if (_oactor != oa_none)
     {
-        int v = std::get<int>(i->second);
-        _ASSERT(v >= 0 && v <= oa_none);
-        e = (e_oactor)v;
-        if (e != oa_none)
-        {
-            actor = actors()[e];
-        }
+        actor = &actors()[_oactor];
     }
     return actor;
 }
 
 Bits Object::ovtype() const
 {
-    Bits b = numbits;
-    auto i = prop_map.find(ksl_ovtype);
-    if (i != prop_map.end())
-    {
-        int v = std::get<int>(i->second);
-        _ASSERT(v >= 0 && v < numbits);
-        b = (Bits)v;
-    }
-    return b;
+    return _ovtype;
 }
 
 int Object::ocapac() const
@@ -280,19 +283,17 @@ void Object::restore(const Object &o)
     _omatch = o._omatch;
     _ostrength = o._ostrength;
     contents = o.contents;
+    desc = o.desc;
+    _odesc1 = o._odesc1;
 }
 
 
 const tofmsgs *Object::ofmsgs() const
 {
-    typedef const tofmsgs &(*ofmsgf)();
     const tofmsgs *ofmsg = nullptr;
-    auto i = prop_map.find(ksl_ofmsgs);
-    if (i != prop_map.end())
+    if (_melee_func)
     {
-        typedef const tofmsgs &(*ofmsgf)();
-        ofmsgf fn = std::get<OP::melee_func>(i->second);
-        ofmsg = &fn();
+        ofmsg = &_melee_func();
     }
     return ofmsg;
 }
@@ -309,32 +310,15 @@ const std::string &Object::oread() const
 
 std::map<std::string, int64_t> gobject_map;
 
-GObject::GObject(const std::string &name, const StringList &syns, const StringList &adj,
+GObject::GObject(Bits g_bits, const StringList &syns, const StringList &adj,
     const char *desc, const std::initializer_list<Bits> &_bits, rapplic obj_fun,
-const std::initializer_list<ObjectP> &contents, const std::initializer_list<OP> &props) :
+const std::initializer_list<const char *> &contents, const std::initializer_list<OP> &props) :
 Object(syns, adj, desc, _bits, obj_fun, contents, props)
 {
-    int64_t bits;
-    if (!name.empty())
+    if (g_bits != numbits)
     {
-        _name = name;
-        std::string sname = name;
-        // Has this name been assigned?
-        auto iter = gobject_map.find(sname);
-        if (iter != gobject_map.end())
-        {
-            bits = iter->second;
-        }
-        else
-        {
-            glohi = bits = glohi * 2;
-            gobject_map[sname] = bits;
-        }
-        _oglobal = name;
-    }
-    else
-    {
-        glohi = bits = glohi * 2;
+        _gbits = g_bits;
+        _oglobal = g_bits;
     }
     flags.set(::oglobal);
 }
@@ -360,7 +344,7 @@ void init_objects()
         inc_score_max(p->ofval() + p->otval());
 
         // Ensure everything in this object has its ocan pointer set.
-        for (ObjectP o : p->ocontents())
+        for (const ObjectP &o : p->ocontents())
         {
             o->ocan(p);
         }
@@ -491,9 +475,8 @@ ObjectP get_obj(const std::string &name, ObjectP init_val)
 }
 
 
-olint_t::olint_t(int v, bool enable, CEventP ev, int init_val) : _val(v)
+olint_t::olint_t(int v, bool enable, const CEventP &ev, int init_val) : _val(v), _ev(ev)
 {
-    _ev = ev;
     _ev->ctick(init_val);
 }
 
@@ -502,28 +485,24 @@ const ObjectPobl &object_pobl()
     return Objects();
 }
 
-ObjectP find_obj(const std::string &name, bool check_correctness)
+bool is_obj(const std::string &name)
 {
-    _ASSERT(name.size() <= 5); // To catch typos
-    if (check_correctness)
-    {
-        _ASSERT(Objects().find(name) != Objects().end());
-    }
-    auto iter = Objects().find(name);
-    if (check_correctness)
-    {
-        _ASSERT(iter != Objects().end());
-        _ASSERT(iter->second.size() == 1 || iter->second.front()->onames()[0] == name);
-    }
-    return iter == Objects().end() ? ObjectP() : iter->second.front();
+    return Objects().find(name) != Objects().end();
 }
 
-ObjectP sfind_obj(const std::string &name)
+const ObjectP &find_obj(const std::string &name)
+{
+    _ASSERT(name.size() <= 5); // To catch typos
+    auto iter = Objects().find(name);
+    return iter->second.front();
+}
+
+const ObjectP &sfind_obj(const std::string &name)
 {
     return find_obj(name);
 }
 
-ObjectP sfind_obj(const char *name)
+const ObjectP &sfind_obj(const char *name)
 {
     return sfind_obj(std::string(name));
 }

@@ -5,8 +5,6 @@
 #include "dung.h"
 #include "funcs.h"
 
-const int lexsize = 30;
-
 // Possible levels of false returns from parser.
 typedef std::pair<ObjectP, int> Nefals;
 extern Nefals nefals;
@@ -33,7 +31,7 @@ inline ParseVec put(ParseVec a, int index, nullptr_t)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, ObjectP o)
+inline ParseVec put(ParseVec a, int index, const ObjectP &o)
 {
     if (o)
         a[index] = o;
@@ -48,7 +46,7 @@ inline ParseVec put(ParseVec a, int index, direction d)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, VerbP v)
+inline ParseVec put(ParseVec a, int index, const VerbP &v)
 {
     if (v)
         a[index] = v;
@@ -63,7 +61,7 @@ inline ParseVec put(ParseVec a, int index, ParseVecVal an)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, ActionP v)
+inline ParseVec put(ParseVec a, int index, const ActionP &v)
 {
     if (v)
         a[index] = v;
@@ -72,7 +70,7 @@ inline ParseVec put(ParseVec a, int index, ActionP v)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, PhraseP p)
+inline ParseVec put(ParseVec a, int index, const PhraseP &p)
 {
     if (p)
         a[index] = p;
@@ -91,9 +89,9 @@ inline Iterator<ParseContV> member(const std::string &s, Iterator<ParseContV> pv
 {
     while (pv.cur() != pv.end())
     {
-        std::string s1 = (*pv.cur())->s1;
+        const std::string &s1 = (*pv.cur())->s1;
         if (s1 == s)
-            return pv;
+            break;
         ++pv;
     }
     return pv;
@@ -101,7 +99,7 @@ inline Iterator<ParseContV> member(const std::string &s, Iterator<ParseContV> pv
 
 extern ParseVec prsvec;
 extern PrepVec prepvec;
-inline VerbP prsa()
+inline const VerbP &prsa()
 {
     return std::get<VerbP>(prsvec[0]);
 }
@@ -146,13 +144,13 @@ inline PrsoType prso()
     return rv;
 }
 
-inline bool operator==(PrsoType prso, ObjectP obj)
+inline bool operator==(const PrsoType &prso, const ObjectP &obj)
 {
-    ObjectP *op = std::get_if<ObjectP>(&prso);
+    auto op = std::get_if<ObjectP>(&prso);
     return op ? (*op == obj) : false;
 }
 
-inline bool operator==(ObjectP obj, PrsoType prso)
+inline bool operator==(const ObjectP &obj, const PrsoType &prso)
 {
     return prso == obj;
 }
@@ -179,7 +177,7 @@ struct StuffVec
 };
 typedef std::unique_ptr<StuffVec> StuffVecP;
 
-typedef std::optional<const std::vector<std::string>*> Globals;
+typedef std::optional<const std::vector<Bits>*> Globals;
 
 Iterator<ParseContV> lex(SIterator s, SIterator sx = SIterator());
 bool eparse(Iterator<ParseContV> pv, bool vb);
@@ -191,24 +189,25 @@ class cwin
 
 typedef std::variant<std::monostate, cwin, ParseVec, bool> SParseVal;
 SParseVal sparse(Iterator<ParseContV> sv, bool vb);
-Nefals search_list(const std::string objname, const ObjList &slist, AdjectiveP adj, bool first = true, const Globals &global = Globals());
+Nefals search_list(const std::string &objname, const ObjList &slist, const AdjectiveP &adj, bool first = true, const Globals &global = Globals());
 bool this_it(const std::string &objname, ObjectP obj, AdjectiveP adj, Globals global);
 Nefals get_object(const std::string &objnam, AdjectiveP adj);
 StuffVecP stuff_obj(ObjectP obj, PrepP prep, PrepVec prepvec, ParseVec pvr, bool vb);
 ObjectP get_last(ObjList &l);
 ObjectP get_it_obj();
 
-OrphanP orphan(bool flag = false, ActionP action = nullptr, OrphanSlotType slot1 = std::monostate(), PrepP prep = PrepP(),
+const OrphanP &orphan(bool flag = false, ActionP action = nullptr, OrphanSlotType slot1 = std::monostate(), PrepP prep = PrepP(),
     const std::string &name = std::string(), OrphanSlotType slot2 = std::monostate());
 bool ortell(VargP varg, ActionP action, ObjectP gwim, OrphanSlotType slot2 = std::monostate());
-std::string lcify(std::string str, size_t len = std::string::npos);
+std::string lcify(const std::string &str, size_t len = std::string::npos);
 bool syn_match(ParseVec pv);
 bool syn_equal(VargP varg, OrphanSlotType pobj);
-bool take_it_or_leave_it(SyntaxP syn, ParseVec pv);
-bool take_it(ObjectP obj, VargP varg);
+bool take_it_or_leave_it(const SyntaxP &syn, ParseVec pv);
+bool take_it(const ObjectP &obj, VargP varg);
 bool orfeo(int slot, const VargP &syn, ParseVec objs);
 ObjectP gwim_slot(int fx, const VargP &varg, ParseVec &objs);
 Nefals gwim(const std::bitset<numbits> &bits, VargP fword);
+Nefals fwim(Bits b, const ObjList &objs, bool no_care);
 Nefals fwim(const std::bitset<numbits> &bits, const ObjList &objs, bool no_care);
 bool do_take(ObjectP obj);
 std::string foostr(std::string nam, bool first = true, bool lc = false);

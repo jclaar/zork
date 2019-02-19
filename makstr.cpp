@@ -14,9 +14,6 @@ namespace
         WordP wp;
         switch (st)
         {
-            case kAny:
-                wp = std::make_shared<word>(val);
-                break;
             case kPrep:
                 wp = std::make_shared<prep_t>(val);
                 break;
@@ -30,14 +27,14 @@ namespace
                 wp = std::make_shared<adjective>(val);
                 break;
         }
-        _ASSERT(wp.get() != nullptr);
+        _ASSERT(wp);
         return wp;
     }
 }
 
-void add_demon(HackP x)
+void add_demon(const HackP &x)
 {
-    for (HackP y : demons)
+    for (HackP &y : demons)
     {
         if (y->haction() == x->haction())
         {
@@ -47,40 +44,45 @@ void add_demon(HackP x)
     demons.push_front(x);
 }
 
-void add_buncher(const std::initializer_list<std::string> &strs)
+void add_buncher(const std::initializer_list<const char *> &strs)
 {
-    for (const std::string &str : strs)
+    for (auto str : strs)
     {
         bunchers.push_front(find_verb(str));
     }
 }
 
-void add_buzz(const std::initializer_list<std::string> &w)
+void add_buzz(const std::initializer_list<const char*> &w)
 {
     add_zork(kBuzz, w);
 }
 
-void add_zork(SpeechType st, const std::initializer_list<std::string> &w)
+
+void add_zork(SpeechType st, const std::string &w)
 {
-    // Add these values to the word map.
-    for (auto &s : w)
+    // One hack -- remove LOWER from the adjective list so that
+    // it doesn't conflict with the verb LOWER. I don't know why 
+    // this isn't a problem in the MDL code? I'm guessing because
+    // of the different between a STRING and a PSTRING?
+    if (w != "LOWER")
     {
-        // One hack -- remove LOWER from the adjective list so that
-        // it doesn't conflict with the verb LOWER. I don't know why 
-        // this isn't a problem in the MDL code? I'm guessing because
-        // of the different between a STRING and a PSTRING?
-        if (s != "LOWER")
-        {
-            words_pobl[s] = make_word(st, s);
-        }
+        words_pobl[w] = make_word(st, w);
     }
 }
 
-void synonym(const char *n1, const std::initializer_list<std::string> &n2)
+void add_zork(SpeechType st, const std::initializer_list<const char*> &w)
 {
-    WordP wp = words_pobl[n1];
-    _ASSERT(wp.get() != nullptr);
-    for (auto &s : n2)
+    for (auto c : w)
+    {
+        add_zork(st, c);
+    }
+}
+
+void synonym(const char *n1, const std::initializer_list<const char*> &n2)
+{
+    const WordP &wp = words_pobl[n1];
+    _ASSERT(wp);
+    for (auto s : n2)
     {
         words_pobl[s] = wp;
     }
@@ -97,16 +99,16 @@ VerbP find_verb(const std::string &verbo)
     {
         words_pobl[verbo] = make_word(kVerb, verbo);
     }
-    WordP wp = words_pobl[verbo];
+    const WordP &wp = words_pobl[verbo];
     VerbP vp = std::dynamic_pointer_cast<verb>(wp);
-    if (vp.get() == nullptr)
+    if (!vp)
     {
         error("Requested verb that wasn't a verb.");
     }
     return vp;
 }
 
-ActionP find_action(const std::string &act)
+const ActionP &find_action(const std::string &act)
 {
     auto iter = actions_pobl.find(act);
     if (iter == actions_pobl.end())
@@ -130,7 +132,7 @@ PrepP find_prep(const std::string &prepo)
     }
     WordP wp = words_pobl[prepo];
     PrepP pp = std::dynamic_pointer_cast<prep_t>(wp);
-    if (pp.get() == nullptr)
+    if (!pp)
         error("Requested preposition that wasn't a preposition");
     return pp;
 }
@@ -176,60 +178,56 @@ namespace
     template <typename T>
     bool memq(const AL &al)
     {
-        for (auto &a : al)
+        auto iter = std::find_if(std::begin(al), std::end(al), [](const ALType &t)
         {
-            if (a.type() == typeid(T))
-            {
-                return true;
-            }
-        }
-        return false;
+            return std::get_if<T>(&t) != nullptr;
+        });
+        return iter != std::end(al);
     }
 
-    const std::any &idx(const AL &al, size_t index)
+    const ALType &idx(const AL &al, size_t index)
     {
         AL::const_iterator i = al.begin();
         std::advance(i, index);
         return *i;
     }
 
-    void parse_item(std::any itm, ParseData &pd)
+    void parse_item(ParseItem itm, ParseData &pd)
     {
         bool found = false;
-        if (itm.type() == typeid(const char *))
+        if (const char **p = std::get_if<const char*>(&itm))
         {
-            pd.prep = find_prep(std::any_cast<const char*>(itm));
+            pd.prep = find_prep(*p);
             found = true;
         }
-        if (itm.type() == typeid(obj))
+        if (std::get_if<obj>(&itm))
         {
             itm = AL({ -1, reach(), robjs(), aobjs() });
             found = true;
         }
-        if (itm.type() == typeid(nrobj))
+        if (std::get_if<nrobj>(&itm))
         {
             itm = AL({ -1, robjs(), aobjs() });
             found = true;
         }
-        if (itm.type() == typeid(AL))
+        if (AL *alp = std::get_if<AL>(&itm))
         {
             found = true;
-            const AL &al = std::any_cast<const AL&>(itm);
-            const std::any &a0 = idx(al, 0);
+            const AL &al = *alp;
+            auto &a0 = idx(al, 0);
             VargP vv = std::make_shared<_varg>();
-            if (a0.type() == typeid(Bits))
+			if (auto b = std::get_if<Bits>(&a0))
             {
-                vv->vbit[std::any_cast<Bits>(a0)] = 1;
+                vv->vbit[*b] = 1;
             }
-            else if (a0.type() == typeid(int))
+            else if (auto index_value = std::get_if<int>(&a0))
             {
-                int index_value = std::any_cast<int>(a0);
-                _ASSERT(index_value == -1);
+                _ASSERT(*index_value == -1);
                 vv->vbit.set();
             }
-            else if (a0.type() == typeid(std::list<Bits>))
+			else if (auto pbl = std::get_if<std::list<Bits>>(&a0))
             {
-                const std::list<Bits> &bl = std::any_cast<std::list<Bits>>(a0);
+                auto &bl = *pbl;
                 for (Bits b : bl)
                 {
                     vv->vbit[b] = 1;
@@ -244,30 +242,29 @@ namespace
             // It's basically used to distinguish between, for example,
             // attacking something (i.e. "strike troll") vs. lighting something.
             // (i.e. "strike match")
-            if (al.size() > 1 && idx(al,1).type() == typeid(Bits))
+			const Bits *b;
+            if (al.size() > 1 && (b = std::get_if<Bits>(&idx(al,1))))
             {
-                vv->vfwim[std::any_cast<Bits>(idx(al, 1))] = 1;
+                vv->vfwim[*b] = 1;
             }
             else
             {
                 vv->vbit.set();
                 // Index 0 can be an item from Bits or -1.
-                if (a0.type() == typeid(Bits))
+                if (auto b = std::get_if<Bits>(&a0))
                 {
-                    vv->vfwim[std::any_cast <Bits>(a0)] = 1;
+                    vv->vfwim[*b] = 1;
                 }
-                else if (a0.type() == typeid(BitsList))
+                else if (auto bl = std::get_if<BitsList>(&a0))
                 {
-                    const BitsList &bl = std::any_cast<const BitsList&>(a0);
-                    for (Bits b : bl)
+                    for (Bits b : *bl)
                     {
                         vv->vfwim[b] = 1;
                     }
                 }
                 else
                 {
-                    _ASSERT(a0.type() == typeid(int));
-                    _ASSERT(std::any_cast<int>(a0) == -1);
+					_ASSERT(std::get<int>(a0) == -1);
                     vv->vfwim.set();
                 }
             }
@@ -306,27 +303,27 @@ namespace
 
             pd.syntax_->syn[pd.whr++] = vv;
         }
-        if (itm.type() == typeid(AVSyntax))
+        if (const AVSyntax *avp = std::get_if<AVSyntax>(&itm))
         {
             found = true;
-            const AVSyntax &av = std::any_cast<AVSyntax>(itm);
+            const AVSyntax &av = *avp;
             VerbP verb = find_verb(av.verb());
             if (verb->vfcn() == nullptr)
                 verb->set_vfcn(av.fn());
             pd.syntax_->sfcn = verb;
         }
-        if (itm.type() == typeid(driver))
+        if (std::get_if<driver>(&itm))
         {
             found = true;
             pd.syntax_->sflags[sdriver] = 1;
         }
-        if (itm.type() == typeid(flip))
+        if (std::get_if<flip>(&itm))
         {
             found = true;
             pd.syntax_->sflags[sflip] = 1;
         }
-	if (!found)
-		std::cerr << itm.type().name() << std::endl;
+        if (!found)
+            error("Invalid action");
         _ASSERT(found);
     }
 }
@@ -374,13 +371,6 @@ void add_action(const char *nam, const char *str, const ActionVec &decl)
     actions_pobl[nam] = std::make_shared<action>(nam, vs, str);
 }
 
-void add_action(const char *nam, const char *str, const AnyV &decl)
-{
-    AnyV anyv{ decl };
-    ActionVec av{ anyv };
-    add_action(nam, str, av);
-}
-
 void sadd_action(const char *name, rapplic action)
 {
     add_action(name, "", ActionVec{ AnyV{ AVSyntax(name, action) } });
@@ -393,15 +383,14 @@ void vsynonym(const char *verb, const char *syn)
 
 void vsynonym(const char *verb, const std::initializer_list<const char *> &syns)
 {
-    auto vp = actions_pobl[verb];
-    std::for_each(syns.begin(), syns.end(), [vp](const char *syn)
+    auto &vp = actions_pobl[verb];
+    std::for_each(syns.begin(), syns.end(), [&vp](const char *syn)
     {
-        _ASSERT(strlen(syn) <= 5);
         actions_pobl[syn] = vp;
     });
 }
 
-void add_inqobj(ObjectP obj)
+void add_inqobj(const ObjectP &obj)
 {
     inqobjs.push_front(obj);
 }

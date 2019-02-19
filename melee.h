@@ -27,10 +27,10 @@ enum attack_state
 };
 
 
-std::optional<attack_state> blow(AdvP hero, ObjectP villain, const tofmsgs *remarks, bool bhero, std::optional<int> out);
+std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsgs *remarks, bool bhero, std::optional<int> out);
 bool cure_clock();
 bool diagnose();
-int fight_strength(AdvP hero, bool adjust = true);
-bool pres(const std::vector<std::string> &tbl, const std::string &a, const std::string &d, const std::optional<std::string> &w);
-int villain_strength(ObjectP villain);
-bool winning(ObjectP v, AdvP h);
+int fight_strength(const AdvP &hero, bool adjust = true);
+bool pres(const tofmsg &tbl, const std::string &a, const std::string &d, const std::optional<std::string> &w);
+int villain_strength(const ObjectP &villain);
+bool winning(const ObjectP &v, const AdvP &h);

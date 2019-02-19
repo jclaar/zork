@@ -13,7 +13,6 @@ typedef std::pair<std::string, WordP> WordsPoblPair;
 typedef std::map<std::string, direction> DirectionsPobl;
 typedef std::map<std::string, ActionP> ActionsPobl;
 
-extern int64_t glohi;
 extern WordsPobl words_pobl;
 extern DirectionsPobl directions_pobl;
 extern ActionsPobl actions_pobl;
@@ -31,23 +30,23 @@ extern HackP sword_demon;
 extern HackP fight_demon;
 extern HackP clocker;
 extern VerbP buncher;
-extern std::vector<std::vector<attack_state>> def1_res;
-extern std::vector<std::vector<attack_state>> def2_res;
-extern std::vector<std::vector<attack_state>> def3_res;
+extern const std::vector<std::vector<attack_state>> def1_res;
+extern const std::vector<std::vector<attack_state>> def2_res;
+extern const std::vector<std::vector<attack_state>> def3_res;
 extern int cyclowrath;
 extern std::vector<VerbP> robot_actions;
 extern std::vector<VerbP> master_actions;
 extern RoomP bloc;
 extern const RoomP startroom;
-extern const RoomP northend;
-extern const RoomP southend;
+extern const RoomP &northend;
+extern const RoomP &southend;
 extern const ObjList cobjs;
 extern const ObjList nobjs;
 extern const ObjList pobjs;
 extern std::array<ObjList, 8> cells;
 
 typedef std::pair<ObjectP, int> NumObjs;
-extern std::vector<NumObjs> numobjs;
+extern std::array<NumObjs, 8> numobjs;
 
 // Direction vector for mirror
 typedef std::pair<direction, int> DVPair;
@@ -68,7 +67,7 @@ public:
         copy(h);
     }
 
-    hack operator=(const hack &h)
+    hack &operator=(const hack &h)
     {
         copy(h);
         return *this;
@@ -79,9 +78,9 @@ public:
 
     bool hflag() const { return _hflag; }
     void hflag(bool flg) { _hflag = flg; }
-    ObjectP hobj() { return _hobj; }
-    RoomP hroom() { return _room; }
-    void hroom(RoomP rm) { _room = rm; }
+    const ObjectP &hobj() const { return _hobj; }
+    const RoomP &hroom() { return _room; }
+    void hroom(const RoomP &rm) { _room = rm; }
     const std::list<RoomP> &hrooms() const { return _hrooms; }
     std::list<RoomP> &hrooms() { return _hrooms; }
 
@@ -103,24 +102,24 @@ public:
         _hobjs_ev = el;
     }
 
-    void hobjs_add(CEventP ev)
+    void hobjs_add(const CEventP &ev)
     {
         _hobjs_ev.push_front(ev);
     }
 
-    void hobjs_add(ObjectP ob)
+    void hobjs_add(const ObjectP &ob)
     {
         _hobjs_ob.push_front(ob);
     }
 
 private:
-    hackfn _haction;
+    hackfn _haction = nullptr;
     EventList _hobjs_ev;
     ObjList _hobjs_ob;
     std::list<RoomP> _hrooms;
     RoomP _room;
     ObjectP _hobj;
-    bool _hflag;
+    bool _hflag = false;
 
     void copy(const hack &s)
     {
@@ -137,11 +136,7 @@ private:
 typedef std::shared_ptr<hack> HackP;
 
 // Puzzle room
-struct CpExit
-{
-    direction dir;
-    int offset;
-};
+typedef std::tuple<direction, int> CpExit;
 typedef std::vector<CpExit> CpExitV;
 extern const CpExitV cpexits;
 
@@ -177,8 +172,8 @@ public:
     BestWeapons(ObjectP v, ObjectP w, int va) :
         vill(v), weap(w), val(va) {}
 
-    ObjectP villain() const { return vill; }
-    ObjectP weapon() const { return weap; }
+    const ObjectP &villain() const { return vill; }
+    const ObjectP &weapon() const { return weap; }
     int value() const { return val; }
 private:
     ObjectP vill;
@@ -239,11 +234,6 @@ inline ObjectP as_obj(ParseVecVal pvv)
     return op ? *op : ObjectP();
 }
 
-inline std::any as_any(ObjectP op)
-{
-    return op ? std::any(op) : std::any();
-}
-
 inline WordP as_word(const ParseAval &a)
 {
     return std::get<WordP>(a);
@@ -253,6 +243,8 @@ inline VerbP as_verb(const ParseVecVal &a)
 {
     return std::get<VerbP>(a);
 }
+
+void dir_syns();
 
 void init_dung();
 

@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "memq.h"
 
-std::vector<NumObjs>::const_iterator memq(ObjectP o, const std::vector<NumObjs> &nm)
+std::array<NumObjs, 8>::const_iterator memq(const ObjectP &o, const std::array<NumObjs, 8> &nm)
 {
-    return std::find_if(nm.begin(), nm.end(), [o](const NumObjs &nob)
+    return std::find_if(nm.begin(), nm.end(), [&o](const NumObjs &nob)
     {
         return nob.first == o;
     });
@@ -17,17 +17,17 @@ DirVec::const_iterator memq(direction d, const DirVec &dv)
     });
 }
 
-bool memq(CEventP ev, const EventList &hobjs)
+bool memq(const CEventP &ev, const EventList &hobjs)
 {
     return std::find(hobjs.begin(), hobjs.end(), ev) != hobjs.end();
 }
 
 CpExitV::const_iterator memq(direction d, const CpExitV &v)
 {
-    return std::find_if(v.begin(), v.end(), [d](const CpExit &e) { return e.dir == d; });
+    return std::find_if(v.begin(), v.end(), [d](const CpExit &e) { return std::get<0>(e) == d; });
 }
 
-bool memq(AdjectiveP adj, const std::vector<std::string> &adjs)
+bool memq(const AdjectiveP &adj, const std::vector<std::string> &adjs)
 {
     return std::find(adjs.begin(), adjs.end(), adj->w()) != adjs.end();
 }
@@ -37,9 +37,9 @@ bool memq(char c, const std::string &s)
     return s.find(c) != std::string::npos;
 }
 
-cpwall_vec::const_iterator memq(ObjectP obj, const std::vector<cpwall_val> &v)
+cpwall_vec::const_iterator memq(const ObjectP &obj, const std::array<cpwall_val, 4> &v)
 {
-    auto iter = std::find_if(v.begin(), v.end(), [obj](const cpwall_val &w)
+    auto iter = std::find_if(v.cbegin(), v.cend(), [&obj](const cpwall_val &w)
     {
         return obj == std::get<0>(w);
     });
@@ -53,7 +53,7 @@ bool memq(direction dir, const std::initializer_list<direction> &dirs)
     return std::find(dirs.begin(), dirs.end(), dir) != dirs.end();
 }
 
-std::list<RoomP>::iterator memq(RoomP rm, std::list<RoomP> &lst)
+std::list<RoomP>::iterator memq(const RoomP &rm, std::list<RoomP> &lst)
 {
     return std::find(lst.begin(), lst.end(), rm);
 }
@@ -69,21 +69,21 @@ const ScolRooms &memq(direction dir, const ScolRoomsV &c)
     return *iter;
 }
 
-BestWeaponsP memq(ObjectP v, const BestWeaponsList &bwl)
+BestWeaponsList::const_iterator memq(const ObjectP &v, const BestWeaponsList &bwl)
 {
     auto iter = std::find_if(bwl.begin(), bwl.end(), [&v](const BestWeaponsP &bw)
     {
         return v == bw->villain();
     });
-    return (iter == bwl.end()) ? BestWeaponsP() : *iter;
+    return iter;
 }
 
-bool memq(ObjectP op, const ObjList &ol)
+bool memq(const ObjectP &op, const ObjList &ol)
 {
     return std::find(ol.begin(), ol.end(), op) != ol.end();
 }
 
-bool memq(ObjectP op, Iterator<ObjVector> ol)
+bool memq(const ObjectP &op, Iterator<ObjVector> ol)
 {
     while (ol.cur() != ol.end())
     {
@@ -94,7 +94,7 @@ bool memq(ObjectP op, Iterator<ObjVector> ol)
     return false;
 }
 
-Iterator<ParseVec> memq(ObjectP o, ParseVec pv)
+Iterator<ParseVec> memq(const ObjectP &o, ParseVec pv)
 {
     Iterator<ParseVec> i(pv, pv.begin());
     while (i.cur() != i.end())
@@ -119,7 +119,7 @@ const Ex *memq(direction dir, const std::vector<Ex> &ex)
     return exi == ex.end() ? nullptr : &(*exi);
 }
 
-bool memq(RoomP p, const std::vector<Ex> &exits)
+bool memq(const RoomP &p, const std::vector<Ex> &exits)
 {
     // This is limited to specific circumstances, namely
     // when all exits are open in the endgame. 

@@ -12,15 +12,15 @@
 extern RoomP here;
 extern rapplic dead_player;
 extern direction fromdir;
-extern AdvP winner;
+extern const AdvP *winner;
 extern int raw_score;
 extern int moves;
 extern std::list<HackP> demons;
 extern std::unique_ptr<std::ofstream> script_channel;
 
-CEventP clock_int(CEventP cev, std::optional<int> num = std::optional<int>(), bool flag = false);
-CEventP clock_disable(CEventP cev);
-CEventP clock_enable(CEventP cev);
+const CEventP &clock_int(const CEventP &cev, std::optional<int> num = std::optional<int>(), bool flag = false);
+bool clock_disable(const CEventP &cev);
+bool clock_enable(const CEventP &cev);
 
 struct ParseCont
 {
@@ -39,7 +39,8 @@ private:
     std::string s2b;
 };
 typedef std::shared_ptr<ParseCont> ParseContP;
-typedef std::vector<ParseContP> ParseContV;
+const int lexsize = 30;
+typedef std::array<ParseContP, lexsize> ParseContV;
 
 extern Iterator<ParseContV> parse_cont;
 
@@ -49,34 +50,34 @@ std::string remarkably_disgusting_code();
 void start(const std::string &rm, const std::string &st = std::string());
 void save_it(bool start = true);
 void contin(bool foo = false);
-bool goto_(RoomP rm, AdvP win = winner);
+bool goto_(const RoomP &rm, const AdvP &win = *winner);
 bool room_info(std::optional<int> full);
 inline bool room_info() { return room_info(std::optional<int>()); }
 bool object_action();
-bool long_desc_obj(ObjectP obj, int full = 1, bool fullq = false, bool first = false);
+bool long_desc_obj(const ObjectP &obj, int full = 1, bool fullq = false, bool first = false);
 bool command();
 bool find();
 bool find_frob(const ObjList &objl, const std::string &str1, const std::string &str2, const std::string &str3);
 bool kill_cints();
-bool invent(AdvP win);
-inline bool invent() { return invent(winner); }
+bool invent(const AdvP &win);
+inline bool invent() { return invent(*winner); }
 void print_contents(const ObjList &olst);
-void print_cont(ObjectP obj, ObjectP av, ObjectP win, SIterator indent, bool cse = true);
+void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &win, SIterator indent, bool cse = true);
 bool quit();
 void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
 // recout's quit parameter can be a boolean or a string. If it's a string,
 // print that instead of Quit or Died.
 typedef std::variant<bool, std::string> RecOutQuit;
-void record(int score, int moves, int deaths, RecOutQuit quit, RoomP loc);
+void record(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc);
 inline void record(int score, int movs, int deaths, const char *quit, RoomP loc)
 {
     record(score, movs, deaths, std::string(quit), loc);
 }
-void recout(int score, int moves, int deaths, RecOutQuit quit, RoomP loc);
+void recout(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc);
 bool room_obj();
 bool room_name();
 bool room_room();
-void score_room(RoomP rm);
+void score_room(const RoomP &rm);
 void mung_room(RoomP rm, const std::string &str);
 inline bool room_desc() { return room_info(3); }
 bool jigs_up(const std::string &desc, bool player = false);
@@ -84,10 +85,10 @@ void score_upd(int num);
 void score_bless();
 bool nogo(const std::string &str, direction dir);
 int weight(const ObjList &objl);
-void score_obj(ObjectP obj);
+void score_obj(const ObjectP &obj);
 int score(bool ask);
 inline bool score() { score(true); return true; }
-RoomP get_door_room(RoomP rm, DoorExitPtr leavings);
+const RoomP &get_door_room(const RoomP &rm, const DoorExitPtr &leavings);
 
 bool takefn2(bool take_);
 inline bool takefn() { return takefn2(true); }
@@ -96,7 +97,7 @@ bool board();
 bool brief();
 bool bugger(bool feech);
 inline bool bugger() { return bugger(false); }
-bool clock_demon(HackP hack);
+bool clock_demon(const HackP &hack);
 bool closer();
 bool do_restore();
 bool do_save();
@@ -107,7 +108,7 @@ bool doc();
 bool dropper();
 bool end_game_herald();
 bool feech();
-bool finish(RecOutQuit ask);
+bool finish(const RecOutQuit &ask);
 inline bool finish(const char *ask) { return finish(std::string(ask)); }
 inline bool finish(bool ask) { return finish(RecOutQuit(ask)); }
 inline bool finish() { return finish(true); }
@@ -131,7 +132,7 @@ inline bool putter_noarg() { return putter(true); }
 bool restart();
 bool superbrief();
 bool unboard();
-bool valchk(std::any flg, ObjectP obj, Iterator<ObjVector> allbut);
+bool valchk(const std::any &flg, const ObjectP &obj, Iterator<ObjVector> allbut);
 bool verbose();
 bool version();
 bool wait(int turns);
@@ -156,5 +157,5 @@ void select(T from, Iterator<T> to)
 
 namespace obj_funcs
 {
-    bool valuables_c(std::any everything, const Iterator<ObjVector> allbut);
+    bool valuables_c(std::any everything, const Iterator<ObjVector> &allbut);
 }

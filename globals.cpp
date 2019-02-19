@@ -24,16 +24,11 @@ namespace
         return fl;
     }
 
-    std::bitset<num_flag_bits> fl = init_flags();
-
     int score_max_ = 0;
     int max_load = 100;
 }
 
-std::bitset<num_flag_bits> &flags()
-{
-    return fl;
-}
+std::bitset<num_flag_bits> flags = init_flags();
 
 int eg_score_max = 0;
 

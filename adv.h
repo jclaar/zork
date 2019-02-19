@@ -14,10 +14,10 @@ class Adv
 {
 public:
 
-    Adv(RoomP r, const std::initializer_list<ObjectP> &objs, int score, ObjectP vehicle,
-        ObjectP obj, rapplic action, int strength);
+    Adv(RoomP r, const std::initializer_list<ObjectP> &objs, int score, const ObjectP &vehicle,
+        const ObjectP &obj, rapplic action, int strength);
 
-    ObjectP aobj() const { return _aobj; }
+    const ObjectP &aobj() const { return _aobj; }
 
     int astrength() const { return _astrength; }
     void astrength(int new_s) { _astrength = new_s; }
@@ -28,11 +28,11 @@ public:
     rapplic aaction() { return _aaction; }
     void aaction(rapplic new_action) { _aaction = new_action; }
 
-    RoomP aroom() const { return _aroom; }
-    void aroom(RoomP rp) { _aroom = rp; }
+    const RoomP &aroom() const { return _aroom; }
+    void aroom(const RoomP &rp) { _aroom = rp; }
 
-    ObjectP avehicle() const { return _avehicle; }
-    void avehicle(ObjectP op) { _avehicle = op; }
+    const ObjectP &avehicle() const { return _avehicle; }
+    void avehicle(const ObjectP &op) { _avehicle = op; }
 
     const ObjList &aobjs() const { return _aobjs; }
     ObjList &aobjs() { return _aobjs; }
@@ -106,26 +106,26 @@ private:
     std::bitset<anumbits> bits;
 };
 
-inline bool atrnn(AdvP adv, AdvBits b)
+inline bool atrnn(const AdvP &adv, AdvBits b)
 {
     return adv->flags()[b] != 0;
 }
 
-inline void atrz(AdvP adv, AdvBits b)
+inline void atrz(const AdvP &adv, AdvBits b)
 {
     adv->flags()[b] = 0;
 }
 
-inline void atro(AdvP adv, AdvBits b)
+inline void atro(const AdvP &adv, AdvBits b)
 {
     adv->flags()[b] = 1;
 }
 
-AdvP add_actor(e_oactor actor_name, RoomP room, const std::initializer_list<ObjectP> &objs,
+void add_actor(e_oactor actor_name, RoomP room, const std::initializer_list<ObjectP> &objs,
     int score, ObjectP vehicle, ObjectP obj, rapplic action, int strength);
-std::map<e_oactor, AdvP> &actors();
+std::array<AdvP, oa_none> &actors();
 
-inline AdvP player() { return actors()[oa_player]; }
+inline const AdvP &player() { return actors()[oa_player]; }
 
 // Actor functions
 namespace actor_funcs

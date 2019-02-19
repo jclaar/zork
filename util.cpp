@@ -9,36 +9,30 @@
 
 bool always_lit = false;
 
-HackP get_demon(const char *id)
+const HackP &get_demon(const char *id)
 {
-    ObjectP obj = find_obj(id);
-    for (HackP x : demons)
+    const ObjectP &obj = find_obj(id);
+    return *std::find_if(demons.cbegin(), demons.cend(), [&obj](const HackP &h)
     {
-        if (x->hobj() == obj)
-            return x;
-    }
-    _ASSERT(0);
-    return HackP();
+        return h->hobj() == obj;
+    });
 }
 
-ObjList splice_out(ObjectP op, const ObjList &al)
+ObjList splice_out(const ObjectP &op, const ObjList &al)
 {
-    ObjList new_list;
-    // Copy the list, except for the matching object.
-    std::copy_if(al.begin(), al.end(), std::back_inserter(new_list), [&op](ObjectP o) { return op != o; });
+    ObjList new_list = al;
+    new_list.remove_if([&op](const ObjectP &o) { return o == op; });
     return new_list;
 }
 
-ObjectP remove_object(ObjectP obj, AdvP winner)
+bool remove_object(const ObjectP &obj, const AdvP &winner)
 {
     // Remove it from the object that it's contained in.
-    ObjectP ocan;
-    RoomP oroom;
-    if (ocan = obj->ocan())
+    if (auto &ocan = obj->ocan())
     {
         ocan->ocontents() = splice_out(obj, ocan->ocontents());
     }
-    else if (oroom = obj->oroom())
+    else if (auto &oroom = obj->oroom())
     {
         oroom->robjs() = splice_out(obj, oroom->robjs());
     }
@@ -48,42 +42,43 @@ ObjectP remove_object(ObjectP obj, AdvP winner)
     }
     obj->oroom(RoomP());
     obj->ocan(ObjectP());
-    return obj;
+    // Return value is never used, except to make a conditional statement continue.
+    return true;
 }
 
-bool insert_object(ObjectP obj, RoomP room)
+bool insert_object(const ObjectP &obj, const RoomP &room)
 {
     obj->oroom(room);
     room->robjs().push_front(obj);
     return true;
 }
 
-void insert_into(ObjectP cnt, ObjectP obj)
+void insert_into(const ObjectP &cnt, const ObjectP &obj)
 {
     cnt->ocontents().push_front(obj);
     obj->ocan(cnt);
     obj->oroom(RoomP());
 }
 
-void remove_from(ObjectP cnt, ObjectP obj)
+void remove_from(const ObjectP &cnt, const ObjectP &obj)
 {
     cnt->ocontents() = splice_out(obj, cnt->ocontents());
     obj->ocan(ObjectP());
 }
 
-void take_object(ObjectP obj, AdvP winner)
+void take_object(const ObjectP &obj, const AdvP &winner)
 {
     tro(obj, touchbit);
     obj->oroom(RoomP());
     winner->aobjs().push_front(obj);
 }
 
-void drop_object(ObjectP obj, AdvP winner)
+void drop_object(const ObjectP &obj, const AdvP &winner)
 {
     winner->aobjs() = splice_out(obj, winner->aobjs());
 }
 
-bool drop_if(ObjectP obj, AdvP winner)
+bool drop_if(const ObjectP &obj, const AdvP &winner)
 {
     bool rv = false;
     if (memq(obj, winner->aobjs()))
@@ -94,7 +89,7 @@ bool drop_if(ObjectP obj, AdvP winner)
     return rv;
 }
 
-ObjectP snarf_object(ObjectP who, ObjectP what)
+const ObjectP &snarf_object(const ObjectP &who, const ObjectP &what)
 {
     if (what->ocan() != who &&
         (what->oroom() || what->ocan()))
@@ -103,13 +98,12 @@ ObjectP snarf_object(ObjectP who, ObjectP what)
         insert_into(who, what);
     }
     return who;
-    // This will need to return an object..but which one???
 }
 
-bool in_room(ObjectP obj, RoomP here)
+bool in_room(const ObjectP &obj, const RoomP &here)
 {
     bool found = false;
-    ObjectP tobj = obj->ocan();
+    const ObjectP &tobj = obj->ocan();
     if (tobj)
     {
         if (tobj->oroom() == here)
@@ -128,10 +122,11 @@ bool in_room(ObjectP obj, RoomP here)
     return found;
 }
 
-bool hackable(ObjectP obj, RoomP rm)
+bool hackable(const ObjectP &obj, const RoomP &rm)
 {
     bool h = false;
-    ObjectP av = winner->avehicle();
+    const AdvP &winner = *::winner;
+    const ObjectP &av = winner->avehicle();
     if (av)
     {
         h = search_list(obj->oid(), av->ocontents(), AdjectiveP()).first != ObjectP();
@@ -146,13 +141,13 @@ bool hackable(ObjectP obj, RoomP rm)
 
 bool lfcn(const ObjList &l)
 {
-    for (ObjectP x : l)
+    for (auto &x : l)
     {
         if (trnn(x, onbit))
             return true;
         if (trnn(x, ovison) && (trnn(x, openbit) || trnn(x, transbit)))
         {
-            for (ObjectP x2 : x->ocontents())
+            for (auto &x2 : x->ocontents())
             {
                 if (trnn(x2, onbit))
                 {
@@ -160,7 +155,7 @@ bool lfcn(const ObjList &l)
                 }
             }
         }
-        if (trnn(x, actorbit) && lfcn(x->oactor()->aobjs()))
+        if (trnn(x, actorbit) && lfcn((*x->oactor())->aobjs()))
         {
             return true;
         }
@@ -168,9 +163,9 @@ bool lfcn(const ObjList &l)
     return false;
 }
 
-bool lit(RoomP rm)
+bool lit(const RoomP &rm)
 {
-    AdvP win = winner;
+    const AdvP &win = *winner;
     bool is_lit = false;
     if (rtrnn(rm, rlightbit) ||
         lfcn(rm->robjs()) || 
@@ -188,7 +183,7 @@ bool prob(int goodluck, int badluck)
     if (badluck == -1)
         badluck = goodluck;
     int val = rand() % 100;
-    return val < (flags()[lucky] ? goodluck : badluck);
+    return val < (flags[lucky] ? goodluck : badluck);
 }
 
 bool perform(rapplic fcn, VerbP vb, ObjectP obj1, ObjectP obj2)
@@ -219,17 +214,16 @@ bool yes_no(bool no_is_bad)
     return rv;
 }
 
-ObjList rob_adv(AdvP win, ObjList newlist)
+ObjList rob_adv(const AdvP &win, ObjList newlist)
 {
-    ObjList aobjs = win->aobjs();
-    for (ObjectP x : aobjs)
+    // First move all non-sacred valuables to the front of
+    // the list, then splice them into newlist.
+    ObjList &aobjs = win->aobjs();
+    auto end_val = std::partition(aobjs.begin(), aobjs.end(), [](const ObjectP &o)
     {
-        if (x->otval() > 0 && !trnn(x, sacredbit))
-        {
-            win->aobjs() = splice_out(x, win->aobjs());
-            newlist.push_front(x);  
-        }
-    }
+        return o->otval() > 0 && !trnn(o, sacredbit);
+    });
+    newlist.splice(newlist.begin(), aobjs, aobjs.begin(), end_val);
     return newlist;
 }
 
@@ -246,7 +240,7 @@ ObjList rob_room(RoomP rm, ObjList newlist, int prob)
         }
         else if (x->oactor())
         {
-            newlist = rob_adv(x->oactor(), newlist);
+            newlist = rob_adv((*x->oactor()), newlist);
         }
     }
     return newlist;

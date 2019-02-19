@@ -44,6 +44,7 @@ bool digger()
 bool ledge_mung()
 {
     RoomP rm = sfind_room("LEDG4");
+    const AdvP &winner = *::winner;
     if (here == rm)
     {
         if (winner->avehicle())
@@ -125,7 +126,7 @@ bool shaker()
     }
     else if (trnn(prso, openbit) && !empty(prso->ocontents()))
     {
-        for (ObjectP x : prso->ocontents())
+        for (ObjectP &x : prso->ocontents())
         {
             x->ocan(nullptr);
             insert_object(x, here);
@@ -167,6 +168,7 @@ bool volgnome()
 
 bool geronimo()
 {
+    const AdvP &winner = *::winner;
     if (winner->avehicle() == sfind_obj("BARRE"))
     {
         jigs_up(over_falls_str);
@@ -180,7 +182,6 @@ bool geronimo()
 
 bool put_balloon(ObjectP ball, const std::string &there, const std::string &str)
 {
-    RoomP here = ::here;
     if (member("LEDG", here->rid()) || here == find_room("VLBOT"))
     {
         tell("You watch as the balloon slowly " + str, 1);
@@ -192,6 +193,7 @@ bool put_balloon(ObjectP ball, const std::string &there, const std::string &str)
 
 bool rise_and_shine(ObjectP ball)
 {
+    const AdvP &winner = *::winner;
     bool in = winner->avehicle() == ball;
     RoomP bl = bloc;
 
@@ -270,6 +272,7 @@ bool rise_and_shine(ObjectP ball)
 
 bool decline_and_fall(ObjectP ball)
 {
+    const AdvP &winner = *::winner;
     bool in = winner->avehicle() == ball;
     RoomP bl = bloc;
     clock_int(bint, 3);
@@ -324,8 +327,7 @@ bool decline_and_fall(ObjectP ball)
 bool balloon_burn()
 {
     ObjectP prso = ::prso();
-    ObjectP blabe;
-    ObjectP ball = sfind_obj("BALLO");
+    const ObjectP &ball = sfind_obj("BALLO");
     tell("The " + prso->odesc2() + " burns inside the receptacle.", 1);
     burnup_int = clock_int(brnin, prso->osize() * 20);
     tro(prso, { flamebit, lightbit, onbit });
@@ -336,12 +338,13 @@ bool balloon_burn()
     else
     {
         tell("The cloth bag inflates as it fills with hot air.");
-        if (!flags()[blab])
+        if (!flags[blab])
         {
-            ball->ocontents().push_front(blabe = sfind_obj("BLABE"));
+            auto &blabe = sfind_obj("BLABE");
+            ball->ocontents().push_front(blabe);
             blabe->ocan(ball);
         }
-        flags()[blab] = true;
+        flags[blab] = true;
         binf = prso;
         clock_int(bint, 3);
     }
@@ -378,19 +381,6 @@ bool burnup()
     return true;
 }
 
-bool cliff_function()
-{
-    if (memq(sfind_obj("RBOAT"), winner->aobjs()))
-    {
-        flags()[deflate] = false;
-    }
-    else
-    {
-        flags()[deflate] = true;
-    }
-    return flags()[deflate];
-}
-
 void fweep(int, int)
 {
     // This function uses the "IMAGE 7" command apparently to ring
@@ -402,7 +392,6 @@ namespace obj_funcs
 {
     bool dboat_function()
     {
-        RoomP here = ::here;
         ObjectP dboat = sfind_obj("DBOAT");
         bool rv = true;
         if (verbq("INFLA"))
@@ -438,8 +427,8 @@ namespace obj_funcs
     bool gunk_function()
     {
         bool rv = false;
-        ObjectP g = sfind_obj("GUNK");
-        ObjectP m = g->ocan();
+        const ObjectP &g = sfind_obj("GUNK");
+        const ObjectP &m = g->ocan();
         if (m)
         {
             m->ocontents() = splice_out(g, m->ocontents());
@@ -492,7 +481,7 @@ namespace obj_funcs
                     {
                         trz(sfind_obj("SSLOT"), ovison);
                         tro(sfind_obj("SAFE"), openbit);
-                        flags()[safe_flag] = true;
+                        flags[safe_flag] = true;
                     }
                 }
                 else
@@ -540,7 +529,7 @@ namespace obj_funcs
         }
         else if (verbq("OPEN"))
         {
-            if (flags()[safe_flag])
+            if (flags[safe_flag])
             {
                 tell("The box has no door!");
             }
@@ -551,7 +540,7 @@ namespace obj_funcs
         }
         else if (verbq("CLOSE"))
         {
-            if (flags()[safe_flag])
+            if (flags[safe_flag])
             {
                 tell("The box has no door!");
             }
@@ -581,7 +570,7 @@ namespace obj_funcs
                     "and he disappears from sight.");
                 remove_object(prso);
                 remove_object(gnome);
-                flags()[gnome_door] = true;
+                flags[gnome_door] = true;
             }
             else if (bomb(prso))
             {
@@ -594,7 +583,7 @@ namespace obj_funcs
             else
             {
                 tell("'That wasn't quite what I had in mind', he says, crunching the\n" + prso->odesc2() +
-                    " in his rockihard hands.", 1);
+                    " in his rock-hard hands.", 1);
                 remove_object(prso);
             }
         }
@@ -610,8 +599,8 @@ namespace obj_funcs
         else
         {
             tell("The gnome appears incresingly nervous.");
-            flags()[gnome_flag] || clock_int(gnoin, 5);
-            flags()[gnome_flag] = true;
+            flags[gnome_flag] || clock_int(gnoin, 5);
+            flags[gnome_flag] = true;
         }
         return true;
     }
@@ -913,7 +902,6 @@ namespace obj_funcs
 
     bool guano_function()
     {
-        RoomP here = ::here;
         int cnt;
         bool rv = false;
         if (verbq("DIG"))
@@ -926,7 +914,7 @@ namespace obj_funcs
             }
             else
             {
-                tell(cdigs[cnt - 1]);
+                tell(cdigs[size_t(cnt) - 1]);
             }
         }
         return rv;
@@ -934,8 +922,7 @@ namespace obj_funcs
 
     bool sand_function()
     {
-        ObjectP s = sfind_obj("STATU");
-        RoomP here = ::here;
+        const ObjectP &s = sfind_obj("STATU");
         int cnt;
         bool rv = false;
         if (verbq("DIG"))
@@ -965,7 +952,7 @@ namespace obj_funcs
             }
             else
             {
-                tell(bdigs[cnt - 1]);
+                tell(bdigs[size_t(cnt) - 1]);
             }
         }
         return rv;
@@ -988,9 +975,9 @@ namespace obj_funcs
     bool rboat_function()
     {
         bool rv = true;
-        ObjectP rboat = sfind_obj("RBOAT");
-        ObjectP iboat = sfind_obj("IBOAT");
-        RoomP here = ::here;
+        const ObjectP &rboat = sfind_obj("RBOAT");
+        const ObjectP &iboat = sfind_obj("IBOAT");
+        const AdvP &winner = *::winner;
         if (arg) // Must be a holdover from something -- never used in MDL.
         {
             return false;
@@ -1025,7 +1012,7 @@ namespace obj_funcs
             else
             {
                 tell("The boat deflates.");
-                flags()[deflate] = true;
+                flags[deflate] = true;
                 remove_object(rboat);
                 insert_object(iboat, here);
             }
@@ -1037,9 +1024,8 @@ namespace obj_funcs
 
     bool iboat_function()
     {
-        ObjectP iboat = sfind_obj("IBOAT");
-        ObjectP rboat = sfind_obj("RBOAT");
-        RoomP here = ::here;
+        const ObjectP &iboat = sfind_obj("IBOAT");
+        const ObjectP &rboat = sfind_obj("RBOAT");
         bool rv = false;
         if (verbq("INFLA"))
         {
@@ -1051,7 +1037,7 @@ namespace obj_funcs
             else if (prsi() == sfind_obj("PUMP"))
             {
                 tell("The boat inflates and appears seaworthy.");
-                flags()[deflate] = false;
+                flags[deflate] = false;
                 remove_object(iboat);
                 insert_object(rboat, here);
             }
@@ -1069,11 +1055,11 @@ namespace obj_funcs
 
     bool dumbwaiter()
     {
-        ObjectP tb = sfind_obj("TBASK");
-        RoomP top = sfind_room("TSHAF");
-        RoomP bot = sfind_room("BSHAF");
-        ObjectP fb = sfind_obj("FBASK");
-        bool ct = flags()[cage_top];
+        const ObjectP &tb = sfind_obj("TBASK");
+        const RoomP &top = sfind_room("TSHAF");
+        const RoomP &bot = sfind_room("BSHAF");
+        const ObjectP &fb = sfind_obj("FBASK");
+        bool ct = flags[cage_top];
         bool lit = ::lit(here);
 
         bool rv = true;
@@ -1091,7 +1077,7 @@ namespace obj_funcs
                 insert_object(tb, top);
                 insert_object(fb, bot);
                 tell("The basket is raised to the top of the shaft.");
-                flags()[cage_top] = true;
+                flags[cage_top] = true;
             }
         }
         else if (verbq("LOWER"))
@@ -1107,7 +1093,7 @@ namespace obj_funcs
                 insert_object(tb, bot);
                 insert_object(fb, top);
                 tell("The basket is lowered to the bottom of the shaft.");
-                flags()[cage_top] = false;
+                flags[cage_top] = false;
                 if (lit && !::lit(here))
                 {
                     tell("It is now pitch black.");
@@ -1125,7 +1111,7 @@ namespace obj_funcs
         else
             rv = false;
 
-            return rv;
+        return rv;
     }
 
     bool fly_me()
@@ -1159,7 +1145,6 @@ namespace obj_funcs
 
     bool stick_function()
     {
-        RoomP here = ::here;
         bool rv = false;
         if (verbq("WAVE"))
         {
@@ -1167,23 +1152,23 @@ namespace obj_funcs
             if (here == sfind_room("FALLS") ||
                 here == sfind_room("POG"))
             {
-                if (!flags()[rainbow])
+                if (!flags[rainbow])
                 {
                     // Make the pot of gold visible.
                     tro(sfind_obj("POT"), ovison);
                     tell("Suddenly, the rainbow appears to become solid and, I venture,\n"
                         "walkable (I think the giveaway was the stairs and bannister).");
-                    flags()[rainbow] = true;
+                    flags[rainbow] = true;
                 }
                 else
                 {
                     tell("The rainbow seems to have become somewhat run-of-the-mill.");
-                    flags()[rainbow] = false;
+                    flags[rainbow] = false;
                 }
             }
             else if (here == sfind_room("RAINB"))
             {
-                flags()[rainbow] = false;
+                flags[rainbow] = false;
                 jigs_up("The structural integrity of the rainbow seems to have left it,\n"
                     "leaving you about 450 feet in the air, supported by water vapor.");
             }
@@ -1200,9 +1185,10 @@ namespace room_funcs
     {
         bool rv = false;
         bool dummy = false;
-        AdvP win = winner;
         ObjectP o;
+        const AdvP &winner = *::winner;
         const ObjList &aobjs = winner->aobjs();
+#pragma warning(suppress: 6282)
         if (verbq("GO-IN") || (verbq({ "ON", "TRNON", "LIGHT", "BURN" }) && (dummy = true)))
         {
             rv = true;
@@ -1262,7 +1248,7 @@ namespace room_funcs
         {
             rv = tell("You are in a dusty old room which is virtually featureless, except\n"
                 "for an exit on the north side." +
-                std::string(!flags()[safe_flag] ? "\n"
+                std::string(!flags[safe_flag] ? "\n"
                     "Imbedded in the far wall, there is a rusty old box.  It appears that\n"
                     "the box is somewhat damaged, since an oblong hole has been chipped\n"
                     "out of the front of it." : "\n"
@@ -1284,13 +1270,14 @@ namespace room_funcs
 
     bool no_objs()
     {
+        const AdvP &winner = *::winner;
         if (empty(winner->aobjs()))
         {
-            flags()[empty_handed] = true;
+            flags[empty_handed] = true;
         }
         else
         {
-            flags()[empty_handed] = false;
+            flags[empty_handed] = false;
         }
         if (here == sfind_room("BSHAF") && lit(here))
         {
@@ -1302,30 +1289,33 @@ namespace room_funcs
 
     bool rivr4_room()
     {
-        if (memq(sfind_obj("BUOY"), winner->aobjs()) && flags()[buoy_flag])
+        const AdvP &winner = *::winner;
+        if (memq(sfind_obj("BUOY"), winner->aobjs()) && flags[buoy_flag])
         {
             tell("Something feels funny about the feel of the buoy.");
-            flags()[buoy_flag] = false;
+            flags[buoy_flag] = false;
         }
         return false;
     }
 
     bool cliff_function()
     {
+        const AdvP &winner = *::winner;
         if (memq(sfind_obj("RBOAT"), winner->aobjs()))
         {
-            flags()[deflate] = false;
+            flags[deflate] = false;
         }
         else
         {
-            flags()[deflate] = true;
+            flags[deflate] = true;
         }
-        return flags()[deflate];
+        return flags[deflate];
     }
 
     bool bats_room()
     {
         bool rv = true;
+        const AdvP &winner = *::winner;
         if (verbq("GO-IN") && !memq(sfind_obj("GARLI"), winner->aobjs()))
         {
             rv = obj_funcs::fly_me();
@@ -1349,7 +1339,7 @@ namespace room_funcs
         {
             tell("You are at the top of Aragain Falls, an enormous waterfall with a\n"
                 "drop of about 450 feet.The only path here is on the north end.", long_tell1);
-            if (flags()[rainbow])
+            if (flags[rainbow])
                 tell("A solid rainbow spans the falls.");
             else
                 tell("A beautiful rainbow can be seen over the falls and to the east.");

@@ -38,9 +38,9 @@ enum ObjectSlots
 class olint_t
 {
 public:
-    olint_t(int v, bool enable, CEventP ev, int init_val);
+    olint_t(int v, bool enable, const CEventP &ev, int init_val);
 
-    CEventP ev() const { return _ev; }
+    const CEventP &ev() const { return _ev; }
     int val() const { return _val; }
     void val(int new_val) { _val = new_val; }
 
@@ -55,7 +55,7 @@ private:
         ar & _ev;
     }
 
-    int _val;
+    int _val = 0;
     CEventP _ev;
 };
 typedef std::shared_ptr<olint_t> OlintP;
@@ -63,11 +63,11 @@ typedef std::shared_ptr<olint_t> OlintP;
 class OP
 {
 public:
-    typedef const std::vector<std::vector<std::string>> &(*melee_func)();
+    typedef const tofmsgs &(*melee_func)();
     typedef std::variant<int, std::string, melee_func, olint_t> PropVal;
     OP(ObjectSlots os, const PropVal &v) : sl(os), val(v) {}
     ObjectSlots slot() const { return sl; }
-    const PropVal &value() { return val; }
+    const PropVal &value() const { return val; }
 private:
     ObjectSlots sl;
     PropVal val;
@@ -80,7 +80,7 @@ public:
     Object() {}
 
     Object(const std::initializer_list<const char*> &syns, const std::initializer_list<const char *> &adj = {}, const char *desc = "",
-        const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr, const std::initializer_list<ObjectP> &contents = {},
+        const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr, const std::initializer_list<const char *> &contents = {},
         const std::initializer_list<OP> &props = {});
 
 	virtual ~Object()
@@ -97,8 +97,10 @@ public:
 	const std::string &oread() const;
     const std::string &odesco() const { return _odesco; }
     const std::string &odesc1() const;
+    void odesc1(const char *s) { _odesc1 = s; }
     void odesc1(const std::string &s) { _odesc1 = s; }
     const std::string &odesc2() const { return desc; }
+    void odesc2(const char *new_desc) { desc = new_desc; }
     void odesc2(const std::string &new_desc) { desc = new_desc; }
     int otval() const;
     void otval(int new_value);
@@ -111,22 +113,22 @@ public:
     void ostrength(int new_strength) { _ostrength = new_strength; }
     int omatch() const;
     void omatch(int new_val);
-    OlintP olint() const {
+    const OlintP &olint() const {
         return _olint;
     }
-    AdvP oactor() const;
-    const std::string &oglobal() const { return _oglobal; }
+    const AdvP *oactor() const;
+    std::optional<Bits> oglobal() const { return _oglobal; }
     const std::bitset<numbits> &oflags() const { return flags; }
     std::bitset<numbits> &oflags() { return flags; }
     rapplic oaction() const { return objfn; }
-    RoomP oroom() const { return _oroom; }
-    void oroom(RoomP r) { _oroom = r; }
-    ObjectP ocan() const { return _ocan; }
-    void ocan(ObjectP op) { _ocan = op; }
+    const RoomP &oroom() const { return _oroom; }
+    void oroom(const RoomP &r) { _oroom = r; }
+    const ObjectP &ocan() const { return _ocan; }
+    void ocan(const ObjectP &op) { _ocan = op; }
     Bits ovtype() const;
 
     VerbP obverb() const { return _obverb; }
-    void obverb(VerbP v) { _obverb = v; }
+    void obverb(const VerbP &v) { _obverb = v; }
 
     void restore(const Object &o);
 
@@ -156,23 +158,25 @@ protected:
     RoomP _oroom;  // What room it's in.
     std::bitset<numbits> flags;
     rapplic objfn = nullptr;
-    std::map<ObjectSlots, OP::PropVal> prop_map;
     OlintP _olint;
     VerbP _obverb;
-    std::string _oglobal;
+    std::optional<Bits> _oglobal;
     int _omatch = 0;
     int _ocapac = 0;
+    e_oactor _oactor = oa_none;
+    Bits _ovtype = numbits;
+    OP::melee_func _melee_func = nullptr;
 };
 
 class GObject : public Object
 {
 public:
-    GObject(const std::string &name, const std::initializer_list<const char *> &syns, const std::initializer_list<const char *> &adj = {},
+    GObject(Bits gbits, const std::initializer_list<const char *> &syns, const std::initializer_list<const char *> &adj = {},
         const char * = "", const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr,
-        const std::initializer_list<ObjectP> &contents = {},
+        const std::initializer_list<const char*> &contents = {},
         const std::initializer_list<OP> &props = { OP(ksl_oglobal, 0) });
 
-    const std::string &name() const { return _name; }
+    const std::optional<Bits> &gbits() const { return _gbits; }
 
 private:
     GObject() {}
@@ -183,7 +187,7 @@ private:
         ar & boost::serialization::base_object<Object>(*this);
     }
 
-    std::string _name;
+    std::optional<Bits> _gbits;
 };
 
 
@@ -205,7 +209,8 @@ ObjList &global_objects();
 
 typedef std::map<std::string, ObjList> ObjectPobl;
 const ObjectPobl &object_pobl();
-ObjectP find_obj(const std::string &name, bool correctness = true);
-ObjectP sfind_obj(const char *name);
-ObjectP sfind_obj(const std::string &name);
+bool is_obj(const std::string &name);
+const ObjectP &find_obj(const std::string &name);
+const ObjectP &sfind_obj(const char *name);
+const ObjectP &sfind_obj(const std::string &name);
 

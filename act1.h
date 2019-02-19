@@ -4,9 +4,9 @@
 extern int water_level;
 
 // Demons
-bool robber(HackP dem);
-bool sword_glow(HackP dem);
-bool fighting(HackP dem);
+bool robber(const HackP &dem);
+bool sword_glow(const HackP &dem);
+bool fighting(const HackP &dem);
 
 bool advent();
 bool alarm();
@@ -23,7 +23,7 @@ bool exorcise();
 bool fill();
 bool hack_hack(ObjectP obj, const std::string &str, const std::string &obj2 = std::string());
 bool hello();
-bool infested(RoomP r);
+bool infested(const RoomP &r);
 bool inflater();
 bool jargon();
 bool kicker();
@@ -39,7 +39,7 @@ bool look_under();
 bool melter();
 bool munger();
 bool oil();
-bool open_close(ObjectP obj, const std::string &stropn, const std::string &strcls);
+bool open_close(const ObjectP &obj, const std::string &stropn, const std::string &strcls);
 bool plugger();
 bool pour_on();
 bool prayer();
@@ -57,7 +57,7 @@ bool swinger();
 bool thief_in_treasure(ObjectP hobj);
 bool tie();
 bool tie_up();
-bool torch_off(ObjectP t);
+bool torch_off(const ObjectP &t);
 bool treas();
 bool turner();
 bool unlocker();

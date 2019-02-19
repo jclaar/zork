@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/unique_ptr.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/map.hpp>
@@ -26,7 +27,7 @@ typedef SV::iterator SVI;
 
 namespace
 {
-    const int save_version = 3;
+    const int save_version = 5;
     RoomP room_from_str(const std::string &s)
     {
         return (s.empty() ? RoomP() : sfind_room(s));
@@ -171,13 +172,11 @@ void dump_winners(archive &oa)
 template <class archive>
 void restore_winners(archive &ia)
 {
-    std::map<e_oactor, AdvP> rest_actors;
+    std::array<AdvP, oa_none> rest_actors;
     ia & rest_actors;
-    for (auto r : rest_actors)
+    for (size_t i = 0; i < oa_none; ++i)
     {
-        auto iter = actors().find(r.first);
-        _ASSERT(iter != actors().end());
-        iter->second->restore(*r.second.get());
+        actors()[i]->restore(*rest_actors[i].get());
     }
 }
 
@@ -244,7 +243,7 @@ bool save_game(const std::string &f)
         dump_clockers(oa);
         dump_winners(oa);
         // Save various globals (from MGVALS in dung.mud)
-        oa & flags();
+        oa & flags;
         oa & (binf ? binf->oid() : emp);
         oa & (btie ? btie->oid() : emp);
         oa & light_shaft;
@@ -314,7 +313,7 @@ bool restore_game(const std::string &f)
                 restore_clockers(ia);
                 restore_winners(ia);
                 // Restore various globals.
-                ia & flags();
+                ia & flags;
                 std::string temp;
                 ia & temp;
                 binf = obj_from_str(temp);

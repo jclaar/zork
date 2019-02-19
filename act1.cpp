@@ -31,20 +31,19 @@ namespace
 
 int water_level = 0;
 
-bool robber(HackP hack)
+bool robber(const HackP &hack)
 {
     RoomP rm = hack->hroom();
     bool seenq = rtrnn(rm, rseenbit);
-    AdvP win = player();
+    auto &win = player();
     RoomP wroom = ::here;
-    ObjectP hobj = hack->hobj();
-    ObjectP still = sfind_obj("STILL");
+    auto &hobj = hack->hobj();
+    auto &still = sfind_obj("STILL");
     RoomP hereq;
     auto hh = hack->hobjs_ob();
-    RoomP treas = sfind_room("TREAS");
-    ObjectP egg;
+    auto &treas = sfind_room("TREAS");
     bool litq;
-    bool deadq = flags()[dead_flag];
+    bool deadq = flags[dead_flag];
 
     bool once = false;
     while (1)
@@ -64,13 +63,13 @@ bool robber(HackP hack)
                     snarf_object(hobj, still);
                 }
                 remove_object(hobj);
-                for (ObjectP x : rm->robjs())
+                std::for_each(rm->robjs().begin(), rm->robjs().end(), [](const ObjectP &x)
                 {
                     tro(x, ovison);
-                }
+                });
                 hereq.reset();
             }
-            egg = sfind_obj("EGG");
+            auto &egg = sfind_obj("EGG");
 
             auto hhdup = hh;
             for (ObjectP x : hhdup)
@@ -81,7 +80,7 @@ bool robber(HackP hack)
                     insert_object(x, rm);
                     if (x == egg)
                     {
-                        flags()[egg_solve] = true;
+                        flags[egg_solve] = true;
                         tro(x, openbit);
                     }
                 }
@@ -190,7 +189,7 @@ bool robber(HackP hack)
                         hack->hobjs(hh = rob_adv(win, hh));
                         if (memq(sfind_obj("ROPE"), hh))
                         {
-                            flags()[dome_flag] = false;
+                            flags[dome_flag] = false;
                         }
                         if (objt == hh)
                         {
@@ -268,7 +267,7 @@ bool robber(HackP hack)
                 }
                 if (memq(sfind_obj("ROPE"), hh))
                 {
-                    flags()[dome_flag] = false;
+                    flags[dome_flag] = false;
                 }
             }
         }
@@ -330,11 +329,10 @@ bool robber(HackP hack)
     return true;
 }
 
-bool sword_glow(HackP dem)
+bool sword_glow(const HackP &dem)
 {
-    ObjectP sw = dem->hobj();
+    auto &sw = dem->hobj();
     int g = sw->otval();
-    RoomP here = ::here;
     int ng = 0;
     if (!sw->oroom() && !sw->ocan() && memq(sw, player()->aobjs()))
     {
@@ -347,7 +345,7 @@ bool sword_glow(HackP dem)
             bool found = false;
             for (const Ex &e : here->rexits())
             {
-                ExitType ex = std::get<1>(e);
+                const ExitType &ex = std::get<1>(e);
                 if (auto sp = std::get_if<std::string>(&ex))
                 {
                     if (infested(find_room(*sp)))
@@ -403,14 +401,14 @@ bool sword_glow(HackP dem)
 
 bool sinbad()
 {
-    ObjectP c = sfind_obj("CYCLO");
+    auto &c = sfind_obj("CYCLO");
     if (here == sfind_room("CYCLO") &&
         memq(c, here->robjs()))
     {
-        flags()[cyclops_flag] = true;
+        flags.set(cyclops_flag);
         tell("The cyclops, hearing the name of his father's deadly nemesis, flees the room\n"
             "by knocking down the wall on the north of the room.");
-        flags()[magic_flag] = true;
+        flags.set(magic_flag);
         trz(c, fightbit);
         remove_object(c);
     }
@@ -479,7 +477,8 @@ bool prayer()
 bool pumper()
 {
     bool rv = true;
-    ObjectP p = sfind_obj("PUMP");
+    const ObjectP &p = sfind_obj("PUMP");
+    const AdvP &winner = *::winner;
     if (in_room(p) || memq(p, winner->aobjs()))
     {
         prsvec[2] = sfind_obj("PUMP");
@@ -620,14 +619,13 @@ bool swinger()
 
 bool thief_in_treasure(ObjectP hobj)
 {
-    ObjectP chali = sfind_obj("CHALI");
-    RoomP here = ::here;
+    const ObjectP &chali = sfind_obj("CHALI");
     if (length(here->robjs()) != 2)
     {
         tell("The thief gestures mysteriously, and the treasures in the room\n"
             "suddenly vanish.");
 
-        for (ObjectP x : here->robjs())
+        for (const ObjectP &x : here->robjs())
         {
             if (x != chali && x != hobj)
             {
@@ -684,7 +682,7 @@ bool tie_up()
     return true;
 }
 
-bool torch_off(ObjectP t)
+bool torch_off(const ObjectP &t)
 {
     t->odesc2("burned out ivory torch");
     t->odesc1("There is a burned out ivory torch here.");
@@ -707,7 +705,8 @@ bool brush()
 {
     if (prso() == sfind_obj("TEETH"))
     {
-		ObjectP prsi = ::prsi();
+        ObjectP prsi = ::prsi();
+        const AdvP &winner = *::winner;
         if (prsi == sfind_obj("PUTTY") && memq(prsi, winner->aobjs()))
         {
             jigs_up("Well, you seem to have been bruhing your teeth with some sort of\n"
@@ -734,6 +733,7 @@ bool brush()
 bool burner()
 {
     bool rv = true;
+    const AdvP &winner = *::winner;
     if (flaming(prsi()))
     {
         ObjectP prso = ::prso();
@@ -817,20 +817,18 @@ bool hello()
     return true;
 }
 
-bool infested(RoomP r)
+bool infested(const RoomP &r)
 {
     const ObjList &villains = ::villains;
-    HackP dem = get_demon("THIEF");
-    return flags()[end_game_flag] && eg_infested(r) ||
+    const HackP &dem = get_demon("THIEF");
+    return flags[end_game_flag] && eg_infested(r) ||
         r == dem->hroom() && dem->haction() ||
-        [&villains, r]() -> bool
+        [&villains, &r]() -> bool
     {
-        for (ObjectP v : villains)
+        return std::find_if(villains.begin(), villains.end(), [&r](const ObjectP &v)
         {
-            if (r == v->oroom())
-                return true;
-        }
-        return false;
+            return r == v->oroom();
+        }) != villains.end();
     }();
 }
 
@@ -938,7 +936,7 @@ bool oil()
     return true;
 }
 
-bool open_close(ObjectP obj, const std::string &stropn, const std::string &strcls)
+bool open_close(const ObjectP &obj, const std::string &stropn, const std::string &strcls)
 {
     bool rv = false;
     if (verbq("OPEN"))
@@ -980,12 +978,12 @@ bool leave()
 
 bool leaves_appear()
 {
-    ObjectP grate = sfind_obj("GRATE");
-    if (!(trnn(grate, openbit)) && !(flags()[grate_revealed]))
+    const ObjectP &grate = sfind_obj("GRATE");
+    if (!(trnn(grate, openbit)) && !(flags[grate_revealed]))
     {
         tell("A grating appears on the ground.");
         tro(grate, ovison);
-        flags()[grate_revealed] = true;
+        flags[grate_revealed] = true;
     }
     return false;
 }
@@ -995,7 +993,7 @@ void light_int(ObjectP obj, CEventP cev, const std::vector<int> &tick, const std
     OlintP foo = obj->olint();
     int cnt, tim;
     foo->val(cnt = (foo->val() + 1));
-    clock_int(cev, tim = tick[cnt-1]);
+    clock_int(cev, tim = tick[size_t(cnt) - 1]);
     if (tim < 0)
     {
         if (!obj->oroom() || obj->oroom() == here)
@@ -1006,7 +1004,7 @@ void light_int(ObjectP obj, CEventP cev, const std::vector<int> &tick, const std
     }
     else if (!obj->oroom() || obj->oroom() == here)
     {
-        ::tell(tell[cnt - 1]);
+        ::tell(tell[size_t(cnt) - 1]);
     }
 }
 
@@ -1018,7 +1016,7 @@ bool locker()
     }
     else if (prso() == sfind_obj("GRATE") && here == sfind_room("MGRAT"))
     {
-        flags()[grunlock] = false;
+        flags[grunlock] = false;
         tell("The grate is locked.");
         dput("The grate is locked.");
     }
@@ -1032,6 +1030,7 @@ bool eat()
     bool eat = false;
     bool drink = false;
     ObjectP nobj;
+    const AdvP &winner = *::winner;
     const ObjList &aobjs = winner->aobjs();
     ObjectP prsoo = prso();
 
@@ -1053,7 +1052,7 @@ bool eat()
     }
     else if (drink = trnn(prsoo, drinkbit))
     {
-        if (!prsoo->oglobal().empty() || (nobj = prsoo->ocan()) && memq(nobj, aobjs) && trnn(nobj, openbit))
+        if (prsoo->oglobal().has_value() || (nobj = prsoo->ocan()) && memq(nobj, aobjs) && trnn(nobj, openbit))
         {
             tell("Thank you very much. I was rather thirsty (from all this talking\nprobably.)");
             if (nobj)
@@ -1115,7 +1114,7 @@ bool munger()
             else
             {
                 tell("Trying to destroy a " + prsoo->odesc2() + " with a ", 0);
-tell(prsi()->odesc2() + " is quite self-desctructive.");
+                tell(prsi()->odesc2() + " is quite self-desctructive.");
             }
         }
         else
@@ -1132,6 +1131,7 @@ tell(prsi()->odesc2() + " is quite self-desctructive.");
 
 bool look_inside()
 {
+    const AdvP &winner = *::winner;
     if (!object_action())
     {
         ObjectP prsoo = prso();
@@ -1201,7 +1201,7 @@ bool reader()
 int otval_frob(const ObjList &l)
 {
     int value = 0;
-    for (ObjectP x : l)
+    for (auto &x : l)
     {
         value += x->otval();
         if (!empty(x->ocontents()))
@@ -1214,14 +1214,14 @@ namespace exit_funcs
 {
     ExitFuncVal chimney_function()
     {
-        ObjectP door;
-        AdvP winner = ::winner;
+        const AdvP &winner = *::winner;
         const ObjList &aobjs = winner->aobjs();
         if (length(aobjs) < 2 && memq(sfind_obj("LAMP"), aobjs))
         {
-            flags()[light_load] = true;
+            flags[light_load] = true;
             // Door will slam shut next time, too, since this way up don't count.
-            if (!trnn(door = sfind_obj("DOOR"), openbit))
+            const ObjectP &door = sfind_obj("DOOR");
+            if (!trnn(door, openbit))
             {
                 trz(door, touchbit);
             }
@@ -1234,20 +1234,21 @@ namespace exit_funcs
         }
         else
         {
-            flags()[light_load] = false;
+            flags[light_load] = false;
             return std::monostate();
         }
     }
 
     ExitFuncVal coffin_cure()
     {
+        const AdvP &winner = *::winner;
         if (memq(sfind_obj("COFFI"), winner->aobjs()))
         {
-            flags()[egypt_flag] = false;
+            flags[egypt_flag] = false;
         }
         else
         {
-            flags()[egypt_flag] = true;
+            flags[egypt_flag] = true;
         }
         // Always return null. This function is just to make
         // sure the egypt_flag is set properly.
@@ -1264,7 +1265,7 @@ namespace exit_funcs
     ExitFuncVal carousel_exit()
     {
         ExitFuncVal rm;
-        if (flags()[carousel_flip])
+        if (flags[carousel_flip])
         {
         }
         else
@@ -1318,7 +1319,7 @@ namespace room_funcs
         if (verbq("LOOK"))
         {
             rv = true;
-            if (flags()[glacier_flag])
+            if (flags[glacier_flag])
             {
                 tell(gladesc, long_tell1);
                 tell("There is a large passageway leading westward.");
@@ -1326,7 +1327,7 @@ namespace room_funcs
             else
             {
                 tell(gladesc, long_tell1);
-                if (flags()[glacier_melt])
+                if (flags[glacier_melt])
                     tell("Part of the glacier has been melted.");
             }
         }
@@ -1339,7 +1340,7 @@ namespace room_funcs
         if (verbq("LOOK"))
         {
             tell(mirr_desc, long_tell1);
-            if (flags()[mirror_mung])
+            if (flags[mirror_mung])
             {
                 tell("Unfortunately, the mirror has been destroyed by your recklessness.");
             }
@@ -1350,7 +1351,7 @@ namespace room_funcs
 
     bool maint_room()
     {
-        RoomP mnt = find_room("MAINT");
+        const RoomP &mnt = find_room("MAINT");
         bool here = (::here == mnt);
         int lev;
         bool rv = false;
@@ -1378,7 +1379,7 @@ namespace room_funcs
         if (verbq("LOOK"))
         {
             tell(dam_desc, long_tell1);
-            if (flags()[low_tide])
+            if (flags[low_tide])
             {
                 tell(ltide_desc, long_tell1);
             }
@@ -1388,7 +1389,7 @@ namespace room_funcs
             }
             tell("There is a control panel here.  There is a large metal bolt on the \n"
                 "panel. Above the bolt is a small green plastic bubble.", long_tell1);
-            if (flags()[gate_flag])
+            if (flags[gate_flag])
             {
                 tell("The green bubble is glowing.", 1);
             }
@@ -1402,7 +1403,7 @@ namespace room_funcs
         bool rv = false;
         if (verbq("LOOK"))
         {
-            if (flags()[low_tide])
+            if (flags[low_tide])
             {
                 tell("You are in a large cavernous room, the south of which was formerly\n"
                     "a reservoir.");
@@ -1423,7 +1424,7 @@ namespace room_funcs
         bool rv = false;
         if (verbq("LOOK"))
         {
-            if (flags()[low_tide])
+            if (flags[low_tide])
             {
                 tell("You are on what used to be a large reservoir, but which is now a large\n"
                     "mud pile.There are 'shores' to the north and south.", long_tell1);
@@ -1442,7 +1443,7 @@ namespace room_funcs
         bool rv = false;
         if (verbq("LOOK"))
         {
-            if (flags()[low_tide])
+            if (flags[low_tide])
             {
                 tell("You are in a long room, to the north of which was formerly a reservoir.");
                 tell(resdesc, long_tell1);
@@ -1469,7 +1470,7 @@ namespace room_funcs
         VerbP feature = find_verb("FEATU");
         Iterator<ParseContV> v;
 
-        if (flags()[echo_flag] || flags()[dead_flag])
+        if (flags[echo_flag] || flags[dead_flag])
         {
             return true;
         }
@@ -1480,10 +1481,11 @@ namespace room_funcs
                 rapplic random_action;
                 l = readst(b, "");
                 moves++;
+                PrsoType prsot = prso();
                 if ((v = lex(SIterator(b, b.begin()), SIterator(b, b.end()))) &&
                     eparse(v, true) &&
                     (!is_empty(prsvec[0]) && prsa() == walk) &&
-                    !empty(prso()) &&
+                    (!std::get_if<ObjectP>(&prsot) || !empty(prso())) &&
                     memq(as_dir(prsvec[1]), rm->rexits()))
                 {
                     random_action = prsa()->vfcn();
@@ -1502,14 +1504,14 @@ namespace room_funcs
                 else
                 {
                     printstring(b.c_str());
-                    flags()[tell_flag] = true;
+                    flags[tell_flag] = true;
                     crlf();
-                    std::transform(b.begin(), b.end(), b.begin(), [](char c) { return (char) toupper(c); });
+                    std::transform(b.begin(), b.end(), b.begin(), [](char c) { return (char)toupper(c); });
                     if (b.find("ECHO") != std::string::npos)
                     {
                         tell("The acoustics of the room change subtly.");
                         trz(sfind_obj("BAR"), sacredbit);
-                        flags()[echo_flag] = true;
+                        flags[echo_flag] = true;
                         return true;
                     }
                 }
@@ -1524,11 +1526,11 @@ namespace room_funcs
         if (verbq("LOOK"))
         {
             tell("This room has an exit on the west side, and a staircase leading up.");
-            if (flags()[magic_flag])
+            if (flags[magic_flag])
             {
                 tell("The north wall, previously solid, now has a cyclops-sized hole in it.");
             }
-            else if (flags()[cyclops_flag] && trnn(sfind_obj("CYCLO"), sleepbit))
+            else if (flags[cyclops_flag] && trnn(sfind_obj("CYCLO"), sleepbit))
             {
                 tell("The cyclops is sleeping blissfully at the foot of the stairs.");
             }
@@ -1543,7 +1545,7 @@ namespace room_funcs
             else if (wrath < 0)
             {
                 tell("The cyclops, having eaten the hot peppers, appears to be gasping.\n"
-                    "His enflamed tongue protrudes from his man - sized mouth.");
+                    "His enflamed tongue protrudes from his man-sized mouth.");
             }
         }
         else if (verbq("GO-IN"))
@@ -1558,14 +1560,15 @@ namespace room_funcs
     bool carousel_room()
     {
         bool rv = true;
-        if (verbq("GO-IN") && flags()[carousel_zoom])
+        if (verbq("GO-IN") && flags[carousel_zoom])
         {
             jigs_up(spindizzy);
         }
         else if (verbq("LOOK"))
         {
             tell("You are in a circular room with passages off in eight directions.");
-            tell("Your compass needle spins wildly, and you can't get your bearings.");
+            if (!flags[carousel_flip])
+                tell("Your compass needle spins wildly, and you can't get your bearings.");
         }
         else
         {
@@ -1577,13 +1580,14 @@ namespace room_funcs
     bool living_room()
     {
         ObjectP tc;
-        ObjectP door = sfind_obj("DOOR");
+        const ObjectP &door = sfind_obj("DOOR");
         bool rug;
         bool rv = true;
+        const AdvP &winner = *::winner;
 
         if (verbq("LOOK"))
         {
-            if (flags()[magic_flag])
+            if (flags[magic_flag])
             {
                 tell(lroom_desc1, long_tell);
             }
@@ -1591,7 +1595,7 @@ namespace room_funcs
             {
                 tell(lroom_desc2, long_tell);
             }
-            rug = flags()[rug_moved];
+            rug = flags[rug_moved];
 
             if (rug && trnn(door, openbit))
             {
@@ -1617,7 +1621,7 @@ namespace room_funcs
         }
         else
             rv = false;
-return rv;
+        return rv;
     }
 
     bool east_house()
@@ -1625,11 +1629,10 @@ return rv;
         bool handled = false;
         if (verbq("LOOK"))
         {
-            std::stringstream ss;
-            ss << "You are behind the white house.  In one corner of the house there" << std::endl;
-            ss << "is a small window which is ";
-            ss << (trnn(sfind_obj("WINDO"), openbit) ? "open." : "slightly ajar.");
-            tell(ss.str());
+            std::string s = "You are behind the white house.  In one corner of the house there\n"
+                "is a small window which is ";
+            s += trnn(sfind_obj("WINDO"), openbit) ? "open." : "slightly ajar.";
+            tell(s);
             handled = true;
         }
         return handled;
@@ -1637,17 +1640,16 @@ return rv;
 
     bool clearing()
     {
-        ObjectP grate = sfind_obj("GRATE");
-        ObjectP leaves = sfind_obj("LEAVE");
         bool rv = false;
         if (verbq("LOOK"))
         {
+            const ObjectP &grate = sfind_obj("GRATE");
             tell("You are in a clearing, with a forest surrounding you on the west\nand south.");
             if (trnn(grate, openbit))
             {
                 tell("There is an open grating, descending into darkness.", 1);
             }
-            else if (flags()[grate_revealed])
+            else if (flags[grate_revealed])
             {
                 tell("There is a grating securely fastened into the ground.", 1);
             }
@@ -1666,7 +1668,7 @@ return rv;
             {
                 tell("Above you is an open grating with sunlight pouring in.");
             }
-            else if (flags()[grunlock])
+            else if (flags[grunlock])
             {
                 tell("Above you is a grating.");
             }
@@ -1690,7 +1692,7 @@ return rv;
             else
                 tell("slightly ajar.", post_crlf);
         }
-        else if (verbq("GO-IN") && flags()[brflag1] && !flags()[brflag2])
+        else if (verbq("GO-IN") && flags[brflag1] && !flags[brflag2])
         {
             clock_int(broin, 3);
         }
@@ -1710,27 +1712,27 @@ int aos_sos(int foo)
     {
         ++foo;
     }
-    if (flags()[cyclops_flag])
+    if (flags[cyclops_flag])
     {
 
     }
     else
     {
-        tell(cyclomad[abs(foo) - 1]);
+        tell(cyclomad[size_t(abs(foo)) - 1]);
     }
     return foo;
 }
 
 bool xb_cint()
 {
-    flags()[xc] || (here == sfind_room("LLD1") && tell(exor4));
-    flags()[xb] = false;
+    flags[xc] || (here == sfind_room("LLD1") && tell(exor4));
+    flags[xb] = false;
     return true;
 }
 
 bool xbh_cint()
 {
-    RoomP lld = sfind_room("LLD1");
+    const RoomP &lld = sfind_room("LLD1");
     remove_object(sfind_obj("HBELL"));
     insert_object(sfind_obj("BELL"), lld);
     if (here == lld)
@@ -1742,7 +1744,7 @@ bool xbh_cint()
 
 bool xc_cint()
 {
-    flags()[xc] = false;
+    flags[xc] = false;
     return xb_cint();
 }
 
@@ -1820,12 +1822,12 @@ namespace obj_funcs
         }
         else if (verbq({ "MUNG", "BURN" }))
         {
-            if (flags()[on_pole])
+            if (flags[on_pole])
             {
             }
             else
             {
-                flags()[on_pole] = true;
+                flags[on_pole] = true;
                 insert_object(sfind_obj("HPOLE"), sfind_room("LLD2"));
             }
             jigs_up("The voice of the guardian of the dungeon booms out from the darkness\n"
@@ -1838,7 +1840,7 @@ namespace obj_funcs
 
     bool robber_function()
     {
-        auto dem = get_demon("THIEF");
+        auto &dem = get_demon("THIEF");
         bool flg = false;
         ObjectP st;
         ObjectP t = dem->hobj();
@@ -1866,7 +1868,7 @@ namespace obj_funcs
             if (!empty(dem->hobjs_ob()))
             {
                 tell("  His booty remains.");
-                for (ObjectP x : dem->hobjs_ob())
+                for (auto &x : dem->hobjs_ob())
                 {
                     insert_object(x, here);
                 }
@@ -1874,7 +1876,7 @@ namespace obj_funcs
             }
             if (here == sfind_room("TREAS"))
             {
-                for (ObjectP x : here->robjs())
+                for (auto &x : here->robjs())
                 {
                     if (x != chali && x != t)
                     {
@@ -1968,7 +1970,7 @@ namespace obj_funcs
                 dem->hobjs_add(prso);
                 if (prso->otval() > 0)
                 {
-                    flags()[thief_engrossed] = true;
+                    flags[thief_engrossed] = true;
                     tell("The thief is taken aback by your unexpected generosity, but accepts\n"
                         "the " + prso->odesc2() + " and stops to admire its beauty.\n", 1);
                 }
@@ -2016,7 +2018,6 @@ namespace obj_funcs
     bool granite()
     {
         bool rv = false;
-        RoomP here = ::here;
         if (verbq("FIND"))
         {
             rv = true;
@@ -2079,25 +2080,24 @@ namespace obj_funcs
 
     bool cyclops()
     {
-        RoomP rm = here;
-        ObjectP cyc = sfind_obj("CYCLO");
-        ObjectP food = sfind_obj("FOOD");
-        ObjectP drink = sfind_obj("WATER");
+        const ObjectP &cyc = sfind_obj("CYCLO");
+        const ObjectP &food = sfind_obj("FOOD");
+        const ObjectP &drink = sfind_obj("WATER");
         int count = cyclowrath;
 
         bool rv = false;
-        if (flags()[cyclops_flag])
+        if (flags[cyclops_flag])
         {
             if (verbq({ "WAKE", "KICK", "ATTAC", "BURN", "DESTR" }))
             {
                 rv = true;
                 tell("The cyclops yawns and stares at the thing that woke him up.");
-                flags()[cyclops_flag] = false;
+                flags[cyclops_flag] = false;
                 trz(cyc, sleepbit);
                 tro(cyc, fightbit);
                 cyclowrath = abs(count);
             }
-        } 
+        }
         else if (verbq("GIVE"))
         {
             rv = true;
@@ -2118,7 +2118,7 @@ namespace obj_funcs
                     trz(cyc, fightbit);
                     tell("The cyclops looks tired and quickly falls fast asleep (what did you\n"
                         "put in that drink, anyway?).", long_tell1);
-                    flags()[cyclops_flag] = true;
+                    flags[cyclops_flag] = true;
                 }
                 else
                 {
@@ -2195,6 +2195,7 @@ namespace obj_funcs
     {
         bool rv = true;
         ObjectP r;
+        const AdvP &winner = *::winner;
         if (verbq("TAKE"))
         {
             if (memq(sfind_obj("SWORD"), winner->aobjs()))
@@ -2217,8 +2218,9 @@ namespace obj_funcs
 
     bool skeleton()
     {
-        RoomP rm = winner->aroom();
-        RoomP lld = sfind_room("LLD2");
+        const AdvP &winner = *::winner;
+        const RoomP &rm = winner->aroom();
+        const RoomP &lld = sfind_room("LLD2");
         tell(cursestr, long_tell1);
         ObjList l = rob_room(rm, ObjList(), 100);
         l = rob_adv(player(), l);
@@ -2237,8 +2239,8 @@ namespace obj_funcs
     bool glacier()
     {
         bool rv = true;
-        ObjectP t = sfind_obj("TORCH");
-        ObjectP ice = sfind_obj("ICE");
+        auto &t = sfind_obj("TORCH");
+        auto &ice = sfind_obj("ICE");
         if (verbq("THROW"))
         {
             ObjectP prso = ::prso();
@@ -2251,7 +2253,7 @@ namespace obj_funcs
                 torch_off(t);
                 lit(here) || tell("The melting glacier seems to have carried the torch away, leaving\n"
                     "you in the dark.");
-                flags()[glacier_flag] = true;
+                flags[glacier_flag] = true;
             }
             else
             {
@@ -2262,7 +2264,7 @@ namespace obj_funcs
         {
             if (flaming(prsi()))
             {
-                flags()[glacier_melt] = true;
+                flags[glacier_melt] = true;
                 prsi() == t && torch_off(t);
                 jigs_up("Part of the glacier melts, drowning you under a torrent of water.");
             }
@@ -2323,7 +2325,7 @@ namespace obj_funcs
             {
                 tell("With what?");
                 orphan(true, find_action("LIGHT"), c, std::dynamic_pointer_cast<prep_t>(plookup("WITH", words_pobl)));
-                flags()[parse_won] = false;
+                flags[parse_won] = false;
             }
             else if (prsi() == (match = sfind_obj("MATCH")) && trnn(match, onbit))
             {
@@ -2390,17 +2392,16 @@ namespace obj_funcs
     bool mirror_mirror()
     {
         bool rv = true;
-        RoomP rm1, rm2;
-        if (!flags()[mirror_mung] && verbq("RUB"))
+        if (!flags[mirror_mung] && verbq("RUB"))
         {
-            rm1 = here;
-            rm2 = (rm1 == sfind_room("MIRR1") ? sfind_room("MIRR2") : sfind_room("MIRR1"));
+            const RoomP &rm1 = here;
+            const RoomP &rm2 = (rm1 == sfind_room("MIRR1") ? sfind_room("MIRR2") : sfind_room("MIRR1"));
             std::swap(rm1->robjs(), rm2->robjs());
-            for (ObjectP x : rm1->robjs())
+            for (const ObjectP &x : rm1->robjs())
             {
                 x->oroom(rm1);
             }
-            for (ObjectP x : rm2->robjs())
+            for (const ObjectP &x : rm2->robjs())
             {
                 x->oroom(rm2);
             }
@@ -2409,7 +2410,7 @@ namespace obj_funcs
         }
         else if (verbq({ "LKAT", "LKIN", "EXAMI" }))
         {
-            if (flags()[mirror_mung])
+            if (flags[mirror_mung])
             {
                 tell("The mirror is broken into many pieces.");
             }
@@ -2424,14 +2425,14 @@ namespace obj_funcs
         }
         else if (verbq({ "MUNG", "THROW", "POKE" }))
         {
-            if (flags()[mirror_mung])
+            if (flags[mirror_mung])
             {
                 tell("Haven't you done enough already?");
             }
             else
             {
-                flags()[mirror_mung] = true;
-                flags()[lucky] = false;
+                flags[mirror_mung] = true;
+                flags[lucky] = false;
                 tell("You have broken the mirror.  I hope you have a seven years supply of\n"
                     "good luck handy.");
             }
@@ -2454,7 +2455,7 @@ namespace obj_funcs
                 if (water_level == 0)
                 {
                     tro(sfind_obj("LEAK"), ovison);
-                    here->rglobal("RGWATER");
+                    here->rglobal(rgwater);
                     tell("There is a rumbling sound and a stream of water appears to burst\n"
                         "from the east wall of the room (apparently, a leak has occurred in a\n"
                         "pipe.)", long_tell1);
@@ -2480,12 +2481,12 @@ namespace obj_funcs
             }
             else if (prso() == sfind_obj("BRBUT"))
             {
-                flags()[gate_flag] = false;
+                flags[gate_flag] = false;
                 tell("Click.");
             }
             else if (prso() == sfind_obj("YBUTT"))
             {
-                flags()[gate_flag] = true;
+                flags[gate_flag] = true;
                 tell("Click.");
             }
             else
@@ -2532,6 +2533,7 @@ namespace obj_funcs
 
     bool sword()
     {
+        const AdvP &winner = *::winner;
         if (verbq("TAKE") && winner == player())
         {
             sword_demon->haction(sword_glow);
@@ -2568,14 +2570,14 @@ namespace obj_funcs
         }
         else if (verbq("DEAD!"))
         {
-            flags()[troll_flag] = true;
+            flags[troll_flag] = true;
             rv = true;
         }
         else if (verbq("OUT!"))
         {
             trz(a, ovison);
             t->odesc1(trollout);
-            flags()[troll_flag] = true;
+            flags[troll_flag] = true;
         }
         else if (verbq("IN!"))
         {
@@ -2585,7 +2587,7 @@ namespace obj_funcs
                 tell("The troll stirs, quickly resuming a fighting stance.");
             }
             t->odesc1(trolldesc);
-            flags()[troll_flag] = false;
+            flags[troll_flag] = false;
         }
         else if (verbq("1ST?"))
         {
@@ -2634,7 +2636,7 @@ namespace obj_funcs
                 tell("The troll laughs at your puny gesture.");
             }
         }
-        else if (flags()[troll_flag] && verbq("HELLO"))
+        else if (flags[troll_flag] && verbq("HELLO"))
         {
             rv = tell("Unfortunately, the troll cannot hear you.");
         }
@@ -2660,7 +2662,7 @@ namespace obj_funcs
     bool water_function()
     {
         ObjectP prso = ::prso();
-        AdvP me = winner;
+        const AdvP &me = *winner;
         ObjectP b = sfind_obj("BOTTL");
         ParseVec pv = prsvec;
         ObjectP av = me->avehicle();
@@ -2669,6 +2671,7 @@ namespace obj_funcs
         ObjectP rw = sfind_obj("WATER");
         bool pi;
         bool rv = true;
+        const std::initializer_list<const char*> tp = { "TAKE", "PUT" };
 
         if (verbq("GTHRO"))
         {
@@ -2697,7 +2700,7 @@ namespace obj_funcs
         if (w == gw)
         {
             w = rw;
-            if (verbq({ "TAKE", "PUT" }))
+            if (verbq(tp))
                 remove_object(w);
         }
 
@@ -2710,7 +2713,7 @@ namespace obj_funcs
             prsvec[1] = w;
         }
 
-        if (verbq({ "TAKE", "PUT" }) && !pi)
+        if (verbq(tp) && !pi)
         {
             if (av && (av == prsi() || empty(prsi()) && w->ocan() != av))
             {
@@ -2850,7 +2853,7 @@ namespace obj_funcs
                 // Returns false so take will run.
             }
         }
-        else if (verbq("LKUND") && !flags()[grate_revealed])
+        else if (verbq("LKUND") && !flags[grate_revealed])
         {
             tell("Underneath the pile of leaves is a grating.");
             rv = true;
@@ -2868,7 +2871,7 @@ namespace obj_funcs
         }
         else if (verbq("MOVE"))
         {
-            if (flags()[rug_moved])
+            if (flags[rug_moved])
             {
                 rv = tell("Having moved the carpet previously, you find it impossible to move\nit again.");
             }
@@ -2877,14 +2880,14 @@ namespace obj_funcs
                 rv = tell("With a great effort, the rug is moved to one side of the room.\n"
                     "With the rug moved, the dusty cover of a closed trap-door appears.", long_tell1);
                 tro(sfind_obj("DOOR"), ovison);
-                flags()[rug_moved] = true;
+                flags[rug_moved] = true;
             }
         }
         else if (verbq("TAKE"))
         {
             rv = tell("The rug is extremely heavy and cannot be carried.");
         }
-        else if (verbq("LKUND") && !flags()[rug_moved] && !trnn(sfind_obj("DOOR"), openbit))
+        else if (verbq("LKUND") && !flags[rug_moved] && !trnn(sfind_obj("DOOR"), openbit))
         {
             rv = tell("Underneath the rug is a closed trap door.");
         }
@@ -2935,7 +2938,7 @@ namespace obj_funcs
         RoomP groom;
         if (verbq({ "OPEN", "CLOSE" }))
         {
-            if (flags()[grunlock])
+            if (flags[grunlock])
             {
                 open_close(obj = sfind_obj("GRATE"),
                     here == sfind_room("CLEAR") ? "The grating opens." : "The grating opens to reveal trees above you.",
@@ -3003,7 +3006,7 @@ bool fill()
     auto prsvec = ::prsvec;
     if (empty(prsi()))
     {
-        if (gtrnn(here, "RGWATER"))
+        if (gtrnn(here, rgwater))
         {
             prsvec[2] = sfind_obj("GWATE");
         }
@@ -3011,7 +3014,7 @@ bool fill()
         {
             tell("With what?");
             orphan(true, find_action("FILL"), prso(), std::dynamic_pointer_cast<prep_t>((plookup("WITH", words_pobl))));
-            flags()[parse_won] = false;
+            flags[parse_won] = false;
             return false;
         }
     }
@@ -3076,7 +3079,7 @@ bool turner()
 
 bool unlocker()
 {
-    RoomP rm = sfind_room("MGRAT");
+    const RoomP &rm = sfind_room("MGRAT");
     if (object_action())
     {
 
@@ -3085,7 +3088,7 @@ bool unlocker()
     {
         if (prsi() == sfind_obj("KEYS"))
         {
-            flags()[grunlock] = true;
+            flags[grunlock] = true;
             tell("The grate is unlocked.");
             dput("The grate is unlocked.");
         }
@@ -3155,11 +3158,11 @@ namespace obj_funcs
         {
             if (prsi() == sfind_obj("WRENC"))
             {
-                if (flags()[gate_flag])
+                if (flags[gate_flag])
                 {
-                    if (flags()[low_tide])
+                    if (flags[low_tide])
                     {
-                        flags()[low_tide] = false;
+                        flags[low_tide] = false;
                         tell("The sluice gates close and water starts to collect behind the dam.");
                         rtro(reser, rwaterbit);
                         rtrz(reser, rlandbit);
@@ -3167,7 +3170,7 @@ namespace obj_funcs
                     }
                     else
                     {
-                        flags()[low_tide] = true;
+                        flags[low_tide] = true;
                         tell("The sluice gates open and water pours through the dam.");
                         trz(sfind_obj("COFFI"), sacredbit);
                         rtro(reser, rlandbit);
@@ -3210,7 +3213,7 @@ namespace obj_funcs
     {
         RoomP rm = here;
         bool rv = false;
-        if (verbq({"OPEN", "CLOSE"}) && rm == sfind_room("LROOM"))
+        if (verbq({ "OPEN", "CLOSE" }) && rm == sfind_room("LROOM"))
         {
             rv = open_close(prso(), "The door reluctantly opens to reveal a rickety staircase descending\ninto darkness.",
                 "The door swings shut and closes.");
@@ -3231,7 +3234,6 @@ namespace obj_funcs
 
     bool house_function()
     {
-        RoomP here = ::here;
         bool rv = true;
 
         if (rest(here->rid()) != "HOUS")
@@ -3324,12 +3326,11 @@ namespace room_funcs
     bool lld_room()
     {
         bool rv = true;
-        AdvP win = ::winner;
+        const AdvP &win = *winner;
         const ObjList &wobj = win->aobjs();
         ObjectP cand = sfind_obj("CANDL");
         ObjectP bell = sfind_obj("BELL");
-        bool flag = !flags()[lld_flag];
-        RoomP here = ::here;
+        bool flag = !flags[lld_flag];
 
         if (verbq("LOOK"))
         {
@@ -3342,7 +3343,7 @@ namespace room_funcs
         }
         else if (flag && verbq("RING") && prso() == bell)
         {
-            flags()[xb] = true;
+            flags[xb] = true;
             remove_object(bell);
             insert_object(last_it = sfind_obj("HBELL"), here);
             tell(exor1);
@@ -3356,18 +3357,18 @@ namespace room_funcs
             clock_enable(clock_int(xbin, 6));
             clock_enable(clock_int(xbhin, 20));
         }
-        else if (flags()[xb] && memq(cand, wobj) && trnn(cand, onbit) && !flags()[xc])
+        else if (flags[xb] && memq(cand, wobj) && trnn(cand, onbit) && !flags[xc])
         {
-            flags()[xc] = true;
+            flags[xc] = true;
             tell(exor2);
             clock_disable(xbin);
             clock_enable(clock_int(xcin, 3));
         }
-        else if (flags()[xc] && verbq("READ") && prso() == sfind_obj("BOOK"))
+        else if (flags[xc] && verbq("READ") && prso() == sfind_obj("BOOK"))
         {
             tell(exor3, long_tell1);
             remove_object(sfind_obj("GHOST"));
-            flags()[lld_flag] = true;
+            flags[lld_flag] = true;
             clock_disable(xcin);
         }
         else if (verbq("EXORC"))
@@ -3399,7 +3400,7 @@ namespace room_funcs
         bool rv = false;
         if (verbq("LOOK"))
         {
-            rv = tell(lld_desc + (flags()[on_pole] ? ("\n" + lld_desc1) : ""), long_tell1);
+            rv = tell(lld_desc + (flags[on_pole] ? ("\n" + lld_desc1) : ""), long_tell1);
         }
         return rv;
     }
@@ -3410,7 +3411,7 @@ namespace room_funcs
         if (verbq("LOOK"))
         {
             tell(torch_desc, long_tell1);
-            if (flags()[dome_flag])
+            if (flags[dome_flag])
             {
                 tell("A large piece of rope descends from the railing above, ending some\n"
                     "five feet above your head.");
@@ -3423,13 +3424,14 @@ namespace room_funcs
     bool cave2_room()
     {
         bool rv = false;
+        const AdvP &winner = *::winner;
         if (verbq("GO-IN"))
         {
             ObjectP c = sfind_obj("CANDL");
             if (memq(c, winner->aobjs()) && prob(50, 80) && trnn(c, onbit))
             {
-                OlintP foo = c->olint();
-                CEventP bar = foo->ev();
+                const OlintP &foo = c->olint();
+                const CEventP &bar = foo->ev();
                 clock_disable(bar);
                 trz(c, onbit);
                 tell("The cave is very windy at the moment and your candles have blown out.");
@@ -3466,7 +3468,7 @@ namespace room_funcs
         if (verbq("LOOK"))
         {
             tell(dome_desc, long_tell1);
-            if (flags()[dome_flag])
+            if (flags[dome_flag])
             {
                 tell("Hanging down from the railing is a rope which ends about ten feet\n"
                     "from the floor below.");

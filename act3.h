@@ -19,7 +19,7 @@ bool cpgoto(int fx);
 bool enter();
 ScolWalls get_wall(RoomP rm);
 bool go_and_look(RoomP rm);
-bool held(ObjectP obj);
+bool held(const ObjectP &obj);
 bool knock();
 bool maker();
 void numtell(int num, const std::string &str);
@@ -28,15 +28,15 @@ void pcheck();
 bool pdoor(const std::string &str, ObjectP lid, ObjectP keyhole);
 ObjectP pkh(ObjectP keyhole, bool this_ = false);
 bool play();
-ObjectP plid(ObjectP obj1 = sfind_obj("PLID1"), ObjectP obj2 = sfind_obj("PLID2"));
-void plookat(RoomP rm);
+const ObjectP &plid(const ObjectP &obj1 = sfind_obj("PLID1"), const ObjectP &obj2 = sfind_obj("PLID2"));
+void plookat(const RoomP &rm);
 bool put_under();
-bool rope_away(ObjectP rope, RoomP rm);
+bool rope_away(const ObjectP &rope, const RoomP &rm);
 bool scol_clock();
 bool scol_obj(ObjectP obj, int cint, RoomP rm);
-bool scol_through(int cint, RoomP rm);
+bool scol_through(int cint, const RoomP &rm);
 bool sender();
-bool slider(ObjectP obj);
+bool slider(const ObjectP &obj);
 bool smeller();
 bool through(ObjectP obj);
 bool untie_from();
@@ -47,10 +47,10 @@ bool wind();
 bool wisher();
 bool yell();
 bool zgnome_init();
-bool pass_the_bucket(RoomP r, ObjectP b);
+bool pass_the_bucket(const RoomP &r, const ObjectP &b);
 
 namespace obj_funcs
 {
-    bool scol_object(ObjectP obj);
+    bool scol_object(const ObjectP &obj);
     bool slide_cint();
 }

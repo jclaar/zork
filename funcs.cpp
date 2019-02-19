@@ -25,8 +25,6 @@ bool terminal()
 class TtyBuff : public std::basic_stringbuf<char, std::char_traits<char>>
 {
 protected:
-    typedef std::basic_stringbuf<char, std::char_traits<char>> Base;
-
     int sync() override
     {
         auto s = this->str();
@@ -39,13 +37,13 @@ protected:
             // Method for simulating output on an older terminal.
             // Just prints one character at a time with a 10ms
             // delay between each one.
-            std::for_each(s.begin(), s.end(), [](char c)
+            for (auto c : s)
             {
                 using namespace std::chrono_literals;
                 std::cout << c;
                 std::cout.flush();
                 std::this_thread::sleep_for(10ms);
-            });
+            }
         }
         if (script_channel)
         {
@@ -59,13 +57,10 @@ protected:
 TtyBuff tty_buf;
 std::ostream tty(&tty_buf);
 
-std::string &substruc(std::string src, size_t start, size_t end, std::string &dest)
+std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest)
 {
     _ASSERT(dest.size() >= end);
-    for (size_t i = start; i < end; ++i)
-    {
-        dest[i] = src[i];
-    }
+    std::copy(src.begin() + start, src.begin() + end, dest.begin() + start);
     return dest;
 }
 

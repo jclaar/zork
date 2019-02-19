@@ -21,6 +21,8 @@ void Object::save(archive &ar, const unsigned int version) const
     std::list<std::string> conts;
     std::transform(contents.begin(), contents.end(), std::back_inserter(conts), [](ObjectP o) { return o->oid(); });
     ar & conts;
+    ar & _odesc1;
+    ar & desc;
 }
 
 template <class archive>
@@ -46,6 +48,8 @@ void Object::load(archive &ar, const unsigned int version)
     ar & _ostrength;
     std::list<std::string> conts;
     ar & conts;
+    ar & _odesc1;
+    ar & desc;
     contents.clear();
     std::transform(conts.begin(), conts.end(), std::back_inserter(contents), [](const std::string &s)
     {

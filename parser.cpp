@@ -23,23 +23,19 @@ SyntaxP bunch_syn;
 bool gwim_disable = false;
 std::list<VerbP> bunchers;
 
-std::string ostringb = "     ";
-SIterator ostring(ostringb, ostringb.begin() + ostringb.size());
-
 // Takes an input string and lowercases it.
 // first implies that the first letter will remain the same (if it's uppercase)
 // If lc is false, the string will be unchanged.
 std::string foostr(std::string nam, bool first, bool lc)
 {
-    for (size_t i = 0; i < nam.size(); ++i)
-    {
-        if (!lc && (first && i == 0))
+    auto start_iter = nam.begin();
+    if (!lc && first)
+        ++start_iter;
+    std::transform(start_iter, nam.end(), start_iter,
+        [](char c)
         {
-            nam[i] = nam[i];
-        }
-        else
-            nam[i] = tolower(nam[i]);
-    }
+            return tolower(c);
+        });
     return nam;
 }
 
@@ -54,11 +50,10 @@ ObjectP prsi()
 }
 
 
-std::vector<ParseContP> lex_prog()
+std::array<ParseContP, lexsize> lex_prog()
 {
-    std::vector<ParseContP> ls;
-    ls.reserve(lexsize);
-    std::generate_n(std::back_inserter(ls), lexsize, []() { return std::make_shared<ParseCont>(); });
+    std::array<ParseContP, lexsize> ls;
+    std::generate(ls.begin(), ls.end(), []() { return std::make_shared<ParseCont>(); });
     return ls;
 }
 
@@ -211,15 +206,14 @@ Iterator<ParseContV> lex(SIterator s, SIterator sx)
 bool eparse(Iterator<ParseContV> pv, bool vb)
 {
     bool rv;
-    ObjectP bobj = bunch_obj;
+    const ObjectP &bobj = bunch_obj;
     Iterator<ParseContV> unk = unknown;
     Iterator<ParseContV> lv = lexv;
     int len;
-    VerbP verb;
     ParseVecVal obj;
-    std::string str;
     trz(bobj, { climbbit, tiebit, staggered });
-    if ((str = pv[0]->s1) == "AGAIN")
+    std::string str = pv[0]->s1;
+    if (str == "AGAIN")
     {
         swap_em();
         pv = lexv;
@@ -256,7 +250,7 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
                     ActionP act = (pact = std::get_if<ActionP>(&((*pvp)[0]))) ? *pact : ActionP();
                     if (act)
                     {
-                        std::any_cast<ParseVec>(val)[0] = act->vdecl()[0]->sfcn;
+                        std::get<ParseVec>(val)[0] = act->vdecl()[0]->sfcn;
                     }
                     orphan();
                 }
@@ -319,7 +313,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
     ParseVec pvr = put(put(rest(pv), 0, nullptr), 1, nullptr);
     ParseVec andloc;
     PrepVec prepvec = ::prepvec;
-    ObjectP except = sfind_obj("EXCEP");
+    const ObjectP &except = sfind_obj("EXCEP");
     const ActionsPobl &actions = actions_pobl;
     const DirectionsPobl &dirs = directions_pobl;
     ObjectP robj;
@@ -347,9 +341,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
     auto vv = sv;
     while (1)
     {
-        std::string x, y;
-
-        y = vv[0]->s1;              // 144
+        std::string y = vv[0]->s1;              // 144
 
         if (empty(y))
         {
@@ -364,7 +356,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
             }
             else
             {
-                parse_cont == vv;
+                parse_cont = vv;
                 RETURN(true);
             }
         }
@@ -379,7 +371,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
             continue;
         }
 
-        x = y;                      // 154
+        std::string x = y;                      // 154
 
         bool cont_proc = true;
 
@@ -532,7 +524,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
             }
             else if (!orph->oname().empty() &&                     // 233
                 std::get_if<ObjectP>(&back(pvr)[0]) && (nobj = as_obj(back(pvr)[0])) &&
-                this_it(x, nobj, nullptr, std::optional<std::vector<std::string>*>()))
+                this_it(x, nobj, nullptr, Globals()))
             {
                 // NOP
                 cont_proc = false;
@@ -576,7 +568,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
                 {
                     if (!vb)
                     {
-                        tell("I can't reach that from inside the " + (robj = winner->avehicle())->odesc2() + ".", 1);
+                        tell("I can't reach that from inside the " + (robj = (*winner)->avehicle())->odesc2() + ".", 1);
                     }
                     orphan();
                     RETURN(false);
@@ -585,7 +577,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
                 else
                 {
                     aval = action ? action : ((orfl && orph->overb()) ? orph->overb() : ActionP());
-                    ActionP the_action = std::get<ActionP>(aval);
+                    const ActionP &the_action = std::get<ActionP>(aval);
                     orphan(true,
                         the_action,
                         as_obj(pv[1]), prep, y.substr(0, 5));
@@ -744,7 +736,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
     return val;
 }
 
-OrphanP orphan(bool flag, ActionP action, OrphanSlotType slot1, PrepP prep,
+const OrphanP &orphan(bool flag, ActionP action, OrphanSlotType slot1, PrepP prep,
     const std::string &name, OrphanSlotType slot2)
 {
     if (flag)
@@ -853,7 +845,7 @@ StuffVecP stuff_obj(ObjectP obj, PrepP prep, PrepVec prepvec, ParseVec pvr, bool
     }
 }
 
-ObjectP is_global(ObjectP obj, const std::vector<std::string> &global)
+ObjectP is_global(const ObjectP &obj, const std::vector<Bits> &gflags)
 {
     // This is a global object if it can be cast into a GObject,
     // and it's in the global list.
@@ -861,10 +853,11 @@ ObjectP is_global(ObjectP obj, const std::vector<std::string> &global)
     if (go)
     {
         // If there is no name, then just return it.
-        if (go->name().empty())
+        if (!go->gbits().has_value())
             return go;
+
         // Otherwise, check to see if it's in the passed list.
-        if (std::find(global.begin(), global.end(), go->name()) != global.end())
+        if (std::find(gflags.begin(), gflags.end(), go->gbits()) != gflags.end())
             return go;
     }
     return ObjectP();
@@ -875,7 +868,7 @@ ObjectP is_global(ObjectP obj, const std::vector<std::string> &global)
 // Object is visible
 // Object name matches the obj
 // If adjective is specified, the adjective must match the object as well.
-bool this_it(const std::string &objname, ObjectP obj, AdjectiveP adj, std::optional<const std::vector<std::string>*> global)
+bool this_it(const std::string &objname, ObjectP obj, AdjectiveP adj, Globals global)
 {
     bool rv = false;
     // Continue if not searching for globals, or if this is a global object.
@@ -895,14 +888,14 @@ bool this_it(const std::string &objname, ObjectP obj, AdjectiveP adj, std::optio
     return rv;
 }
 
-Nefals search_list(const std::string objnam, const ObjList &slist, AdjectiveP adj, bool first, const Globals &global)
+Nefals search_list(const std::string &objnam, const ObjList &slist, const AdjectiveP &adj, bool first, const Globals &global)
 {
     ObjectP oobj;
     Nefals nobj;
     Nefals nefals = ::nefals;
     bool ambig_empty = false;
 
-    for (ObjectP obj : slist)
+    for (auto &obj : slist)
     {
         Nefals result;
         if ((result = [&]() -> Nefals
@@ -985,7 +978,7 @@ Nefals get_object(const std::string &objnam, AdjectiveP adj)
 {
     ObjectP obj;
     ObjectP oobj;
-    ObjectP av = winner->avehicle();
+    ObjectP av = (*winner)->avehicle();
     bool chomp = false;
     bool lit = ::lit(here);
     Nefals rv;
@@ -1019,7 +1012,7 @@ Nefals get_object(const std::string &objnam, AdjectiveP adj)
         }
     }
 
-    if (obj = search_list(objnam, winner->aobjs(), adj).first)
+    if (obj = search_list(objnam, (*winner)->aobjs(), adj).first)
     {
         if (oobj)
         {
@@ -1061,7 +1054,7 @@ Nefals get_object(const std::string &objnam, AdjectiveP adj)
     else if (adj)
     {
         const ObjList &obj_list = plookup(objnam, object_pobl());
-        if (!obj_list.empty() && (obj = obj_list.front()) && (!obj->oglobal().empty() && gtrnn(here, obj->oglobal())))
+        if (!obj_list.empty() && (obj = obj_list.front()) && (obj->oglobal().has_value() && gtrnn(here, obj->oglobal().value())))
         {
             return Nefals(obj, 0);
         }
@@ -1072,8 +1065,7 @@ Nefals get_object(const std::string &objnam, AdjectiveP adj)
 ObjectP get_it_obj()
 {
     ObjectP li = last_it;
-    RoomP here = ::here;
-    AdvP player = ::player();
+    const AdvP &player = ::player();
     ObjectP obj;
     if (orphans->oslot1() && (obj = orphans->oslot1()) && obj && (in_room(obj, here) || memq(obj, player->aobjs())))
     {
@@ -1097,7 +1089,7 @@ ObjectP get_it_obj()
 
 ObjectP get_last(ObjList &l)
 {
-    for (ObjectP x : l)
+    for (const ObjectP &x : l)
     {
         if (trnn(x, ovison))
             return x;
@@ -1105,12 +1097,13 @@ ObjectP get_last(ObjList &l)
     return ObjectP();
 }
 
-std::string lcify(std::string str, size_t len)
+std::string lcify(const std::string &str, size_t len)
 {
-    auto iter = str.begin();
-    auto end = (len == std::string::npos) ? str.end() : (iter + len);
-    std::transform(iter, end, iter, [](char c) { return tolower(c); });
-    return std::string(str.begin(), end);
+    std::string rv;
+    std::string::const_iterator end = len == std::string::npos ? str.end() : (str.begin() + len);
+    std::transform(str.begin(), end,
+        std::back_inserter(rv), tolower);
+    return rv;
 }
 
 bool syn_match(ParseVec pv)
@@ -1126,7 +1119,7 @@ bool syn_match(ParseVec pv)
     VargP synn;
     PrepP prep = orph->oflag() ? orph->oprep() : PrepP();
 
-    for (SyntaxP syn : action->vdecl())
+    for (const SyntaxP &syn : action->vdecl())
     {
         auto cond2 = [&]()
         {
@@ -1231,7 +1224,7 @@ bool syn_equal(VargP varg, OrphanSlotType pobj)
     return rv;
 }
 
-bool take_it_or_leave_it(SyntaxP syn, ParseVec pv)
+bool take_it_or_leave_it(const SyntaxP &syn, ParseVec pv)
 {
     ParseVecVal pv1 = pv[1];
     ParseVecVal pv2 = pv[2];
@@ -1273,10 +1266,10 @@ bool take_it_or_leave_it(SyntaxP syn, ParseVec pv)
 
 // TAKE-IT -- takes object, parse-vector, and syntax bits, tries to perform a TAKE of
 // the object from the room.Its value is more or less ignored.
-bool take_it(ObjectP obj, VargP varg)
+bool take_it(const ObjectP &obj, VargP varg)
 {
     ObjectP to;
-    if (!obj->oglobal().empty())
+    if (obj->oglobal().has_value())
     {
     }
     else
@@ -1346,9 +1339,7 @@ bool take_it(ObjectP obj, VargP varg)
 bool do_take(ObjectP obj)
 {
     ParseVec pv = prsvec;
-    ParseVecVal sav1 = pv[0];
-    ParseVecVal sav2 = pv[1];
-    ParseVecVal sav3 = pv[2];
+    const ParseVecVal sav[] = { pv[0],pv[1], pv[2] };
 
     pv[0] = find_verb("TAKE");
     pv[1] = obj;
@@ -1359,9 +1350,7 @@ bool do_take(ObjectP obj)
     else
         res = takefn2(true);
 
-    pv[0] = sav1;
-    pv[1] = sav2;
-    pv[2] = sav3;
+    std::copy(std::begin(sav), std::end(sav), std::begin(pv));
 
     return res;
 }
@@ -1375,18 +1364,32 @@ bool orfeo(int slot, const VargP &syn, ParseVec objs)
 
     _ASSERT(slot == 1 || slot == 2);
     OrphanSlotType orphan;
+    ObjectP the_obj;
     switch (slot)
     {
     case 1:
         if (orph->oslot1())
+        {
             orphan = orph->oslot1();
+            the_obj = std::get<ObjectP>(orphan);
+        }
         break;
     case 2:
         orphan = orph->oslot2();
+        // Not quite right here but at least it doesn't
+        // crash anymore.
+        if (PhraseP *pp = std::get_if<PhraseP>(&orphan))
+        {
+            the_obj = (*pp)->obj();
+        }
+        else if (ObjectP *op = std::get_if<ObjectP>(&orphan))
+        {
+            the_obj = *op;
+        }
         break;
     }
     // The slot is a one-based index in MDL, so subtract one for C++;
-    return syn_equal(syn, orphan) && put(objs, slot-1, std::get<ObjectP>(orphan));
+    return syn_equal(syn, orphan) && put(objs, slot-1, the_obj);
 }
 
 // ---------------------------------------------------------------------
@@ -1421,7 +1424,8 @@ Nefals gwim(const std::bitset<numbits> &bits, VargP fword)
     bool dont_care = !(vtrnn(fword, vcbit));
     ObjectP aobj;
     Nefals robj;
-    ObjectP av = winner->avehicle();
+    const AdvP &winner = *::winner;
+    const ObjectP &av = winner->avehicle();
 
     if (baobj)
     {
@@ -1448,10 +1452,17 @@ Nefals gwim(const std::bitset<numbits> &bits, VargP fword)
     return Nefals(aobj, 0);
 }
 
+Nefals fwim(Bits b, const ObjList &objs, bool no_care)
+{
+    std::bitset<numbits> bs;
+    bs.set(b);
+    return fwim(bs, objs, no_care);
+}
+
 Nefals fwim(const std::bitset<numbits> &bit, const ObjList &objs, bool no_care)
 {
     ObjectP nobj;
-    for (ObjectP x : objs)
+    for (const ObjectP &x : objs)
     {
         if (trnn(x, ovison) && (no_care || trnn(x, takebit)) && trnn(x, bit))
         {
@@ -1461,7 +1472,7 @@ Nefals fwim(const std::bitset<numbits> &bit, const ObjList &objs, bool no_care)
         }
         if (trnn(x, ovison) && trnn(x, transbit))
         {
-            for (ObjectP x2 : x->ocontents())
+            for (const ObjectP &x2 : x->ocontents())
             {
                 if (trnn(x2, ovison) && trnn(x2, bit))
                 {

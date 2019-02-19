@@ -9,9 +9,9 @@
 #define D "%D%"
 #define W "%W%"
 
-const std::vector<std::vector<std::string>> &cyclops_melee()
+const tofmsgs &cyclops_melee()
 {
-    static const std::vector<std::vector<std::string>> cm =
+    static const tofmsgs cm =
     {
         {   "The Cyclops misses, but the backwash almost knocks you over.",
             "The Cyclops rushes you, but runs into the wall.",
@@ -64,9 +64,9 @@ const std::vector<std::vector<std::string>> &cyclops_melee()
     };
     return cm;
 };
-const std::vector<std::vector<std::string>> &knife_melee()
+const tofmsgs &knife_melee()
 {
-    static const std::vector<std::vector<std::string>> km =
+    static const tofmsgs km =
     {
         {
             "Your stab misses the " D " by an inch.",
@@ -108,9 +108,9 @@ const std::vector<std::vector<std::string>> &knife_melee()
     return km;
 }
 
-const std::vector<std::vector<std::string>> &sword_melee()
+const tofmsgs &sword_melee()
 {
-    static const std::vector<std::vector<std::string>> sm =
+    static const tofmsgs sm =
     {
         {
             "Your swing misses the " D " by an inch.",
@@ -152,9 +152,9 @@ const std::vector<std::vector<std::string>> &sword_melee()
     return sm;
 }
 
-const std::vector<std::vector<std::string>> &thief_melee()
+const tofmsgs &thief_melee()
 {
-    static const std::vector<std::vector<std::string>> tm =
+    static const tofmsgs tm =
     {
         {
             "The thief stabs nonchalantly with his stiletto and misses.",
@@ -214,9 +214,9 @@ const std::vector<std::vector<std::string>> &thief_melee()
     return tm;
 }
 
-const std::vector<std::vector<std::string>> &troll_melee()
+const tofmsgs &troll_melee()
 {
-    static const std::vector<std::vector<std::string>> tm =
+    static const tofmsgs tm =
     {
         {
             "The troll swings his axe, but it misses.",

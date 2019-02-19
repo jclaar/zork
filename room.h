@@ -13,7 +13,8 @@
 #include "object.h"
 #include "roomfns.h"
 
-typedef std::tuple<ObjectSlots, std::any> RP;
+typedef std::variant<int, std::vector<Bits>> RPValue;
+typedef std::tuple<ObjectSlots, RPValue> RP;
 inline RP rg(const std::initializer_list<Bits> &rb)
 {
     std::vector<Bits> bits(rb);
@@ -55,13 +56,13 @@ public:
     }
 
     ex_rapplic cxaction() const { return _fn; }
-    RoomP cxroom() const;
+    const RoomP &cxroom() const;
     const std::string &cxstr() const { return _desc; }
 
     bool cxflag() const {
         if (auto fid = std::get_if<FlagId>(&_flid))
         {
-            return flags()[*fid];
+            return flags[*fid];
         }
         return false;
     }
@@ -90,9 +91,9 @@ public:
     ex_rapplic daction() const {
         return _fn;
     }
-    ObjectP dobj() const;
-    RoomP droom1() const;
-    RoomP droom2() const;
+    const ObjectP &dobj() const;
+    const RoomP &droom1() const;
+    const RoomP &droom2() const;
     const std::string &dstr() const { return _str; }
     void dstr(const std::string &s) { _str = s; }
 
@@ -108,7 +109,7 @@ typedef std::shared_ptr<DoorExit> DoorExitPtr;
 class SetgExit
 {
 public:
-    SetgExit(const std::string &name, CExitPtr cep) : sname(name), ce(cep) {}
+    SetgExit(const std::string &name, const CExitPtr &cep) : sname(name), ce(cep) {}
 
     const std::string &name() const { return sname; }
     CExitPtr cexit() { return ce; }
@@ -126,7 +127,7 @@ class Room
 public:
 	Room(const std::string &rid, const std::string &, const std::string &d2,
         const std::initializer_list<Ex> &exits,
-        const std::initializer_list<ObjectP> &contents,
+        const std::initializer_list<const char*> &contents,
         rapplic roomf,
         const std::initializer_list<Bits> &rb,
         const std::initializer_list<RP> &room_slots);
@@ -138,8 +139,8 @@ public:
     ObjList &robjs() { return _contents; }
     const ObjList &robjs() const { return _contents; }
     const std::vector<Ex> &rexits() const { return _exits; }
-    const std::vector<std::string> &rglobal() const { return _rglobal; }
-    void rglobal(const std::string &new_global) { _rglobal.push_back(new_global); }
+    const std::vector<Bits> &rglobal() const { return _rglobal; }
+    void rglobal(Bits new_global) { _rglobal.push_back(new_global); }
     std::bitset<numbits> &rbits() { return _room_bits; }
     rapplic raction() const { return _room_fn; }
     int rval() const;
@@ -150,6 +151,9 @@ public:
         _room_bits = src._room_bits;
         _rval = src._rval;
         robjs() = src.robjs();
+        // Also have to save the room description, since mung_room
+        // might change it.
+        _desc1 = src.rdesc1();
     }
 
 private:
@@ -166,6 +170,7 @@ private:
             return o->oid();
         });
         ar & rob;
+        ar & _desc1;
     }
 
     template <class archive>
@@ -175,6 +180,7 @@ private:
         ar & _rval;
         std::list<std::string> rob;
         ar & rob;
+        ar & _desc1;
         robjs().clear();
         std::transform(rob.begin(), rob.end(), std::back_inserter(robjs()), [](const std::string &oid)
         {
@@ -189,18 +195,18 @@ private:
     std::string _desc2;
     int _rval = 0;
     std::bitset<numbits> _room_bits;
-    std::vector<std::string> _rglobal;
+    std::vector<Bits> _rglobal;
     std::vector<Ex> _exits;
     ObjList _contents;
-    rapplic _room_fn;
+    rapplic _room_fn = nullptr;
 };
 
 void init_rooms();
-RoomP get_room(const char *rid, RoomP init_val = RoomP());
-RoomP get_room(const std::string &rid, RoomP init_val = RoomP());
-RoomP find_room(const std::string &rid);
-RoomP sfind_room(const std::string &s);
-RoomP sfind_room(const char *s);
+const RoomP &get_room(const char *rid, RoomP init_val = RoomP());
+const RoomP &get_room(const std::string &rid, RoomP init_val = RoomP());
+const RoomP &find_room(const std::string &rid);
+const RoomP &sfind_room(const std::string &s);
+const RoomP &sfind_room(const char *s);
 std::list<RoomP> &rooms();
 std::map<std::string, RoomP> &room_map();
 

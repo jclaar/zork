@@ -27,7 +27,7 @@ RoomP here;
 rapplic dead_player = nullptr;
 int raw_score = 0;
 int moves = 0;
-AdvP winner;
+const AdvP *winner;
 direction fromdir = NumDirs;
 Iterator<ParseContV> parse_cont;
 bool bugflag = false;
@@ -70,7 +70,7 @@ std::string remarkably_disgusting_code()
 std::string unspeakable_code()
 {
     int len_i = 0;
-    ObjectP O = sfind_obj("PAPER");
+    const ObjectP &O = sfind_obj("PAPER");
     const std::string &oread = O->oread();
     auto pos = oread.find_first_of('/');
     if (oread[pos - 2] == '1')
@@ -91,16 +91,16 @@ std::string unspeakable_code()
 void contin(bool foo)
 {
     excruciatingly_untasteful_code();
-    winner = player();
+    winner = &player();
     room_info(3);
 }
 
 int score(bool ask)
 {
-    bool eg = flags()[end_game_flag];
+    bool eg = flags[end_game_flag];
     int scor, smax;
     float pct;
-    flags()[tell_flag] = true;
+    flags[tell_flag] = true;
     princ("Your score ");
     if (eg)
         princ("in the end game ");
@@ -111,7 +111,7 @@ int score(bool ask)
     if (eg)
         prin1(scor = eg_score);
     else
-        prin1(scor = winner->ascore());
+        prin1(scor = (*winner)->ascore());
 
     princ(" [total of ");
     prin1(smax = (eg ? eg_score_max : score_max()));
@@ -151,11 +151,10 @@ int score(bool ask)
     return scor;
 }
 
-bool goto_(RoomP rm, AdvP win)
+bool goto_(const RoomP &rm, const AdvP &win)
 {
     bool rv = false;
-    ObjectP av = winner->avehicle();
-    RoomP here = ::here;
+    const ObjectP &av = (*winner)->avehicle();
     bool lb = rtrnn(rm, rlandbit);
     if (!lb && (!av || !rtrnn(rm, av->ovtype())) ||
         (rtrnn(here, rlandbit) && lb && av && !rtrnn(rm, av->ovtype())))
@@ -166,7 +165,7 @@ bool goto_(RoomP rm, AdvP win)
         }
         else if (rm->rbits() == 0)
         {
-            tell("		Halt!Excavation in Progress!\n"
+            tell("		Halt! Excavation in Progress!\n"
                 "      Frobozz Magic Implementation Company");
         }
         else
@@ -201,7 +200,7 @@ bool goto_(RoomP rm, AdvP win)
 int weight(const ObjList &objl)
 {
     int w = 0;
-    for (ObjectP obj : objl)
+    for (const ObjectP &obj : objl)
     {
         w += obj->osize();
         w += weight(obj->ocontents());
@@ -209,7 +208,7 @@ int weight(const ObjList &objl)
     return w;
 }
 
-void score_room(RoomP rm)
+void score_room(const RoomP &rm)
 {
     int temp = rm->rval();
     if (temp > 0)
@@ -222,7 +221,7 @@ void score_room(RoomP rm)
 void start(const std::string &rm, const std::string &st)
 {
     here = find_room(rm);
-    winner->aroom(here);
+    (*winner)->aroom(here);
     tell(st);
     if (!msg_string.empty())
         tell(msg_string);
@@ -238,7 +237,7 @@ void save_it(bool strt)
     raw_score = 0;
     deaths = 0;
     moves = 0;
-    winner = player();
+    winner = &player();
     srand((unsigned int)time(NULL));
     start("WHOUS", st);
 }
@@ -246,14 +245,13 @@ void save_it(bool strt)
 bool object_action()
 {
     bool rv = false;
-    if (prsi())
+    if (auto pi = prsi())
     {
-        rv = apply_object(prsi());
+        rv = apply_object(pi);
     }
     if (!rv && !is_empty(prso()))
     {
-        ObjectP op = prso();
-        if (op)
+        if (ObjectP op = prso())
         {
             rv = apply_object(op);
         }
@@ -261,10 +259,10 @@ bool object_action()
     return rv;
 }
 
-bool long_desc_obj(ObjectP obj, int full, bool fullq, bool first)
+bool long_desc_obj(const ObjectP &obj, int full, bool fullq, bool first)
 {
     bool rv = false;
-    if (!full && (flags()[super_brief] || (!fullq && flags()[brief_flag])))
+    if (!full && (flags[super_brief] || (!fullq && flags[brief_flag])))
     {
         if (first)
         {
@@ -291,18 +289,18 @@ bool long_desc_obj(ObjectP obj, int full, bool fullq, bool first)
     }
     else
     {
-        std::string str;
+        const std::string *str;
         if (trnn(obj, touchbit) || obj->odesco().empty())
         {
-            str = obj->odesc1();
+            str = &obj->odesc1();
         }
         else
         {
-            str = obj->odesco();
+            str = &obj->odesco();
         }
-        if (!str.empty())
+        if (!str->empty())
         {
-            tell(str, long_tell);
+            tell(*str, long_tell);
             rv = true;
         }
     }
@@ -323,17 +321,17 @@ bool room_name()
 bool room_obj()
 {
     room_info(1);
-    if (!flags()[tell_flag])
+    if (!flags[tell_flag])
         tell("I see no objects here.");
     return true;
 }
 
 bool room_info(std::optional<int> full)
 {
-    ObjectP av = winner->avehicle();
+    auto &av = (*winner)->avehicle();
     RoomP rm = ::here;
     ParseVecVal prso = prsvec[1];
-    ObjectP winobj = sfind_obj("#####");
+    auto &winobj = sfind_obj("#####");
     bool fullq = false;
     bool first = true;
     rapplic ra;
@@ -375,7 +373,7 @@ bool room_info(std::optional<int> full)
 
         tell(rm->rdesc2());
 
-        if (!full && flags()[super_brief] || rtrnn(rm, rseenbit) && (flags()[brief_flag] || prob(80)) && !full)
+        if (!full && flags[super_brief] || rtrnn(rm, rseenbit) && (flags[brief_flag] || prob(80)) && !full)
         {
         }
         else if (empty(rm->rdesc1()) && (ra = rm->raction()))
@@ -398,7 +396,7 @@ bool room_info(std::optional<int> full)
     {
         tell("I can't see anything.");
     }
-    else if (!full && !flags()[no_obj_print] || full && !((full.value() & 1) == 0))
+    else if (!full && !flags[no_obj_print] || full && !((full.value() & 1) == 0))
     {
         for (ObjectP x : rm->robjs())
         {
@@ -419,11 +417,11 @@ bool room_info(std::optional<int> full)
                 }
                 if (trnn(x, actorbit))
                 {
-                    invent(x->oactor());
+                    invent(*x->oactor());
                 }
                 else if (see_inside(x))
                 {
-                    print_cont(x, av, winobj, indentstr, full.has_value() || !flags()[super_brief] && !flags()[brief_flag]);
+                    print_cont(x, av, winobj, indentstr, full.has_value() || !flags[super_brief] && !flags[brief_flag]);
                 }
             }
         }
@@ -439,14 +437,14 @@ bool room_info(std::optional<int> full)
     return true;
 }
 
-bool invent(AdvP win)
+bool invent(const AdvP &win)
 {
     bool any = false;
-    for (ObjectP x : win->aobjs())
+    for (auto &x : win->aobjs())
     {
         if (trnn(x, ovison))
         {
-            auto prog = [&any, x, win]()
+            if (!any)
             {
                 if (win == player())
                 {
@@ -457,11 +455,6 @@ bool invent(AdvP win)
                     tell("The " + win->aobj()->odesc2() + " is carrying:", post_crlf);
                 }
                 any = true;
-            };
-
-            if (!any)
-            {
-                prog();
             }
             tell("A " + x->odesc2(), 0);
 
@@ -482,34 +475,34 @@ bool invent(AdvP win)
     return true;
 }
 
-void print_cont(ObjectP obj, ObjectP av, ObjectP winobj, SIterator indent, bool caseq)
+void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &winobj, SIterator indent, bool caseq)
 {
     const ObjList &cont = obj->ocontents();
     bool tobj = false;
     bool also = false;
     if (!cont.empty())
     {
-        if (flags()[super_brief] || obj == sfind_obj("TCASE"))
+        if (flags[super_brief] || obj == sfind_obj("TCASE"))
         {
             tobj = true;
         }
         else
         {
-            for (ObjectP y : cont)
+            for (auto &y : cont)
             {
-                std::string str;
                 if (av && y == winobj)
                 {
                     // Do nothing
                 }
                 else
                 {
+                    const std::string *str;
                     if (trnn(y, ovison) &&
                         !trnn(y, touchbit) &&
-                        !(str = y->odesco()).empty())
+                        !(str = &y->odesco())->empty())
                     {
                         also = true;
-                        tell(str);
+                        tell(*str);
                         if (see_inside(y))
                         {
                             print_cont(y, av, winobj, back(indent));
@@ -531,13 +524,13 @@ void print_cont(ObjectP obj, ObjectP av, ObjectP winobj, SIterator indent, bool 
         }
         else if (tobj && !(length(cont) == 1 && cont.front() == sfind_obj("#####")))
         {
-            tell(indent, 0);
+            tell(std::string(indent), 0);
             tell("The " + obj->odesc2() + (also ? " also contains:" : " contains:"));
         }
 
         if (tobj)
         {
-            for (ObjectP y : obj->ocontents())
+            for (auto &y : obj->ocontents())
             {
                 if (av && y == winobj)
                 {
@@ -585,7 +578,6 @@ void rdcom(Iterator<ParseContV> ivec)
     ParseVec rvec;
     int inplen = 1;
     std::string inbuf;
-    AdvP winner = ::winner;
     ObjectP av;
     ParseVecVal cv;
     Iterator<ParseContV> rv;
@@ -593,7 +585,7 @@ void rdcom(Iterator<ParseContV> ivec)
 
     if (!ivec)
     {
-        if (!flags()[tell_flag])
+        if (!flags[tell_flag])
             room_info(0);
     }
 
@@ -611,7 +603,7 @@ void rdcom(Iterator<ParseContV> ivec)
         }
         else if (!ivec)
         {
-            flags()[tell_flag] = false;
+            flags[tell_flag] = false;
             static const std::string prompt = ">";
             inplen = readst(inbuf, prompt);
             if (inplen > 0 && inbuf[0] == ';' || inplen == 0)
@@ -633,38 +625,6 @@ void rdcom(Iterator<ParseContV> ivec)
                 room_info();
                 continue;
             }
-            else if (inbuf.find("oloc", 0) == 0)
-            {
-                std::transform(inbuf.begin(), inbuf.end(), inbuf.begin(), toupper);
-                auto pos = inbuf.find_first_of(' ');
-                if (pos != std::string::npos)
-                {
-                    ++pos;
-                    std::string oid = inbuf.substr(pos);
-                    ObjectP o = find_obj(oid, false);
-                    if (o)
-                    {
-                        tell("The " + o->odesc2() + " is ", no_crlf);
-                        if (o->oroom())
-                        {
-                            tell("in " + o->oroom()->rid() + ".");
-                        }
-                        else
-                        {
-                            tell("not in a room.");
-                        }
-                    }
-                    else
-                    {
-                        tell("Object " + oid + " not found.");
-                    }
-                }
-                else
-                {
-                    tell("No object specified.");
-                }
-                continue;
-            }
 
             vc = lex(SIterator(inbuf, inbuf.begin()), SIterator(inbuf, inbuf.end()));
         }
@@ -678,10 +638,10 @@ void rdcom(Iterator<ParseContV> ivec)
                     eparse(rv, false) &&
                     std::get_if<VerbP>(&(cv = (rvec = prsvec)[0])));
             };
-            if (flags()[parse_won] = pfn())   // 728
+            if (flags[parse_won] = pfn())   // 728
             {
                 no_tell = false;
-                if (random_action = winner->aaction())
+                if (random_action = (*winner)->aaction())
                 {
                     if (apply_random(random_action))
                     {
@@ -691,7 +651,7 @@ void rdcom(Iterator<ParseContV> ivec)
                         continue;
                     }
                 }
-                if ((av = winner->avehicle()) &&
+                if ((av = (*winner)->avehicle()) &&
                     (random_action = av->oaction()))  // 736
                 {
                     vval = !apply_random(random_action, read_in);
@@ -715,18 +675,18 @@ void rdcom(Iterator<ParseContV> ivec)
             }
             else if (ivec)
             {
-                if (flags()[tell_flag])
+                if (flags[tell_flag])
                     tell("Please input the entire command again.");
                 else
                     tell("Nothing happens.");
                 return;
             }
 
-            flags()[tell_flag] || tell("Nothing happens.");
+            flags[tell_flag] || tell("Nothing happens.");
         }
         else
         {
-            flags()[parse_won] = false;
+            flags[parse_won] = false;
         }
         if (bugflag)
         {
@@ -735,10 +695,9 @@ void rdcom(Iterator<ParseContV> ivec)
         }
         else
         {
-            for (HackP x : demons)
+            for (const HackP &x : demons)
             {
-                hackfn random_action;
-                if ((random_action = x->haction()))
+                if (auto random_action = x->haction())
                 {
                     no_tell = 0;
                     apply_random(random_action, x);
@@ -746,7 +705,7 @@ void rdcom(Iterator<ParseContV> ivec)
             }
         }
         no_tell = 0;
-        if (flags()[parse_won] && (av = winner->avehicle()) && (random_action = av->oaction()))
+        if (flags[parse_won] && (av = (*winner)->avehicle()) && (random_action = av->oaction()))
         {
             apply_random(random_action, read_out);
         }
@@ -761,7 +720,7 @@ void rdcom(Iterator<ParseContV> ivec)
 
 void score_bless()
 {
-    int num = winner->ascore();
+    int num = (*winner)->ascore();
     int ms = score_max();
     if (num >= ms || (deaths == 1 && num >= ms - 10))
     {
@@ -771,41 +730,40 @@ void score_bless()
 
 void score_upd(int num)
 {
-    if (flags()[end_game_flag])
+    if (flags[end_game_flag])
     {
         eg_score += num;
     }
     else
     {
         raw_score += num;
-        winner->ascore(winner->ascore() + num);
+        (*winner)->ascore((*winner)->ascore() + num);
         score_bless();
     }
 }
 
 bool jigs_up(const std::string &desc, bool player)
 {
-    ObjectP lamp = sfind_obj("LAMP");
-    RoomP lamp_location;
+    const ObjectP &lamp = sfind_obj("LAMP");
     ObjList val_list;
-    ObjectP lc, c;
-    ObjList aobjs = winner->aobjs();
+    ObjectP c;
+    ObjList aobjs = (*winner)->aobjs();
 
     no_tell = 0;
     tell(desc);
 
-    if (winner != ::player() && !player)
+    if (*winner != ::player() && !player)
     {
-        tell("The " + winner->aobj()->odesc2() + " has died.");
-        remove_object(winner->aobj());
-        winner->aroom(sfind_room("FCHMP"));
+        tell("The " + (*winner)->aobj()->odesc2() + " has died.");
+        remove_object((*winner)->aobj());
+        (*winner)->aroom(sfind_room("FCHMP"));
 		return false;
     }
 
     score_upd(-10);
-    winner->avehicle(nullptr);
+    (*winner)->avehicle(nullptr);
     remove_object(sfind_obj("#####"));
-    if (flags()[end_game_flag])
+    if (flags[end_game_flag])
     {
         tell("Normally I could attempt to rectify your condition, but I'm ashamed\n"
             "to say my abilities are not equal to dealing with your present state\n"
@@ -823,20 +781,20 @@ bool jigs_up(const std::string &desc, bool player)
 
     ++deaths;
     tell(death, 3);
-    flags()[dead] = true;
+    flags[dead] = true;
     gwim_disable = true;
     always_lit = true;
     ::player()->aaction(dead_player);
 
-    for (ObjectP x : here->robjs())
+    for (ObjectP &x : here->robjs())
     {
         trz(x, fightbit);
     }
     tro(sfind_obj("ROBOT"), ovison);
 
-    if (lamp_location = lamp->oroom())
+    if (const RoomP &lamp_location = lamp->oroom())
     {
-        if (lc = lamp->ocan())
+        if (const ObjectP &lc = lamp->ocan())
         {
             lc->ocontents() = splice_out(lamp, lc->ocontents());
             lamp->oroom(nullptr);
@@ -865,28 +823,28 @@ bool jigs_up(const std::string &desc, bool player)
         {
             remove_object(lamp);
         }
-        winner->aobjs().push_front(lamp);
+        (*winner)->aobjs().push_front(lamp);
     }
     else if (memq(lamp, aobjs))
     {
-        (winner->aobjs() = splice_out(lamp, aobjs)).push_front(lamp);
+        ((*winner)->aobjs() = splice_out(lamp, aobjs)).push_front(lamp);
     }
 
     trz(sfind_obj("DOOR"), touchbit);
     goto_(sfind_room("LLD1"));
     parse_cont.clear();
-    flags()[egypt_flag] = true;
-    val_list = rob_adv(winner, val_list);
+    flags[egypt_flag] = true;
+    val_list = rob_adv(*winner, val_list);
 
-    if (memq(c = sfind_obj("COFFI"), winner->aobjs()))
+    if (memq(c = sfind_obj("COFFI"), (*winner)->aobjs()))
     {
-        winner->aobjs() = splice_out(c, winner->aobjs());
+        (*winner)->aobjs() = splice_out(c, (*winner)->aobjs());
         insert_object(c, sfind_room("EGYPT"));
     }
 
-    ObjList::iterator x = winner->aobjs().begin();
+    ObjList::iterator x = (*winner)->aobjs().begin();
     RoomList::const_iterator y = random_list.begin();
-    for (; x != winner->aobjs().end() && y != random_list.end(); ++x, ++y)
+    for (; x != (*winner)->aobjs().end() && y != random_list.end(); ++x, ++y)
     {
         insert_object(*x, *y);
     }
@@ -924,7 +882,7 @@ bool jigs_up(const std::string &desc, bool player)
         }
         ++riter;
     }
-    winner->aobjs().clear();
+    (*winner)->aobjs().clear();
     kill_cints();
 
     return true;
@@ -932,8 +890,8 @@ bool jigs_up(const std::string &desc, bool player)
 
 bool command()
 {
-    AdvP win = winner;
-    AdvP play = player();
+    const AdvP &win = *winner;
+    const AdvP &play = player();
     auto lv = lexv;
     auto v = rest(member("", lv), 1);
     auto nv = rest(member("", v), 1);
@@ -949,7 +907,7 @@ bool command()
     else if (trnn(prso, actorbit))
     {
         winner = prso->oactor();
-        here = winner->aroom();
+        here = (*winner)->aroom();
         while (1)
         {
             rdcom(parse_cont ? parse_cont : v);
@@ -960,7 +918,7 @@ bool command()
         if (!empty(nv[0]->s1))
             parse_cont = nv;
 
-        winner = play;
+        winner = &play;
         here = play->aroom();
     }
     else if (trnn(prso, vicbit))
@@ -981,14 +939,14 @@ bool find()
     else if (!empty(prso()))
     {
         find_frob(here->robjs(), ", which is in the room.", "There is a ", " here.");
-        find_frob(winner->aobjs(), ", which you are carrying.", "You are carrying a ", ".");
+        find_frob((*winner)->aobjs(), ", which you are carrying.", "You are carrying a ", ".");
     }
     return true;
 }
 
 bool find_frob(const ObjList &objl, const std::string &str1, const std::string &str2, const std::string &str3)
 {
-    for (ObjectP x : objl)
+    for (const ObjectP &x : objl)
     {
         if (prso() == x)
         {
@@ -996,7 +954,7 @@ bool find_frob(const ObjList &objl, const std::string &str1, const std::string &
         }
         else if (trnn(x, transbit) || openable(x) && trnn(x, openbit))
         {
-            for (ObjectP y : x->ocontents())
+            for (const ObjectP &y : x->ocontents())
             {
                 if (y == prso())
                 {
@@ -1011,8 +969,8 @@ bool find_frob(const ObjList &objl, const std::string &str1, const std::string &
 
 bool kill_cints()
 {
-    EventList cints = clocker->hobjs_ev();
-    for (CEventP ev : cints)
+    const EventList &cints = clocker->hobjs_ev();
+    for (const CEventP &ev : cints)
     {
         if (ev->cdeath())
         {
@@ -1023,7 +981,7 @@ bool kill_cints()
     return true;
 }
 
-CEventP clock_int(CEventP cev, std::optional<int> num, bool flag)
+const CEventP &clock_int(const CEventP &cev, std::optional<int> num, bool flag)
 {
     if (!memq(cev, clocker->hobjs_ev()))
     {
@@ -1040,25 +998,25 @@ CEventP clock_int(CEventP cev, std::optional<int> num, bool flag)
     return cev;
 }
 
-CEventP clock_disable(CEventP cev)
+bool clock_disable(const CEventP &cev)
 {
     cev->cflag(false);
-    return cev;
+    return true;
 }
 
-CEventP clock_enable(CEventP cev)
+bool clock_enable(const CEventP &cev)
 {
     cev->cflag(true);
-    return cev;
+    return true;
 }
 
-bool clock_demon(HackP hack)
+bool clock_demon(const HackP &hack)
 {
     bool flg = false;
     VerbP cint = find_verb("C-INT");
-    if (flags()[parse_won])
+    if (flags[parse_won])
     {
-        for (CEventP ev : hack->hobjs_ev())
+        for (const CEventP &ev : hack->hobjs_ev())
         {
             int tick = ev->ctick();
             if (!ev->cflag())
@@ -1096,8 +1054,8 @@ bool backer()
 
 bool board()
 {
-    AdvP win = winner;
-    ObjectP av = win->avehicle();
+    const AdvP &win = *winner;
+    const ObjectP &av = win->avehicle();
     ObjectP prso = ::prso();
     if (trnn(prso, vehbit))
     {
@@ -1134,8 +1092,8 @@ bool board()
 
 bool unboard()
 {
-    AdvP win = winner;
-    ObjectP av = win->avehicle();
+    const AdvP &win = *winner;
+    const ObjectP &av = win->avehicle();
     ObjectP prso = ::prso();
     if (av == prso)
     {
@@ -1162,8 +1120,8 @@ bool unboard()
 
 bool takefn2(bool take_)
 {
-    AdvP win = winner;
-    RoomP rm = win->aroom();
+    const AdvP &win = *winner;
+    const RoomP &rm = win->aroom();
     ObjectP nobj;
     bool getter = false;
     ObjectP from = prsi();
@@ -1176,7 +1134,7 @@ bool takefn2(bool take_)
     {
         return object_action();
     }
-    if (prsoo->oglobal().size() != 0)
+    if (prsoo->oglobal().has_value())
     {
         return object_action();
     }
@@ -1235,7 +1193,7 @@ bool takefn2(bool take_)
     return true;
 }
 
-void score_obj(ObjectP obj)
+void score_obj(const ObjectP &obj)
 {
     int temp = obj->ofval();
     if (temp > 0)
@@ -1339,14 +1297,14 @@ bool doc()
 
 bool dropper()
 {
-    AdvP winner = ::winner;
-    ObjectP av = winner->avehicle();
+    const AdvP &winner = *::winner;
+    const ObjectP &av = winner->avehicle();
     const ObjList &aobjs = winner->aobjs();
     bool getter = false;
     auto vec = prsvec;
-    RoomP rm = winner->aroom();
+    const RoomP &rm = winner->aroom();
     ObjectP nobj;
-    VerbP vb = prsa();
+    auto &vb = prsa();
 
     ObjectP prsoo = prso();
     if (prsoo == av)
@@ -1431,7 +1389,7 @@ bool putter(bool objact)
         return object_action();
     }
 
-    if (!(prsoo->oglobal().empty() && prsio->oglobal().empty()))
+    if (!(!prsoo->oglobal().has_value() && !prsio->oglobal().has_value()))
     {
         return object_action() ? true : tell("Nice try.");
     }
@@ -1472,7 +1430,7 @@ bool putter(bool objact)
 
     if (weight(can->ocontents()) + weight(crock->ocontents()) + crock->osize() > can->ocapac())
     {
-        if (can == winner->avehicle())
+        if (can == (*winner)->avehicle())
         {
             tell("There isn't enough room in the " + can->odesc2() + ".", 1);
         }
@@ -1524,7 +1482,7 @@ bool putter(bool objact)
 
 bool end_game_herald()
 {
-    flags()[end_game_flag] = true;
+    flags[end_game_flag] = true;
     tell(end_herald_1, long_tell1);
     return true;
 }
@@ -1535,7 +1493,7 @@ bool feech()
     return true;
 }
 
-bool finish(RecOutQuit ask)
+bool finish(const RecOutQuit &ask)
 {
     bool askq;
     if (std::get_if<std::string>(&ask))
@@ -1558,17 +1516,17 @@ bool quit()
     return true;
 }
 
-void record(int score, int moves, int deaths, RecOutQuit quit, RoomP loc)
+void record(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc)
 {
     recout(score, moves, deaths, quit, loc);
 }
 
-void recout(int score, int moves, int deaths, RecOutQuit quit, RoomP loc)
+void recout(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc)
 {
     crlf();
     play_time();
     crlf();
-    if (!flags()[end_game_flag])
+    if (!flags[end_game_flag])
     {
         prin1(score);
     }
@@ -1609,8 +1567,8 @@ void recout(int score, int moves, int deaths, RecOutQuit quit, RoomP loc)
 
 bool no_obj_hack()
 {
-    flags()[no_obj_print] = !flags()[no_obj_print];
-    tell(flags()[no_obj_print] ? "Don't print objects." : "Print objects");
+    flags[no_obj_print] = !flags[no_obj_print];
+    tell(flags[no_obj_print] ? "Don't print objects." : "Print objects");
     return true;
 }
 
@@ -1640,7 +1598,7 @@ bool opener()
             {
                 tell("Opened.");
             }
-            else if (flags()[tell_flag] = true) // Always true -- this is intentional.
+            else if (flags[tell_flag] = true) // Always true -- this is intentional.
             {
                 tell("Opening the " + obj->odesc2() + " reveals ", 0);
                 print_contents(obj->ocontents());
@@ -1660,7 +1618,7 @@ bool play_time(bool loser)
 {
     using namespace std::chrono;
     // Not an exact translation of the MDL code, but gets the point across...
-    flags()[tell_flag] = true;
+    flags[tell_flag] = true;
     if (loser)
         princ("You have been playing ZORK for ");
     else
@@ -1674,7 +1632,7 @@ bool play_time(bool loser)
     d -= m;
     auto s = duration_cast<seconds>(d);
 
-    std::stringstream ss;
+    std::ostringstream ss;
     ss << h.count() << " hour" << (h.count() != 1 ? "s" : "") << ", ";
     ss << m.count() << " minute" << (m.count() != 1 ? "s" : "") << ", and ";
     ss << s.count() << " second" << (s.count() != 1 ? "s" : "") << ".";
@@ -1685,8 +1643,8 @@ bool play_time(bool loser)
 
 bool brief()
 {
-    flags()[brief_flag] = true;
-    flags()[super_brief] = false;
+    flags[brief_flag] = true;
+    flags[super_brief] = false;
     tell("Brief descriptions.");
     return true;
 }
@@ -1698,12 +1656,10 @@ bool bugger(bool feech)
         time_t t;
         time(&t);
         auto tm = localtime(&t);
-        std::stringstream ss;
-        ss << "This software was feature-complete approximately ";
-        ss << (tm->tm_year - 81) << " years ago.\n";
-        ss << "Perhaps you can contact the original authors to see if there\n";
-        ss << "is an interest in adding any new features.";
-        tell(ss.str());
+        std::string s = "This software was feature-complete approximately " + std::to_string(tm->tm_year - 81) + " years ago.\n"
+            "Perhaps you can contact the original authors to see if there\n"
+            "is an interest in adding any new features.";
+        tell(s);
     }
     else
     {
@@ -1756,20 +1712,24 @@ bool closer()
     return true;
 }
 
-RoomP get_door_room(RoomP rm, DoorExitPtr leavings)
+const RoomP &get_door_room(const RoomP &rm, const DoorExitPtr &leavings)
 {
-    if (rm == leavings->droom1())
-        return leavings->droom2();
-    else if (rm == leavings->droom2())
-        return leavings->droom1();
-    _ASSERT(0);
-    return RoomP();
+    _ASSERT(rm == leavings->droom1() || rm == leavings->droom2());
+    return rm == leavings->droom1() ? leavings->droom2() : leavings->droom1();
 }
 
 bool walk()
 {
-    direction where_ = as_dir(prsvec[1]);
-    AdvP me = winner;
+    direction where_;
+    try
+    {
+        where_ = as_dir(prsvec[1]);
+    }
+    catch (...)
+    {
+        where_ = NumDirs;
+    }
+    const AdvP &me = *winner;
     ex_rapplic random_action;
     RoomP rm = me->aroom();
     ExitFuncVal nl;
@@ -1922,7 +1882,7 @@ bool frob_lots(Iterator<ObjVector> uv)
 {
     ParseVec prsvec = ::prsvec;
     rapplic ra = prsa()->vfcn();
-    AdvP winner = ::winner;
+    const AdvP &winner = *::winner;
     RoomP here = ::here;
     bool none = false;
 
@@ -1935,7 +1895,7 @@ bool frob_lots(Iterator<ObjVector> uv)
         }
         while (uv.cur() != uv.end())
         {
-            ObjectP x = uv[0];
+            const ObjectP &x = uv[0];
             if (trnn(x, takebit) || trnn(x, trytakebit))
             {
                 put(prsvec, 1, x);
@@ -1964,7 +1924,7 @@ bool frob_lots(Iterator<ObjVector> uv)
 
         while (uv.cur() != uv.end())
         {
-            ObjectP x = uv[0];
+            const ObjectP &x = uv[0];
             put(prsvec, 1, x);
             tell(x->odesc2() + ":\n", 0);
             apply_random(ra);
@@ -1992,7 +1952,7 @@ bool info()
 
 bool lamp_off()
 {
-    AdvP me = winner;
+    const AdvP &me = *winner;
     ObjectP prsoo = prso();
     if (object_action())
     {
@@ -2022,7 +1982,7 @@ bool lamp_off()
 
 bool lamp_on()
 {
-    AdvP me = winner;
+    const AdvP &me = *winner;
     bool lit = ::lit(here);
     bool rv = false;
     if (object_action())
@@ -2055,7 +2015,7 @@ bool lamp_on()
 bool move()
 {
     bool rv = false;
-    RoomP rm = winner->aroom();
+    const RoomP &rm = (*winner)->aroom();
     ObjectP prsoo = prso();
     if (memq(prsoo, rm->robjs()))
     {
@@ -2098,7 +2058,7 @@ bool restart()
 
 bool superbrief()
 {
-    flags()[super_brief] = true;
+    flags[super_brief] = true;
     tell("No long descriptions.");
     return true;
 }
@@ -2107,10 +2067,10 @@ bool superbrief()
 // If FLG is a FIX, this is POSSESSIONS;
 // If FLG is a FALSE, this is VALUABLES;
 // In any event, this is KLUDGY.
-bool valchk(std::any flg, ObjectP obj, Iterator<ObjVector> but)
+bool valchk(const std::any &flg, const ObjectP &obj, Iterator<ObjVector> but)
 {
     if (((flg.type() == typeid(Iterator<ParseVec>) || flg.type() == typeid(bool)) ||
-        (flg.type() == typeid(int) && memq(obj, winner->aobjs())) ||
+        (flg.type() == typeid(int) && memq(obj, (*winner)->aobjs())) ||
         (!flg.has_value() && !(obj->otval() == 0))) &&
         (!but || !memq(obj, but)))
     {
@@ -2121,8 +2081,8 @@ bool valchk(std::any flg, ObjectP obj, Iterator<ObjVector> but)
 
 bool verbose()
 {
-    flags()[brief_flag] = false;
-    flags()[super_brief] = false;
+    flags[brief_flag] = false;
+    flags[super_brief] = false;
     tell("Maximum verbosity.");
     return true;
 }
@@ -2146,14 +2106,14 @@ bool wait(int num)
 
 namespace obj_funcs
 {
-    bool valuables_c(std::any everything, Iterator<ObjVector> allbut)
+    bool valuables_c(std::any everything, const Iterator<ObjVector> &allbut)
     {
         ParseVec prsvec = ::prsvec;
         Iterator<ObjVector> suv(obj_uv);
         Iterator<ObjVector> tuv(top(suv));
         int lu = length(tuv);
         RoomP here = ::here;
-        AdvP winner = ::winner;
+        const AdvP &winner = *::winner;
         bool wrong_verb = false;
         const ObjList &room_list = winner->avehicle() ? winner->avehicle()->ocontents() : here->robjs();
 
@@ -2179,7 +2139,7 @@ namespace obj_funcs
         }
         else if (verbq("DROP"))
         {
-            for (ObjectP x : winner->aobjs())
+            for (const ObjectP &x : winner->aobjs())
             {
                 if (valchk(everything, x, allbut))
                 {
@@ -2206,7 +2166,7 @@ namespace obj_funcs
                     }
                 }
 
-                for (ObjectP x : winner->aobjs())
+                for (const ObjectP &x : winner->aobjs())
                 {
                     if (suv == tuv && x != prsi())
                     {
