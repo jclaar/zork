@@ -197,7 +197,7 @@ bool fighting(const HackP &dem)
             }
         }
     }
-    return true;
+    return fight;
 }
 
 bool cure_clock()
