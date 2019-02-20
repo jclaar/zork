@@ -1356,8 +1356,8 @@ namespace obj_funcs
 
     bool slide_cint()
     {
-        if (here == sfind_room("SLIDE") ||
-            !member("SLID", here->rid()))
+        if (here != sfind_room("SLIDE") &&
+            member("SLID", here->rid()))
         {
             tell("The rope slips from your grasp and you tumble to the cellar.");
             go_and_look(sfind_room("CELLA"));
@@ -2287,7 +2287,7 @@ namespace exit_funcs
         if (timber_tie)
         {
             tell(slippery);
-            clock_enable(clock_int(sldin, std::max(w / 100, 2)));
+            clock_enable(clock_int(sldin, std::max(100 / w, 2)));
             rm = sfind_room("SLID1");
         }
         else

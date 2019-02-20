@@ -69,19 +69,10 @@ std::string remarkably_disgusting_code()
 
 std::string unspeakable_code()
 {
-    int len_i = 0;
     const ObjectP &O = sfind_obj("PAPER");
     const std::string &oread = O->oread();
     auto pos = oread.find_first_of('/');
-    if (oread[pos - 2] == '1')
-    {
-        pos -= 2;
-        len_i = 1;
-    }
-    else
-    {
-        pos--;
-    }
+    pos -= (oread[pos - 2] == '1' ? 2 : 1);
     std::string s = "There is an issue of US NEWS & DUNGEON REPORT dated ";
     s += oread.substr(pos, oread.find_first_of(' ', pos) - pos);
     s += " here.";
