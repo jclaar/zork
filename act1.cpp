@@ -21,12 +21,33 @@ namespace
     int hs = 0;
 
     const std::vector<int> candle_ticks{ 20, 10, 5, 0 };
-    const std::string cdimmer = "The candles grow shorter.";
-    const std::vector<std::string> candle_tells{ cdimmer, cdimmer, "The candles are very short." };
+    const char *cdimmer = "The candles grow shorter.";
+    const std::vector<const char *> candle_tells{ cdimmer, cdimmer, "The candles are very short." };
 
     const std::vector<int> lamp_ticks{ 50, 30, 20, 10, 4, 0 };
-    const std::string dimmer = "The lamp appears to be getting dimmer.";
-    const std::vector<std::string> lamp_tells{ dimmer, dimmer, dimmer, dimmer, "The lamp is dying." };
+    const char *dimmer = "The lamp appears to be getting dimmer.";
+    const std::vector<const char *> lamp_tells{ dimmer, dimmer, dimmer, dimmer, "The lamp is dying." };
+
+    template <typename T>
+    void light_int(const ObjectP &obj, const CEventP &cev, const std::vector<int> &tick, const std::vector<T> &tell)
+    {
+        const OlintP &foo = obj->olint();
+        int cnt, tim;
+        foo->val(cnt = (foo->val() + 1));
+        clock_int(cev, tim = tick[size_t(cnt) - 1]);
+        if (tim < 0)
+        {
+            if (!obj->oroom() || obj->oroom() == here)
+            {
+                ::tell("I hope you have more light than from a " + obj->odesc2() + ".");
+            }
+            trz(obj, { lightbit, onbit });
+        }
+        else if (!obj->oroom() || obj->oroom() == here)
+        {
+            ::tell(tell[size_t(cnt) - 1]);
+        }
+    }
 }
 
 int water_level = 0;
@@ -116,7 +137,7 @@ bool robber(const HackP &hack)
                         if (!winning(hobj, win))
                         {
                             tell("Your opponent, determining discretion to be the better part of\n"
-                                "valor, decides to terminate this little contretemps.With a rueful\n"
+                                "valor, decides to terminate this little contretemps.  With a rueful\n"
                                 "nod of his head, he steps backward into the gloom and disappears.", long_tell1);
                             remove_object(hobj);
                             trz(hobj, fightbit);
@@ -986,26 +1007,6 @@ bool leaves_appear()
         flags[grate_revealed] = true;
     }
     return false;
-}
-
-void light_int(ObjectP obj, CEventP cev, const std::vector<int> &tick, const std::vector<std::string> &tell)
-{
-    OlintP foo = obj->olint();
-    int cnt, tim;
-    foo->val(cnt = (foo->val() + 1));
-    clock_int(cev, tim = tick[size_t(cnt) - 1]);
-    if (tim < 0)
-    {
-        if (!obj->oroom() || obj->oroom() == here)
-        {
-            ::tell("I hope you have more light than from a " + obj->odesc2() + ".");
-        }
-        trz(obj, { lightbit, onbit });
-    }
-    else if (!obj->oroom() || obj->oroom() == here)
-    {
-        ::tell(tell[size_t(cnt) - 1]);
-    }
 }
 
 bool locker()

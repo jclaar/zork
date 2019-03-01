@@ -169,6 +169,12 @@ void rtrc(const RoomP &p, Bits b)
 
 bool flaming(const ObjectP &obj)
 {
-    // True if any of the light-giving bits are set.
-    return trnn(obj, { flamebit, onbit, lightbit });
+    // True if all of the light-giving bits are set.
+    const Bits f[] = { flamebit, onbit, lightbit };
+    for (Bits b : f)
+    {
+        if (!obj->oflags().test(b))
+            return false;
+    }
+    return true;
 }

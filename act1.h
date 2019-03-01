@@ -32,7 +32,6 @@ inline bool killer() { return killer("kill"); }
 bool leaper();
 bool leave();
 bool leaves_appear();
-void light_int(ObjectP obj, CEventP cev, const std::vector<int> &tick, const std::vector<std::string> &tell);
 bool locker();
 bool look_inside();
 bool look_under();
