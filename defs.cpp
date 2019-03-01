@@ -121,24 +121,12 @@ bool gtrnn(const RoomP &p, Bits b)
     return std::find(p->rglobal().begin(), p->rglobal().end(), b) != p->rglobal().end();
 }
 
-bool rtro(RoomP &p, Bits b)
-{
-    p->rbits().set(b);
-    return true;
-}
-
-bool rtrz(RoomP &p, const std::initializer_list<Bits> &bits)
+bool rtrz(const RoomP &p, const std::initializer_list<Bits> &bits)
 {
     for (auto b : bits)
     {
-        rtrz(p, b);
+		p->rbits().reset(b);
     }
-    return true;
-}
-
-bool rtrz(RoomP &p, Bits b)
-{
-    p->rbits().reset(b);
     return true;
 }
 

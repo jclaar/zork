@@ -148,7 +148,6 @@ void select(T from, Iterator<T> to)
     // selection. To make it simpler, this just copies
     // the from list to the to list, does a shuffle, and
     // returns the required number of elements.
-    size_t required = to.size();
     std::random_device rd;
     std::mt19937 g(rd());
     std::shuffle(from.begin(), from.end(), g);

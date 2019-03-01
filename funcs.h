@@ -281,7 +281,7 @@ inline SIterator substruc(SIterator src, int start, int end, SIterator dest)
 inline SIterator substruc(const char *msg, int start, int end, SIterator dest)
 {
     _ASSERT(start == 0);
-#pragma warning(suppress: 26444)
+//#pragma warning(suppress: 26444)
     std::copy(msg + start, msg + end, dest);
     return dest;
 }

@@ -215,3 +215,17 @@ inline std::list<RoomP>::iterator rest(std::list<RoomP>::iterator i, int count =
     std::advance(i, count);
     return i;
 }
+
+// Set or 0 room bit
+template <Bits b>
+bool rtro(const RoomP &p)
+{
+	p->rbits().set(b);
+	return true;
+}
+template <Bits b>
+bool rtrz(const RoomP &p)
+{
+	p->rbits().reset(b);
+	return true;
+}

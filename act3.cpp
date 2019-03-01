@@ -622,7 +622,7 @@ bool go_and_look(RoomP rm)
     bool seen = rtrnn(rm, rseenbit);
     goto_(rm);
     perform(room_desc, find_verb("LOOK"));
-    seen || rtrz(rm, rseenbit);
+    seen || rtrz<rseenbit>(rm);
     return true;
 }
 
@@ -721,8 +721,7 @@ int cpnext(int rm, ObjectP obj)
 
 bool cpgoto(int fx)
 {
-    RoomP here = ::here;
-    rtrz(here, rseenbit);
+    rtrz<rseenbit>(here);
     cpobjs[size_t(cphere) - 1] = here->robjs();
     cphere = fx;
     here->robjs() = cpobjs[size_t(fx) - 1];
@@ -1228,7 +1227,7 @@ namespace obj_funcs
 					if (trnn(i, ovison))
 					{
 						RoomP carou = sfind_room("CAROU");
-						rtrz(carou, rseenbit);
+						rtrz<rseenbit>(carou);
 					}
                 }
                 else
@@ -2321,7 +2320,7 @@ namespace exit_funcs
     bool cpgoto(int fx)
     {
         RoomP here = ::here;
-        rtrz(here, rseenbit);
+        rtrz<rseenbit>(here);
         cpobjs[size_t(cphere) - 1] = here->robjs();
         cphere = fx;
         here->robjs() = cpobjs[size_t(fx) - 1];
@@ -2355,8 +2354,8 @@ namespace exit_funcs
         else if (rm == 52 && dir == West && flags[cpout])
         {
             goto_(find_room("CPOUT"));
-			RoomP cp = find_room("CP");
-            rtrz(cp, rseenbit);
+			const RoomP &cp = find_room("CP");
+            rtrz<rseenbit>(cp);
             room_info();
             return rv;
         }

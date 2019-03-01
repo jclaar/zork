@@ -57,7 +57,7 @@ const std::string help_str =
 "Containment :\n\n"
 
 "   Some objects can contain other objects.Many such containers can\n"
-"be opened and closed.  The rest are always open.They may or may\n"
+"be opened and closed.  The rest are always open.  They may or may\n"
 "not be transparent.  For you to access(e.g., take) an object\n"
 "which is in a container, the container must be open.  For you\n"
 "to see such an object, the container must be either open or\n"
@@ -112,7 +112,7 @@ const std::string help_str =
 "        WITH DEMON' won't parse.\n\n"
 "   Sentences:\n"
 "        The parser understands a reasonable number of syntactic construc-\n"
-"        tions.  In particular, multiple commands(separated by commas)\n"
+"        tions.  In particular, multiple commands(separated by periods)\n"
 "        can be placed on the same line.\n\n"
 "   Ambiguity:\n"
 "        The parser tries to be clever about what to do in the case of\n"

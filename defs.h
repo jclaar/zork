@@ -380,10 +380,7 @@ bool strnn(const SyntaxP &syn, SyntaxBits b);
 bool rtrnn(const RoomP &p, Bits b);
 bool rtrnn(const RoomP &p, const std::initializer_list<Bits> &bits);
 bool gtrnn(const RoomP &, Bits);
-// Set or 0 room bit
-bool rtro(RoomP &p, Bits b);
-bool rtrz(RoomP &p, Bits b);
-bool rtrz(RoomP &p, const std::initializer_list<Bits> &bits);
+bool rtrz(const RoomP &p, const std::initializer_list<Bits> &bits);
 // Set or 0 object bit or bits.
 const ObjectP &tro(const ObjectP &op, Bits b);
 void tro(const ObjectP &op, const std::initializer_list<Bits> &b);

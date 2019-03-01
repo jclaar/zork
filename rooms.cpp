@@ -378,7 +378,7 @@ bool room_info(std::optional<int> full)
             tell(rm->rdesc1(), long_tell1);
         }
 
-        rtro(rm, rseenbit);
+        rtro<rseenbit>(rm);
 
         av && tell("You are in the " + av->odesc2() + ".", post_crlf);
     }
@@ -542,7 +542,7 @@ void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &winobj, SI
 
 void mung_room(RoomP rm, const std::string &str)
 {
-    rtro(rm, rmungbit);
+    rtro<rmungbit>(rm);
     rm->rdesc1() = str;
 }
 

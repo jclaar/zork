@@ -1216,7 +1216,8 @@ namespace exit_funcs
     {
         const AdvP &winner = *::winner;
         const ObjList &aobjs = winner->aobjs();
-        if (length(aobjs) < 2 && memq(sfind_obj("LAMP"), aobjs))
+        // Winner can carry two objects, and one has to be the lamp.
+        if (length(aobjs) <= 2 && memq(sfind_obj("LAMP"), aobjs))
         {
             flags[light_load] = true;
             // Door will slam shut next time, too, since this way up don't count.
@@ -2946,11 +2947,11 @@ namespace obj_funcs
                 groom = sfind_room("MGRAT");
                 if (trnn(obj, openbit))
                 {
-                    rtro(groom, rlightbit);
+                    rtro<rlightbit>(groom);
                 }
                 else
                 {
-                    rtrz(groom, rlightbit);
+                    rtrz<rlightbit>(groom);
                 }
             }
             else
@@ -3164,8 +3165,8 @@ namespace obj_funcs
                     {
                         flags[low_tide] = false;
                         tell("The sluice gates close and water starts to collect behind the dam.");
-                        rtro(reser, rwaterbit);
-                        rtrz(reser, rlandbit);
+                        rtro<rwaterbit>(reser);
+                        rtrz<rlandbit>(reser);
                         memq(trunk, reser->robjs()) && trz(trunk, ovison);
                     }
                     else
@@ -3173,7 +3174,7 @@ namespace obj_funcs
                         flags[low_tide] = true;
                         tell("The sluice gates open and water pours through the dam.");
                         trz(sfind_obj("COFFI"), sacredbit);
-                        rtro(reser, rlandbit);
+                        rtro<rlandbit>(reser);
                         rtrz(reser, { rwaterbit, rseenbit });
                         tro(trunk, ovison);
                     }

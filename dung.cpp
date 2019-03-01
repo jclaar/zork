@@ -236,7 +236,7 @@ namespace
             "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT"
         };
         static_assert(sizeof(num) / sizeof(num[0]) == numobjs.size(), "Array sizes do not match");
-        for (int i = 0; i < numobjs.size(); ++i)
+        for (int i = 0; i < (int) numobjs.size(); ++i)
         {
             numobjs[i] = NumObjs(get_obj(num[i]), i + 1);
         }
