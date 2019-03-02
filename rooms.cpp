@@ -1293,9 +1293,9 @@ bool dropper()
     const ObjList &aobjs = winner->aobjs();
     bool getter = false;
     auto vec = prsvec;
-    const RoomP &rm = winner->aroom();
+    RoomP rm = winner->aroom();
     ObjectP nobj;
-    auto &vb = prsa();
+    VerbP vb = prsa();
 
     ObjectP prsoo = prso();
     if (prsoo == av)

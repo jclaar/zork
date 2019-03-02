@@ -180,7 +180,7 @@ bool geronimo()
     return true;
 }
 
-bool put_balloon(ObjectP ball, const std::string &there, const std::string &str)
+bool put_balloon(const ObjectP &ball, const std::string &there, const std::string &str)
 {
     if (member("LEDG", here->rid()) || here == find_room("VLBOT"))
     {
@@ -191,7 +191,7 @@ bool put_balloon(ObjectP ball, const std::string &there, const std::string &str)
     return true;
 }
 
-bool rise_and_shine(ObjectP ball)
+bool rise_and_shine(const ObjectP &ball)
 {
     const AdvP &winner = *::winner;
     bool in = winner->avehicle() == ball;
@@ -270,7 +270,7 @@ bool rise_and_shine(ObjectP ball)
     return true;
 }
 
-bool decline_and_fall(ObjectP ball)
+bool decline_and_fall(const ObjectP &ball)
 {
     const AdvP &winner = *::winner;
     bool in = winner->avehicle() == ball;
@@ -371,9 +371,9 @@ bool breathe()
 
 bool burnup()
 {
-    ObjectP r = sfind_obj("RECEP");
+    const ObjectP &r = sfind_obj("RECEP");
     _ASSERT(r->ocontents().size() == 1);
-    ObjectP obj = r->ocontents().front();
+    const ObjectP &obj = r->ocontents().front();
     tell("You notice that the " + obj->odesc2() + " has burned out, and that\n"
         "the cloth bag starts to deflate.");
     r->ocontents() = splice_out(obj, r->ocontents());
@@ -392,7 +392,7 @@ namespace obj_funcs
 {
     bool dboat_function()
     {
-        ObjectP dboat = sfind_obj("DBOAT");
+        const ObjectP &dboat = sfind_obj("DBOAT");
         bool rv = true;
         if (verbq("INFLA"))
         {
@@ -442,10 +442,9 @@ namespace obj_funcs
 
     bool fuse_function()
     {
-        ObjectP fuse = sfind_obj("FUSE");
-        ObjectP brick = sfind_obj("BRICK");
+        const ObjectP &fuse = sfind_obj("FUSE");
+        const ObjectP &brick = sfind_obj("BRICK");
         RoomP brick_room;
-        ObjectP oc;
 
         bool rv = true;
         if (verbq("BURN"))
@@ -457,7 +456,7 @@ namespace obj_funcs
         {
             if (fuse->ocan() == brick)
             {
-                if (oc = brick->ocan())
+                if (auto &oc = brick->ocan())
                 {
                     brick_room = oc->oroom();
                 }
@@ -490,7 +489,7 @@ namespace obj_funcs
                     clock_int(safin, 5);
                     munged_room = brick->oroom();
 
-                    for (ObjectP x : brick_room->robjs())
+                    for (const ObjectP &x : brick_room->robjs())
                     {
                         if (trnn(x, takebit))
                         {
@@ -500,7 +499,7 @@ namespace obj_funcs
 
                     if (brick_room == sfind_room("LROOM"))
                     {
-                        for (ObjectP x : sfind_obj("TCASE")->ocontents())
+                        for (const ObjectP &x : sfind_obj("TCASE")->ocontents())
                         {
                             x->ocan(nullptr);
                         }
