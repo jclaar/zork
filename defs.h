@@ -372,9 +372,12 @@ bool apply_random(hackfn fcn, const HackP &demon);
 // oflags, rflags testers and setter
 
 // Check status of specific bit in object or room.
-bool trnn(const ObjectP &op, Bits b);
-bool trnn(const ObjectP &op, const std::initializer_list<Bits> &bits_to_check);
-bool trnn(const ObjectP &op, const std::bitset<numbits> &bits_to_check);
+template <Bits b>
+bool trnnt(const ObjectP &op);
+#define trnn(obj, b) trnnt<b>(obj)
+
+bool trnn_list(const ObjectP &op, const std::initializer_list<Bits> &bits_to_check);
+bool trnn_bits(const ObjectP &op, const std::bitset<numbits> &bits_to_check);
 void trc(const ObjectP &op, Bits b);
 bool strnn(const SyntaxP &syn, SyntaxBits b);
 bool rtrnn(const RoomP &p, Bits b);
@@ -390,7 +393,7 @@ void rtrc(const RoomP &p, Bits b);
 
 inline bool openable(const ObjectP &op)
 {
-    return trnn(op, { doorbit, contbit });
+    return trnn_list(op, { doorbit, contbit });
 }
 
 inline int length(const RoomList &rl) { return (int)rl.size(); }

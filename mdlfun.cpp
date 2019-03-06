@@ -18,7 +18,7 @@ std::string username();
 int run_zork()
 {
 	// Option to print incantation to skip directly to the endgame.
-#if 0
+#if 1
     std::string un = username();
     std::string hello("HELLO");
 	std::cerr << "Hello : " << pw(un, hello) << std::endl;

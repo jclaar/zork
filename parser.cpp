@@ -1205,7 +1205,7 @@ bool syn_equal(VargP varg, OrphanSlotType pobj)
     {
         PhraseP pobjp = *pp;
         if (varg->vprep == pobjp->prep() &&
-            trnn(pobjp->obj(), varg->vbit))
+            trnn_bits(pobjp->obj(), varg->vbit))
         {
             rv = true;
         }
@@ -1214,7 +1214,7 @@ bool syn_equal(VargP varg, OrphanSlotType pobj)
     if (auto *op = std::get_if<ObjectP>(&pobj))
     {
         ObjectP pobjo = *op;
-        if (!varg->vprep && trnn(pobjo, varg->vbit))
+        if (!varg->vprep && trnn_bits(pobjo, varg->vbit))
             rv = true;
     }
 
@@ -1464,7 +1464,7 @@ Nefals fwim(const std::bitset<numbits> &bit, const ObjList &objs, bool no_care)
     ObjectP nobj;
     for (const ObjectP &x : objs)
     {
-        if (trnn(x, ovison) && (no_care || trnn(x, takebit)) && trnn(x, bit))
+        if (trnn(x, ovison) && (no_care || trnn(x, takebit)) && trnn_bits(x, bit))
         {
             if (nobj)
                 return nefals;
@@ -1474,7 +1474,7 @@ Nefals fwim(const std::bitset<numbits> &bit, const ObjList &objs, bool no_care)
         {
             for (const ObjectP &x2 : x->ocontents())
             {
-                if (trnn(x2, ovison) && trnn(x2, bit))
+                if (trnn(x2, ovison) && trnn_bits(x2, bit))
                 {
                     if (nobj)
                         return nefals;
@@ -1504,7 +1504,7 @@ bool bunchem()
     bool ev = trnn(bun, climbbit);
 
     pv[0] = verb;
-    if (trnn(bun, { climbbit, tiebit, staggered }))
+    if (trnn_list(bun, { climbbit, tiebit, staggered }))
     {
         trz(bun, { climbbit, tiebit, staggered });
         obj_funcs::valuables_c(ev, objs);

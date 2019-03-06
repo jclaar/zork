@@ -1056,7 +1056,7 @@ namespace obj_funcs
                 flags[cpout] = true;
                 tell(confiscate);
             }
-            else if (trnn(prso, { vicbit, villain }))
+            else if (trnn_list(prso, { vicbit, villain }))
             {
                 tell(pick_one(yuks));
             }
@@ -1955,7 +1955,7 @@ namespace obj_funcs
                 tell("There is no obvious way to open the egg.");
             else if (prsi() == sfind_obj("HANDS"))
                 tell("I doubt you could do that without damaging it.");
-            else if (trnn(prsi(), { weaponbit, toolbit }))
+            else if (trnn_list(prsi(), { weaponbit, toolbit }))
             {
                 tell("The egg is now open, but the clumsiness of your attempt has seriously\n"
                     "compromised its esthetic appeal.");

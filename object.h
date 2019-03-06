@@ -214,3 +214,8 @@ const ObjectP &find_obj(const std::string &name);
 const ObjectP &sfind_obj(const char *name);
 const ObjectP &sfind_obj(const std::string &name);
 
+template <Bits b>
+bool trnnt(const ObjectP &op)
+{
+    return op->oflags().test(b);
+}

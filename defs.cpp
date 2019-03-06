@@ -24,7 +24,16 @@ void prin1(int val)
 
 bool verbq(const char *al)
 {
-    return prsa()->w() == al;
+    bool rv = false;
+    try
+    {
+        rv = prsa()->w() == al;
+    }
+    catch (...)
+    {
+        // Unrecognized word. Just return false.
+    }
+    return rv;
 }
 
 bool verbq(const std::initializer_list<const char*> &verbs)
@@ -81,23 +90,17 @@ bool apply_object(const ObjectP &op)
     return rv;
 }
 
-bool trnn(const ObjectP &op, const std::bitset<numbits> &bits_to_check)
+bool trnn_bits(const ObjectP &op, const std::bitset<numbits> &bits_to_check)
 {
     // returns true if any bits in the bits_to_check are set in op->oflags
     return (op->oflags() & bits_to_check).any();
 }
 
-bool trnn(const ObjectP &op, const std::initializer_list<Bits> &bits_to_check)
+bool trnn_list(const ObjectP &op, const std::initializer_list<Bits> &bits_to_check)
 {
     return std::find_if(bits_to_check.begin(),
         bits_to_check.end(),
-        [&op](Bits b) { return trnn(op, b); }) != bits_to_check.end();
-}
-
-bool trnn(const ObjectP &op, Bits b)
-{
-    _ASSERT(op);
-    return op->oflags().test(b);
+        [&op](Bits b) { return op->oflags().test(b); }) != bits_to_check.end();
 }
 
 bool strnn(const SyntaxP &syn, SyntaxBits b)
@@ -153,7 +156,7 @@ void trz(const ObjectP &op, const std::initializer_list<Bits> &bl)
 {
     for (Bits b : bl)
     {
-        trz(op, b);
+        op->oflags().reset(b);
     }
 }
 
