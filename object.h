@@ -219,3 +219,32 @@ bool trnnt(const ObjectP &op)
 {
     return op->oflags().test(b);
 }
+
+template <typename T>
+int trz(const ObjectP &op, T b)
+{
+    return op->oflags()[b] = 0;
+}
+
+template <typename T, typename... Args>
+int trz(const ObjectP &op, T first, Args... args)
+{
+    trz(op, first);
+    trz(op, args...);
+    return 0;
+}
+
+template <typename T>
+const ObjectP &tro(const ObjectP &op, T b)
+{
+    op->oflags()[b] = 1;
+    return op;
+}
+
+template <typename T, typename... Args>
+const ObjectP &tro(const ObjectP &op, T first, Args... args)
+{
+    tro(op, first);
+    tro(op, args...);
+    return op;
+}

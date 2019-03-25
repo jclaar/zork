@@ -178,9 +178,9 @@ bool lit(const RoomP &rm)
     return is_lit;
 }
 
-bool prob(int goodluck, int badluck)
+bool prob(int goodluck, std::optional<int> badluck)
 {
-    if (badluck == -1)
+    if (!badluck.has_value())
         badluck = goodluck;
     int val = rand() % 100;
     return val < (flags[lucky] ? goodluck : badluck);
@@ -227,10 +227,10 @@ ObjList rob_adv(const AdvP &win, ObjList newlist)
     return newlist;
 }
 
-ObjList rob_room(RoomP rm, ObjList newlist, int prob)
+ObjList rob_room(const RoomP &rm, ObjList newlist, int prob)
 {
     ObjList robjs = rm->robjs();
-    for (ObjectP x : robjs)
+    for (const ObjectP &x : robjs)
     {
         if (x->otval() > 0 && !trnn(x, sacredbit) && trnn(x, ovison) && ::prob(prob))
         {

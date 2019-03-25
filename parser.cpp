@@ -211,7 +211,7 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
     Iterator<ParseContV> lv = lexv;
     int len;
     ParseVecVal obj;
-    trz(bobj, { climbbit, tiebit, staggered });
+    trz(bobj, climbbit, tiebit, staggered );
     std::string str = pv[0]->s1;
     if (str == "AGAIN")
     {
@@ -1506,7 +1506,7 @@ bool bunchem()
     pv[0] = verb;
     if (trnn_list(bun, { climbbit, tiebit, staggered }))
     {
-        trz(bun, { climbbit, tiebit, staggered });
+        trz(bun, climbbit, tiebit, staggered );
         obj_funcs::valuables_c(ev, objs);
     }
     else

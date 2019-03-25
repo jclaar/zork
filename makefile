@@ -1,12 +1,15 @@
+DEPDIR := .d
+$(shell mkdir -p $(DEPDIR) > /dev/null)
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
+
 CC=gcc-7
-CFLAGS=--std=c++1z -Os
+CFLAGS=--std=c++1z -Os $(DEPFLAGS)
 CDEFINES=-D__STDC_WANT_LIB_EXT1__=1
 BOOSTLIB=$(BOOST)/stage/lib/libboost_serialization.a
+POSTCOMPILE = @mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
 
-
-OBJS=act1.o act2.o act3.o act4.o adv.o cevent.o defs.o dung.o\
-	funcs.o globals.o info.o makstr.o mdlfun.o melee.o memq.o object.o\
-	parser.o room.o roomfns.o rooms.o sr.o strings.o util.o zstring.o
+SRCS = $(wildcard *.cpp)
+OBJS = $(SRCS:.cpp=.o)
 
 all: zork_linux
 
@@ -14,9 +17,17 @@ clean:
 	rm *.o
 	rm zork_linux
 
-%.o: %.cpp
+%.o : %.cpp
+%.o: %.cpp $(DEPDIR)/%.d
 	$(CC) $(CFLAGS) $(CDEFINES) -c -o $@ $<
+	$(POSTCOMPILE)
 
 zork_linux: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ -lstdc++ $(BOOSTLIB)
+
+$(DEPDIR)/%.d: ;
+.PRECIOUS: $(DEPDIR)/%.d
+
+include $(wildcard $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS))))
+
 

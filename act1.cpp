@@ -41,7 +41,7 @@ namespace
             {
                 ::tell("I hope you have more light than from a " + obj->odesc2() + ".");
             }
-            trz(obj, { lightbit, onbit });
+            trz(obj, lightbit, onbit );
         }
         else if (!obj->oroom() || obj->oroom() == here)
         {
@@ -707,7 +707,7 @@ bool torch_off(const ObjectP &t)
 {
     t->odesc2("burned out ivory torch");
     t->odesc1("There is a burned out ivory torch here.");
-    trz(t, { lightbit, onbit, flamebit });
+    trz(t, lightbit, onbit, flamebit );
     return true;
 }
 
@@ -1822,7 +1822,7 @@ namespace obj_funcs
         {
             tell("A force keeps you from taking the bodies.");
         }
-        else if (verbq({ "MUNG", "BURN" }))
+        else if (verbq( "MUNG", "BURN" ))
         {
             if (flags[on_pole])
             {
@@ -1949,7 +1949,7 @@ namespace obj_funcs
                 tro(t, fightbit);
             }
         }
-        else if (verbq({ "THROW", "GIVE" }) && (opp = std::get_if<ObjectP>(&(prso_type = prso()))) && *opp != dem->hobj())
+        else if (verbq( "THROW", "GIVE" ) && (opp = std::get_if<ObjectP>(&(prso_type = prso()))) && *opp != dem->hobj())
         {
             if (t->ostrength() < 0)
             {
@@ -2090,7 +2090,7 @@ namespace obj_funcs
         bool rv = false;
         if (flags[cyclops_flag])
         {
-            if (verbq({ "WAKE", "KICK", "ATTAC", "BURN", "DESTR" }))
+            if (verbq( "WAKE", "KICK", "ATTAC", "BURN", "DESTR" ))
             {
                 rv = true;
                 tell("The cyclops yawns and stares at the thing that woke him up.");
@@ -2135,7 +2135,7 @@ namespace obj_funcs
             else
                 tell("The cyclops is not so stupid as to eat THAT!");
         }
-        else if (verbq({ "KILL", "THROW", "ATTAC", "DESTR", "POKE" }))
+        else if (verbq( "KILL", "THROW", "ATTAC", "DESTR", "POKE" ))
         {
             rv = true;
             clock_int(cycin, -1);
@@ -2207,8 +2207,8 @@ namespace obj_funcs
             }
             rv = false;
         }
-        else if (prsi() == (r = sfind_obj("RKNIF")) && verbq({ "ATTAC", "KILL" }) ||
-            verbq({ "SWING", "THROW" }) && prso() == r && !empty(prsi()))
+        else if (prsi() == (r = sfind_obj("RKNIF")) && verbq( "ATTAC", "KILL" ) ||
+            verbq( "SWING", "THROW" ) && prso() == r && !empty(prsi()))
         {
             remove_object(r);
             jigs_up(rusty_knife_str);
@@ -2226,7 +2226,7 @@ namespace obj_funcs
         tell(cursestr, long_tell1);
         ObjList l = rob_room(rm, ObjList(), 100);
         l = rob_adv(player(), l);
-        for (ObjectP x : l)
+        for (auto &x : l)
         {
             x->oroom(lld);
         }
@@ -2316,7 +2316,7 @@ namespace obj_funcs
             clock_enable(foo->ev());
             rv = false;
         }
-        else if (verbq({ "TRNON", "BURN", "LIGHT" }))
+        else if (verbq( "TRNON", "BURN", "LIGHT" ))
         {
             if (!trnn(c, lightbit))
             {
@@ -2410,7 +2410,7 @@ namespace obj_funcs
             goto_(rm2);
             tell("There is a rumble from deep within the earth and the room shakes.");
         }
-        else if (verbq({ "LKAT", "LKIN", "EXAMI" }))
+        else if (verbq( "LKAT", "LKIN", "EXAMI" ))
         {
             if (flags[mirror_mung])
             {
@@ -2425,7 +2425,7 @@ namespace obj_funcs
         {
             tell("Nobody but a greedy surgeon would allow you to attempt that trick.");
         }
-        else if (verbq({ "MUNG", "THROW", "POKE" }))
+        else if (verbq( "MUNG", "THROW", "POKE" ))
         {
             if (flags[mirror_mung])
             {
@@ -2512,7 +2512,7 @@ namespace obj_funcs
             }
             else
             {
-                tro(match, { flamebit, lightbit, onbit });
+                tro(match, flamebit, lightbit, onbit );
                 clock_int(matin, 2);
                 tell("One of the matches starts to burn.");
             }
@@ -2520,13 +2520,13 @@ namespace obj_funcs
         else if (verbq("TRNOF") && trnn(match, lightbit))
         {
             tell("The match is out.");
-            trz(match, { flamebit, lightbit, onbit });
+            trz(match, flamebit, lightbit, onbit );
             clock_int(matin, 0);
         }
         else if (verbq("C-INT"))
         {
             tell("The match has gone out.");
-            trz(match, { flamebit, lightbit, onbit });
+            trz(match, flamebit, lightbit, onbit );
         }
         else
             rv = false;
@@ -2595,8 +2595,8 @@ namespace obj_funcs
         {
             rv = prob(33, 66);
         }
-        else if (verbq({ "THROW", "GIVE" }) && !empty(prso()) ||
-            verbq({ "TAKE", "MOVE", "MUNG" }))
+        else if (verbq( "THROW", "GIVE" ) && !empty(prso()) ||
+            verbq( "TAKE", "MOVE", "MUNG" ))
         {
             rv = true;
             if (t->ostrength() < 0)
@@ -2605,7 +2605,7 @@ namespace obj_funcs
                 perform(troll, find_verb("IN!"));
             }
 
-            if (verbq({ "THROW", "GIVE" }))
+            if (verbq( "THROW", "GIVE" ))
             {
                 ObjectP prsoo = prso();
                 if (verbq("THROW"))
@@ -2629,7 +2629,7 @@ namespace obj_funcs
                     remove_object(prsoo);
                 }
             }
-            else if (verbq({ "TAKE", "MOVE" }))
+            else if (verbq( "TAKE", "MOVE" ))
             {
                 tell("The troll spits in your face, saying \"Better luck next time.\"");
             }
@@ -2673,7 +2673,6 @@ namespace obj_funcs
         ObjectP rw = sfind_obj("WATER");
         bool pi;
         bool rv = true;
-        const std::initializer_list<const char*> tp = { "TAKE", "PUT" };
 
         if (verbq("GTHRO"))
         {
@@ -2702,7 +2701,7 @@ namespace obj_funcs
         if (w == gw)
         {
             w = rw;
-            if (verbq(tp))
+            if (verbq("TAKE", "PUT"))
                 remove_object(w);
         }
 
@@ -2715,7 +2714,7 @@ namespace obj_funcs
             prsvec[1] = w;
         }
 
-        if (verbq(tp) && !pi)
+        if (verbq("TAKE", "PUT") && !pi)
         {
             if (av && (av == prsi() || empty(prsi()) && w->ocan() != av))
             {
@@ -2766,7 +2765,7 @@ namespace obj_funcs
         {
             tell("Nice try.");
         }
-        else if (verbq({ "DROP", "POUR", "GIVE" }))
+        else if (verbq( "DROP", "POUR", "GIVE" ))
         {
             remove_object(rw);
             if (av)
@@ -2806,7 +2805,7 @@ namespace obj_funcs
         {
             light_int(rlamp, lntin, lamp_ticks, lamp_tells);
         }
-        else if (verbq({ "TRNON", "LIGHT" }))
+        else if (verbq( "TRNON", "LIGHT" ))
         {
             clock_enable(rlamp->olint()->ev());
             rv = false;
@@ -2841,7 +2840,7 @@ namespace obj_funcs
             }
             rv = true;
         }
-        else if (verbq({ "MOVE", "TAKE" }))
+        else if (verbq( "MOVE", "TAKE" ))
         {
             if (verbq("MOVE"))
             {
@@ -2938,7 +2937,7 @@ namespace obj_funcs
         bool rv = false;
         ObjectP obj;
         RoomP groom;
-        if (verbq({ "OPEN", "CLOSE" }))
+        if (verbq( "OPEN", "CLOSE" ))
         {
             if (flags[grunlock])
             {
@@ -3176,7 +3175,7 @@ namespace obj_funcs
                         tell("The sluice gates open and water pours through the dam.");
                         trz(sfind_obj("COFFI"), sacredbit);
                         rtro<rlandbit>(reser);
-                        rtrz(reser, { rwaterbit, rseenbit });
+                        rtrz(reser, rwaterbit, rseenbit );
                         tro(trunk, ovison);
                     }
                 }
@@ -3215,7 +3214,7 @@ namespace obj_funcs
     {
         RoomP rm = here;
         bool rv = false;
-        if (verbq({ "OPEN", "CLOSE" }) && rm == sfind_room("LROOM"))
+        if (verbq( "OPEN", "CLOSE" ) && rm == sfind_room("LROOM"))
         {
             rv = open_close(prso(), "The door reluctantly opens to reveal a rickety staircase descending\ninto darkness.",
                 "The door swings shut and closes.");

@@ -22,25 +22,6 @@ void prin1(int val)
     tty << val;
 }
 
-bool verbq(const char *al)
-{
-    bool rv = false;
-    try
-    {
-        rv = prsa()->w() == al;
-    }
-    catch (...)
-    {
-        // Unrecognized word. Just return false.
-    }
-    return rv;
-}
-
-bool verbq(const std::initializer_list<const char*> &verbs)
-{
-    return std::find(verbs.begin(), verbs.end(), prsa()->w()) != verbs.end();
-}
-
 bool apply_random(rapplic fcn, std::optional<ApplyRandomArg> arg)
 {
     ::arg = arg;
@@ -108,56 +89,9 @@ bool strnn(const SyntaxP &syn, SyntaxBits b)
     return syn->sflags.test(b);
 }
 
-bool rtrnn(const RoomP &p, const std::initializer_list<Bits> &bits)
-{
-    return std::find_if(bits.begin(), bits.end(),
-        [p](Bits b) { return rtrnn(p, b); }) != bits.end();
-}
-
-bool rtrnn(const RoomP &p, Bits b)
-{
-    return p->rbits().test(b);
-}
-
 bool gtrnn(const RoomP &p, Bits b)
 {
     return std::find(p->rglobal().begin(), p->rglobal().end(), b) != p->rglobal().end();
-}
-
-bool rtrz(const RoomP &p, const std::initializer_list<Bits> &bits)
-{
-    for (auto b : bits)
-    {
-		p->rbits().reset(b);
-    }
-    return true;
-}
-
-void tro(const ObjectP &op, const std::initializer_list<Bits> &bits)
-{
-    for (auto b : bits)
-    {
-        tro(op, b);
-    }
-}
-
-const ObjectP &tro(const ObjectP &op, Bits b)
-{
-    op->oflags()[b] = 1;
-    return op;
-}
-
-int trz(const ObjectP &op, Bits b)
-{
-    return op->oflags()[b] = 0;
-}
-
-void trz(const ObjectP &op, const std::initializer_list<Bits> &bl)
-{
-    for (Bits b : bl)
-    {
-        op->oflags().reset(b);
-    }
 }
 
 void trc(const ObjectP &op, Bits b)

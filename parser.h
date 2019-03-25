@@ -25,7 +25,7 @@ extern std::list<VerbP> bunchers;
 extern SIterator scrstr;
 
 // Specialization for ParseVec
-inline ParseVec put(ParseVec a, int index, nullptr_t)
+inline ParseVec put(ParseVec a, int index, std::nullptr_t)
 {
     a[index] = std::monostate();
     return a;
@@ -102,6 +102,30 @@ extern PrepVec prepvec;
 inline const VerbP &prsa()
 {
     return std::get<VerbP>(prsvec[0]);
+}
+
+template <typename T>
+bool verbq(T al)
+{
+    bool rv = false;
+    try
+    {
+        rv = prsa()->w() == al;
+    }
+    catch (...)
+    {
+        // Unrecognized word. Just return false.
+    }
+    return rv;
+}
+
+//bool verbq(const char *al);
+template <typename T, typename ...Args>
+bool verbq(T first, Args... args)
+{
+    if (verbq(first))
+        return true;
+    return verbq(args...);
 }
 
 template <class... Types>

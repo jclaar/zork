@@ -330,8 +330,8 @@ bool balloon_burn()
     const ObjectP &ball = sfind_obj("BALLO");
     tell("The " + prso->odesc2() + " burns inside the receptacle.", 1);
     burnup_int = clock_int(brnin, prso->osize() * 20);
-    tro(prso, { flamebit, lightbit, onbit });
-    trz(prso, { takebit, readbit });
+    tro(prso, flamebit, lightbit, onbit );
+    trz(prso, takebit, readbit );
     if (binf)
     {
     }
@@ -557,15 +557,15 @@ namespace obj_funcs
     {
         ObjectP gnome = sfind_obj("GNOME");
         ObjectP brick;
-        if (verbq({ "GIVE", "THROW" }))
+        if (verbq( "GIVE", "THROW" ))
         {
             ObjectP prso = ::prso();
             if (prso->otval() != 0)
             {
                 tell("Thank you very much for the " + prso->odesc2() + ".  I don't believe \n"
                     "I've ever seen one as beautiful. 'Follow me', he says, and a door\n"
-                    "appears on the west end of the ledge.Through the door, you can see\n"
-                    "a narrow chimney sloping steeply downward.The gnome moves quickly,\n"
+                    "appears on the west end of the ledge.  Through the door, you can see\n"
+                    "a narrow chimney sloping steeply downward.  The gnome moves quickly,\n"
                     "and he disappears from sight.");
                 remove_object(prso);
                 remove_object(gnome);
@@ -697,7 +697,7 @@ namespace obj_funcs
         bool rv = true;
         ObjectP prso = ::prso();
 
-        if (verbq({ "TAKE", "FIND", "EXAMI" }))
+        if (verbq( "TAKE", "FIND", "EXAMI" ))
         {
             bcontents();
         }
@@ -750,7 +750,7 @@ namespace obj_funcs
                 tell("");
             }
         }
-        else if (verbq({ "FIND", "EXAMI" }))
+        else if (verbq( "FIND", "EXAMI" ))
         {
             ObjectP prso = ::prso();
             tell("The " + prso->odesc2() + " is part of the basket.  It may be manipulated\n"
@@ -937,7 +937,7 @@ namespace obj_funcs
                 }
                 jigs_up("The hole collapses, smothering you.");
             }
-            if (cnt == 4)
+            else if (cnt == 4)
             {
                 if (!trnn(s, ovison))
                 {
@@ -1188,7 +1188,7 @@ namespace room_funcs
         const AdvP &winner = *::winner;
         const ObjList &aobjs = winner->aobjs();
 #pragma warning(suppress: 6282)
-        if (verbq("GO-IN") || (verbq({ "ON", "TRNON", "LIGHT", "BURN" }) && (dummy = true)))
+        if (verbq("GO-IN") || (verbq( "ON", "TRNON", "LIGHT", "BURN" ) && (dummy = true)))
         {
             rv = true;
             if (memq(o = sfind_obj("CANDL"), aobjs) && trnn(o, onbit) ||

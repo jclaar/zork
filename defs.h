@@ -354,9 +354,6 @@ bool see_inside(const ObjectP &op);
 extern int no_tell;
 extern int eg_score;
 
-bool verbq(const char *al);
-bool verbq(const std::initializer_list<const char*> &verbs);
-
 // Hacky method of allowing an additional argument to be passed to 
 // apply_random. This is only used in a couple of cases.
 enum ApplyRandomArg
@@ -380,15 +377,8 @@ bool trnn_list(const ObjectP &op, const std::initializer_list<Bits> &bits_to_che
 bool trnn_bits(const ObjectP &op, const std::bitset<numbits> &bits_to_check);
 void trc(const ObjectP &op, Bits b);
 bool strnn(const SyntaxP &syn, SyntaxBits b);
-bool rtrnn(const RoomP &p, Bits b);
-bool rtrnn(const RoomP &p, const std::initializer_list<Bits> &bits);
 bool gtrnn(const RoomP &, Bits);
-bool rtrz(const RoomP &p, const std::initializer_list<Bits> &bits);
 // Set or 0 object bit or bits.
-const ObjectP &tro(const ObjectP &op, Bits b);
-void tro(const ObjectP &op, const std::initializer_list<Bits> &b);
-int trz(const ObjectP &op, Bits b);
-void trz(const ObjectP &op, const std::initializer_list<Bits> &b);
 void rtrc(const RoomP &p, Bits b);
 
 inline bool openable(const ObjectP &op)

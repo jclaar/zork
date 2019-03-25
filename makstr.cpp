@@ -7,29 +7,26 @@
 #include "parser.h"
 #include "ZorkException.h"
 
-namespace
+WordP make_word(SpeechType st, const std::string &val)
 {
-    WordP make_word(SpeechType st, const std::string &val)
+    WordP wp;
+    switch (st)
     {
-        WordP wp;
-        switch (st)
-        {
-            case kPrep:
-                wp = std::make_shared<prep_t>(val);
-                break;
-            case kBuzz:
-                wp = std::make_shared<buzz>(val);
-                break;
-            case kVerb:
-                wp = std::make_shared<verb>(val);
-                break;
-            case kAdj:
-                wp = std::make_shared<adjective>(val);
-                break;
-        }
-        _ASSERT(wp);
-        return wp;
+        case kPrep:
+            wp = std::make_shared<prep_t>(val);
+            break;
+        case kBuzz:
+            wp = std::make_shared<buzz>(val);
+            break;
+        case kVerb:
+            wp = std::make_shared<verb>(val);
+            break;
+        case kAdj:
+            wp = std::make_shared<adjective>(val);
+            break;
     }
+    _ASSERT(wp);
+    return wp;
 }
 
 void add_demon(const HackP &x)
@@ -49,42 +46,6 @@ void add_buncher(const std::initializer_list<const char *> &strs)
     for (auto str : strs)
     {
         bunchers.push_front(find_verb(str));
-    }
-}
-
-void add_buzz(const std::initializer_list<const char*> &w)
-{
-    add_zork(kBuzz, w);
-}
-
-
-void add_zork(SpeechType st, const std::string &w)
-{
-    // One hack -- remove LOWER from the adjective list so that
-    // it doesn't conflict with the verb LOWER. I don't know why 
-    // this isn't a problem in the MDL code? I'm guessing because
-    // of the different between a STRING and a PSTRING?
-    if (w != "LOWER")
-    {
-        words_pobl[w] = make_word(st, w);
-    }
-}
-
-void add_zork(SpeechType st, const std::initializer_list<const char*> &w)
-{
-    for (auto c : w)
-    {
-        add_zork(st, c);
-    }
-}
-
-void synonym(const char *n1, const std::initializer_list<const char*> &n2)
-{
-    const WordP &wp = words_pobl[n1];
-    _ASSERT(wp);
-    for (auto s : n2)
-    {
-        words_pobl[s] = wp;
     }
 }
 
@@ -143,14 +104,6 @@ direction find_dir(const std::string &dir)
     if (iter == directions_pobl.end())
         error("Unknown direction");
     return iter->second;
-}
-
-void dsynonym(const char *dir, const char *syn)
-{
-    auto iter = directions_pobl.find(dir);
-    if (iter == directions_pobl.end())
-        error("Invalid direction synonym added");
-    directions_pobl[syn] = iter->second;
 }
 
 void dsynonym(const char *dir, const std::initializer_list<const char*> &syns)
@@ -374,20 +327,6 @@ void add_action(const char *nam, const char *str, const ActionVec &decl)
 void sadd_action(const char *name, rapplic action)
 {
     add_action(name, "", ActionVec{ AnyV{ AVSyntax(name, action) } });
-}
-
-void vsynonym(const char *verb, const char *syn)
-{
-    actions_pobl[syn] = actions_pobl[verb];
-}
-
-void vsynonym(const char *verb, const std::initializer_list<const char *> &syns)
-{
-    auto &vp = actions_pobl[verb];
-    std::for_each(syns.begin(), syns.end(), [&vp](const char *syn)
-    {
-        actions_pobl[syn] = vp;
-    });
 }
 
 void add_inqobj(const ObjectP &obj)

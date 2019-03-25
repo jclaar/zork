@@ -214,7 +214,7 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
 
 const AdvP *Object::oactor() const
 {
-    AdvP *actor = nullptr;
+    const AdvP *actor = nullptr;
     if (_oactor != oa_none)
     {
         actor = &actors()[_oactor];

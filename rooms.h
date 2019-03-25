@@ -87,7 +87,7 @@ bool nogo(const std::string &str, direction dir);
 int weight(const ObjList &objl);
 void score_obj(const ObjectP &obj);
 int score(bool ask);
-inline bool score() { score(true); return true; }
+inline bool score() { score(false); return true; }
 const RoomP &get_door_room(const RoomP &rm, const DoorExitPtr &leavings);
 
 bool takefn2(bool take_);
@@ -139,22 +139,39 @@ bool wait(int turns);
 inline bool wait() { return wait(3); }
 bool walk();
 
-template <typename T>
-void select(T from, Iterator<T> to)
-{
-    // This is only used in one place, and is used to
-    // fill to with random elements from "from". It uses
-    // the username and some other things to do the
-    // selection. To make it simpler, this just copies
-    // the from list to the to list, does a shuffle, and
-    // returns the required number of elements.
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(from.begin(), from.end(), g);
-    std::copy(from.begin(), from.begin() + to.size(), to.begin());
-}
-
 namespace obj_funcs
 {
     bool valuables_c(std::any everything, const Iterator<ObjVector> &allbut);
 }
+
+template <typename T>
+bool rtrnn(const RoomP &p, T bits)
+{
+    return p->rbits().test(bits);
+}
+
+// Returns true if any bit in the room bits is set.
+template <typename T, typename... Args>
+bool rtrnn(const RoomP &p, T first, Args... bits)
+{
+    if (rtrnn(p, first))
+        return true;
+    return rtrnn(p, bits...);
+}
+
+template <typename T>
+bool rtrz(const RoomP &p, T bit)
+{
+    p->rbits().reset(bit);
+    return true;
+}
+
+template <typename T, typename... Args>
+bool rtrz(const RoomP &p, T first, Args... bits)
+{
+    rtrz(p, first);
+    rtrz(p, bits...);
+    return true;
+}
+
+

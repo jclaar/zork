@@ -28,8 +28,8 @@ std::string spell_flag;
 bool incant_ok = false;
 int poleup = 0;
 const char *wood_closes = "The pine wall closes quietly.";
-std::vector<QuestionP> nqvecb(3);
-Iterator<std::vector<QuestionP>> nqvec(nqvecb);
+std::array<QuestionP, 3> nqvecb;
+Iterator<std::array<QuestionP, 3>> nqvec(nqvecb);
 
 namespace
 {
@@ -470,6 +470,20 @@ bool incant()
     return true;
 }
 
+void select(std::vector<QuestionP> from, Iterator<std::array<QuestionP, 3>> to)
+{
+    // This is only used in one place, and is used to
+    // fill to with random elements from "from". It uses
+    // the username and some other things to do the
+    // selection. To make it simpler, this just copies
+    // the from list to the to list, does a shuffle, and
+    // returns the required number of elements.
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(from.begin(), from.end(), g);
+    std::copy(from.begin(), from.begin() + to.size(), to.begin());
+}
+
 bool inqstart()
 {
     const auto &qv = qvec;
@@ -494,7 +508,6 @@ bool inqstart()
 
 bool inquisitor(Iterator<ParseContV> ans)
 {
-    bool rv = true;
     int nqatt = ::nqatt;
     auto nqv = nqvec;
     const QuestionP &ques = nqv[0];
@@ -864,11 +877,11 @@ namespace obj_funcs
         {
             tell("I can't see a panel here.");
         }
-        else if (verbq({ "OPEN", "MOVE" }))
+        else if (verbq("OPEN", "MOVE" ))
         {
             tell("I don't see a way to open the panel here.");
         }
-        else if (verbq({ "POKE", "MUNG" }))
+        else if (verbq( "POKE", "MUNG" ))
         {
             if (mirror == 1)
             {
@@ -914,7 +927,7 @@ namespace obj_funcs
         RoomP here = ::here;
         ObjectP beam = sfind_obj("BEAM");
         bool rv = true;
-        if (verbq({ "PUT", "POKE", "MUNG" }))
+        if (verbq( "PUT", "POKE", "MUNG" ))
         {
             if (verbq("PUT"))
             {
@@ -994,7 +1007,7 @@ namespace obj_funcs
         bool rv = false;
         RoomP here = ::here;
         bool ncell = here == sfind_room("NCELL");
-        if (verbq({ "OPEN", "CLOSE" }))
+        if (verbq( "OPEN", "CLOSE" ))
         {
             rv = true;
             if (ncell || lcell == 4 && (here == sfind_room("CELL") || here == sfind_room("SCORR")))
@@ -1031,7 +1044,7 @@ namespace obj_funcs
     bool dial()
     {
         bool rv = true;
-        if (verbq({ "SET", "PUT", "MOVE", "TRNTO" }))
+        if (verbq( "SET", "PUT", "MOVE", "TRNTO" ))
         {
             if (!empty(prsi()))
             {
@@ -1092,7 +1105,7 @@ namespace obj_funcs
     bool cell_door()
     {
         bool rv = false;
-        if (verbq({ "OPEN", "CLOSE" }))
+        if (verbq( "OPEN", "CLOSE" ))
         {
             open_close(sfind_obj("CDOOR"), "The wooden door opens.", "The wooden door closes.");
             rv = true;
@@ -1103,7 +1116,7 @@ namespace obj_funcs
     bool wood_door()
     {
         bool rv = true;
-        if (verbq({ "OPEN", "CLOSE" }))
+        if (verbq( "OPEN", "CLOSE" ))
         {
             tell("The door won't budge.");
         }
@@ -1231,7 +1244,7 @@ namespace obj_funcs
                 tell("The pole is now slightly above the floor.");
             }
         }
-        else if (verbq({ "PUSH", "LOWER" }))
+        else if (verbq( "PUSH", "LOWER" ))
         {
             if (pu == 0)
             {
@@ -1270,7 +1283,7 @@ namespace obj_funcs
         {
             tell("I see no mirror here.");
         }
-        else if (verbq({ "OPEN", "MOVE" }))
+        else if (verbq( "OPEN", "MOVE" ))
         {
             tell("I don't see a way to open the mirror here.");
         }
@@ -1285,7 +1298,7 @@ namespace obj_funcs
                 tell("The mirror is broken into little pieces.");
             }
         }
-        else if (verbq({ "POKE", "MUNG" }))
+        else if (verbq( "POKE", "MUNG" ))
         {
             if (mirror == 1)
             {
@@ -1888,7 +1901,7 @@ namespace actor_funcs
         }
         else if (memq(prsa(), master_actions))
         {
-            if (verbq({ "STAY", "FOLLO" }))
+            if (verbq( "STAY", "FOLLO" ))
             {
 
             }

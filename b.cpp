@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "b.h"
 #include "room.h"
+#include "rooms.h"
 
 namespace
 {

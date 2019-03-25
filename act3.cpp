@@ -283,7 +283,7 @@ bool put_under()
 
 bool rope_away(const ObjectP &rope, const RoomP &rm)
 {
-    tro(rope, { climbbit, ndescbit });
+    tro(rope, climbbit, ndescbit );
     if (!rope->oroom())
     {
         drop_object(rope);
@@ -772,7 +772,7 @@ namespace obj_funcs
     {
         ObjectP gnome = sfind_obj("ZGNOM");
         ObjectP brick;
-        if (verbq({ "GIVE", "THROW" }))
+        if (verbq( "GIVE", "THROW" ))
         {
             ObjectP prso = ::prso();
             if (prso->otval() != 0)
@@ -808,7 +808,7 @@ namespace obj_funcs
             }
             remove_object(gnome);
         }
-        else if (verbq({ "KILL", "ATTAC", "POKE" }))
+        else if (verbq( "KILL", "ATTAC", "POKE" ))
         {
             tell("The gnome says 'Well, I never...' and disappears with a snap of his\n"
                 "fingers, leaving you alone.");
@@ -825,7 +825,7 @@ namespace obj_funcs
     bool wclif_object()
     {
         bool rv = false;
-        if (verbq({ "CLUP", "CLDN", "CLUDG" }))
+        if (verbq( "CLUP", "CLDN", "CLUDG" ))
         {
             rv = tell("The cliff is too steep for climbing.");
         }
@@ -836,7 +836,7 @@ namespace obj_funcs
     {
         bool rv = true;
         ObjectP prso = ::prso();
-        if (trnn(prso, takebit) && verbq({ "THROW", "DROP", "PUT" }))
+        if (trnn(prso, takebit) && verbq( "THROW", "DROP", "PUT" ))
         {
             tell("The " + prso->odesc2() + " is now sitting at the bottom of the well.", 1);
             remove_object(prso);
@@ -857,7 +857,7 @@ namespace obj_funcs
             me->aobjs().push_back(prso());
             tell("Done.");
         }
-        else if (verbq({ "KILL", "MUNG" }))
+        else if (verbq( "KILL", "MUNG" ))
         {
             jigs_up("If you insist.... Poof, you're dead!");
         }
@@ -985,7 +985,7 @@ namespace obj_funcs
             tell("You tumble down the chute to the cellar.");
             go_and_look(sfind_room("CELLA"));
         }
-        else if (verbq({ "CLDN", "CLUP", "CLUDG" }))
+        else if (verbq( "CLDN", "CLUP", "CLUDG" ))
         {
             rv = false;
         }
@@ -1007,7 +1007,7 @@ namespace obj_funcs
             }
             rv = false;
         }
-        else if (verbq({ "EXAMI", "LKAT", "READ" }) && prso == sfind_obj("BROCH"))
+        else if (verbq( "EXAMI", "LKAT", "READ" ) && prso == sfind_obj("BROCH"))
         {
             tell(bro1 + username() + bro2);
             stamp->ocan() && tell("Affixed loosely to the brochure is a small stamp.");
@@ -1076,7 +1076,7 @@ namespace obj_funcs
         if ((cpuvec[size_t(here) + 1 - 1] == -2) && (flg = true) ||
             cpuvec[size_t(here) - 1 - 1] == -3)
         {
-            if (verbq({ "CLUP", "CLUDG" }))
+            if (verbq( "CLUP", "CLUDG" ))
             {
                 if (flg && here == 10)
                 {
@@ -1255,7 +1255,7 @@ namespace obj_funcs
             aa->aobjs().push_front(prso);
             tell("The robot gladly takes the " + prso->odesc2() + "\nand nods his head-like appendage in thanks.", 1);
         }
-        else if (verbq({ "THROW", "MUNG" }) &&
+        else if (verbq( "THROW", "MUNG" ) &&
             (prsi() == (rr = find_obj("ROBOT")) || prso() == rr))
         {
             tell(robotdie, long_tell1);
@@ -1340,7 +1340,7 @@ namespace obj_funcs
     bool stove_function()
     {
         bool rv = true;
-        if (verbq({ "TAKE", "FEEL", "DESTR", "ATTAC" }))
+        if (verbq( "TAKE", "FEEL", "DESTR", "ATTAC" ))
         {
             tell("The intense heat of the stove keeps you away.");
         }
@@ -1490,7 +1490,7 @@ namespace obj_funcs
         {
             tell("The implementers are dead; therefore they do not respond.");
         }
-        else if (verbq({ "DESTR", "KICK", "POKE", "ATTAC", "KILL", "RUB", "OPEN", "TAKE", "BURN" }))
+        else if (verbq( "DESTR", "KICK", "POKE", "ATTAC", "KILL", "RUB", "OPEN", "TAKE", "BURN" ))
         {
             tell(headstr1, long_tell1);
             ObjList nl = rob_adv(winner, ObjList());
@@ -1584,12 +1584,12 @@ namespace obj_funcs
     bool plid_function()
     {
         bool rv = true;
-        if (verbq({ "OPEN", "RAISE" }))
+        if (verbq( "OPEN", "RAISE" ))
         {
             tell("The lid is open.");
             tro(prso(), openbit);
         }
-        else if (verbq({ "CLOSE", "LOWER" }))
+        else if (verbq( "CLOSE", "LOWER" ))
         {
             if (!empty(((here == sfind_room("PALAN")) ? sfind_obj("PKH2") : sfind_obj("PKH1"))->ocontents()))
             {
@@ -1658,7 +1658,7 @@ namespace obj_funcs
             insert_object(prso(),
                 here == (rm = sfind_room("PRM")) ? sfind_room("PALAN") : rm);
         }
-        else if (verbq({ "OPEN", "CLOSE" }))
+        else if (verbq( "OPEN", "CLOSE" ))
         {
             if (flags[punlock])
             {
@@ -1785,7 +1785,7 @@ namespace obj_funcs
                 }
                 flags[dome_flag] = false;
                 timber_tie.reset();
-                trz(rope, { climbbit, ndescbit });
+                trz(rope, climbbit, ndescbit );
                 tell("The rope is now untied.");
             }
             else
@@ -1820,11 +1820,11 @@ namespace obj_funcs
     bool scol_object(const ObjectP &obj)
     {
         bool rv = false;
-        if (verbq({ "PUSH", "MOVE", "TAKE", "RUB" }))
+        if (verbq( "PUSH", "MOVE", "TAKE", "RUB" ))
         {
             rv = tell("As you try, your hand seems to go through it.");
         }
-        else if (verbq({ "POKE", "ATTAC", "KILL" }))
+        else if (verbq( "POKE", "ATTAC", "KILL" ))
         {
             rv = tell("The " + prsi()->odesc2() + " goes through it.", 1);
         }
@@ -1873,7 +1873,7 @@ namespace obj_funcs
             insert_object(prsoo, here);
             flags[mud] = true;
         }
-        else if (verbq({ "TAKE", "MOVE", "PULL" }) && obj)
+        else if (verbq( "TAKE", "MOVE", "PULL" ) && obj)
         {
             matobj.reset();
             remove_object(obj);
@@ -1888,7 +1888,7 @@ namespace obj_funcs
     bool coke_bottles()
     {
         bool rv = false;
-        if (verbq({ "THROW", "MUNG" }))
+        if (verbq( "THROW", "MUNG" ))
         {
             tell("Congratulations!  You've managed to break all those bottles.\n"
                 "Fortunately for your feet, they were made of magic glass and disappear\n"
@@ -1915,7 +1915,7 @@ namespace obj_funcs
             mung_room(here, "Noxious vapors prevent your entry.");
             jigs_up(vapors);
         }
-        else if (verbq({ "MUNG", "THROW" }))
+        else if (verbq( "MUNG", "THROW" ))
         {
             tell("The flask breaks into pieces.");
             ObjectP prsoo = prso();
@@ -1970,7 +1970,7 @@ namespace obj_funcs
                 tell("The concept of using a " + prsi()->odesc2() + " is certainly original.");
             }
         }
-        else if (verbq({ "OPEN", "POKE", "MUNG" }))
+        else if (verbq("OPEN", "POKE", "MUNG"))
         {
             tell("Your rather indelicate handling of the egg has caused it some damage.\nThe egg is now open.");
             bad_egg(begg);
@@ -2432,7 +2432,7 @@ namespace actor_funcs
             winner = ract;
             flags[cage_solve] = true;
         }
-        else if (verbq({ "EAT", "DRINK" }))
+        else if (verbq("EAT", "DRINK"))
         {
             tell("\"I am sorry but that action is difficult for a being with no mouth.\"");
         }
@@ -2475,15 +2475,15 @@ namespace actor_funcs
                 }
             }
         }
-        else if (verbq({ "QUIT", "RESTA" }))
+        else if (verbq("QUIT", "RESTA"))
         {
             return false;
         }
-        else if (verbq({ "ATTAC", "BLOW", "DESTR", "KILL", "POKE", "STRIK", "SWING", "TAUNT" }))
+        else if (verbq("ATTAC", "BLOW", "DESTR", "KILL", "POKE", "STRIK", "SWING", "TAUNT"))
         {
             tell("All such attacks are vain in your condition.");
         }
-        else if (verbq({ "OPEN", "CLOSE", "EAT", "DRINK", "INFLA", "DEFLA", "TURN", "BURN", "TIE", "UNTIE", "RUB" }))
+        else if (verbq( "OPEN", "CLOSE", "EAT", "DRINK", "INFLA", "DEFLA", "TURN", "BURN", "TIE", "UNTIE", "RUB" ))
         {
             tell("Even such a simple action is beyond your capabilities.");
         }
@@ -2503,7 +2503,7 @@ namespace actor_funcs
         {
             tell("Your hand passes through its object.");
         }
-        else if (verbq({ "DROP", "THROW", "INVEN" }))
+        else if (verbq( "DROP", "THROW", "INVEN" ))
         {
             tell("You have no possessions.");
         }

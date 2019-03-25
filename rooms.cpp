@@ -653,7 +653,8 @@ void rdcom(Iterator<ParseContV> ivec)
                 {
                     no_tell = false;
                     // If the room has changed due to the open, display the room info.
-                    if (!lit && here == (here = ::here) && ::lit(here))
+                    RoomP there = here;
+                    if (!lit && there == (here = ::here) && ::lit(here))
                     {
                         perform(room_info, find_verb("LOOK"));
                     }
@@ -866,7 +867,7 @@ bool jigs_up(const std::string &desc, bool player)
             break;
         }
         RoomP rm;
-        if (!rtrnn(rm = *riter, { rendgame, rairbit, rwaterbit }))
+        if (!rtrnn(rm = *riter, rendgame, rairbit, rwaterbit ))
         {
             insert_object(*oiter, rm);
             ++oiter;
@@ -1350,7 +1351,7 @@ bool dropper()
         {
 
         }
-        else if (verbq({ "DROP", "POUR" }))
+        else if (verbq( "DROP", "POUR" ))
         {
             tell("Dropped.");
         }
@@ -1900,7 +1901,7 @@ bool frob_lots(Iterator<ObjVector> uv)
         }
         none || tell("I can't find anything.");
     }
-    else if (verbq({ "DROP", "PUT" }))
+    else if (verbq( "DROP", "PUT" ))
     {
         if (verbq("PUT") && prso() == prsi())
         {

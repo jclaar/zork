@@ -13,12 +13,9 @@ enum SpeechType
 };
 
 void add_buncher(const std::initializer_list<const char *> &strs);
-void add_buzz(const std::initializer_list<const char*> &w);
-void add_zork(SpeechType st, const std::string &w);
-void add_zork(SpeechType st, const std::initializer_list<const char*> &w);
-void synonym(const char *n1, const std::initializer_list<const char*> &n2);
-
 void add_inqobj(const ObjectP &obj);
+WordP make_word(SpeechType st, const std::string &val);
+
 
 void add_question(const char *str, const std::initializer_list<QuestionValue> &vector);
 void add_demon(const HackP &x);
@@ -29,8 +26,6 @@ VerbP find_verb(const char *verb);
 VerbP find_verb(const std::string &verb);
 const ActionP &find_action(const std::string &action);
 direction find_dir(const std::string &dir);
-void dsynonym(const char *dir, const char *syn);
-void dsynonym(const char *dir, const std::initializer_list<const char*> &syns);
 
 // Actions
 // Object support flags.
@@ -67,5 +62,3 @@ void oneadd_action(const char *str1, const char *str2, rapplic atm);
 void onenradd_action(const char *str1, const char *str2, rapplic atm);
 void add_action(const char *nam, const char *str, const ActionVec &decl);
 void sadd_action(const char *name, rapplic action);
-void vsynonym(const char *verb, const char *syn);
-void vsynonym(const char *verb, const std::initializer_list<const char *> &syns);
