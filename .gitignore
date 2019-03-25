@@ -261,4 +261,4 @@ __pycache__/
 *.pyc
 *.o
 zork_linux
-
+.d/
