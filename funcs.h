@@ -44,8 +44,6 @@ bool terminal();
 
 int readst(std::string &rdbuf, const std::string &prompt);
 
-bool frobozz();
-
 // Various MDL functions mapped to C++ equivalents
 //inline char *back(char *s, size_t count) { return s - count; }
 std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest);

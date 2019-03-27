@@ -87,12 +87,6 @@ int readst(std::string &buffer, const std::string &prompt)
     return (int) buffer.size();
 }
 
-bool frobozz()
-{
-    tell("The FROBOZZ Corporation created, owns, and operates this dungeon.");
-    return true;
-}
-
 SIterator uppercase(SIterator src)
 {
     std::transform(src.begin(), src.end(), src.begin(), [](char c) { return toupper(c); });

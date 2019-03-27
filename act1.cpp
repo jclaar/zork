@@ -3257,7 +3257,7 @@ namespace obj_funcs
         {
             tell("It's right in front of you. Are you blind or something?");
         }
-        else if (verbq("LKAT"))
+        else if (verbq( "LKAT", "EXAMI" ))
         {
             tell("The house is a beautiful colonial house which is painted white.\n"
                 "It is clear that the owners must have been extremely wealthy.");

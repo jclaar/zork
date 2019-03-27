@@ -8,7 +8,7 @@
 extern ObjectP timber_tie;
 extern ObjectP matobj;
 
-bool bad_egg(ObjectP begg);
+bool bad_egg(const ObjectP &begg);
 bool chomp();
 bool climb_up(direction dir, bool noobj = false);
 bool climb_up();
@@ -17,6 +17,7 @@ bool climb_foo();
 bool count();
 bool cpgoto(int fx);
 bool enter();
+bool frobozz();
 ScolWalls get_wall(RoomP rm);
 bool go_and_look(RoomP rm);
 bool held(const ObjectP &obj);

@@ -100,6 +100,12 @@ bool cpwhere()
     return true;
 }
 
+bool frobozz()
+{
+    tell("The FROBOZZ Corporation created, owns, and operates this dungeon.");
+    return true;
+}
+
 bool maker()
 {
     bool rv = false;
@@ -650,10 +656,9 @@ bool knock()
     return true;
 }
 
-bool bad_egg(ObjectP begg)
+bool bad_egg(const ObjectP &begg)
 {
-    ObjectP can;
-    ObjectP egg = sfind_obj("EGG");
+    const ObjectP &egg = sfind_obj("EGG");
     if (sfind_obj("GCANA")->ocan() == egg)
     {
         tell(sfind_obj("BCANA")->odesco());
@@ -668,7 +673,7 @@ bool bad_egg(ObjectP begg)
 
     if (egg->oroom())
         insert_object(begg, here);
-    else if (can = egg->ocan())
+    else if (const ObjectP &can = egg->ocan())
         insert_into(can, begg);
     else
         take_object(begg);
@@ -1694,6 +1699,8 @@ namespace obj_funcs
             {
                 tell("There is nothing it can be tied to.");
             }
+            else
+                rv = false;
         }
         else if (verbq("CLDN") && here == sfind_room("CPANT"))
         {
@@ -1944,8 +1951,8 @@ namespace obj_funcs
     bool egg_object()
     {
         bool rv = true;
-        ObjectP begg = sfind_obj("BEGG");
-        ObjectP egg = sfind_obj("EGG");
+        const ObjectP &begg = sfind_obj("BEGG");
+        const ObjectP &egg = sfind_obj("EGG");
         ObjectP prsoo = prso();
         if (verbq("OPEN") && prsoo == egg)
         {

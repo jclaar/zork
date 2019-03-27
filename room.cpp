@@ -6,6 +6,7 @@
 #include "funcs.h"
 #include "objfns.h"
 #include "ZorkException.h"
+#include "act3.h"
 
 // These are all exit definitions in the original MDL code.
 #define notree_FORE1 NExit("There is no tree here suitable for climbing.")
