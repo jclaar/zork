@@ -3241,7 +3241,7 @@ namespace obj_funcs
         {
             if (verbq("FIND"))
             {
-                if (here == sfind_room("CELLA"))
+                if (here == sfind_room("CLEAR"))
                 {
                     tell("It seems to be to the southwest.");
                 }
@@ -3251,7 +3251,7 @@ namespace obj_funcs
                 }
             }
             else
-                rv = false;
+                tell("You're not at the house.");
         }
         else if (verbq("FIND"))
         {
