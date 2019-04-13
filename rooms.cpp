@@ -1505,7 +1505,7 @@ void record(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc)
     recout(score, moves, deaths, quit, loc);
 }
 
-void recout(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc)
+void recout(int score, int moves, int deaths, const RecOutQuit &quit, const RoomP &loc)
 {
     crlf();
     play_time();
@@ -1534,7 +1534,7 @@ void recout(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc)
         princ("s. ");
     princ(" In ");
     princ(loc->rdesc2());
-    bool *bquit;
+    const bool *bquit;
     if (bquit = std::get_if<bool>(&quit))
     {
         if (*bquit)
@@ -1608,8 +1608,7 @@ bool play_time(bool loser)
     else
         princ("Played for ");
 
-    auto now = steady_clock::now();
-    auto d = now - start_time;
+    auto d = steady_clock::now() - start_time;
     auto h = duration_cast<hours>(d);
     d -= h;
     auto m = duration_cast<minutes>(d);

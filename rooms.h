@@ -86,7 +86,7 @@ inline void record(int score, int movs, int deaths, const char *quit, RoomP loc)
 {
     record(score, movs, deaths, std::string(quit), loc);
 }
-void recout(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc);
+void recout(int score, int moves, int deaths, const RecOutQuit &quit, const RoomP &loc);
 bool room_obj();
 bool room_name();
 bool room_room();

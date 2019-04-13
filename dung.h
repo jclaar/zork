@@ -242,7 +242,8 @@ inline WordP as_word(const ParseAval &a)
 
 inline VerbP as_verb(const ParseVecVal &a)
 {
-    return std::get<VerbP>(a);
+    const VerbP *p = std::get_if<VerbP>(&a);
+    return p ? *p : VerbP();
 }
 
 void dir_syns();
