@@ -28,9 +28,17 @@ int run_zork()
 
 	save_it(true);
 
-	rdcom();
+    bool restart = false;
+    try
+    {
+        rdcom();
+    }
+    catch (ExitException &e)
+    {
+        restart = e.restart_flag();
+    }
 
-	return restart_flag();
+	return restart;
 }
 
 int main(int argc, char *argv[])

@@ -20,7 +20,6 @@
 #include "info.h"
 #include "memq.h"
 
-bool running = true;
 ObjVector obj_uv_b(20);
 Iterator<ObjVector> obj_uv(obj_uv_b, obj_uv_b.end());
 RoomP here;
@@ -37,8 +36,6 @@ std::unique_ptr<std::ofstream> script_channel;
 
 namespace
 {
-    bool f_restart = false;
-
     void flush_cin()
     {
         // Remove all characters from cin. This is useful when prompting for
@@ -47,11 +44,6 @@ namespace
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
-}
-
-bool restart_flag()
-{
-    return f_restart;
 }
 
 void excruciatingly_untasteful_code()
@@ -581,7 +573,7 @@ void rdcom(Iterator<ParseContV> ivec)
     }
 
     Iterator<ParseContV> vc;
-    while (running)
+    while (1)
     {
         Iterator<ParseContV> pc;
         bool vval = true;
@@ -1504,7 +1496,7 @@ bool finish(const RecOutQuit &ask)
 
 bool quit()
 {
-    running = false;
+    throw ExitException(false);
     return true;
 }
 
@@ -2042,8 +2034,7 @@ bool restart()
         tell("Restarting.");
         // Set the restart flag and quit. The outer shell will
         // handle the restart.
-        f_restart = true;
-        running = false;
+        throw ExitException(true);
     }
     return false;
 }

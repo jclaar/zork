@@ -2038,14 +2038,14 @@ namespace obj_funcs
     bool ghost_function()
     {
         bool rv = false;
-        ObjectP g = sfind_obj("GHOST");
+        auto &g = sfind_obj("GHOST");
         if (prsi() == g)
         {
             tell("How can you attack a spirit with material objects?");
         }
         else if (prso() == g)
         {
-            tell("You seem unable to affect these spririts.");
+            tell("You seem unable to affect these spirits.");
             rv = true;
         }
         return rv;
