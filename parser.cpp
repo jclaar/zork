@@ -818,9 +818,9 @@ StuffVecP stuff_obj(ObjectP obj, PrepP prep, PrepVec prepvec, ParseVec pvr, bool
         }
     }
 
-    if (empty(pvr) && vb)
+    if (empty(pvr))
     {
-        tell("Too many objects specified?");
+        vb || tell("Too many objects specified?");
         return stuff;
     }
     else
