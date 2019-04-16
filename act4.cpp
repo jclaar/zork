@@ -520,7 +520,7 @@ bool inquisitor(Iterator<ParseContV> ans)
     {
         if (correct(ans, ques->qans()))
         {
-            tell("The dungeon master says 'Excellent'.");
+            tell("The dungeon master says 'Excellent.'");
             if (empty(nqv = rest(nqv)))
             {
                 tell(quiz_win, long_tell1);
@@ -1056,7 +1056,7 @@ namespace obj_funcs
                 }
                 else
                 {
-                    tell("The dial face contains only numbers.");
+                    tell("The dial face only contains numbers.");
                 }
             }
             else

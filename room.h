@@ -25,7 +25,7 @@ inline RP rg(const std::initializer_list<Bits> &rb)
 class NExit
 {
 public:
-    NExit(const std::string &desc) : nexit_desc(desc) {}
+	explicit NExit(const char *desc) : nexit_desc(desc) {}
 
     const std::string &desc() const { return nexit_desc; }
 private:

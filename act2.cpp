@@ -37,7 +37,7 @@ bool digger()
         tell("Digging with the " + prsi()->odesc2() + " is slow and tedious.");
     }
     else
-        tell("Digging with the " + prsi()->odesc2() + " is silly.");
+        tell("Digging with a " + prsi()->odesc2() + " is silly.");
     return true;
 }
 
@@ -254,7 +254,7 @@ bool rise_and_shine(const ObjectP &ball)
         else
         {
             clock_int(vlgin, 10);
-            put_balloon(ball, s, "floats away. It seems to be ascending\ndue to its light load.");
+            put_balloon(ball, s, "floats away.  It seems to be ascending\ndue to its light load.");
         }
     }
     else if (in)
@@ -359,7 +359,7 @@ bool blast()
     }
     else
     {
-        tell("I really don't know how to do that.");
+        tell("I don't really know how to do that.");
     }
     return true;
 }
@@ -663,7 +663,7 @@ namespace obj_funcs
             {
                 if (binf == prso())
                 {
-                    tell("You really don't want to hold a burning " + ((ObjectP)prso())->odesc2() + ".", 1);
+                    tell("You don't really want to hold a burning " + ((ObjectP)prso())->odesc2() + ".", 1);
                     return true;
                 }
                 return false;
@@ -880,7 +880,7 @@ namespace obj_funcs
                 }
                 else
                 {
-                    tell("The machine opens.");
+                    tell("The lid opens.");
                     tro(mach, openbit);
                 }
             }
@@ -941,7 +941,7 @@ namespace obj_funcs
             {
                 if (!trnn(s, ovison))
                 {
-                    tell("You see a small statue here in the sand.");
+                    tell("You can see a small statue here in the sand.");
                     tro(s, ovison);
                 }
             }
@@ -985,7 +985,7 @@ namespace obj_funcs
         {
             if (memq(sfind_obj("STICK"), winner->aobjs()))
             {
-                tell("There is a hissing sound as the boat deflates.");
+                tell("There is a hissing sound and the boat deflates.");
                 remove_object(rboat);
                 insert_object(sfind_obj("DBOAT"), here);
             }
@@ -1291,7 +1291,7 @@ namespace room_funcs
         const AdvP &winner = *::winner;
         if (memq(sfind_obj("BUOY"), winner->aobjs()) && flags[buoy_flag])
         {
-            tell("Something feels funny about the feel of the buoy.");
+            tell("Something seems funny about the feel of the buoy.");
             flags[buoy_flag] = false;
         }
         return false;

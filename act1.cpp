@@ -174,7 +174,7 @@ bool robber(const HackP &hack)
                             tell("A seedy-looking individual with a large bag just wandered through\n"
                                 "the room.  On the way through, he quietly abstracted all valuables\n"
                                 "from the room and from your possession, mumbling something about\n"
-                                "\"Doing unto others before..\"", long_tell1);
+                                "\"Doing unto others before...\"", long_tell1);
                         }
                         else if (hereq)
                         {
@@ -440,7 +440,7 @@ bool sinbad()
 
 bool advent()
 {
-    tell("A hollow voice says 'Cretin'.");
+    tell("A hollow voice says 'Cretin.'");
     return true;
 }
 
@@ -730,7 +730,7 @@ bool brush()
         const AdvP &winner = *::winner;
         if (prsi == sfind_obj("PUTTY") && memq(prsi, winner->aobjs()))
         {
-            jigs_up("Well, you seem to have been bruhing your teeth with some sort of\n"
+            jigs_up("Well, you seem to have been brushing your teeth with some sort of\n"
                 "glue. As a result, your mouth gets glued together (with your nose)\n"
                 "and you die of respiratory failure.");
         }
@@ -1047,7 +1047,7 @@ bool eat()
         }
         else
         {
-            tell("Thank you very much. It really hit the spot.");
+            tell("Thank you very much.  It really hit the spot.");
             remove_object(prsoo);
         }
     }
@@ -1055,7 +1055,7 @@ bool eat()
     {
         if (prsoo->oglobal().has_value() || (nobj = prsoo->ocan()) && memq(nobj, aobjs) && trnn(nobj, openbit))
         {
-            tell("Thank you very much. I was rather thirsty (from all this talking\nprobably.)");
+            tell("Thank you very much.  I was rather thirsty (from all this talking\nprobably.)");
             if (nobj)
             {
                 remove_from(nobj, prsoo);
@@ -1429,7 +1429,7 @@ namespace room_funcs
             if (flags[low_tide])
             {
                 tell("You are on what used to be a large reservoir, but which is now a large\n"
-                    "mud pile.There are 'shores' to the north and south.", long_tell1);
+                    "mud pile.  There are 'shores' to the north and south.", long_tell1);
             }
             else
             {
@@ -1497,7 +1497,7 @@ namespace room_funcs
 
                 if (!is_empty(prsvec[0]) && prsa() == bug)
                 {
-                    tell("Feature");
+                    tell("Feature.");
                 }
                 else if (!is_empty(prsvec[0]) && prsa() == feature)
                 {
@@ -2019,33 +2019,35 @@ namespace obj_funcs
 
     bool granite()
     {
-        bool rv = false;
-        if (verbq("FIND"))
-        {
-            rv = true;
-            if (here == sfind_room("TEMP1") || here == sfind_room("TREAS"))
-            {
-                tell("The north wall is solid granite here.");
-            }
-            else
-            {
-                tell("I see no granite wall here.");
-            }
+		if (verbq("FIND"))
+		{
+			if (here == sfind_room("TEMP1") || here == sfind_room("TREAS"))
+			{
+				tell("The north wall is solid granite here.");
+			}
+			else
+			{
+				tell("There is no granite wall here.");
+			}
+		}
+		else
+		{
+            tell("I see no granite wall here.");
         }
-        return rv;
+        return true;
     }
 
     bool ghost_function()
     {
         bool rv = false;
-        ObjectP g = sfind_obj("GHOST");
+        auto &g = sfind_obj("GHOST");
         if (prsi() == g)
         {
             tell("How can you attack a spirit with material objects?");
         }
         else if (prso() == g)
         {
-            tell("You seem unable to affect these spririts.");
+            tell("You seem unable to affect these spirits.");
             rv = true;
         }
         return rv;
@@ -2460,7 +2462,7 @@ namespace obj_funcs
                     here->rglobal(rgwater);
                     tell("There is a rumbling sound and a stream of water appears to burst\n"
                         "from the east wall of the room (apparently, a leak has occurred in a\n"
-                        "pipe.)", long_tell1);
+                        "pipe).", long_tell1);
                     water_level = 1;
                     clock_int(mntin, -1);
                 }
@@ -2508,7 +2510,7 @@ namespace obj_funcs
         {
             if (match->omatch(mc = mc - 1), mc < 0)
             {
-                tell("I am afraid that you have run out of matches.");
+                tell("I'm afraid that you have run out of matches.");
             }
             else
             {
@@ -2640,7 +2642,7 @@ namespace obj_funcs
         }
         else if (flags[troll_flag] && verbq("HELLO"))
         {
-            rv = tell("Unfortunately, the troll cannot hear you.");
+            rv = tell("Unfortunately, the troll can't hear you.");
         }
         return rv;
     }
@@ -3091,7 +3093,7 @@ bool unlocker()
         {
             flags[grunlock] = true;
             tell("The grate is unlocked.");
-            dput("The grate is unlocked.");
+            dput("The grate is closed.");
         }
         else
         {
@@ -3191,7 +3193,7 @@ namespace obj_funcs
         }
         else if (verbq("OIL"))
         {
-            tell("Hmm. It appears the tube contained glue, not oil.  Turning the bolt\n"
+            tell("Hmm.  It appears the tube contained glue, not oil.  Turning the bolt\n"
                 "won't get any easier....");
         }
         else
@@ -3255,7 +3257,7 @@ namespace obj_funcs
         }
         else if (verbq("FIND"))
         {
-            tell("It's right in front of you. Are you blind or something?");
+            tell("It's right in front of you.  Are you blind or something?");
         }
         else if (verbq( "LKAT", "EXAMI" ))
         {

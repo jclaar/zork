@@ -115,7 +115,7 @@ bool maker()
         if (here == sfind_room("BWELL") &&
             (memq(coins, here->robjs()) || memq(coins = sfind_obj("COINS"), here->robjs())))
         {
-            tell("A whispering voice replies: 'Water makes the bucket go'\n"
+            tell("A whispering voice replies: 'Water makes the bucket go.'\n"
                 "Unfortunately, wishing makes the coins go....");
             remove_object(coins);
         }
@@ -647,7 +647,7 @@ bool knock()
     }
     else if (memq("DOOR", (obj = prso())->onames()))
     {
-        tell("I don't think anybody's home.");
+        tell("I don't think that anybody's home.");
     }
     else
     {
@@ -922,7 +922,7 @@ namespace obj_funcs
                 else if (prsi() == sfind_obj("FLASK"))
                 {
                     tell("The icing, now visible, says '" +
-                        std::string(prso == rice ? "Evaporate" : (prso == oice ? "Explode" : "Enlarged")) + "'.", 1);
+                        std::string(prso == rice ? "Evaporate" : (prso == oice ? "Explode" : "Enlarge")) + "'.", 1);
                 }
                 else tell("You can't see through that!");
             }
@@ -1019,7 +1019,7 @@ namespace obj_funcs
         }
         else if (verbq("FIND") && flags[brflag1])
         {
-            tell("It's probably on its way.");
+            tell("It's probably on the way.");
         }
         else if (verbq("SEND"))
         {
@@ -1295,7 +1295,7 @@ namespace obj_funcs
         {
             if (prso() == buck)
             {
-                tell("The bucket is fireproof and won't burn.");
+                tell("The bucket is fireproof, and won't burn.");
             }
             else
                 rv = false;
@@ -1715,7 +1715,7 @@ namespace obj_funcs
             }
             else
             {
-                tell("It's not really tied, but...");
+                tell("It's not really tied, but....");
             }
             rv = false;
         }
@@ -1852,7 +1852,7 @@ namespace obj_funcs
         bool rv = false;
         if (verbq("GTHRO") || verbq("PUT") && prso() == player()->aobj())
         {
-            tell("You tumble down the slide.");
+            tell("You tumble down the slide....");
             go_and_look(sfind_room("CELLA"));
             rv = true;
         }
@@ -2210,7 +2210,7 @@ namespace room_funcs
             }
             else
             {
-                tell("As you enter, your compass stars spinning wildly.");
+                tell("As you enter, your compass starts spinning wildly.");
             }
         }
         else
@@ -2272,7 +2272,7 @@ namespace exit_funcs
         direction dir = as_dir(pv[1]);
         if (flags[carousel_flip])
         {
-            tell("You cannot get your bearings.");
+            tell("You cannot get your bearings...");
             if (prob(50))
                 return sfind_room("CMACH");
             else
@@ -2353,9 +2353,13 @@ namespace exit_funcs
                 }
                 else
                 {
-                    tell("There is no way up.");
+                    tell("The exit is too far above your head.");
                 }
             }
+			else
+			{
+				tell("There is no way up.");
+			}
             return rv;
         }
         else if (rm == 52 && dir == West && flags[cpout])
