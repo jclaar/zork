@@ -301,7 +301,7 @@ void add_zork(SpeechType st, T wc)
     // this isn't a problem in the MDL code? I'm guessing because
     // of the different between a STRING and a PSTRING?
     std::string w = wc;
-    if (wc != "LOWER")
+    if (w != "LOWER")
     {
         words_pobl[w] = make_word(st, wc);
     }

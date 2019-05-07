@@ -719,11 +719,11 @@ namespace obj_funcs
                 clock_enable(bint = clock_int(::bint, 3));
                 btie->odesc1(hook_desc);
                 btie.reset();
-                tell("The wire falls off the hook.");
+                tell("The wire falls off of the hook.");
             }
             else
             {
-                tell("The wire is not attached to anything.");
+                tell("The wire is not tied to anything.");
             }
         }
         else

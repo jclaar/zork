@@ -55,7 +55,7 @@ std::array<CEventP, kev_numevs> ev =
     mke(0, start_end, true, "STRTE", false),
 };
 
-CEvent::CEvent(int tick, rapplic action, bool flag, const std::string &id, bool death) :
+CEvent::CEvent(int tick, rapplic action, bool flag, std::string_view id, bool death) :
     _ctick(tick),
     _caction(action),
     _cflag(flag),

@@ -499,7 +499,7 @@ bool inqstart()
     }
     else
     {
-        tell("The Dungeonmaster gazes at you impatiently, and says, 'My conditions\n"
+        tell("The dungeon master gazes at you impatiently, and says, 'My conditions\n"
             "have been stated, abide by them or depart!'");
     }
 
@@ -1713,7 +1713,7 @@ namespace room_funcs
                 "and south.  A narrow red beam of light crosses the room at the north\n"
                 "end, inches above the floor.", long_tell);
 
-            if (ObjectP o = beam_stopped())
+            if (const ObjectP &o = beam_stopped())
             {
                 tell("  The beam is stopped halfway across the\n"
                     "room by a " + o->odesc2() + " lying on the floor.", 1);

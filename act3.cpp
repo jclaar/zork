@@ -2106,7 +2106,7 @@ namespace room_funcs
             }
             else if (prob(10))
             {
-                tell("You hear in the distance the chirping of a songbird.");
+                tell("You hear in the distance the chirping of a song bird.");
             }
         }
         else if (verbq("GO-IN"))
@@ -2392,7 +2392,8 @@ namespace exit_funcs
             {
                 tell("There is a wall there.");
             }
-        }
+        } else
+            tell("There is a wall there.");
 
         return rv;
     }

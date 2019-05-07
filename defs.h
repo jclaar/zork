@@ -160,7 +160,7 @@ enum vword_flag
 class word
 {
 public:
-    word(const std::string &s) : _w(s) {}
+    word(std::string_view s) : _w(s) {}
     virtual ~word() {}
 
     const std::string &w() const { return _w; }
@@ -172,7 +172,7 @@ private:
 class prep_t : public word
 {
 public:
-    prep_t(const std::string &s) : word(s) {}
+    prep_t(std::string_view s) : word(s) {}
 };
 
 typedef std::shared_ptr<prep_t> PrepP;
@@ -180,13 +180,13 @@ typedef std::shared_ptr<prep_t> PrepP;
 class buzz : public word
 {
 public:
-    buzz(const std::string &s) : word(s) {}
+    buzz(std::string_view s) : word(s) {}
 };
 
 class adjective : public word
 {
 public:
-    adjective(const std::string &s) : word(s) {}
+    adjective(std::string_view s) : word(s) {}
 };
 typedef std::shared_ptr<adjective> AdjectiveP;
 
@@ -206,7 +206,7 @@ typedef std::shared_ptr<_varg> VargP;
 struct verb : public word
 {
 public:
-    verb(const std::string &w, rapplic vf = nullptr) : word(w), _vfcn(vf) {}
+    verb(std::string_view w, rapplic vf = nullptr) : word(w), _vfcn(vf) {}
     
     rapplic vfcn() const { return _vfcn; }
     void set_vfcn(rapplic fn) { _vfcn = fn; }

@@ -9,7 +9,7 @@
 class CEvent
 {
 public:
-    CEvent(int tick, rapplic action, bool flag, const std::string &id, bool death);
+    CEvent(int tick, rapplic action, bool flag, std::string_view id, bool death);
 
     rapplic caction() const { return _caction; }
     int ctick() const { return _ctick; }

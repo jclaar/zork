@@ -128,6 +128,19 @@ bool verbq(T first, Args... args)
     return verbq(args...);
 }
 
+template <typename T>
+void add_buncher(T b)
+{
+    bunchers.push_front(find_verb(b));
+}
+
+template <typename T, typename ...Args>
+void add_buncher(T first, Args... args)
+{
+    add_buncher(first);
+    add_buncher(args...);
+}
+
 template <class... Types>
 class PrsoTypeT : public std::variant<Types...>
 {

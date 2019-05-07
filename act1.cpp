@@ -1055,7 +1055,7 @@ bool eat()
     {
         if (prsoo->oglobal().has_value() || (nobj = prsoo->ocan()) && memq(nobj, aobjs) && trnn(nobj, openbit))
         {
-            tell("Thank you very much.  I was rather thirsty (from all this talking\nprobably.)");
+            tell("Thank you very much.  I was rather thirsty (from all this talking\nprobably).");
             if (nobj)
             {
                 remove_from(nobj, prsoo);
@@ -1295,7 +1295,7 @@ namespace room_funcs
             rv = true;
             if (flg = (hobj->oroom() != here))
             {
-                tell("You hear a scream of anguish as you violate the robber's hideaway. \n"
+                tell("You hear a scream of anguish as you violate the robber's hideaway.\n"
                     "Using passages unknown to you, he rushes to its defense.");
                 if (hobj->oroom())
                     remove_object(hobj);
@@ -1389,7 +1389,7 @@ namespace room_funcs
             {
                 tell(htide_desc, long_tell1);
             }
-            tell("There is a control panel here.  There is a large metal bolt on the \n"
+            tell("There is a control panel here.  There is a large metal bolt on the\n"
                 "panel. Above the bolt is a small green plastic bubble.", long_tell1);
             if (flags[gate_flag])
             {
@@ -1601,15 +1601,15 @@ namespace room_funcs
 
             if (rug && trnn(door, openbit))
             {
-                tell("and a rug lying beside an open trap door.", post_crlf);
+                tell("and a rug lying beside an open trap-door.", post_crlf);
             }
             else if (rug)
             {
-                tell("and a closed trap door at your feet.", post_crlf);
+                tell("and a closed trap-door at your feet.", post_crlf);
             }
             else if (trnn(door, openbit))
             {
-                tell("and an open trap door at your feet.", post_crlf);
+                tell("and an open trap-door at your feet.", post_crlf);
             }
             else
             {
@@ -2108,9 +2108,12 @@ namespace obj_funcs
             ObjectP prso = ::prso();
             if (prso == food)
             {
-                remove_object(food);
-                tell(cyclofood, long_tell1);
-                cyclowrath = std::min(-1, -count);
+                if (count >= 0)
+                {
+                    remove_object(food);
+                    tell(cyclofood, long_tell1);
+                    cyclowrath = std::min(-1, -count);
+                }
                 clock_int(cycin, -1);
             }
             else if (prso == drink)
@@ -2627,7 +2630,7 @@ namespace obj_funcs
                 }
                 else
                 {
-                    tell("and not having the most discriminating taste, gleefully eats it.");
+                    tell("and not having the most discriminating tastes, gleefully eats it.");
                     remove_object(prsoo);
                 }
             }

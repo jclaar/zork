@@ -41,14 +41,6 @@ void add_demon(const HackP &x)
     demons.push_front(x);
 }
 
-void add_buncher(const std::initializer_list<const char *> &strs)
-{
-    for (auto str : strs)
-    {
-        bunchers.push_front(find_verb(str));
-    }
-}
-
 VerbP find_verb(const char *verbo)
 {
     return find_verb(std::string(verbo));
@@ -91,7 +83,7 @@ PrepP find_prep(const std::string &prepo)
     {
         words_pobl[prepo] = make_word(kPrep, prepo);
     }
-    WordP wp = words_pobl[prepo];
+    auto &wp = words_pobl[prepo];
     PrepP pp = std::dynamic_pointer_cast<prep_t>(wp);
     if (!pp)
         error("Requested preposition that wasn't a preposition");

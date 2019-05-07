@@ -157,15 +157,14 @@ namespace obj_funcs
     bool valuables_c(std::any everything, const Iterator<ObjVector> &allbut);
 }
 
-template <typename T>
-bool rtrnn(const RoomP &p, T bits)
+inline bool rtrnn(const RoomP &p, Bits bits)
 {
     return p->rbits().test(bits);
 }
 
 // Returns true if any bit in the room bits is set.
-template <typename T, typename... Args>
-bool rtrnn(const RoomP &p, T first, Args... bits)
+template <typename... Args>
+bool rtrnn(const RoomP &p, Bits first, Args... bits)
 {
     if (rtrnn(p, first))
         return true;

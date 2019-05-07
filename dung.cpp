@@ -992,7 +992,7 @@ void init_dung()
     init_robot();
     init_master();
 
-    add_buncher({ "TAKE", "DROP", "PUT", "COUNT" });
+    add_buncher("TAKE", "DROP", "PUT", "COUNT");
 
     init_questions();
 }

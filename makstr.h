@@ -12,7 +12,6 @@ enum SpeechType
     kBuzz,
 };
 
-void add_buncher(const std::initializer_list<const char *> &strs);
 void add_inqobj(const ObjectP &obj);
 WordP make_word(SpeechType st, const std::string &val);
 

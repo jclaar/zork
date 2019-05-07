@@ -153,7 +153,7 @@ bool goto_(const RoomP &rm, const AdvP &win)
         }
         else
         {
-            tell("You can't go there in a vehicle.");
+            tell("You can't go there without a vehicle.");
         }
         // rv remains false.
     }
@@ -350,7 +350,7 @@ bool room_info(std::optional<int> full)
         }
         else if (!lit(rm))
         {
-            tell("It is pitch black. You are likely to be eaten by a grue.");
+            tell("It is pitch black.  You are likely to be eaten by a grue.");
             return false;
         }
 
@@ -756,7 +756,7 @@ bool jigs_up(const std::string &desc, bool player)
         return true;
     }
 
-    if (deaths > 2)
+    if (deaths >= 2)
     {
         tell(suicidal, long_tell1);
         finish(false);
@@ -1154,7 +1154,7 @@ bool takefn2(bool take_)
         }
         else if (weight(aobjs) + weight(prsoo->ocontents()) + prsoo->osize() > load_max)
         {
-            tell("Your load is too heavy. You will have to leave something behind.");
+            tell("Your load is too heavy.  You will have to leave something behind.");
             parse_cont.clear();
             return false;
         }
