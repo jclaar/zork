@@ -1115,7 +1115,7 @@ bool munger()
             else
             {
                 tell("Trying to destroy a " + prsoo->odesc2() + " with a ", 0);
-                tell(prsi()->odesc2() + " is quite self-desctructive.");
+                tell(prsi()->odesc2() + " is quite self-destructive.");
             }
         }
         else
@@ -1861,7 +1861,7 @@ namespace obj_funcs
             {
                 snarf_object(t, st);
                 tell("The robber, somewhat surprised at this turn of events, nimbly\n"
-                    "retrieves his stilletto.");
+                    "retrieves his stiletto.");
                 rv = true;
             }
         }

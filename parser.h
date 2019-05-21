@@ -104,8 +104,7 @@ inline const VerbP &prsa()
     return std::get<VerbP>(prsvec[0]);
 }
 
-template <typename T>
-bool verbq(T al)
+inline bool verbq(const char *al)
 {
     bool rv = false;
     try

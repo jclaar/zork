@@ -85,7 +85,7 @@ const std::string help_str =
 "first six letters.  All others are ignored.  For example, typing\n"
 "'DISASSEMBLE THE ENCYCLOPEDIA' is not only meaningless, it also\n"
 "creates excess effort for your fingers.  Note that this trunca-\n"
-"tion may produce ambiguities in the intepretation of longer words.\n\n"
+"tion may produce ambiguities in the interpretation of longer words.\n\n"
 "You are dealing with a fairly stupid parser, which understands\n"
 "the following types of things--\n\n"
 "   Actions:\n"

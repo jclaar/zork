@@ -262,3 +262,4 @@ __pycache__/
 *.o
 zork_linux
 .d/
+stdafx.h.gch

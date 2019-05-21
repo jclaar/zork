@@ -16,11 +16,15 @@ all: zork_linux
 clean:
 	rm *.o
 	rm zork_linux
+	rm *.gch
 
 %.o : %.cpp
-%.o: %.cpp $(DEPDIR)/%.d
+%.o: %.cpp $(DEPDIR)/%.d stdafx.h.gch
 	$(CC) $(CFLAGS) $(CDEFINES) -c -o $@ $<
 	$(POSTCOMPILE)
+
+stdafx.h.gch: stdafx.h
+	$(CC) $(CFLAGS) $(CDEFINES) -x c++-header stdafx.h -c -o stdafx.h.gch
 
 zork_linux: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ -lstdc++ $(BOOSTLIB)

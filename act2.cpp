@@ -597,7 +597,7 @@ namespace obj_funcs
         }
         else
         {
-            tell("The gnome appears incresingly nervous.");
+            tell("The gnome appears increasingly nervous.");
             flags[gnome_flag] || clock_int(gnoin, 5);
             flags[gnome_flag] = true;
         }
@@ -619,7 +619,8 @@ namespace obj_funcs
                 }
                 else
                 {
-                    tell("The cloth bag is draped over the the basket.");
+					// The word "the" is doubled in the MDL source code.
+                    tell("The cloth bag is draped over the basket.");
                 }
                 if (btie)
                 {
