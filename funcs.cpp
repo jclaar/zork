@@ -48,6 +48,7 @@ protected:
         if (script_channel)
         {
             (*script_channel) << s;
+            script_channel->flush();
         }
         this->str("");
         return 0;

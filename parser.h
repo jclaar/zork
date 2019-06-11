@@ -79,10 +79,9 @@ inline ParseVec put(ParseVec a, int index, const PhraseP &p)
     return a;
 }
 
-inline Iterator<ObjVector> put(Iterator<ObjVector> a, int index, ObjectP o)
+inline void put(Iterator<ObjVector> a, int index, ObjectP o)
 {
     a[index] = o;
-    return a;
 }
 
 inline Iterator<ParseContV> member(const std::string &s, Iterator<ParseContV> pv)

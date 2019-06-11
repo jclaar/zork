@@ -12,14 +12,13 @@
 #include "makstr.h"
 #include "dung.h"
 #include "ZorkException.h"
-typedef std::initializer_list<const char *> StringList;
 struct ObjectDefinition {
     StringList syns;
     StringList adj;
     const char *desc;
     std::initializer_list<Bits> bits;
     rapplic obj_fun;
-    std::initializer_list<const char*> contents;
+    StringList contents;
     std::initializer_list<OP> props;
 };
 
@@ -108,7 +107,7 @@ namespace
 ObjectP last_it(get_obj("#####"));
 
 Object::Object(const std::initializer_list<const char *> &syns, const std::initializer_list<const char *> &adj, const char *description,
-    const std::initializer_list<Bits> &bits, rapplic objfun, const std::initializer_list<const char*> &cntnts, 
+    const std::initializer_list<Bits> &bits, rapplic objfun, const StringList &cntnts, 
     const std::initializer_list<OP> &props) :
     synonyms(syns.begin(), syns.end()),
     adjec(adj.begin(), adj.end()),

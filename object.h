@@ -13,6 +13,8 @@
 #include "defs.h"
 #include "strings.h"
 
+typedef std::initializer_list<const char*> StringList;
+
 enum ObjectSlots
 {
 	ksl_odesco,
@@ -79,8 +81,8 @@ public:
 
     Object() {}
 
-    Object(const std::initializer_list<const char*> &syns, const std::initializer_list<const char *> &adj = {}, const char *desc = "",
-        const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr, const std::initializer_list<const char *> &contents = {},
+    Object(const StringList &syns, const StringList &adj = {}, const char *desc = "",
+        const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr, const StringList &contents = {},
         const std::initializer_list<OP> &props = {});
 
 	virtual ~Object()
@@ -171,7 +173,7 @@ protected:
 class GObject : public Object
 {
 public:
-    GObject(Bits gbits, const std::initializer_list<const char *> &syns, const std::initializer_list<const char *> &adj = {},
+    GObject(Bits gbits, const StringList &syns, const StringList &adj = {},
         const char * = "", const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr,
         const std::initializer_list<const char*> &contents = {},
         const std::initializer_list<OP> &props = { OP(ksl_oglobal, 0) });
