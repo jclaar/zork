@@ -1,7 +1,4 @@
 #pragma once
-#include <boost/serialization/split_member.hpp>
-#include <boost/serialization/base_object.hpp>
-#include <boost/serialization/bitset.hpp>
 #include <vector>
 #include <map>
 #include <string>
@@ -48,14 +45,6 @@ public:
 
 private:
     olint_t() {}
-
-    friend class boost::serialization::access;
-    template <class archive>
-    void serialize(archive &ar, const unsigned int version)
-    {
-        ar & _val;
-        ar & _ev;
-    }
 
     int _val = 0;
     CEventP _ev;
@@ -134,16 +123,6 @@ public:
 
     void restore(const Object &o);
 
-private:
-    friend class boost::serialization::access;
-    // For serialization
-    template <class archive>
-    void save(archive &ar, const unsigned int version) const;
-    template <class archive>
-    void load(archive &ar, const unsigned int version);
-
-    BOOST_SERIALIZATION_SPLIT_MEMBER();
-
 protected:
     std::vector<std::string> synonyms;
     std::vector<std::string> adjec;
@@ -182,12 +161,6 @@ public:
 
 private:
     GObject() {}
-    friend class boost::serialization::access;
-    template <class archive>
-    void serialize(archive &ar, const unsigned int version)
-    {
-        ar & boost::serialization::base_object<Object>(*this);
-    }
 
     std::optional<Bits> _gbits;
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/serialization/bitset.hpp>
+//#include <boost/serialization/bitset.hpp>
 #include <string>
 #include <vector>
 #include <memory>
@@ -157,38 +157,7 @@ public:
     }
 
 private:
-    friend class boost::serialization::access;
     Room() {}
-    template <class archive>
-    void save(archive &ar, const unsigned int version) const
-    {
-        ar & _room_bits;
-        ar & _rval;
-        std::list<std::string> rob;
-        std::transform(robjs().begin(), robjs().end(), std::back_inserter(rob), [](ObjectP o)
-        {
-            return o->oid();
-        });
-        ar & rob;
-        ar & _desc1;
-    }
-
-    template <class archive>
-    void load(archive &ar, const unsigned int version)
-    {
-        ar & _room_bits;
-        ar & _rval;
-        std::list<std::string> rob;
-        ar & rob;
-        ar & _desc1;
-        robjs().clear();
-        std::transform(rob.begin(), rob.end(), std::back_inserter(robjs()), [](const std::string &oid)
-        {
-            return sfind_obj(oid);
-        });
-    }
-
-    BOOST_SERIALIZATION_SPLIT_MEMBER();
 
     std::string _id;
     std::string _desc1;

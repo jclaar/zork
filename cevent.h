@@ -29,16 +29,6 @@ public:
 
 private:
     CEvent() {}
-    friend class boost::serialization::access;
-    template <class archive>
-    void serialize(archive &ar, const unsigned int version)
-    {
-        ar & _ctick;
-        //ar & _caction;
-        ar & _cflag;
-        ar & _cid;
-        ar & _cdeath;
-    }
 
     int _ctick = 0;
     rapplic _caction = nullptr;

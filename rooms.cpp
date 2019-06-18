@@ -1194,14 +1194,7 @@ bool do_restore()
         tell("Restores are not permitted in the end game.");
         return true;
     }
-    std::string fn;
-    tell("Enter restore file name: ", 0);
-    tty.flush();
-    std::string f;
-    std::cin >> f;
-    flush_cin();
-    tell("Restoring.");
-    restore_game(f);
+    tell("Restore not implemented.");
     return true;
 }
 
@@ -1213,13 +1206,7 @@ bool do_save()
     }
     else
     {
-        tell("Enter save file name: ", 0);
-        tty.flush();
-        std::string f;
-        std::cin >> f;
-        flush_cin();
-        tell("Saving.");
-        save_game(f);
+        tell("Save not implemented.");
     }
     return true;
 }
