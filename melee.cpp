@@ -278,7 +278,7 @@ bool diagnose()
     return true;
 }
 
-bool pres(const tofmsg &tab, const std::string &a, const std::string &d, const std::optional<std::string> &w)
+bool pres(const tofmsg &tab, std::string_view a, std::string_view d, std::string_view w)
 {
     int l = (int) tab.size();
     // Replace a %D% with the name.
@@ -294,9 +294,9 @@ bool pres(const tofmsg &tab, const std::string &a, const std::string &d, const s
     {
         s.replace(pos, 3, a);
     }
-    if (w && ((pos = s.find("%W%")) != std::string::npos))
+    if (!w.empty() && ((pos = s.find("%W%")) != std::string::npos))
     {
-        s.replace(pos, 3, w.value());
+        s.replace(pos, 3, w);
     }
     tell(s);
     return true;
@@ -398,7 +398,7 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
             res = lose_weapon;
         }
 
-        pres((*remarks)[res.value()], heroq ? "Adventurer" : vdesc, heroq ? vdesc : "Adventurer", dweapon ? dweapon->odesc2() : std::optional<std::string>());
+        pres((*remarks)[res.value()], heroq ? "Adventurer" : vdesc, heroq ? vdesc : "Adventurer", dweapon ? dweapon->odesc2() : std::string_view());
     }
 
     if (res == missed || res == hesitate)

@@ -91,9 +91,9 @@ bool room_obj();
 bool room_name();
 bool room_room();
 void score_room(const RoomP &rm);
-void mung_room(RoomP rm, const std::string &str);
+void mung_room(RoomP rm, std::string_view str);
 inline bool room_desc() { return room_info(3); }
-bool jigs_up(const std::string &desc, bool player = false);
+bool jigs_up(std::string_view desc, bool player = false);
 void score_upd(int num);
 void score_bless();
 bool nogo(const std::string &str, direction dir);

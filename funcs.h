@@ -38,11 +38,11 @@ void princ(const T &v)
     tty << v;
 }
 void prin1(int val);
-inline void printstring(const char *str) { tty << str; }
+inline void printstring(std::string_view str) { tty << str; }
 
 bool terminal();
 
-int readst(std::string &rdbuf, const std::string &prompt);
+int readst(std::string &rdbuf, std::string_view prompt);
 
 // Various MDL functions mapped to C++ equivalents
 //inline char *back(char *s, size_t count) { return s - count; }
@@ -238,18 +238,22 @@ Iterator<T> top(Iterator<T> it)
 }
 
 template <typename T>
-T rest(T it, int offset = 1)
+Iterator<T> rest(Iterator<T> i, int len = 1)
 {
-    it.advance(offset);
-    return it;
+    i.advance(len);
+    return i;
 }
 
-template <>
-inline char *rest(char *s, int len) { return s + len; }
-template <>
-inline const char *rest(const char *s, int len) { return s + len; }
-inline std::string rest(const std::string &s, int len = 1) { return s.substr(len); }
+inline SIterator rest(SIterator i, int len = 1)
+{
+    i.advance(len);
+    return i;
+}
 
+inline std::string_view rest(std::string_view s, int len = 1)
+{
+    return s.substr(len);
+}
 
 template <typename T>
 T back(T it, int offset = 1)
@@ -285,7 +289,7 @@ inline SIterator substruc(const char *msg, int start, int end, SIterator dest)
 }
 
 template <typename T>
-typename T::mapped_type plookup(const std::string &a, const T &l)
+typename T::mapped_type plookup(std::string_view a, const T &l)
 {
     auto iter = l.find(a);
     return iter == l.end() ? typename T::mapped_type() : iter->second;

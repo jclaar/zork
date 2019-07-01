@@ -76,7 +76,7 @@ void dump_rooms(archive &oa)
 template <class archive>
 void restore_rooms(archive &ia)
 {
-    std::map<std::string, RoomP> rm_map;
+    RoomMap rm_map;
     ia & rm_map;
     _ASSERT(rm_map.size() == room_map().size());
 

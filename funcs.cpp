@@ -76,7 +76,7 @@ char *substruc(const char *src, size_t start, size_t end, char *dest)
     return dest;
 }
 
-int readst(std::string &buffer, const std::string &prompt)
+int readst(std::string &buffer, std::string_view prompt)
 {
     tty << prompt;
     tty.flush();

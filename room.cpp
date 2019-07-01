@@ -66,29 +66,21 @@
 #define wd_FDOOR wd_BDOOR
 #define nd_NCELL std::make_shared<DoorExit>("ODOOR", "NCELL", "NIRVA")
 
-std::list<RoomP> &rooms()
+RoomList &rooms()
 {
-    static std::list<RoomP> rps;
+    static RoomList rps;
     return rps;
 }
 
-std::map<std::string, RoomP> &room_map()
+RoomMap &room_map()
 {
-    static std::map<std::string, RoomP> rm;
+    static RoomMap rm;
     return rm;
 }
 
 namespace
 {
-    RoomP mr(const char *id, const char *d1, const char *d2, const std::initializer_list<Ex> &exits,
-        const std::initializer_list<const char*> &contents = {}, rapplic roomf = nullptr,
-        const std::initializer_list<Bits> &rb = { rlandbit },
-        const std::initializer_list<RP> &props = {})
-    {
-        return std::make_shared<Room>(id, d1, d2, exits, contents, roomf, rb, props);
-    }
-
-    RoomP mr(const char *id, const std::string &d1, const std::string &d2, const std::initializer_list<Ex> &exits,
+    RoomP mr(std::string_view id, std::string_view d1, std::string_view d2, const std::initializer_list<Ex> &exits,
         const std::initializer_list<const char*> &contents = {}, rapplic roomf = nullptr,
         const std::initializer_list<Bits> &rb = { rlandbit },
         const std::initializer_list<RP> &props = {})
@@ -98,6 +90,9 @@ namespace
 
 	typedef std::vector<RoomP> RoomVector;
 
+#if _MSC_FULL_VER==192227812
+#pragma optimize("", off)
+#endif
     const RoomVector &get_rooms()
     {
         static const RoomVector rooms =
@@ -106,6 +101,9 @@ namespace
         };
 		return rooms;
     }
+#if _MSC_FULL_VER==192227812
+#pragma optimize("", on)
+#endif
 }
 
 const RoomP &CExit::cxroom() const
@@ -129,7 +127,7 @@ const RoomP &DoorExit::droom2() const
 }
 
 
-Room::Room(const std::string &rid, const std::string &d1, const std::string &d2, const std::initializer_list<Ex> &exits,
+Room::Room(std::string_view rid, std::string_view d1, std::string_view d2, const std::initializer_list<Ex> &exits,
     const std::initializer_list<const char*> &cntnts, rapplic roomf, const std::initializer_list<Bits> &rb,
     const std::initializer_list<RP> &props) :
  _id(rid),
@@ -190,12 +188,7 @@ void Room::rval(int new_val)
     _rval = new_val;
 }
 
-const RoomP &get_room(const char *cid, RoomP init_val)
-{
-	return get_room(std::string(cid), init_val);
-}
-
-const RoomP &get_room(const std::string &sid, RoomP init_val)
+const RoomP &get_room(std::string_view sid, RoomP init_val)
 {
     auto iter = room_map().find(sid);
     if (iter == room_map().end())
@@ -203,12 +196,12 @@ const RoomP &get_room(const std::string &sid, RoomP init_val)
         // Add an empty room to the list, or add the init_val.
         if (!init_val)
         {
-            init_val = mr(sid.c_str(), "", "", {});
+            init_val = mr(sid, "", "", {});
         }
-        iter = room_map().insert(std::make_pair(sid, init_val)).first;
+        iter = room_map().insert(std::make_pair(std::string(sid), init_val)).first;
         rooms().push_front(init_val);
     }
-    return room_map()[sid];
+    return iter->second;
 }
 
 void init_rooms()
@@ -232,17 +225,8 @@ void init_rooms()
     }
 }
 
-const RoomP &find_room(const std::string &rid)
+const RoomP &find_room(std::string_view rid)
 {
-    return room_map()[rid];
+    return room_map().find(rid)->second;
 }
 
-const RoomP &sfind_room(const std::string &rid)
-{
-    return find_room(rid);
-}
-
-const RoomP &sfind_room(const char *rid)
-{
-    return sfind_room(std::string(rid));
-}

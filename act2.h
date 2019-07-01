@@ -11,7 +11,6 @@ bool balloon_burn();
 bool blast();
 bool breathe();
 bool burnup();
-bool cliff_function();
 bool digger();
 void fweep(int num, int slp = 0);
 bool geronimo();

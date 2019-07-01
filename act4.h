@@ -23,8 +23,8 @@ bool inquisitor(Iterator<ParseContV> ans);
 inline bool inquisitor() { return inquisitor(Iterator<ParseContV>()); }
 
 typedef std::variant<std::monostate, bool, const char *> LookToVal;
-bool look_to(const std::string &nstr,
-    std::optional<std::string> sstr = std::optional<std::string>(),
+bool look_to(std::string_view nstr,
+    std::optional<std::string_view> sstr = std::optional<std::string_view>(),
     LookToVal ntrll = LookToVal(),
     LookToVal stell = LookToVal(),
     bool htell = true);

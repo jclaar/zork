@@ -68,6 +68,15 @@ public:
     typedef const tofmsgs &(*melee_func)();
     typedef std::variant<int, std::string, melee_func, olint_t> PropVal;
     OP(ObjectSlots os, const PropVal &v) : sl(os), val(v) {}
+    explicit OP(ObjectSlots os, int i) : sl(os), val(i) {}
+    explicit OP(ObjectSlots os, std::string_view v) : sl(os), val(std::string(v)) {}
+    explicit OP(ObjectSlots os, const char* p) : sl(os)
+    {
+        if (p)
+            val = p;
+        else
+            val = (melee_func) nullptr;
+    }
     ObjectSlots slot() const { return sl; }
     const PropVal &value() const { return val; }
 private:
@@ -99,11 +108,9 @@ public:
 	const std::string &oread() const;
     const std::string &odesco() const { return _odesco; }
     const std::string &odesc1() const;
-    void odesc1(const char *s) { _odesc1 = s; }
-    void odesc1(const std::string &s) { _odesc1 = s; }
+    void odesc1(std::string_view s) { _odesc1 = s; }
     const std::string &odesc2() const { return desc; }
     void odesc2(const char *new_desc) { desc = new_desc; }
-    void odesc2(const std::string &new_desc) { desc = new_desc; }
     int otval() const;
     void otval(int new_value);
     int ofval() const;
@@ -176,7 +183,7 @@ public:
     GObject(Bits gbits, const StringList &syns, const StringList &adj = {},
         const char * = "", const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr,
         const std::initializer_list<const char*> &contents = {},
-        const std::initializer_list<OP> &props = { OP(ksl_oglobal, 0) });
+        const std::initializer_list<OP> &props = { OP(ksl_oglobal, OP::PropVal(0)) });
 
     const std::optional<Bits> &gbits() const { return _gbits; }
 
@@ -204,17 +211,14 @@ inline bool empty(const ObjectP &op)
     return !op;
 }
 
-size_t obj_count();
-ObjectP get_obj(const char *name, ObjectP init_val = nullptr);
-ObjectP get_obj(const std::string &name, ObjectP init_val = nullptr);
+ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
 ObjList &global_objects();
 
-typedef std::map<std::string, ObjList> ObjectPobl;
+typedef std::map<std::string, ObjList, std::less<>> ObjectPobl;
 const ObjectPobl &object_pobl();
-bool is_obj(const std::string &name);
-const ObjectP &find_obj(const std::string &name);
-const ObjectP &sfind_obj(const char *name);
-const ObjectP &sfind_obj(const std::string &name);
+bool is_obj(const std::string &obj);
+const ObjectP &find_obj(std::string_view name);
+const ObjectP &sfind_obj(std::string_view name);
 
 template <Bits b>
 bool trnnt(const ObjectP &op)

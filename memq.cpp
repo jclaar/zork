@@ -24,7 +24,7 @@ bool memq(const CEventP &ev, const EventList &hobjs)
 
 CpExitV::const_iterator memq(direction d, const CpExitV &v)
 {
-    return std::find_if(v.begin(), v.end(), [d](const CpExit &e) { return std::get<0>(e) == d; });
+    return std::find_if(v.begin(), v.end(), [d](const CpExit &e) { return e.dir == d; });
 }
 
 bool memq(const AdjectiveP &adj, const std::vector<std::string> &adjs)
@@ -53,7 +53,7 @@ bool memq(direction dir, const std::initializer_list<direction> &dirs)
     return std::find(dirs.begin(), dirs.end(), dir) != dirs.end();
 }
 
-std::list<RoomP>::iterator memq(const RoomP &rm, std::list<RoomP> &lst)
+RoomList::iterator memq(const RoomP &rm, RoomList &lst)
 {
     return std::find(lst.begin(), lst.end(), rm);
 }

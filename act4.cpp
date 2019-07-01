@@ -546,7 +546,7 @@ bool inquisitor(Iterator<ParseContV> ans)
             }
             else
             {
-                tell(" You have " + std::string(nums[5 - nqatt - 1]) + " more chance", 0);
+                tell(" You have " + nums[5 - nqatt - 1] + " more chance", 0);
                 tell(nqatt == 4 ? ".'" : "s.'");
             }
         }
@@ -589,8 +589,8 @@ std::optional<int> mirror_dir(direction dir, RoomP rm)
     return std::optional<int>();
 }
 
-bool look_to(const std::string &nstr,
-    std::optional<std::string> sstr,
+bool look_to(std::string_view nstr,
+    std::optional<std::string_view> sstr,
     LookToVal ntell,
     LookToVal stell,
     bool htell)
@@ -599,7 +599,7 @@ bool look_to(const std::string &nstr,
     bool mir;
     bool m1 = false;
     RoomP nrm, srm;
-    std::string dir;
+    std::string_view dir;
     const char **s;
 
     if (!nstr.empty())
@@ -612,7 +612,7 @@ bool look_to(const std::string &nstr,
 
     if ((p = std::get_if<bool>(&ntell)) && *p)
     {
-        tell(std::string("Somewhat to the north") + guardstr, long_tell1);
+        tell("Somewhat to the north" + guardstr, long_tell1);
     }
     else if (s = std::get_if<const char *>(&ntell))
     {
@@ -620,7 +620,7 @@ bool look_to(const std::string &nstr,
     }
     if ((p = std::get_if<bool>(&stell)) && *p)
     {
-        tell(std::string("Somewhat to the south") + guardstr, long_tell1);
+        tell("Somewhat to the south" + guardstr, long_tell1);
     }
     else if (s = std::get_if<const char *>(&stell))
     {
@@ -1322,7 +1322,7 @@ namespace obj_funcs
                 tell(mirbroke, long_tell1);
             }
         }
-        else if (mirror == 1 && !flags[mr1] && !flags[mr2])
+        else if (mirror == 1 && !flags[mr1] || !flags[mr2])
         {
             tell("Shards of a broken mirror are dangerous to play with.");
         }

@@ -568,7 +568,7 @@ bool treas()
     return true;
 }
 
-bool killer(const std::string &str)
+bool killer(std::string_view str)
 {
     ObjectP prsoo;
     if (object_action())
@@ -877,7 +877,7 @@ bool deflater()
     return true;
 }
 
-void dput(const std::string &str)
+void dput(std::string_view str)
 {
     ObjectP prso = ::prso();
     for (const Ex &ex : here->rexits())
@@ -957,7 +957,7 @@ bool oil()
     return true;
 }
 
-bool open_close(const ObjectP &obj, const std::string &stropn, const std::string &strcls)
+bool open_close(const ObjectP &obj, std::string_view stropn, std::string_view strcls)
 {
     bool rv = false;
     if (verbq("OPEN"))
@@ -1287,7 +1287,7 @@ namespace room_funcs
         HackP hack = robber_demon;
         ObjectP hobj = hack->hobj();
         bool flg = false;
-        std::list<RoomP>::iterator tl;
+        RoomList::iterator tl;
         auto &rooms = ::rooms();
 
         if (hack->haction() && verbq("GO-IN"))
@@ -1303,7 +1303,7 @@ namespace room_funcs
                 hack->hroom(here);
                 tl = rest(memq(here, rooms));
 
-                hack->hrooms() = tl == rooms.end() ? rooms : std::list<RoomP>(tl, rooms.end());
+                hack->hrooms() = tl == rooms.end() ? rooms : RoomList(tl, rooms.end());
                 insert_object(hobj, here);
             }
             else
@@ -1933,7 +1933,7 @@ namespace obj_funcs
                 tell("You evidently frightened the robber, though you didn't hit him.  He\n"
                     "flees" + std::string(empty(dem->hobjs_ob()) ? "." : (([&]()
                 {
-                    for (ObjectP x : dem->hobjs_ob())
+                    for (const ObjectP &x : dem->hobjs_ob())
                     {
                         insert_object(x, here);
                     }
@@ -3035,7 +3035,7 @@ bool fill()
     return true;
 }
 
-bool hack_hack(ObjectP obj, const std::string &str, const std::string &obj2)
+bool hack_hack(ObjectP obj, std::string_view str, std::string_view obj2)
 {
     if (object_action())
         return true;

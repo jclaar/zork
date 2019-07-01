@@ -9,7 +9,7 @@
 typedef std::pair<ObjectP, int> Nefals;
 extern Nefals nefals;
 extern Nefals nefals2;
-inline bool operator==(Nefals ne, ObjectP obj)
+inline bool operator==(const Nefals &ne, const ObjectP &obj)
 {
     return ne.first == obj;
 }
@@ -126,8 +126,7 @@ bool verbq(T first, Args... args)
     return verbq(args...);
 }
 
-template <typename T>
-void add_buncher(T b)
+inline void add_buncher(const char *b)
 {
     bunchers.push_front(find_verb(b));
 }

@@ -7,7 +7,7 @@
 #include "parser.h"
 #include "ZorkException.h"
 
-WordP make_word(SpeechType st, const std::string &val)
+WordP make_word(SpeechType st, std::string_view val)
 {
     WordP wp;
     switch (st)
@@ -41,18 +41,13 @@ void add_demon(const HackP &x)
     demons.push_front(x);
 }
 
-VerbP find_verb(const char *verbo)
-{
-    return find_verb(std::string(verbo));
-}
-
-VerbP find_verb(const std::string &verbo)
+VerbP find_verb(std::string_view verbo)
 {
     if (words_pobl.find(verbo) == words_pobl.end())
     {
-        words_pobl[verbo] = make_word(kVerb, verbo);
+        words_pobl.insert(std::make_pair<std::string, WordP>(std::string(verbo), make_word(kVerb, verbo)));
     }
-    const WordP &wp = words_pobl[verbo];
+    const WordP &wp = words_pobl.find(verbo)->second;
     VerbP vp = std::dynamic_pointer_cast<verb>(wp);
     if (!vp)
     {
@@ -61,7 +56,7 @@ VerbP find_verb(const std::string &verbo)
     return vp;
 }
 
-const ActionP &find_action(const std::string &act)
+const ActionP &find_action(std::string_view act)
 {
     auto iter = actions_pobl.find(act);
     if (iter == actions_pobl.end())
@@ -69,21 +64,16 @@ const ActionP &find_action(const std::string &act)
     return iter->second;
 }
 
-PrepP find_prep(const char *prep)
-{
-    return find_prep(std::string(prep));
-}
-
-PrepP find_prep(const std::string &prepo)
+PrepP find_prep(std::string_view prepo)
 {
     // Is the preposition already in the list?
     // If so return that set. Otherwise insert an empty set
     // and return that.
     if (words_pobl.find(prepo) == words_pobl.end())
     {
-        words_pobl[prepo] = make_word(kPrep, prepo);
+        words_pobl.insert(std::make_pair(prepo, make_word(kPrep, prepo)));
     }
-    auto &wp = words_pobl[prepo];
+    auto wp = words_pobl.find(prepo)->second;
     PrepP pp = std::dynamic_pointer_cast<prep_t>(wp);
     if (!pp)
         error("Requested preposition that wasn't a preposition");
@@ -96,14 +86,6 @@ direction find_dir(const std::string &dir)
     if (iter == directions_pobl.end())
         error("Unknown direction");
     return iter->second;
-}
-
-void dsynonym(const char *dir, const std::initializer_list<const char*> &syns)
-{
-    for (const char *s : syns)
-    {
-        dsynonym(dir, s);
-    }
 }
 
 namespace
@@ -274,40 +256,58 @@ namespace
 }
 
 // Empty syntax.
-VargP evarg = std::make_shared<_varg>();
+const VargP evarg = std::make_shared<_varg>();
+
+void make_action(const AnyV& av, vspec& vs)
+{
+    ParseData pd;
+    for (AnyV::const_iterator i = av.begin(); i != av.end(); ++i)
+    {
+        parse_item(*i, pd);
+    }
+    // Default syntax for slots not specified.
+    if (!pd.syntax_->syn[0])
+    {
+        pd.syntax_->syn[0] = evarg;
+    }
+    if (!pd.syntax_->syn[1])
+    {
+        pd.syntax_->syn[1] = evarg;
+    }
+    vs.push_back(pd.syntax_);
+}
+
+vspec make_action(const AnyV& av)
+{
+    vspec vs;
+    make_action(av, vs);
+    return vs;
+}
 
 vspec make_action(const ActionVec &decl)
 {
     vspec vs;
     for (const AnyV &av : decl)
     {
-        ParseData pd;
-        for (AnyV::const_iterator i = av.begin(); i != av.end(); ++i)
-        {
-            parse_item(*i, pd);
-        }
-        // Default syntax for slots not specified.
-        if (!pd.syntax_->syn[0])
-        {
-            pd.syntax_->syn[0] = evarg;
-        }
-        if (!pd.syntax_->syn[1])
-        {
-            pd.syntax_->syn[1] = evarg;
-        }
-        vs.push_back(pd.syntax_);
+        make_action(av, vs);
     }
     return vs;
 }
 
 void oneadd_action(const char *str1, const char *str2, rapplic atm)
 {
-    add_action(str1, str2, ActionVec{ AnyV{obj(), AVSyntax(str1, atm)} });
+    add_action(str1, str2, AnyV{obj(), AVSyntax(str1, atm)});
 }
 
 void onenradd_action(const char *str1, const char *str2, rapplic atm)
 {
-    add_action(str1, str2, ActionVec{ AnyV{nrobj(), AVSyntax(str1, atm)} });
+    add_action(str1, str2, AnyV{nrobj(), AVSyntax(str1, atm)});
+}
+
+void add_action(const char* nam, const char* str, const AnyV& av)
+{
+    vspec vs = make_action(av);
+    actions_pobl[nam] = std::make_shared<action>(nam, vs, str);
 }
 
 void add_action(const char *nam, const char *str, const ActionVec &decl)
@@ -318,7 +318,7 @@ void add_action(const char *nam, const char *str, const ActionVec &decl)
 
 void sadd_action(const char *name, rapplic action)
 {
-    add_action(name, "", ActionVec{ AnyV{ AVSyntax(name, action) } });
+    add_action(name, "", AnyV{ AVSyntax(name, action) });
 }
 
 void add_inqobj(const ObjectP &obj)

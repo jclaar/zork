@@ -532,7 +532,7 @@ void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &winobj, SI
     }
 }
 
-void mung_room(RoomP rm, const std::string &str)
+void mung_room(RoomP rm, std::string_view str)
 {
     rtro<rmungbit>(rm);
     rm->rdesc1() = str;
@@ -726,7 +726,7 @@ void score_upd(int num)
     }
 }
 
-bool jigs_up(const std::string &desc, bool player)
+bool jigs_up(std::string_view desc, bool player)
 {
     const ObjectP &lamp = sfind_obj("LAMP");
     ObjList val_list;
@@ -1032,8 +1032,7 @@ bool clock_demon(const HackP &hack)
 
 bool backer()
 {
-    tell(backstr);
-    return true;
+    return tell(backstr);
 }
 
 bool board()
@@ -1551,9 +1550,7 @@ void recout(int score, int moves, int deaths, const RecOutQuit &quit, const Room
 
 bool no_obj_hack()
 {
-    flags[no_obj_print] = !flags[no_obj_print];
-    tell(flags[no_obj_print] ? "Don't print objects." : "Print objects");
-    return true;
+    return tell(flags.flip(no_obj_print).test(no_obj_print) ? "Don't print objects." : "Print objects.");
 }
 
 bool opener()

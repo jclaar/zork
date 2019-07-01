@@ -9,6 +9,15 @@
 #include <list>
 #include <any>
 #include <optional>
+#include <string_view>
+
+inline std::string operator+(std::string_view s1, std::string_view s2)
+{
+    std::string rv;
+    rv.reserve(s1.size() + s2.size());
+    std::copy(s2.begin(), s2.end(), std::copy(s1.begin(), s1.end(), std::back_inserter(rv)));
+    return rv;
+}
 
 enum e_oactor
 {
@@ -242,7 +251,7 @@ private:
     std::string vstr_;
 
 public:
-    action(const std::string &vn, const vspec &vd, const std::string &vs) :
+    action(std::string_view vn, const vspec &vd, std::string_view vs) :
         vname_(vn),
         vdecl_(vd),
         vstr_(vs)
@@ -257,13 +266,13 @@ typedef std::shared_ptr<action> ActionP;
 class phrase
 {
 public:
-    phrase(const WordP &p, ObjectP op) : _pprep(p), _pobj(op) {}
+    phrase(const WordP &p, const ObjectP &op) : _pprep(p), _pobj(op) {}
 
-    WordP prep() const { return _pprep; }
-    void prep(WordP p) { _pprep = p; }
+    const WordP &prep() const { return _pprep; }
+    void prep(const WordP &p) { _pprep = p; }
 
-    ObjectP obj() const { return _pobj; }
-    void obj(ObjectP p) { _pobj = p; }
+    const ObjectP &obj() const { return _pobj; }
+    void obj(const ObjectP &p) { _pobj = p; }
 private:
     WordP _pprep;
     ObjectP _pobj;
@@ -277,7 +286,7 @@ typedef std::variant<std::string, ObjectP, ActionP> QuestionValue;
 struct question
 {
 public:
-    question(const std::string &question, const std::vector<QuestionValue> &answers) :
+    question(std::string_view question, const std::vector<QuestionValue> &answers) :
         _qstr(question),
         _qans(answers)
     {}

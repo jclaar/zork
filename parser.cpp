@@ -332,7 +332,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
     ObjectP lobj;
     ObjectP nobj;
     ParseAval aval;
-    static const std::string walk_str("WALK");
+    const char *walk_str = "WALK";
 
     pv[0] = ParseVecVal();
 

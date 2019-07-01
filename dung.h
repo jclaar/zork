@@ -9,10 +9,10 @@
 #include "funcs.h"
 #include "melee.h"
 
-typedef std::map<std::string, WordP> WordsPobl;
+typedef std::map<std::string, WordP, std::less<>> WordsPobl;
 typedef std::pair<std::string, WordP> WordsPoblPair;
-typedef std::map<std::string, direction> DirectionsPobl;
-typedef std::map<std::string, ActionP> ActionsPobl;
+typedef std::map<std::string, direction, std::less<>> DirectionsPobl;
+typedef std::map<std::string, ActionP, std::less<>> ActionsPobl;
 
 extern WordsPobl words_pobl;
 extern DirectionsPobl directions_pobl;
@@ -51,14 +51,14 @@ extern std::array<NumObjs, 8> numobjs;
 
 // Direction vector for mirror
 typedef std::pair<direction, int> DVPair;
-typedef std::vector<DVPair> DirVec;
+typedef std::array<DVPair, 8> DirVec;
 extern const DirVec dirvec;
 
 class hack
 {
     typedef std::variant<CEventP, ObjectP> HobjsValue;
 public:
-    hack(hackfn ha, const ObjList &ho, const std::list<RoomP> &hr, RoomP rm, ObjectP obj) :
+    hack(hackfn ha, const ObjList &ho, const RoomList &hr, RoomP rm, ObjectP obj) :
         _haction(ha), _room(rm), _hobj(obj), _hobjs_ob(ho), _hrooms(hr), _hflag(false)
     {
     }
@@ -82,8 +82,8 @@ public:
     const ObjectP &hobj() const { return _hobj; }
     const RoomP &hroom() { return _room; }
     void hroom(const RoomP &rm) { _room = rm; }
-    const std::list<RoomP> &hrooms() const { return _hrooms; }
-    std::list<RoomP> &hrooms() { return _hrooms; }
+    const RoomList &hrooms() const { return _hrooms; }
+    RoomList &hrooms() { return _hrooms; }
 
     const ObjList &hobjs_ob() const
     {
@@ -117,7 +117,7 @@ private:
     hackfn _haction = nullptr;
     EventList _hobjs_ev;
     ObjList _hobjs_ob;
-    std::list<RoomP> _hrooms;
+    RoomList _hrooms;
     RoomP _room;
     ObjectP _hobj;
     bool _hflag = false;
@@ -137,9 +137,23 @@ private:
 typedef std::shared_ptr<hack> HackP;
 
 // Puzzle room
-typedef std::tuple<direction, int> CpExit;
-typedef std::vector<CpExit> CpExitV;
-extern const CpExitV cpexits;
+struct CpExit
+{
+    direction dir;
+    int offset;
+    constexpr CpExit(direction d, int o) : dir(d), offset(o) {}
+};
+typedef std::array<CpExit, 8> CpExitV;
+constexpr CpExitV cpexits = {
+    CpExit(North, -8),
+    CpExit(South, 8),
+    CpExit(East, 1),
+    CpExit(West, -1),
+    CpExit(Ne, -7),
+    CpExit(Nw, -9),
+    CpExit(Se, 9),
+    CpExit(Sw, 7),
+};
 
 // Bank puzzle
 extern RoomP scol_room;

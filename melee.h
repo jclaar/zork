@@ -31,6 +31,6 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
 bool cure_clock();
 bool diagnose();
 int fight_strength(const AdvP &hero, bool adjust = true);
-bool pres(const tofmsg &tbl, const std::string &a, const std::string &d, const std::optional<std::string> &w);
+bool pres(const tofmsg &tbl, std::string_view a, std::string_view d, std::string_view w);
 int villain_strength(const ObjectP &villain);
 bool winning(const ObjectP &v, const AdvP &h);

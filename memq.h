@@ -17,7 +17,7 @@ Iterator<ParseVec> memq(const ObjectP &o, ParseVec pv);
 bool memq(const RoomP &p, const std::vector<Ex> &exits);
 const Ex *memq(direction dir, const std::vector<Ex> &rexits);
 bool memq(direction dir, const std::initializer_list<direction> &dirs);
-std::list<RoomP>::iterator memq(const RoomP &rm, std::list<RoomP> &lst);
+RoomList::iterator memq(const RoomP &rm, RoomList &lst);
 
 // Generic memq for string containers
 template <typename T>

@@ -126,7 +126,7 @@ bool maker()
     return rv;
 }
 
-void numtell(int num, const std::string &str)
+void numtell(int num, std::string_view str)
 {
     if (num == 0)
     {
@@ -197,7 +197,7 @@ void pcheck()
     }
 }
 
-bool pdoor(const std::string &str, ObjectP lid, ObjectP keyhole)
+bool pdoor(std::string_view str, ObjectP lid, ObjectP keyhole)
 {
     if (flags[plook])
         return flags[plook] = false;
@@ -590,7 +590,7 @@ bool enter()
     return walk();
 }
 
-ScolWalls get_wall(RoomP rm)
+ScolWalls get_wall(const RoomP &rm)
 {
     for (const ScolWalls &w : scol_walls)
     {
@@ -2378,7 +2378,7 @@ namespace exit_funcs
 
         m = memq(dir, cpexits);
         _ASSERT(m != cpexits.end());
-        fx = std::get<1>(*m);
+        fx = m->offset;
 
         if ((abs(fx) >= 1 && abs(fx) <= 8) ||
             (fx > 0 && (uvec[rm + 8 - 1] == 0 || uvec[rm + (fx - 8) - 1] == 0)) ||

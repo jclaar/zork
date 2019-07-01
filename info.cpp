@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "info.h"
 
-const std::string info_str = "Welcome to Zork!\n\n"
+const std::string_view info_str = "Welcome to Zork!\n\n"
 "You are near a large dungeon, which is reputed to contain vast\n"
 "quantities of treasure.  Naturally, you wish to acquire some of it.\n"
 "In order to do so, you must of course remove it from the dungeon.  To\n"
@@ -31,7 +31,7 @@ const std::string info_str = "Welcome to Zork!\n\n"
 "ionally stop in a room you are visiting, but more often he just wanders\n"
 "through and rips you off (he is a skilled pickpocket).\n";
 
-const std::string help_str =
+const std::string_view help_str =
 {
     "Useful commands:\n\n"
 

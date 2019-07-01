@@ -82,6 +82,11 @@ namespace
     }
     // List of all objects
 
+// Disable optimization on VS2019. Resets on each new version to
+// see if linker error is fixed.
+#if _MSC_FULL_VER==192227812
+#pragma optimize("", off)
+#endif
 	typedef std::vector<ObjectP> ObjectArray;
 	ObjectArray load_objects()
     {
@@ -95,6 +100,9 @@ namespace
 
         return o;
     }
+#if _MSC_FULL_VER==192227812
+#pragma optimize("", on)
+#endif
 
 	ObjectArray &get_objects()
     {
@@ -442,19 +450,10 @@ void init_gobjects()
 }
 
 
-size_t obj_count()
-{
-    return Objects().size();
-}
-
-ObjectP get_obj(const char *name, ObjectP init_val)
-{
-    return get_obj(std::string(name), init_val);
-}
-
-ObjectP get_obj(const std::string &name, ObjectP init_val)
+ObjectP get_obj(std::string_view sname, ObjectP init_val)
 {
     ObjectP op;
+    std::string name(sname);
     auto o = Objects().find(name);
     if (o == Objects().end())
     {
@@ -489,20 +488,16 @@ bool is_obj(const std::string &name)
     return Objects().find(name) != Objects().end();
 }
 
-const ObjectP &find_obj(const std::string &name)
+const ObjectP &find_obj(std::string_view name)
 {
     _ASSERT(name.size() <= 5); // To catch typos
     auto iter = Objects().find(name);
     return iter->second.front();
 }
 
-const ObjectP &sfind_obj(const std::string &name)
+const ObjectP &sfind_obj(std::string_view name)
 {
     return find_obj(name);
 }
 
-const ObjectP &sfind_obj(const char *name)
-{
-    return sfind_obj(std::string(name));
-}
 

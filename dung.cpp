@@ -105,7 +105,7 @@ const std::vector<std::vector<attack_state>> def2_res = { def2a, def2b, {def2b.b
 const std::vector<std::vector<attack_state>> def3_res = { def3a, { def3a.begin() + 1, def3a.end()}, def3b, { def3b.begin() + 1, def3b.end() }, def3c };
 
 ActionsPobl actions_pobl;
-std::map<std::string, direction> directions_pobl = {
+DirectionsPobl directions_pobl = {
     { "#!#!#", NullExit },
     { "NORTH", North },
     { "SOUTH", South },
@@ -192,16 +192,6 @@ std::array<int, 64> cpuvec = {
     1,  0,  0, -1,  0,  0,  0,  1,
     1,  1,  1,  0,  0,  0,  1,  1,
     1,  1,  1,  1,  1,  1,  1,  1 };
-const CpExitV cpexits = {
-    { North, -8 },
-    { South, 8 },
-    { East, 1 },
-    { West, -1 },
-    { Ne, -7 },
-    { Nw, -9 },
-    { Se, 9 },
-    { Sw, 7 },
-};
 
 cpwall_vec cpwalls;
 
@@ -273,12 +263,15 @@ namespace
 
     void init_demons()
     {
-        std::list<RoomP> empty_rooms;
+        RoomList empty_rooms;
         add_demon(robber_demon = std::make_shared<hack>(robber, ObjList(), rooms(), *rooms().begin(), get_obj("THIEF")));
         add_demon(sword_demon = std::make_shared<hack>(sword_glow, villains, empty_rooms, *rooms().begin(), get_obj("SWORD")));
         add_demon(fight_demon = std::make_shared<hack>(fighting, villains, empty_rooms, *rooms().begin(), get_obj("TROLL")));
     }
 
+#if _MSC_FULL_VER==192227812
+#pragma optimize("", off)
+#endif
     void init_actions()
     {
         sadd_action("1ST?", room_funcs::time);
@@ -921,6 +914,9 @@ namespace
         });
 #endif
     }
+#if _MSC_FULL_VER==192227812
+#pragma optimize("", on)
+#endif
 
     void init_questions()
     {
@@ -965,7 +961,7 @@ void init_dung()
     words_pobl["BUNCH"] = buncher;
 
     init_gobjects();
-    add_demon(clocker = std::make_shared<hack>(clock_demon, ObjList(), std::list<RoomP>(), RoomP(), ObjectP()));
+    add_demon(clocker = std::make_shared<hack>(clock_demon, ObjList(), RoomList(), RoomP(), ObjectP()));
 
     dir_syns();
 

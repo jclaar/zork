@@ -38,7 +38,7 @@ class CExit
 public:
     typedef std::variant<FlagId, rapplic> FlagVar;
 
-    CExit(FlagVar flag_name, const std::string &rmid, const std::string &desc = "", bool flag = false, ex_rapplic fn = nullptr) :
+    CExit(FlagVar flag_name, std::string_view rmid, std::string_view desc = "", bool flag = false, ex_rapplic fn = nullptr) :
         _flid(flag_name),
         _rmid(rmid),
         _desc(desc),
@@ -78,7 +78,7 @@ typedef std::shared_ptr<CExit> CExitPtr;
 class DoorExit
 {
 public:
-    DoorExit(const std::string &oid, const std::string &rm1, const std::string &rm2, const std::string &str = std::string(), ex_rapplic fn = nullptr) :
+    DoorExit(std::string_view oid, std::string_view rm1, std::string_view rm2, std::string_view str = std::string_view(), ex_rapplic fn = nullptr) :
         _oid(oid),
         _rm1(rm1),
         _rm2(rm2),
@@ -95,7 +95,7 @@ public:
     const RoomP &droom1() const;
     const RoomP &droom2() const;
     const std::string &dstr() const { return _str; }
-    void dstr(const std::string &s) { _str = s; }
+    void dstr(std::string_view s) { _str = s; }
 
 private:
     std::string _oid;
@@ -109,7 +109,7 @@ typedef std::shared_ptr<DoorExit> DoorExitPtr;
 class SetgExit
 {
 public:
-    SetgExit(const std::string &name, const CExitPtr &cep) : sname(name), ce(cep) {}
+    SetgExit(std::string_view name, const CExitPtr &cep) : sname(name), ce(cep) {}
 
     const std::string &name() const { return sname; }
     CExitPtr cexit() { return ce; }
@@ -125,7 +125,7 @@ typedef std::tuple<direction, ExitType> Ex;
 class Room
 {
 public:
-	Room(const std::string &rid, const std::string &, const std::string &d2,
+	Room(std::string_view rid, std::string_view d1, std::string_view d2,
         const std::initializer_list<Ex> &exits,
         const std::initializer_list<const char*> &contents,
         rapplic roomf,
@@ -202,15 +202,14 @@ private:
 };
 
 void init_rooms();
-const RoomP &get_room(const char *rid, RoomP init_val = RoomP());
-const RoomP &get_room(const std::string &rid, RoomP init_val = RoomP());
-const RoomP &find_room(const std::string &rid);
-const RoomP &sfind_room(const std::string &s);
-const RoomP &sfind_room(const char *s);
-std::list<RoomP> &rooms();
-std::map<std::string, RoomP> &room_map();
+const RoomP &get_room(std::string_view rid, RoomP init_val = RoomP());
+const RoomP &find_room(std::string_view rid);
+inline const RoomP &sfind_room(std::string_view s) { return find_room(s); }
+RoomList &rooms();
+typedef std::map<std::string, RoomP, std::less<>> RoomMap;
+RoomMap &room_map();
 
-inline std::list<RoomP>::iterator rest(std::list<RoomP>::iterator i, int count = 1)
+inline RoomList::iterator rest(RoomList::iterator i, int count = 1)
 {
     std::advance(i, count);
     return i;
