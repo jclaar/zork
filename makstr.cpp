@@ -69,11 +69,12 @@ PrepP find_prep(std::string_view prepo)
     // Is the preposition already in the list?
     // If so return that set. Otherwise insert an empty set
     // and return that.
-    if (words_pobl.find(prepo) == words_pobl.end())
+    WordsPobl::iterator wpi;
+    if ((wpi = words_pobl.find(prepo)) == words_pobl.end())
     {
-        words_pobl.insert(std::make_pair(prepo, make_word(kPrep, prepo)));
+        wpi = words_pobl.insert(std::make_pair(std::string(prepo), make_word(kPrep, prepo))).first;
     }
-    auto wp = words_pobl.find(prepo)->second;
+    auto wp = wpi->second;
     PrepP pp = std::dynamic_pointer_cast<prep_t>(wp);
     if (!pp)
         error("Requested preposition that wasn't a preposition");
@@ -266,13 +267,10 @@ void make_action(const AnyV& av, vspec& vs)
         parse_item(*i, pd);
     }
     // Default syntax for slots not specified.
-    if (!pd.syntax_->syn[0])
+    for (auto& v : pd.syntax_->syn)
     {
-        pd.syntax_->syn[0] = evarg;
-    }
-    if (!pd.syntax_->syn[1])
-    {
-        pd.syntax_->syn[1] = evarg;
+        if (!v)
+            v = evarg;
     }
     vs.push_back(pd.syntax_);
 }

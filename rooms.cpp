@@ -1842,16 +1842,17 @@ bool nogo(const std::string &str, direction dir)
         tell(str);
     else if (!rtrnn(here, rnwallbit))
     {
-        if (dir == Up)
+        switch (dir)
         {
+        case Up:
             tell("There is no way up.");
-        }
-        else if (dir == Down)
-        {
+            break;
+        case Down:
             tell("There is no way down.");
-        }
-        else
+            break;
+        default:
             tell("There is a wall there.");
+        }
     }
     else
         tell("You can't go that way.");

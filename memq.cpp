@@ -17,11 +17,6 @@ DirVec::const_iterator memq(direction d, const DirVec &dv)
     });
 }
 
-bool memq(const CEventP &ev, const EventList &hobjs)
-{
-    return std::find(hobjs.begin(), hobjs.end(), ev) != hobjs.end();
-}
-
 CpExitV::const_iterator memq(direction d, const CpExitV &v)
 {
     return std::find_if(v.begin(), v.end(), [d](const CpExit &e) { return e.dir == d; });
@@ -48,11 +43,6 @@ cpwall_vec::const_iterator memq(const ObjectP &obj, const std::array<cpwall_val,
     return iter;
 }
 
-bool memq(direction dir, const std::initializer_list<direction> &dirs)
-{
-    return std::find(dirs.begin(), dirs.end(), dir) != dirs.end();
-}
-
 RoomList::iterator memq(const RoomP &rm, RoomList &lst)
 {
     return std::find(lst.begin(), lst.end(), rm);
@@ -76,11 +66,6 @@ BestWeaponsList::const_iterator memq(const ObjectP &v, const BestWeaponsList &bw
         return v == bw->villain();
     });
     return iter;
-}
-
-bool memq(const ObjectP &op, const ObjList &ol)
-{
-    return std::find(ol.begin(), ol.end(), op) != ol.end();
 }
 
 bool memq(const ObjectP &op, Iterator<ObjVector> ol)

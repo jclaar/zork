@@ -269,7 +269,7 @@ namespace
         add_demon(fight_demon = std::make_shared<hack>(fighting, villains, empty_rooms, *rooms().begin(), get_obj("TROLL")));
     }
 
-#if _MSC_FULL_VER==192227812
+#if _MSC_FULL_VER==192127702
 #pragma optimize("", off)
 #endif
     void init_actions()
@@ -914,7 +914,7 @@ namespace
         });
 #endif
     }
-#if _MSC_FULL_VER==192227812
+#if _MSC_FULL_VER==192127702
 #pragma optimize("", on)
 #endif
 

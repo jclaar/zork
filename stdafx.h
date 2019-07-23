@@ -3,7 +3,8 @@
 // are changed infrequently
 //
 
-#pragma once
+#ifndef STDAFX_H
+#define STDAFX_H
 
 #include <iostream>
 
@@ -21,3 +22,4 @@
 #include <array>
 #include <optional>
 #include <map>
+#endif

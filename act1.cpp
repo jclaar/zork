@@ -1505,7 +1505,7 @@ namespace room_funcs
                 }
                 else
                 {
-                    printstring(b.c_str());
+                    printstring(b);
                     flags[tell_flag] = true;
                     crlf();
                     std::transform(b.begin(), b.end(), b.begin(), [](char c) { return (char)toupper(c); });

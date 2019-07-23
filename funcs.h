@@ -238,22 +238,18 @@ Iterator<T> top(Iterator<T> it)
 }
 
 template <typename T>
-Iterator<T> rest(Iterator<T> i, int len = 1)
+T rest(T it, int offset = 1)
 {
-    i.advance(len);
-    return i;
+    it.advance(offset);
+    return it;
 }
 
-inline SIterator rest(SIterator i, int len = 1)
-{
-    i.advance(len);
-    return i;
-}
+template <>
+inline char *rest(char *s, int len) { return s + len; }
+template <>
+inline const char *rest(const char *s, int len) { return s + len; }
+inline std::string rest(const std::string &s, int len = 1) { return s.substr(len); }
 
-inline std::string_view rest(std::string_view s, int len = 1)
-{
-    return s.substr(len);
-}
 
 template <typename T>
 T back(T it, int offset = 1)

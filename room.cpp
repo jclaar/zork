@@ -90,7 +90,7 @@ namespace
 
 	typedef std::vector<RoomP> RoomVector;
 
-#if _MSC_FULL_VER==192227812
+#if _MSC_FULL_VER==192127702
 #pragma optimize("", off)
 #endif
     const RoomVector &get_rooms()
@@ -101,7 +101,7 @@ namespace
         };
 		return rooms;
     }
-#if _MSC_FULL_VER==192227812
+#if _MSC_FULL_VER==192127702
 #pragma optimize("", on)
 #endif
 }

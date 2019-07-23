@@ -201,7 +201,7 @@ bool rise_and_shine(const ObjectP &ball)
     const char *m;
     if (m = member("VAIR", bl->rid()))
     {
-        if (rest(m, 4) == "4")
+        if (rest(m, 4) == std::string("4"))
         {
             clock_disable(burnup_int);
             clock_disable(bint);
@@ -279,7 +279,7 @@ bool decline_and_fall(const ObjectP &ball)
     const char *m;
     if (m = member("VAIR", bl->rid()))
     {
-        if (rest(m, 4) == "1")
+        if (rest(m, 4) == std::string("1"))
         {
             if (in)
             {
@@ -633,7 +633,7 @@ namespace obj_funcs
         {
             if (verbq("WALK"))
             {
-                const Ex *m = memq(prso(), here->rexits());
+                const Ex *m = memq((direction) prso(), here->rexits());
                 if (m)
                 {
                     if (btie)

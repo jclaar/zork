@@ -14,10 +14,7 @@ namespace
 bool terminal()
 {
     term_sim = !term_sim;
-    if (!term_sim)
-        tell("Terminal mode disabled.");
-    else
-        tell("Terminal mode enabled.");
+    tell(term_sim ? "Terminal mode enabled." : "Terminal mode disabled.");
     return true;
 }
 

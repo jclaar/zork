@@ -13,6 +13,9 @@
 #include "adv.h"
 #include "memq.h"
 
+using namespace std::string_literals;
+using namespace std::string_view_literals;
+
 namespace
 {
     const char *through_desc = "You feel somewhat disoriented as you pass through...";
@@ -1376,7 +1379,7 @@ namespace obj_funcs
             ObjectP prso = ::prso();
             if (prso == timber_tie)
             {
-                tell("The rope comes loose at you take the " + prso->odesc2() + ".");
+                tell("The rope comes loose as you take the " + prso->odesc2() + ".");
                 perform(untie, find_verb("UNTIE"), sfind_obj("ROPE"));
             }
         }
@@ -2254,8 +2257,8 @@ namespace room_funcs
             else
             {
                 tell("You are in a small square room bounded to the north and west with\n"
-                    "marble walls and to the east and south with sandstone walls." +
-                    std::string(trnn(find_obj("WARNI"), touchbit) ? " It\nappears the thief was correct." : ""), 1);
+                     "marble walls and to the east and south with sandstone walls."sv +
+                    (trnn(find_obj("WARNI"), touchbit) ? " It\nappears the thief was correct." : ""), 1);
             }
         }
         else
@@ -2525,7 +2528,7 @@ namespace actor_funcs
         }
         else if (verbq("LOOK"))
         {
-            tell("The room looks strange and unearthly" + std::string((empty(here->robjs()) ? "." : " and objects appear indistinct.")), 1);
+            tell("The room looks strange and unearthly"sv + (empty(here->robjs()) ? "." : " and objects appear indistinct."), 1);
             rtrnn(here, rlightbit) || tell("Although there is no light, the room seems dimly illuminated.");
             return false;
         }
