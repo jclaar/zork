@@ -24,8 +24,8 @@ Adv::Adv(RoomP r, const std::initializer_list<ObjectP> &objs, int score, const O
 
 }
 
-void add_actor(e_oactor actor_name, RoomP room, const std::initializer_list<ObjectP> &objs,
-    int score, ObjectP vehicle, ObjectP obj, rapplic action, int strength)
+void add_actor(e_oactor actor_name, const RoomP &room, const std::initializer_list<ObjectP> &objs,
+    int score, const ObjectP &vehicle, const ObjectP &obj, rapplic action, int strength)
 {
     actor_list[actor_name] = std::make_unique<Adv>(room, objs, score, vehicle, obj, action, strength);
 }

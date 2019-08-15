@@ -84,7 +84,7 @@ namespace
 
 // Disable optimization on VS2019. Resets on each new version to
 // see if linker error is fixed.
-#if _MSC_FULL_VER==192127702
+#if _MSC_FULL_VER==192227812
 #pragma optimize("", off)
 #endif
 	typedef std::vector<ObjectP> ObjectArray;
@@ -100,7 +100,7 @@ namespace
 
         return o;
     }
-#if _MSC_FULL_VER==192127702
+#if _MSC_FULL_VER==192227812
 #pragma optimize("", on)
 #endif
 

@@ -90,7 +90,7 @@ namespace
 
 	typedef std::vector<RoomP> RoomVector;
 
-#if _MSC_FULL_VER==192127702
+#if _MSC_FULL_VER==192227812
 #pragma optimize("", off)
 #endif
     const RoomVector &get_rooms()
@@ -101,7 +101,7 @@ namespace
         };
 		return rooms;
     }
-#if _MSC_FULL_VER==192127702
+#if _MSC_FULL_VER==192227812
 #pragma optimize("", on)
 #endif
 }
@@ -211,7 +211,7 @@ void init_rooms()
 	while (cur_iter != rooms.end())
     {
         RoomP cur_room = *cur_iter++;
-        RoomP p = get_room(cur_room->rid().c_str(), cur_room);
+        RoomP p = get_room(cur_room->rid(), cur_room);
         if (p.get() != cur_room.get())
         {
             *(p.get()) = *(cur_room.get());

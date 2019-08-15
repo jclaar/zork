@@ -121,8 +121,8 @@ inline void atro(const AdvP &adv, AdvBits b)
     adv->flags()[b] = 1;
 }
 
-void add_actor(e_oactor actor_name, RoomP room, const std::initializer_list<ObjectP> &objs,
-    int score, ObjectP vehicle, ObjectP obj, rapplic action, int strength);
+void add_actor(e_oactor actor_name, const RoomP &room, const std::initializer_list<ObjectP> &objs,
+    int score, const ObjectP &vehicle, const ObjectP &obj, rapplic action, int strength);
 std::array<AdvP, oa_none> &actors();
 
 inline const AdvP &player() { return actors()[oa_player]; }

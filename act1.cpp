@@ -999,8 +999,7 @@ bool leave()
 
 bool leaves_appear()
 {
-    const ObjectP &grate = sfind_obj("GRATE");
-    if (!(trnn(grate, openbit)) && !(flags[grate_revealed]))
+    if (auto &grate = sfind_obj("GRATE"); !(trnn(grate, openbit)) && !(flags[grate_revealed]))
     {
         tell("A grating appears on the ground.");
         tro(grate, ovison);
@@ -2506,17 +2505,21 @@ namespace obj_funcs
 
     bool match_function()
     {
-        ObjectP match = sfind_obj("MATCH");
+        auto &match = sfind_obj("MATCH");
         int mc = match->omatch();
         bool rv = true;
         if (verbq("LIGHT") && prso() == match)
         {
-            if (match->omatch(mc = mc - 1), mc < 0)
+            // The MDL code appears to be incorrect here. It will allow
+            // the player to light 5 matches instead of 4. Then if the player
+            // counts matches, it is reported that there are "-1 matches".
+            if (mc == 1)
             {
                 tell("I'm afraid that you have run out of matches.");
             }
             else
             {
+                match->omatch(mc - 1);
                 tro(match, flamebit, lightbit, onbit );
                 clock_int(matin, 2);
                 tell("One of the matches starts to burn.");

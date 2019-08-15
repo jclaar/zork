@@ -633,7 +633,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
     if (!is_empty(pv[0]) && as_verb(pv[0]) == find_verb(walk_str))
         return cwin();
 
-	_ASSERT(std::get_if<bool>(&val));
+	_ASSERT(std::holds_alternative<bool>(val));
     if (std::get<bool>(val))                            // 308
     {
         val = std::monostate();
@@ -1203,22 +1203,18 @@ bool syn_equal(VargP varg, OrphanSlotType pobj)
     bool rv = false;
     if (auto pp = std::get_if<PhraseP>(&pobj))
     {
-        PhraseP pobjp = *pp;
-        if (varg->vprep == pobjp->prep() &&
-            trnn_bits(pobjp->obj(), varg->vbit))
+        if (varg->vprep == (*pp)->prep() &&
+            trnn_bits((*pp)->obj(), varg->vbit))
         {
             rv = true;
         }
     }
-
-    if (auto *op = std::get_if<ObjectP>(&pobj))
+    else if (auto *op = std::get_if<ObjectP>(&pobj))
     {
-        ObjectP pobjo = *op;
-        if (!varg->vprep && trnn_bits(pobjo, varg->vbit))
+        if (!varg->vprep && trnn_bits(*op, varg->vbit))
             rv = true;
     }
-
-    if (is_empty(pobj) && (!varg || varg->vbit.none()))
+    else if (is_empty(pobj) && (!varg || varg->vbit.none()))
         rv = true;
 
     return rv;

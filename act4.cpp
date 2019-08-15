@@ -146,7 +146,7 @@ bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue> &correct
     }
 
     bool rv = false;
-    if (std::get_if<std::string>(&onecorr))
+    if (std::holds_alternative<std::string>(onecorr))
     {
         return member(ans[0]->s1, correct);
     }

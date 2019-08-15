@@ -5,7 +5,7 @@
 
 #ifndef STDAFX_H
 #define STDAFX_H
-
+#define _WIN32_WINNT 0x0601
 #include <iostream>
 
 #include <assert.h>

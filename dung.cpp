@@ -26,7 +26,7 @@ namespace
         add_actor(oa_robot, get_room("MAGNE"), {}, 0, nullptr, get_obj("ROBOT"), actor_funcs::robot_actor, 3);
     }
 
-    std::vector<VerbP> init_actions(const std::initializer_list<const char *> &il)
+    std::vector<VerbP> init_actions(const StringList &il)
     {
         std::vector<VerbP> acts;
         acts.reserve(il.size());
@@ -269,7 +269,7 @@ namespace
         add_demon(fight_demon = std::make_shared<hack>(fighting, villains, empty_rooms, *rooms().begin(), get_obj("TROLL")));
     }
 
-#if _MSC_FULL_VER==192127702
+#if _MSC_FULL_VER==192227812
 #pragma optimize("", off)
 #endif
     void init_actions()
@@ -914,7 +914,7 @@ namespace
         });
 #endif
     }
-#if _MSC_FULL_VER==192127702
+#if _MSC_FULL_VER==192227812
 #pragma optimize("", on)
 #endif
 

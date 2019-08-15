@@ -374,8 +374,11 @@ bool burnup()
     const ObjectP &r = sfind_obj("RECEP");
     _ASSERT(r->ocontents().size() == 1);
     const ObjectP &obj = r->ocontents().front();
-    tell("You notice that the " + obj->odesc2() + " has burned out, and that\n"
-        "the cloth bag starts to deflate.");
+    if (here == bloc)
+    {
+        tell("You notice that the " + obj->odesc2() + " has burned out, and that\n"
+            "the cloth bag starts to deflate.");
+    }
     r->ocontents() = splice_out(obj, r->ocontents());
     binf.reset();
     return true;

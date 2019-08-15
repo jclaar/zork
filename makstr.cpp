@@ -43,11 +43,12 @@ void add_demon(const HackP &x)
 
 VerbP find_verb(std::string_view verbo)
 {
-    if (words_pobl.find(verbo) == words_pobl.end())
+    auto viter = words_pobl.find(verbo);
+    if (viter == words_pobl.end())
     {
-        words_pobl.insert(std::make_pair<std::string, WordP>(std::string(verbo), make_word(kVerb, verbo)));
+        viter = words_pobl.insert(std::make_pair<std::string, WordP>(std::string(verbo), make_word(kVerb, verbo))).first;
     }
-    const WordP &wp = words_pobl.find(verbo)->second;
+    const WordP &wp = viter->second;
     VerbP vp = std::dynamic_pointer_cast<verb>(wp);
     if (!vp)
     {
@@ -108,7 +109,7 @@ namespace
     {
         auto iter = std::find_if(std::begin(al), std::end(al), [](const ALType &t)
         {
-            return std::get_if<T>(&t) != nullptr;
+            return std::holds_alternative<T>(t);
         });
         return iter != std::end(al);
     }
@@ -197,37 +198,29 @@ namespace
                 }
             }
 
-            // If an equ object is specified anywhere in the list,
-            // set the flags appropriately.
-            if (memq<equ>(al))
-            {
-                vv->vbit = vv->vfwim;
-            }
-
             vv->vprep = pd.prep;
-            std::list<vword_flag> sum;
+            std::bitset<numvbits> vbits;
             pd.prep = nullptr;
             if (memq<aobjs>(al))
-                sum.push_back(vabit);
+                vbits.set(vabit);
             if (memq<robjs>(al))
-                sum.push_back(vrbit);
+                vbits.set(vrbit);
             if (memq<no_take>(al))
             {
                 // NOP
             }
             if (memq<have>(al))
-                sum.push_back(vcbit);
+                vbits.set(vcbit);
             if (memq<reach>(al))
-                sum.push_back(vfbit);
+                vbits.set(vfbit);
             if (memq<try_>(al))
-                sum.push_back(vtbit);
+                vbits.set(vtbit);
             if (memq<take>(al))
             {
-                sum.push_back(vtbit);
-                sum.push_back(vcbit);
+                vbits.set(vtbit);
+                vbits.set(vcbit);
             }
-            for (vword_flag vwf : sum)
-                vv->vword.set(vwf);
+            vv->vword = vbits;
 
             pd.syntax_->syn[pd.whr++] = vv;
         }
@@ -240,12 +233,12 @@ namespace
                 verb->set_vfcn(av.fn());
             pd.syntax_->sfcn = verb;
         }
-        if (std::get_if<driver>(&itm))
+        if (std::holds_alternative<driver>(itm))
         {
             found = true;
             pd.syntax_->sflags[sdriver] = 1;
         }
-        if (std::get_if<flip>(&itm))
+        if (std::holds_alternative<flip>(itm))
         {
             found = true;
             pd.syntax_->sflags[sflip] = 1;

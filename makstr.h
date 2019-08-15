@@ -32,13 +32,12 @@ class reach {};
 class obj {};
 class aobjs {};
 class have {};
-class equ {};
 class no_take {};
 class try_ {}; // Added underscore to avoid using "try" keyword
 class take {};
 class driver {};
 class flip {};
-typedef std::variant<std::monostate, int, reach, robjs, aobjs, equ, no_take, have, try_, take, Bits, std::list<Bits>> ALType;
+typedef std::variant<std::monostate, int, reach, robjs, aobjs, no_take, have, try_, take, Bits, std::list<Bits>> ALType;
 typedef std::list<ALType> AL;
 class AVSyntax
 {

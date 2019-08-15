@@ -35,7 +35,7 @@ stdafx.h.gch: stdafx.h
 	$(CC) $(CFLAGS) $(CDEFINES) -x c++-header stdafx.h -c -o stdafx.h.gch
 
 $(OUTFILE): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ -lstdc++ $(BOOSTLIB)
+	$(CC) $(CFLAGS) -o $@ $^ -lpthread -lstdc++ $(BOOSTLIB)
 
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
