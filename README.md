@@ -24,3 +24,16 @@ Build requirements:
 Boost (www.boost.org) - Requires the program\_options and the serialization libraries. This build used
 version 1.70.0.
 
+### CMAKE BUILD
+CMake Build Recipe (Tested in Ubuntu 18.04 w/ gcc 9.2.1).  
+
+From project folder:
+```
+$ sudo apt install libboost-all-dev
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+```
+Party like it is 1979 ...
+
