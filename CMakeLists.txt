@@ -6,7 +6,7 @@ project( zork VERSION 1.0.0 )
 
 set( CMAKE_CXX_STANDARD 17 )
 
-find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization system )
+find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization )
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
