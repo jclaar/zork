@@ -7,6 +7,8 @@ project( zork VERSION 1.0.0 )
 set( CMAKE_CXX_STANDARD 17 )
 
 find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization system )
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 add_executable(zork
@@ -69,4 +71,4 @@ add_executable(zork
 	strings.cpp
 	zstring.cpp )
 
-target_link_libraries(zork ${Boost_LIBRARIES})
+target_link_libraries(zork ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
