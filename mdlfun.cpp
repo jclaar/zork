@@ -2,16 +2,14 @@
 //
 
 #include "stdafx.h"
-#ifndef __GNUC__
-#include <process.h>
-#else
-#include <sys/wait.h>
-#endif
 #include <string>
 #include "funcs.h"
 #include "dung.h"
 #include "rooms.h"
+#pragma warning(disable: 4244)
 #include <boost/process.hpp>
+#include <boost/dll.hpp>
+#pragma warning(default: 4244)
 
 std::string pw(SIterator unm, SIterator key);
 std::string username();
@@ -57,7 +55,7 @@ int main(int argc, char *argv[])
 		// exit.
 		while (status == 1)
         {
-            boost::process::child c(argv[0] + " -go"sv);
+            boost::process::child c(boost::dll::program_location(), "-go");
             c.wait();
             status = c.exit_code();
         }

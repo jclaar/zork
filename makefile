@@ -13,7 +13,7 @@ endif
 
 CFLAGS=--std=c++17 -Os $(DEPFLAGS)
 CDEFINES=-D__STDC_WANT_LIB_EXT1__=1
-BOOSTLIB=$(BOOST)/stage/lib/libboost_serialization.a
+BOOSTLIB=$(BOOST)/stage/lib/libboost_serialization.a $(BOOST)/stage/lib/libboost_filesystem.a
 POSTCOMPILE = @mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
 
 SRCS = $(wildcard *.cpp)
@@ -35,7 +35,7 @@ stdafx.h.gch: stdafx.h
 	$(CC) $(CFLAGS) $(CDEFINES) -x c++-header stdafx.h -c -o stdafx.h.gch
 
 $(OUTFILE): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ -lpthread -lstdc++ $(BOOSTLIB)
+	$(CC) $(CFLAGS) -o $@ $^ -lpthread -ldl -lstdc++ $(BOOSTLIB)
 
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
