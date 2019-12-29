@@ -116,7 +116,7 @@ bool maker()
     if (prso() == sfind_obj("WISH"))
     {
         if (here == sfind_room("BWELL") &&
-            (memq(coins, here->robjs()) || memq(coins = sfind_obj("COINS"), here->robjs())))
+            (memq(coins, here->robjs()) || memq(coins = sfind_obj("COIN"), here->robjs())))
         {
             tell("A whispering voice replies: 'Water makes the bucket go.'\n"
                 "Unfortunately, wishing makes the coins go....");
@@ -1018,7 +1018,12 @@ namespace obj_funcs
         else if (verbq( "EXAMI", "LKAT", "READ" ) && prso == sfind_obj("BROCH"))
         {
             tell(bro1 + username() + bro2);
-            stamp->ocan() && tell("Affixed loosely to the brochure is a small stamp.");
+            // This is a slight change from the MDL code. The old version said:
+            // stamp->ocan() && tell("Affixed...");
+            // This is incorrect -- it would display the message if the stamp is in
+            // ANY container, not just the brochure.
+            if (stamp->ocan() == prso)
+                tell("Affixed loosely to the brochure is a small stamp.");
         }
         else if (verbq("FIND") && flags[brflag1])
         {

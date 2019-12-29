@@ -323,9 +323,9 @@ void cell_move()
 
     if (new_ != old)
     {
-        cells[old] = po = movies(cell);
+        cells[old-1] = po = movies(cell);
         stuff(cell, cells[new_ - 1], cobjs);
-        cells[new_].clear();
+        cells[new_-1].clear();
         if (old == 4)
         {
             stuff(ncell, po, nobjs);

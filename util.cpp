@@ -20,8 +20,11 @@ const HackP &get_demon(const char *id)
 
 ObjList splice_out(const ObjectP &op, const ObjList &al)
 {
-    ObjList new_list = al;
-    new_list.remove_if([&op](const ObjectP &o) { return o == op; });
+    ObjList new_list;
+    std::copy_if(al.begin(), al.end(), std::back_inserter(new_list), [&op](const ObjectP& o)
+        {
+            return o != op;
+        });
     return new_list;
 }
 

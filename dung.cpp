@@ -938,14 +938,14 @@ namespace
 void dir_syns()
 {
     const std::pair<const char*, const char*> ds[] = {
-        std::make_pair("NORTH", "N"),
-        std::make_pair("SOUTH", "S"),
-        std::make_pair("EAST", "E"),
-        std::make_pair("WEST", "W"),
-        std::make_pair("UP", "U"),
-        std::make_pair("DOWN", "D"),
-        std::make_pair("ENTER", "IN"),
-        std::make_pair("CROSS", "TRAVE"),
+        std::pair("NORTH", "N"),
+        std::pair("SOUTH", "S"),
+        std::pair("EAST", "E"),
+        std::pair("WEST", "W"),
+        std::pair("UP", "U"),
+        std::pair("DOWN", "D"),
+        std::pair("ENTER", "IN"),
+        std::pair("CROSS", "TRAVE"),
     };
     for (auto &d : ds)
     {

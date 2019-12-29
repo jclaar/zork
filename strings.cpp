@@ -1,11 +1,6 @@
 #include "stdafx.h"
 #include "strings.h"
 
-#define STR(name, s) const std::string &name() {\
-    static const std::string st(s);\
-    return st; \
-}
-
 #define D "%D%"
 #define W "%W%"
 

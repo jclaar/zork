@@ -58,7 +58,7 @@ class hack
 {
     typedef std::variant<CEventP, ObjectP> HobjsValue;
 public:
-    hack(hackfn ha, const ObjList &ho, const RoomList &hr, RoomP rm, ObjectP obj) :
+    hack(hackfn ha, const ObjList &ho, const RoomList &hr, const RoomP &rm, const ObjectP &obj) :
         _haction(ha), _room(rm), _hobj(obj), _hobjs_ob(ho), _hrooms(hr), _hflag(false)
     {
     }
@@ -278,8 +278,7 @@ void synonym(const char *n1, T first, Args... args)
     synonym(n1, args...);
 }
 
-template <typename T>
-void dsynonym(const char *dir, T syn)
+inline void dsynonym(const char *dir, const char *syn)
 {
     auto iter = directions_pobl.find(dir);
     if (iter == directions_pobl.end())

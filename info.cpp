@@ -58,7 +58,7 @@ const std::string_view help_str =
 
 "   Some objects can contain other objects.Many such containers can\n"
 "be opened and closed.  The rest are always open.  They may or may\n"
-"not be transparent.  For you to access(e.g., take) an object\n"
+"not be transparent.  For you to access (e.g., take) an object\n"
 "which is in a container, the container must be open.  For you\n"
 "to see such an object, the container must be either open or\n"
 "transparent.  Containers have a capacity, and objects have sizes;\n"
@@ -95,7 +95,7 @@ const std::string_view help_str =
 
 "   Directions:\n"
 "        NORTH, SOUTH, UP, DOWN, etc. and their various abbreviations.\n"
-"        Other more obscure directions(LAND, CROSS) are appropriate in\n"
+"        Other more obscure directions (LAND, CROSS) are appropriate in\n"
 "        only certain situations.\n\n"
 "   Objects:\n"
 "        Most objects have names and can be referenced by them.\n\n"
@@ -112,7 +112,7 @@ const std::string_view help_str =
 "        WITH DEMON' won't parse.\n\n"
 "   Sentences:\n"
 "        The parser understands a reasonable number of syntactic construc-\n"
-"        tions.  In particular, multiple commands(separated by periods)\n"
+"        tions.  In particular, multiple commands (separated by periods)\n"
 "        can be placed on the same line.\n\n"
 "   Ambiguity:\n"
 "        The parser tries to be clever about what to do in the case of\n"

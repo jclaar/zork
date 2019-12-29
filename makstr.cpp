@@ -46,7 +46,7 @@ VerbP find_verb(std::string_view verbo)
     auto viter = words_pobl.find(verbo);
     if (viter == words_pobl.end())
     {
-        viter = words_pobl.insert(std::make_pair<std::string, WordP>(std::string(verbo), make_word(kVerb, verbo))).first;
+        viter = words_pobl.insert(std::pair(std::string(verbo), make_word(kVerb, verbo))).first;
     }
     const WordP &wp = viter->second;
     VerbP vp = std::dynamic_pointer_cast<verb>(wp);
@@ -73,7 +73,7 @@ PrepP find_prep(std::string_view prepo)
     WordsPobl::iterator wpi;
     if ((wpi = words_pobl.find(prepo)) == words_pobl.end())
     {
-        wpi = words_pobl.insert(std::make_pair(std::string(prepo), make_word(kPrep, prepo))).first;
+        wpi = words_pobl.insert(std::pair(std::string(prepo), make_word(kPrep, prepo))).first;
     }
     auto wp = wpi->second;
     PrepP pp = std::dynamic_pointer_cast<prep_t>(wp);

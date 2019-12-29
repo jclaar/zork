@@ -113,7 +113,7 @@ const RoomP &CExit::cxroom() const
 
 const ObjectP &DoorExit::dobj() const
 {
-    return find_obj(_oid.c_str());
+    return find_obj(_oid);
 }
 
 const RoomP &DoorExit::droom1() const
@@ -198,7 +198,7 @@ const RoomP &get_room(std::string_view sid, RoomP init_val)
         {
             init_val = mr(sid, "", "", {});
         }
-        iter = room_map().insert(std::make_pair(std::string(sid), init_val)).first;
+        iter = room_map().insert(std::pair(std::string(sid), init_val)).first;
         rooms().push_front(init_val);
     }
     return iter->second;
