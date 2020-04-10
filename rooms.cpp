@@ -384,7 +384,7 @@ bool room_info(std::optional<int> full)
         for (ObjectP x : rm->robjs())
         {
             if (trnn(x, ovison) &&
-                (((full && full.value()) == 1) || describable(x)))
+                ( (full && (full.value() == 1)) || describable(x)))
             {
                 if (x == av)
                 {

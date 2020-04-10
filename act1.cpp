@@ -35,7 +35,7 @@ namespace
         int cnt, tim;
         foo->val(cnt = (foo->val() + 1));
         clock_int(cev, tim = tick[size_t(cnt) - 1]);
-        if (tim == 0)
+        if (tim < 0)
         {
             if (!obj->oroom() || obj->oroom() == here)
             {
