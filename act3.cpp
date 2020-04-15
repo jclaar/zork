@@ -1533,7 +1533,7 @@ namespace obj_funcs
             }
             else
             {
-                rv = perform(unlocker, find_verb("UNLOCK"), sfind_obj("PDOOR"), prso());
+                rv = perform(unlocker, find_verb("UNLOC"), sfind_obj("PDOOR"), prso());
             }
         }
         return rv;
