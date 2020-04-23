@@ -1827,12 +1827,11 @@ namespace exit_funcs
             if (flags[mirror_open])
                 rv = sfind_room("INMIR");
             else
-                tell("The panel is closed.");
+                rv = tell("The panel is closed.");
         }
         else
         {
-            tell("The structure blocks your way.");
-            rv = true;
+            rv = tell("The structure blocks your way.");
         }
         return rv;
     }
