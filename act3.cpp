@@ -607,7 +607,7 @@ bool pass_the_bucket(const RoomP &r, const ObjectP &b)
 {
     const AdvP &winner = *::winner;
     auto prso = ::prso();
-    prsvec[1] = std::monostate();
+    auto oldprsvec1 = prsvec[1];
     remove_object(b);
     insert_object(b, r);
     if (winner->avehicle() == b)
@@ -615,7 +615,7 @@ bool pass_the_bucket(const RoomP &r, const ObjectP &b)
         goto_(r);
         room_info();
     }
-    prsvec[1] = (ObjectP) prso;
+    prsvec[1] = oldprsvec1;
     return true;
 }
 
