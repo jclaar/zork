@@ -1477,6 +1477,7 @@ namespace room_funcs
         }
         else
         {
+            PrsoType prsot;
             while (1)
             {
                 rapplic random_action;
@@ -1485,7 +1486,7 @@ namespace room_funcs
                 if ((v = lex(SIterator(b, b.begin()), SIterator(b, b.end()))) &&
                     eparse(v, true) &&
                     (!is_empty(prsvec[0]) && prsa() == walk) &&
-                    (!std::get_if<ObjectP>(&prso()) || !empty(prso())) &&
+                    (prsot = prso(), !std::get_if<ObjectP>(&prsot) || !empty(prsot)) &&
                     memq(as_dir(prsvec[1]), rm->rexits()))
                 {
                     random_action = prsa()->vfcn();
