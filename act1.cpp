@@ -1482,11 +1482,10 @@ namespace room_funcs
                 rapplic random_action;
                 l = readst(b, "");
                 moves++;
-                PrsoType prsot = prso();
                 if ((v = lex(SIterator(b, b.begin()), SIterator(b, b.end()))) &&
                     eparse(v, true) &&
                     (!is_empty(prsvec[0]) && prsa() == walk) &&
-                    (!std::get_if<ObjectP>(&prsot) || !empty(prso())) &&
+                    (!std::get_if<ObjectP>(&prso()) || !empty(prso())) &&
                     memq(as_dir(prsvec[1]), rm->rexits()))
                 {
                     random_action = prsa()->vfcn();
