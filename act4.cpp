@@ -508,7 +508,6 @@ bool inqstart()
 
 bool inquisitor(Iterator<ParseContV> ans)
 {
-    int nqatt = ::nqatt;
     auto nqv = nqvec;
     const QuestionP &ques = nqv[0];
     if (verbq("C-INT"))
@@ -537,9 +536,8 @@ bool inquisitor(Iterator<ParseContV> ans)
         }
         else
         {
-            nqatt = ::nqatt = nqatt + 1;
-            tell("The dungeon master says 'You are wrong.'", 0);
-            if (nqatt == 5)
+            tell("The dungeon master says 'You are wrong.", 0);
+            if (++nqatt == 5)
             {
                 tell(inq_lose, long_tell1);
                 clock_disable(inqin);
