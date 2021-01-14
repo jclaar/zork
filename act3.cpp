@@ -606,8 +606,8 @@ ScolWalls get_wall(const RoomP &rm)
 bool pass_the_bucket(const RoomP &r, const ObjectP &b)
 {
     const AdvP &winner = *::winner;
-    auto prso = ::prso();
     auto oldprsvec1 = prsvec[1];
+    prsvec[1] = std::monostate();
     remove_object(b);
     insert_object(b, r);
     if (winner->avehicle() == b)

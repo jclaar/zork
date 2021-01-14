@@ -51,12 +51,9 @@ void excruciatingly_untasteful_code()
     // ???
 }
 
-std::string remarkably_disgusting_code()
+const char *remarkably_disgusting_code()
 {
-    std::string s = "This Zork created ";
-    s += __DATE__;
-    s += ".";
-    return s;
+    return "This Zork created " __DATE__ ".";
 }
 
 std::string unspeakable_code()
@@ -65,10 +62,11 @@ std::string unspeakable_code()
     const std::string &oread = O->oread();
     auto pos = oread.find_first_of('/');
     pos -= (oread[pos - 2] == '1' ? 2 : 1);
-    std::string s = "There is an issue of US NEWS & DUNGEON REPORT dated ";
-    s += oread.substr(pos, oread.find_first_of(' ', pos) - pos);
-    s += " here.";
-    return s;
+    std::stringstream ss;
+    ss << "There is an issue of US NEWS & DUNGEON REPORT dated ";
+    ss << std::string_view(&oread[pos], oread.find_first_of(' ', pos) - pos);
+    ss << " here.";
+    return ss.str();
 }
 
 void contin(bool foo)
@@ -82,7 +80,6 @@ int score(bool ask)
 {
     bool eg = flags[end_game_flag];
     int scor, smax;
-    float pct;
     flags[tell_flag] = true;
     princ("Your score ");
     if (eg)
@@ -106,27 +103,27 @@ int score(bool ask)
         princ(" moves.");
     crlf();
     princ("This score gives you the rank of ");
-    pct = (float)scor / (float)smax;
+    int pct = (scor * 100) / smax;
     if (eg)
     {
-        princ((pct == 1.0) ? "Dungeon Master" :
-            (pct > 0.75) ? "Super Cheater" :
-            (pct > 0.50) ? "Master Cheater" :
-            (pct > 0.25) ? "Advanced Cheater" :
+        princ((pct == 100) ? "Dungeon Master" :
+            (pct > 75) ? "Super Cheater" :
+            (pct > 50) ? "Master Cheater" :
+            (pct > 25) ? "Advanced Cheater" :
             "Cheater");
     }
     else
     {
-        princ((pct == 1.0) ? "Cheater" :
-            (pct > 0.95) ? "Wizard" :
-            (pct > 0.8999999) ? "Master" :
-            (pct > 0.7999999) ? "Winner" :
-            (pct > 0.6000000) ? "Hacker" :
-            (pct > 0.3999999) ? "Adventurer" :
-            (pct > 0.1999999) ? "Junior Adventurer" :
-            (pct > 0.0999999) ? "Novice Adventurer" :
-            (pct > 0.0499999) ? "Amateur Adventurer" :
-            (pct >= 0.0) ? "Beginner" :
+        princ((pct == 100) ? "Cheater" :
+            (pct > 95) ? "Wizard" :
+            (pct > 89) ? "Master" :
+            (pct > 79) ? "Winner" :
+            (pct > 60) ? "Hacker" :
+            (pct > 39) ? "Adventurer" :
+            (pct > 19) ? "Junior Adventurer" :
+            (pct > 9) ? "Novice Adventurer" :
+            (pct > 4) ? "Amateur Adventurer" :
+            (pct >= 0) ? "Beginner" :
             "Incompetent");
     }
     princ(".");
@@ -201,7 +198,7 @@ void score_room(const RoomP &rm)
     }
 }
 
-void start(const std::string &rm, const std::string &st)
+void start(std::string_view rm, std::string_view st)
 {
     here = find_room(rm);
     (*winner)->aroom(here);
@@ -213,7 +210,6 @@ void start(const std::string &rm, const std::string &st)
 
 void save_it(bool strt)
 {
-    std::string st = remarkably_disgusting_code();
     sfind_obj("PAPER")->odesc1(unspeakable_code());
     dead_player = player()->aaction();
     player()->aaction(nullptr);
@@ -222,7 +218,7 @@ void save_it(bool strt)
     moves = 0;
     winner = &player();
     srand((unsigned int)time(NULL));
-    start("WHOUS", st);
+    start("WHOUS", remarkably_disgusting_code());
 }
 
 bool object_action()
@@ -381,7 +377,7 @@ bool room_info(std::optional<int> full)
     }
     else if (!full && !flags[no_obj_print] || full && !((full.value() & 1) == 0))
     {
-        for (ObjectP x : rm->robjs())
+        for (auto &x : rm->robjs())
         {
             if (trnn(x, ovison) &&
                 ( (full && (full.value() == 1)) || describable(x)))

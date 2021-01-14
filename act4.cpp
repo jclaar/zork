@@ -33,8 +33,8 @@ Iterator<std::array<QuestionP, 3>> nqvec(nqvecb);
 
 namespace
 {
-    const std::string mrestr("   E");
-    const std::string mrwstr("MBRW");
+    const std::string_view mrestr("   E");
+    const std::string_view mrwstr("MBRW");
 }
 
 bool eg_infested(const RoomP &r)
@@ -105,11 +105,7 @@ bool follow()
 const RoomP &go_e_w(const RoomP &rm, direction dir)
 {
     const std::string &spr = rm->rid();
-    std::string str = mrestr;
-    if (dir != Ne && dir != Se)
-    {
-        str = mrwstr;
-    }
+    std::string str = std::string((dir != Ne && dir != Se) ? mrwstr : mrestr);
     return find_room(substruc(spr, 0, 3, str));
 }
 
@@ -240,11 +236,11 @@ bool enter_end_game()
     robber_demon->haction(nullptr);
 
     // Disable all active events in the adventurer's possession.
-    std::for_each(w->aobjs().begin(), w->aobjs().end(), [](const ObjectP &o)
+    for (const ObjectP& o : w->aobjs())
     {
         if (o->olint())
             clock_disable(o->olint()->ev());
-    });
+    }
 
     tro(lamp, touchbit);
     tro(sword, touchbit);
@@ -286,35 +282,21 @@ ObjList movies(const RoomP &rm)
     return list;
 }
 
-void stuff(const RoomP &r, ObjList l1, ObjList l2)
+void stuff(const RoomP &r, const ObjList &l1, const ObjList &l2)
 {
-    if (empty(l1))
-    {
-        l1 = l2;
-    }
-    else if (empty(l2))
-    {
-
-    }
-    else
-    {
-        l1.splice(l1.end(), l2);
-    }
-    for (const ObjectP &o : l1)
+    r->robjs() = l1;
+    r->robjs().insert(r->robjs().end(), l2.begin(), l2.end());
+    for (const ObjectP &o : r->robjs())
     {
         o->oroom(r);
     }
-    r->robjs() = l1;
 }
 
 void cell_move()
 {
     int new_ = pnumb;
     int old = lcell;
-    RoomP cell = sfind_room("CELL");
-    RoomP ncell = sfind_room("NCELL");
-    RoomP pcell = sfind_room("PCELL");
-    ObjectP d = sfind_obj("ODOOR");
+    const ObjectP &d = sfind_obj("ODOOR");
     ObjList po;
     const AdvP &me = player();
 
@@ -323,6 +305,9 @@ void cell_move()
 
     if (new_ != old)
     {
+        const RoomP& cell = sfind_room("CELL");
+        const RoomP& ncell = sfind_room("NCELL");
+        const RoomP& pcell = sfind_room("PCELL");
         cells[old-1] = po = movies(cell);
         stuff(cell, cells[new_ - 1], cobjs);
         cells[new_-1].clear();
@@ -684,16 +669,17 @@ bool look_to(std::string_view nstr,
 
 RoomP mirew()
 {
-    std::string new_rm = mdir == 0 ? mrwstr : mrestr;
+    std::string new_rm = std::string(mdir == 0 ? mrwstr : mrestr);
     new_rm.replace(0, 3, mloc->rid());
     return find_room(new_rm);
 }
 
-bool mirmove(bool northq, RoomP rm)
+bool mirmove(bool northq, const RoomP &rm)
 {
-    RoomP mrg = sfind_room("MRG");
+    using namespace std::string_view_literals;
+    const RoomP &mrg = sfind_room("MRG");
     bool pu = poleup != 0;
-    tell((pu ? "The structure wobbles " : "The structure slides ") + std::string(northq ? "north" : "south") +
+    tell((pu ? "The structure wobbles " : "The structure slides ") + (northq ? "north"sv : "south"sv) +
         " and stops over another compass rose.");
     mloc = rm;
     if (rm == mrg &&
@@ -722,25 +708,25 @@ bool mirmove(bool northq, RoomP rm)
 
 RoomP mirns(bool northq, bool exitq)
 {
-    RoomP mloc = ::mloc;
+    RoomP rv;
     const std::vector<Ex> &rex = mloc->rexits();
     const Ex *m;
     if (!exitq &&
         ((northq && mloc == northend) || (!northq && mloc == southend)))
     {
-        return RoomP();
+        // Do nothing
     }
     else if (m = memq(northq ? North : South, rex))
     {
         ExitType exit = std::get<1>(*m);
         if (auto cep = std::get_if<CExitPtr>(&exit))
-            return (*cep)->cxroom();
+            rv = (*cep)->cxroom();
         else if (auto roomp = std::get_if<RoomP>(&exit))
-            return *roomp;
+            rv = *roomp;
         else if (auto sp = std::get_if<std::string>(&exit))
-            return sfind_room(*sp);
+            rv = sfind_room(*sp);
     }
-    return nullptr;
+    return rv;
 }
 
 bool mirblock(direction dir, int mdir)

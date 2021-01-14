@@ -20,11 +20,10 @@ namespace
 int fight_strength(const AdvP &hero, bool adjust)
 {
     int s, smax = strength_max, smin = strength_min;
-    float f = float(hero->ascore()) / float(score_max());
-    f *= (smax - smin);
-    f += 0.5f;
-    s = (int)f + smin;
-
+    int pct = hero->ascore() * 100 / score_max();
+    pct *= (smax - smin);
+    pct += 50;
+    s = (pct / 100) + smin;
     return adjust ? (s + hero->astrength()) : s;
 }
 

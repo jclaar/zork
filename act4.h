@@ -30,7 +30,7 @@ bool look_to(std::string_view nstr,
     bool htell = true);
 bool mirblock(direction dir, int mdir);
 RoomP mirew();
-bool mirmove(bool northq, RoomP rm);
+bool mirmove(bool northq, const RoomP &rm);
 RoomP mirns(bool northq = (mdir < 180), bool exitq = false);
 std::optional<int> mirror_here(RoomP rm);
 bool start_end();

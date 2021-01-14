@@ -9,14 +9,14 @@
 #include <list>
 #include <any>
 #include <optional>
+#include <sstream>
 #include <string_view>
 
 inline std::string operator+(std::string_view s1, std::string_view s2)
 {
-    std::string rv;
-    rv.reserve(s1.size() + s2.size());
-    std::copy(s2.begin(), s2.end(), std::copy(s1.begin(), s1.end(), std::back_inserter(rv)));
-    return rv;
+    std::stringstream ss;
+    ss << s1 << s2;
+    return ss.str();
 }
 
 enum e_oactor

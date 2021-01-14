@@ -59,8 +59,8 @@ typedef std::array<ParseContP, lexsize> ParseContV;
 extern Iterator<ParseContV> parse_cont;
 
 std::string unspeakable_code();
-std::string remarkably_disgusting_code();
-void start(const std::string &rm, const std::string &st = std::string());
+const char *remarkably_disgusting_code();
+void start(std::string_view &rm, std::string_view st = std::string());
 void save_it(bool start = true);
 void contin(bool foo = false);
 bool goto_(const RoomP &rm, const AdvP &win = *winner);

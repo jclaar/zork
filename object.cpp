@@ -112,7 +112,7 @@ namespace
 }
 
 // last_it must be defined after Objects.
-ObjectP last_it(get_obj("#####"));
+ObjectP last_it;
 
 Object::Object(const std::initializer_list<const char *> &syns, const std::initializer_list<const char *> &adj, const char *description,
     const std::initializer_list<Bits> &bits, rapplic objfun, const StringList &cntnts, 
@@ -492,6 +492,7 @@ const ObjectP &find_obj(std::string_view name)
 {
     _ASSERT(name.size() <= 5); // To catch typos
     auto iter = Objects().find(name);
+    _ASSERT(iter != Objects().end());
     return iter->second.front();
 }
 

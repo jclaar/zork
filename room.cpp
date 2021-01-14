@@ -15,8 +15,8 @@
 #define notree_FORE5 notree_FORE1
 #define kitchen_window_EHOUS std::make_shared<DoorExit>("WINDO", "KITCH", "EHOUS")
 #define kitchen_window_KITCH kitchen_window_EHOUS
-#define magcmach_MAGNE std::make_shared<CExit>(frobozz, "cmach", "", false, exit_funcs::magnet_room_exit)
-#define magalice_MAGNE std::make_shared<CExit>(frobozz, "cmach", "", false, exit_funcs::magnet_room_exit)
+#define magcmach_MAGNE std::make_shared<CExit>(frobozz, "CMACH", "", false, exit_funcs::magnet_room_exit)
+#define magalice_MAGNE std::make_shared<CExit>(frobozz, "CMACH", "", false, exit_funcs::magnet_room_exit)
 #define current_RIVR1 NExit("You cannot go upstream due to strong currents.")
 #define current_RIVR2 current_RIVR1
 #define current_RIVR3 current_RIVR1
@@ -227,6 +227,8 @@ void init_rooms()
 
 const RoomP &find_room(std::string_view rid)
 {
-    return room_map().find(rid)->second;
+    auto iter = room_map().find(rid);
+    _ASSERT(iter != room_map().end());
+    return iter->second;
 }
 

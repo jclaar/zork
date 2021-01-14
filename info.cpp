@@ -82,7 +82,7 @@ const std::string_view help_str =
 "Command parser:\n\n"
 "   A command is one line of text terminated by a carriage return.\n"
 "For reasons of simplicity, all words are distinguished by their\n"
-"first six letters.  All others are ignored.  For example, typing\n"
+"first five letters.  All others are ignored.  For example, typing\n"
 "'DISASSEMBLE THE ENCYCLOPEDIA' is not only meaningless, it also\n"
 "creates excess effort for your fingers.  Note that this trunca-\n"
 "tion may produce ambiguities in the interpretation of longer words.\n\n"

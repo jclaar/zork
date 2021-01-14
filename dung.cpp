@@ -21,9 +21,9 @@ namespace
     void init_actors()
     {
         // Dungeon master
-        add_actor(oa_master, get_room("BDOOR"), {}, 0, nullptr, get_obj("MASTE"), actor_funcs::master_actor, 30);
-        add_actor(oa_player, get_room("WHOUS"), {}, 0, nullptr, get_obj("#####"), actor_funcs::dead_function, 0);
-        add_actor(oa_robot, get_room("MAGNE"), {}, 0, nullptr, get_obj("ROBOT"), actor_funcs::robot_actor, 3);
+        add_actor(oa_master, sfind_room("BDOOR"), {}, 0, nullptr, sfind_obj("MASTE"), actor_funcs::master_actor, 30);
+        add_actor(oa_player, sfind_room("WHOUS"), {}, 0, nullptr, sfind_obj("#####"), actor_funcs::dead_function, 0);
+        add_actor(oa_robot, sfind_room("MAGNE"), {}, 0, nullptr, sfind_obj("ROBOT"), actor_funcs::robot_actor, 3);
     }
 
     std::vector<VerbP> init_actions(const StringList &il)
@@ -51,28 +51,34 @@ namespace
 // Bunch vector.
 ObjVector bunch_cont()
 {
-    ObjVector ov(8, get_obj("#####"));
+    ObjVector ov(8, sfind_obj("#####"));
     return ov;
 }
-ObjVector bunuvec_cont = bunch_cont();
-Iterator<ObjVector> bunuvec(bunuvec_cont, bunuvec_cont.end());
-Iterator<ObjVector> bunch(bunuvec);
+ObjVector bunuvec_cont;
+Iterator<ObjVector> bunuvec;
+Iterator<ObjVector> bunch;
+
+void init_bunch()
+{
+    bunuvec_cont = bunch_cont();
+    bunuvec = Iterator<ObjVector>(bunuvec_cont, bunuvec_cont.end());
+    bunch = bunuvec;
+}
 
 WordsPobl words_pobl;
 
 // Globals from dung.mud appear here.
-PhraseVecV make_prepvec()
+PhraseVecV prepvecb;
+PrepVec prepvec;
+
+void init_prepvec()
 {
     auto with_prep = find_prep("WITH");
-    auto cretin = get_obj("#####");
-    PhraseVecV pvv;
-    std::generate_n(std::back_inserter(pvv), 5, [&with_prep, &cretin]() { return make_phrase(with_prep, cretin); });
-    return pvv;
+    auto cretin = sfind_obj("#####");
+    prepvecb.clear();
+    std::generate_n(std::back_inserter(prepvecb), 5, [&with_prep, &cretin]() { return make_phrase(with_prep, cretin); });
+    prepvec = prepvecb;
 }
-
-PhraseVecV prepvecb = make_prepvec();
-
-PrepVec prepvec(prepvecb);
 
 // Attacking things...
 const std::vector<attack_state> def1 = { missed, missed, missed, missed,
@@ -966,6 +972,10 @@ void init_dung()
     dir_syns();
 
 	init_objects();
+    // Some objects that were initialized globally, but need to be done after init_objects().
+    last_it = sfind_obj("#####");
+    init_bunch();
+    init_prepvec();
     init_synonyms();
     init_rooms();
     init_actors();

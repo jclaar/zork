@@ -717,6 +717,8 @@ namespace obj_funcs
                 clock_disable(bint);
                 tell("The balloon is fastened to the hook.");
             }
+            else
+                rv = false;
         }
         else if (verbq("UNTIE") && prso == sfind_obj("BROPE"))
         {
@@ -734,8 +736,6 @@ namespace obj_funcs
         }
         else
             rv = false;
-        return rv;
-
         return rv;
     }
 
