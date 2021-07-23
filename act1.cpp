@@ -2974,7 +2974,8 @@ namespace obj_funcs
 
 bool exorcise()
 {
-    return object_action();
+    object_action();
+    return true;
 }
 
 bool plugger()
