@@ -1610,7 +1610,7 @@ namespace room_funcs
         bool rv = false;
         if (verbq("LOOK"))
         {
-            look_to("MRG", "MRA", true);
+            look_to("MRG", "MRB", true);
             rv = true;
         }
         return rv;
