@@ -11,6 +11,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
+link_directories(${Boost_LIBRARY_DIRS})
 add_executable(zork
 	act1.h  
 	act3.h
@@ -72,3 +73,5 @@ add_executable(zork
 	zstring.cpp )
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -ldl)
+
+install(TARGETS zork DESTINATION bin)
