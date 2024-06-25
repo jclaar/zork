@@ -150,7 +150,7 @@ RAPPLIC(superbrief);
 RAPPLIC(unboard);
 RAPPLIC(verbose);
 RAPPLIC(version);
-RAPPLIC_DEF(wait, int, 3);
+RAPPLIC_DEF(wait_, int, 3);
 RAPPLIC(walk);
 
 namespace obj_funcs

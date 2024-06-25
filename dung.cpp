@@ -802,7 +802,7 @@ namespace
         sadd_action("UNSCR", do_unscript());
         sadd_action("VERBO", verbose());
         sadd_action("VERSI", version());
-        sadd_action("WAIT", wait());
+        sadd_action("WAIT", wait_());
         sadd_action("WIN", win());
         vsynonym("WIN", "WINNA" );
 

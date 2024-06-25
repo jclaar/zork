@@ -812,7 +812,7 @@ namespace obj_funcs
     {
         if (verbq("TAKE"))
         {
-            return perform(wait(), find_verb("WAIT"));
+            return perform(wait_(), find_verb("WAIT"));
         }
         return false;
     }

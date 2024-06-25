@@ -2009,7 +2009,7 @@ bool version::operator()() const
     return tell(remarkably_disgusting_code());
 }
 
-bool wait::operator()(int num) const
+bool wait_::operator()(int num) const
 {
     tell("Time passes...");
     // Wait can break out if any of the demons
