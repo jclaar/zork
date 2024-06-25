@@ -6,9 +6,19 @@ project( zork VERSION 1.0.0 )
 
 set( CMAKE_CXX_STANDARD 20 )
 
-find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem )
+find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem system)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+
+# Make sure we have at least gcc-13.
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
+        message(FATAL_ERROR "Must use at least gcc-13.")
+    endif()
+endif()
+
+message("Libs are ${Boost_LIBRARIES}")
+
 
 # Don't give warnings on Win32 Visual Studio builds.
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
