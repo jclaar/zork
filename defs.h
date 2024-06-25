@@ -46,14 +46,9 @@ typedef std::optional<ApplyRandomArg> Rarg;
 
 inline std::string operator+(std::string_view s1, std::string_view s2)
 {
-#if __cpp_lib_ranges >= 202110L
-    auto combined = std::ranges::views::join(std::array{ s1, s2 });
-    return std::string(combined.begin(), combined.end());
-#else
-    std::string ss1 = s1;
+    std::string ss1(s1);
     ss1 += s2;
     return ss1;
-#endif
 }
 
 enum class e_oactor
