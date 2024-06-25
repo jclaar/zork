@@ -1,9 +1,8 @@
 #pragma once
 
-#include <any>
 #include "defs.h"
-#include "object.h"
 #include <memory>
+#include <boost/serialization/access.hpp>
 
 // CEVENT structure
 class CEvent
@@ -47,72 +46,87 @@ private:
     bool _cdeath = false;
 };
 
-enum Event
+enum class Event
 {
-    kev_broin,
-    kev_cycin,
-    kev_sldin,
-    kev_xbin,
-    kev_xcin,
-    kev_xbhin,
-    kev_forin,
-    kev_curin,
-    kev_mntin,
-    kev_lntin,
-    kev_matin,
-    kev_cndin,
-    kev_bint,
-    kev_brnin,
-    kev_fusin,
-    kev_ledin,
-    kev_safin,
-    kev_vlgin,
-    kev_gnoin,
-    kev_bckin,
-    kev_sphin,
-    kev_sclin,
-    kev_egher,
-    kev_zgnin,
-    kev_zglin,
-    kev_folin,
-    kev_mrint,
-    kev_pinin,
-    kev_inqin,
-    kev_strte,
-    kev_numevs
+    broin,
+    cycin,
+    sldin,
+    xbin,
+    xcin,
+    xbhin,
+    forin,
+    curin,
+    mntin,
+    lntin,
+    matin,
+    cndin,
+    bint,
+    brnin,
+    fusin,
+    ledin,
+    safin,
+    vlgin,
+    gnoin,
+    bckin,
+    sphin,
+    sclin,
+    egher,
+    zgnin,
+    zglin,
+    folin,
+    mrint,
+    pinin,
+    inqin,
+    strte,
+    numevs
 };
 
-extern std::array<CEventP, kev_numevs> ev;
+class CEventContainer : private std::array<CEventP, static_cast<size_t>(Event::numevs)>
+{
+    using Base = std::array<CEventP, static_cast<size_t>(Event::numevs)>;
+public:
+    using Base::begin;
+    using Base::end;
+
+    CEventContainer();
+
+    const CEventP& operator[](Event event) const { return Base::operator[](static_cast<size_t>(event)); }
+    CEventP& operator[](Event event) { 
+        return Base::operator[](static_cast<size_t>(event)); 
+    }
+};
+
+extern CEventContainer ev;
 
 extern CEventP sphere_clock;
 // Handy macros to just refer to events by their names.
-#define broin ev[kev_broin]
-#define cycin ev[kev_cycin]
-#define sldin ev[kev_sldin]
-#define xbin ev[kev_xbin]
-#define xcin ev[kev_xcin]
-#define xbhin ev[kev_xbhin]
-#define forin ev[kev_forin]
-#define curin ev[kev_curin]
-#define mntin ev[kev_mntin]
-#define lntin ev[kev_lntin]
-#define matin ev[kev_matin]
-#define cndin ev[kev_cndin]
-#define bint ev[kev_bint]
-#define brnin ev[kev_brnin]
-#define fusin ev[kev_fusin]
-#define ledin ev[kev_ledin]
-#define safin ev[kev_safin]
-#define vlgin ev[kev_vlgin]
-#define gnoin ev[kev_gnoin]
-#define bckin ev[kev_bckin]
-#define sphin ev[kev_sphin]
-#define sclin ev[kev_sclin]
-#define egher ev[kev_egher]
-#define zgnin ev[kev_zgnin]
-#define zglin ev[kev_zglin]
-#define folin ev[kev_folin]
-#define mrint ev[kev_mrint]
-#define pinin ev[kev_pinin]
-#define inqin ev[kev_inqin]
-#define strte ev[kev_strte]
+#define broin ev[Event::broin]
+#define cycin ev[Event::cycin]
+#define sldin ev[Event::sldin]
+#define xbin ev[Event::xbin]
+#define xcin ev[Event::xcin]
+#define xbhin ev[Event::xbhin]
+#define forin ev[Event::forin]
+#define curin ev[Event::curin]
+#define mntin ev[Event::mntin]
+#define lntin ev[Event::lntin]
+#define matin ev[Event::matin]
+#define cndin ev[Event::cndin]
+#define bint ev[Event::bint]
+#define brnin ev[Event::brnin]
+#define fusin ev[Event::fusin]
+#define ledin ev[Event::ledin]
+#define safin ev[Event::safin]
+#define vlgin ev[Event::vlgin]
+#define gnoin ev[Event::gnoin]
+#define bckin ev[Event::bckin]
+#define sphin ev[Event::sphin]
+#define sclin ev[Event::sclin]
+#define egher ev[Event::egher]
+#define zgnin ev[Event::zgnin]
+#define zglin ev[Event::zglin]
+#define folin ev[Event::folin]
+#define mrint ev[Event::mrint]
+#define pinin ev[Event::pinin]
+#define inqin ev[Event::inqin]
+#define strte ev[Event::strte]

@@ -3,33 +3,89 @@
 
 #include <list>
 #include <iostream>
-#include <any>
 #include <cstring>
 #include <sstream>
 #include <streambuf>
 #include <string_view>
 #include "ZorkException.h"
+#include "globals.h"
 
 extern std::ostream tty;
 
 // Bits for tell
-const uint32_t long_tell = 0x40000000;
-const uint32_t pre_crlf = 0x00000002;
-const uint32_t post_crlf = 0x00000001;
-const uint32_t no_crlf = 0x00000000;
-const uint32_t long_tell1 = long_tell | post_crlf;
+constexpr uint32_t long_tell = 0x40000000;
+constexpr uint32_t pre_crlf = 0x00000002;
+constexpr uint32_t post_crlf = 0x00000001;
+constexpr uint32_t no_crlf = 0x00000000;
+constexpr uint32_t long_tell1 = long_tell | post_crlf;
 
-void tell_pre(uint32_t flags);
-void tell_post(uint32_t flags);
-
-template <typename T>
-bool tell(const T &s, uint32_t flags = post_crlf)
+class tell_base
 {
-    tell_pre(flags);
-    tty << s;
-    tell_post(flags);
-    return true;
+protected:
+    void tell_pre(uint32_t flags)
+    {
+        ::flags[FlagId::tell_flag] = true;
+        if (flags & pre_crlf)
+            tty << std::endl;
+    }
+    void tell_post(uint32_t flags)
+    {
+        if (flags & post_crlf)
+            tty << std::endl;
+    }
+public:
+    operator bool() const { return true; }
+};
+
+class ctellt : public tell_base
+{
+    template <typename T>
+    void tellt2(const T& s)
+    {
+        tty << s;
+    }
+
+    void tellt2(std::monostate ms)
+    {
+        
+    }
+
+    template <typename T, typename... Args>
+    void tellt2(const T& s, Args... args)
+    {
+        tty << s;
+        tellt2(args...);
+    }
+
+    template <typename... Args>
+    ctellt(std::string_view s, uint32_t flags, Args...args)
+    {
+        tell_pre(flags);
+        tty << s;
+        tellt2(args...);
+        tell_post(flags);
+    }
+
+    ctellt(std::string_view s, uint32_t flags)
+    {
+        tell_pre(flags);
+        tty << s;
+        tell_post(flags);
+    }
+    template <typename... Args>
+    friend bool tell(std::string_view s, uint32_t flags, Args...args);
+    friend bool tell(std::string_view s, uint32_t flags);
+};
+
+template <typename... Args>
+bool tell(std::string_view s, uint32_t flags, Args...args)
+{
+    return ctellt(s, flags, args...);
 }
+
+// Add a separate template function with flags, since GCC
+// doesn't like templates with default arguments.
+bool tell(std::string_view s, uint32_t flags = post_crlf);
 
 inline void crlf() { tty << std::endl; }
 template <typename T>
@@ -40,22 +96,19 @@ void princ(const T &v)
 void prin1(int val);
 inline void printstring(std::string_view str) { tty << str; }
 
-bool terminal();
+RAPPLIC(terminal);
 
-int readst(std::string &rdbuf, std::string_view prompt);
+std::string readst(std::string_view prompt);
 
 // Various MDL functions mapped to C++ equivalents
 //inline char *back(char *s, size_t count) { return s - count; }
 std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest);
 char *substruc(const char *src, size_t start, size_t end, char *dest);
-inline const char *member(const std::string &subst, const std::string &str)
+inline const char *member(std::string_view subst, const std::string &str)
 {
     std::string::size_type pos = str.find(subst, 0);
     return (pos == std::string::npos) ? nullptr : &str[pos];
 }
-
-inline int length(const char *s) { return (int) strlen(s); }
-inline int length(const std::string &s) { return (int)s.size(); }
 
 // Class to support iterating through a container. 
 // Mainly useful for supporting REST and BACK.
@@ -248,7 +301,10 @@ template <>
 inline char *rest(char *s, int len) { return s + len; }
 template <>
 inline const char *rest(const char *s, int len) { return s + len; }
-inline std::string rest(const std::string &s, int len = 1) { return s.substr(len); }
+inline std::string_view rest(const std::string& s, int len = 1)
+{
+    return std::string_view(&s[len], s.size() - len);
+}
 
 
 template <typename T>
@@ -256,12 +312,6 @@ T back(T it, int offset = 1)
 {
     it.advance(-offset);
     return it;
-}
-
-template <typename T>
-int length(const Iterator<T> &it)
-{
-    return (int)it.size();
 }
 
 SIterator uppercase(SIterator src);
@@ -279,7 +329,6 @@ inline SIterator substruc(SIterator src, int start, int end, SIterator dest)
 inline SIterator substruc(const char *msg, int start, int end, SIterator dest)
 {
     _ASSERT(start == 0);
-//#pragma warning(suppress: 26444)
     std::copy(msg + start, msg + end, dest);
     return dest;
 }

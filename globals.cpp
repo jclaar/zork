@@ -9,26 +9,24 @@ std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::no
 
 namespace
 {
-    std::bitset<num_flag_bits> init_flags()
-    {
-        std::bitset<num_flag_bits> fl;
-        // Only have to init flags that are non-zero.
-        fl[tell_flag] = true;
-        fl[lucky] = true;
-        fl[mr1] = true;
-        fl[mr2] = true;
-        fl[brief_flag] = true;
-        fl[cage_top] = true;
-        fl[buoy_flag] = true;
-        fl[folflag] = true;
-        return fl;
-    }
-
     int score_max_ = 0;
     int max_load = 100;
 }
 
-std::bitset<num_flag_bits> flags = init_flags();
+FlagBits flags = []()
+    {
+        FlagBits fl;
+        // Only have to init flags that are non-zero.
+        fl[FlagId::tell_flag] = true;
+        fl[FlagId::lucky] = true;
+        fl[FlagId::mr1] = true;
+        fl[FlagId::mr2] = true;
+        fl[FlagId::brief_flag] = true;
+        fl[FlagId::cage_top] = true;
+        fl[FlagId::buoy_flag] = true;
+        fl[FlagId::folflag] = true;
+        return fl;
+    }();
 
 int eg_score_max = 0;
 
@@ -52,3 +50,5 @@ void load_max(int new_load)
     max_load = new_load;
 }
 
+bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }
+bool operator==(const cpwall_val& cp, const ObjectP& o) { return o == cp; }

@@ -2,32 +2,63 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 #include <bitset>
 #include <algorithm>
 #include <set>
 #include <variant>
+#include <ranges>
 #include <list>
-#include <any>
 #include <optional>
 #include <sstream>
 #include <string_view>
+#include "FlagSupport.h"
+
+// For variant stuff.
+template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
+template<class... Ts> overload(Ts...)->overload<Ts...>;
+
+// Hacky method of allowing an additional argument to be passed to 
+// apply_random. This is only used in a couple of cases.
+enum class ApplyRandomArg
+{
+    read_out,
+    read_in
+};
+// Defines a functor for an rapplic. The ApplyRandomArg argument is optional.
+typedef std::optional<ApplyRandomArg> Rarg;
+#define RAPPLIC(x) struct x { \
+    bool operator()() const; \
+    bool operator()(Rarg ra) const { return (*this)(); } \
+    }
+#define RAPPLIC_RARG(x) struct x { \
+    bool operator()(Rarg rarg = Rarg()) const; \
+}
+#define RAPPLIC_DEF(x, type, def) struct x { \
+    bool operator()(type v = def) const;\
+    bool operator()(Rarg arg, type v = def) const { return (*this)(v); } \
+    }
+#define EX_RAPPLIC(x) struct x { ExitFuncVal operator()() const; }
+
+#define HACKFN(x) struct x { \
+    bool operator()(const HackP &dem) const; \
+}
 
 inline std::string operator+(std::string_view s1, std::string_view s2)
 {
-    std::stringstream ss;
-    ss << s1 << s2;
-    return ss.str();
+    auto combined = std::views::join(std::array{ s1, s2 });
+    return std::string(combined.begin(), combined.end());
 }
 
-enum e_oactor
+enum class e_oactor
 {
-    oa_player,
-    oa_master,
-    oa_robot,
-    oa_none
+    player,
+    master,
+    robot,
+    none
 };
 
-enum Bits
+enum class Bits
 {
     ovison,
     readbit,
@@ -64,18 +95,6 @@ enum Bits
     bunchbit,
     oglobal,
     digbit,
-    rseenbit,    // "visited?"
-    rlightbit,   // "endogenous light source?"
-    rlandbit,    // "on land"
-    rwaterbit,   // "water room"
-    rairbit,     // "mid-air room"
-    rsacredbit,  // "thief not allowed"
-    rfillbit,    // "can fill bottle here"
-    rmungbit,    // "room has been munged"
-    rbuckbit,    // "this room is a bucket"
-    rhousebit,   // "This room is part of the house"
-    rendgame,    // "This room is in the end game"
-    rnwallbit,   // "This room doesn't have walls"
     lastrealbit,
     // Special bits. Anything higher than lastrealbit refers to a GOBJECT
     housebit,
@@ -98,10 +117,30 @@ enum Bits
     masterbit,
     numbits
 };
+constexpr size_t numbits = static_cast<int>(Bits::numbits);
 
-typedef std::list<Bits> BitsList;
+enum class RoomBit
+{
+    rseenbit,    // "visited?"
+    rlightbit,   // "endogenous light source?"
+    rlandbit,    // "on land"
+    rwaterbit,   // "water room"
+    rairbit,     // "mid-air room"
+    rsacredbit,  // "thief not allowed"
+    rfillbit,    // "can fill bottle here"
+    rmungbit,    // "room has been munged"
+    rbuckbit,    // "this room is a bucket"
+    rhousebit,   // "This room is part of the house"
+    rendgame,    // "This room is in the end game"
+    rnwallbit,   // "This room doesn't have walls"
+    rnumbits
+};
+constexpr size_t rnumbits = static_cast<int>(RoomBit::rnumbits);
+using RoomBits = Flags<RoomBit, rnumbits>;
 
-enum direction
+using BitsList = std::list<Bits>;
+
+enum class direction
 {
     NullExit,
     North,
@@ -125,38 +164,39 @@ enum direction
 };
 
 class Object;
-typedef std::shared_ptr<Object> ObjectP;
-typedef std::list<ObjectP> ObjList;
-typedef std::vector<ObjectP> ObjVector;
+using ObjectP = std::shared_ptr<Object>;
+using ObjList = std::list<ObjectP>;
+using ObjVector = std::vector<ObjectP>;
 class GObject;
 typedef std::shared_ptr<GObject> GObjectPtr;
 class Room;
-typedef std::shared_ptr<Room> RoomP;
-typedef std::list<RoomP> RoomList;
+using RoomP = std::shared_ptr<Room>;
+using RoomList = std::list<RoomP>;
 class CEvent;
 typedef std::shared_ptr<CEvent> CEventP;
 typedef std::list<CEventP> EventList;
 class Adv;
 typedef std::unique_ptr<Adv> AdvP;
+typedef std::array <AdvP, static_cast<size_t>(e_oactor::none)> AdvArray;
 
 class hack;
 typedef std::shared_ptr<hack> HackP;
 
-template <typename T>
-bool is_empty(const T &v)
+template <typename T0, typename... Ts>
+bool is_empty(const std::variant<T0, Ts...> &v)
 {
-    return std::get_if<std::monostate>(&v) != nullptr;
+    return std::holds_alternative<std::monostate>(v);
 }
 
 // Values that can be returned from an exit function.
-typedef std::variant<std::monostate, bool, RoomP> ExitFuncVal;
+using ExitFuncVal = std::variant<std::monostate, bool, RoomP>;
 
-typedef bool(*rapplic)(); // Action functions
-typedef ExitFuncVal(*ex_rapplic)(); // Exit functions
-typedef bool(*hackfn)(const HackP &demon);
+using rapplic = std::function<bool(Rarg)>;
+using ex_rapplic = std::function<ExitFuncVal()>;
+using hackfn = std::function<bool(const HackP&)>;
 
 // Flags in vword of a varg
-enum vword_flag
+enum class vword_flag
 {
     vabit,      // Look in AOBJS
     vrbit,      // Look in ROBJS
@@ -165,6 +205,7 @@ enum vword_flag
     vfbit,      // true: Care if can't reach the object.
     numvbits
 };
+constexpr size_t numvbits = static_cast<size_t>(vword_flag::numvbits);
 
 class word
 {
@@ -197,17 +238,19 @@ class adjective : public word
 public:
     adjective(std::string_view s) : word(s) {}
 };
-typedef std::shared_ptr<adjective> AdjectiveP;
+using AdjectiveP = std::shared_ptr<adjective>;
+inline bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
+inline bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
 
 typedef std::shared_ptr<word> WordP;
 
 
 struct _varg
 {
-    std::bitset<numbits> vbit;   // acceptable object characteristics (default any)
-    std::bitset<numbits> vfwim;  // spec for fwimming
+    Flags<Bits, numbits> vbit;   // acceptable object characteristics (default any)
+    Flags<Bits, numbits> vfwim;  // spec for fwimming
     PrepP vprep; // preposition that must precede(?) object
-    std::bitset<numvbits> vword;
+    Flags<vword_flag, numvbits> vword;
 };
 typedef std::shared_ptr<_varg> VargP;
 
@@ -217,8 +260,8 @@ struct verb : public word
 public:
     verb(std::string_view w, rapplic vf = nullptr) : word(w), _vfcn(vf) {}
     
-    rapplic vfcn() const { return _vfcn; }
-    void set_vfcn(rapplic fn) { _vfcn = fn; }
+    const rapplic &vfcn() const { return _vfcn; }
+    void set_vfcn(const rapplic &fn) { _vfcn = fn; }
 
 private:
     rapplic _vfcn;
@@ -226,7 +269,7 @@ private:
 typedef std::shared_ptr<verb> VerbP;
 
 // Flags for syntax
-enum SyntaxBits
+enum class SyntaxBits
 {
     sflip,
     sdriver,
@@ -237,13 +280,13 @@ struct syntax
 {
     VargP syn[2];
     VerbP sfcn;
-    std::bitset<snumflags> sflags;
+    Flags<SyntaxBits, static_cast<size_t>(SyntaxBits::snumflags)> sflags;
 };
 typedef std::shared_ptr<syntax> SyntaxP;
 
 typedef std::vector<SyntaxP> vspec;
 
-struct action
+struct Action
 {
 private:
     std::string vname_;
@@ -251,7 +294,7 @@ private:
     std::string vstr_;
 
 public:
-    action(std::string_view vn, const vspec &vd, std::string_view vs) :
+    Action(std::string_view vn, const vspec &vd, std::string_view vs) :
         vname_(vn),
         vdecl_(vd),
         vstr_(vs)
@@ -261,7 +304,7 @@ public:
     const vspec &vdecl() const { return vdecl_; }
     const std::string &vstr() const { return vstr_; }
 };
-typedef std::shared_ptr<action> ActionP;
+typedef std::shared_ptr<Action> ActionP;
 
 class phrase
 {
@@ -281,7 +324,7 @@ typedef std::shared_ptr<phrase> PhraseP;
 typedef std::vector<PhraseP> PhraseVecV;
 PhraseP make_phrase(const WordP &p, const ObjectP &op);
 
-typedef std::variant<std::string, ObjectP, ActionP> QuestionValue;
+typedef std::variant<std::string_view, ObjectP, ActionP> QuestionValue;
 
 struct question
 {
@@ -291,7 +334,7 @@ public:
         _qans(answers)
     {}
 
-    const std::string &qstr() const { return _qstr; }
+    std::string_view qstr() const { return _qstr; }
     const std::vector<QuestionValue> &qans() const { return _qans; }
 
 private:
@@ -302,7 +345,7 @@ typedef std::shared_ptr<question> QuestionP;
 
 inline bool vtrnn(const VargP &va, vword_flag bit)
 {
-    return va->vword[bit] == 1;
+    return va->vword[bit];
 }
 
 // ORPHANS -- mysterious vector of orphan data
@@ -310,14 +353,9 @@ typedef std::variant<std::monostate, ObjectP, PhraseP> OrphanSlotType;
 class Orphans
 {
 public:
-    Orphans(bool oflg = false, ActionP vrb = nullptr, OrphanSlotType slot1 = std::monostate(), PrepP prep = nullptr,
-        const std::string &nm = std::string()) :
-        _oflag(oflg), _overb(vrb), _oprep(prep), _oname(nm)
+    Orphans() :
+        _oflag(false)
     {
-        if (auto op = std::get_if<ObjectP>(&slot1))
-            _oslot1 = *op;
-        else if (auto pp = std::get_if<PhraseP>(&slot1))
-            _oslot1 = (*pp)->obj();
     }
 
     bool oflag() const { return _oflag; }
@@ -330,17 +368,16 @@ public:
     void oprep(const PrepP &prep) { _oprep = prep; }
 
     const std::string &oname() const { return _oname; }
-    void oname(const std::string &name) { _oname = name; }
+    void oname(std::string_view name) { _oname = name; }
 
     const ObjectP &oslot1() const { return _oslot1; }
     void oslot1(const OrphanSlotType &a) {
         static_assert(std::variant_size<OrphanSlotType>() == 3);
-        if (is_empty(a))
-            _oslot1.reset();
-        else if (auto op = std::get_if<ObjectP>(&a))
-            _oslot1 = *op;
-        else
-            _oslot1 = std::get<PhraseP>(a)->obj();
+        std::visit(overload{
+            [&](const ObjectP& op) { _oslot1 = op; },
+            [&](const PhraseP& pp) { _oslot1 = pp->obj(); },
+            [&](auto p) { _oslot1.reset(); }
+            }, a);
     }
 
     const OrphanSlotType &oslot2() const { return _oslot2; }
@@ -354,7 +391,6 @@ private:
     PrepP _oprep;
     std::string _oname;
 };
-typedef std::shared_ptr<Orphans> OrphanP;
 
 bool apply_object(const ObjectP &op);
 bool describable(const ObjectP &op);
@@ -363,38 +399,30 @@ bool see_inside(const ObjectP &op);
 extern int no_tell;
 extern int eg_score;
 
-// Hacky method of allowing an additional argument to be passed to 
-// apply_random. This is only used in a couple of cases.
-enum ApplyRandomArg
+bool apply_random(const rapplic& fcn);
+inline bool apply_random(rapplic fcn, ApplyRandomArg arg)
 {
-    read_out,
-    read_in
-};
-extern std::optional<ApplyRandomArg> arg;
-bool apply_random(rapplic fcn, std::optional<ApplyRandomArg> arg = std::optional<ApplyRandomArg>());
+    return fcn(arg);
+}
 ExitFuncVal apply_random(ex_rapplic fcn);
 bool apply_random(hackfn fcn, const HackP &demon);
 
 // oflags, rflags testers and setter
 
 // Check status of specific bit in object or room.
-template <Bits b>
-bool trnnt(const ObjectP &op);
-#define trnn(obj, b) trnnt<b>(obj)
-
-bool trnn_list(const ObjectP &op, const std::initializer_list<Bits> &bits_to_check);
-bool trnn_bits(const ObjectP &op, const std::bitset<numbits> &bits_to_check);
+bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check);
 void trc(const ObjectP &op, Bits b);
 bool strnn(const SyntaxP &syn, SyntaxBits b);
 bool gtrnn(const RoomP &, Bits);
 // Set or 0 object bit or bits.
-void rtrc(const RoomP &p, Bits b);
+void rtrc(const RoomP &p, RoomBit b);
 
-inline bool openable(const ObjectP &op)
+template <typename T>
+int length(const T& c)
 {
-    return trnn_list(op, { doorbit, contbit });
+    return (int) c.size();
 }
 
-inline int length(const RoomList &rl) { return (int)rl.size(); }
 
 bool flaming(const ObjectP &obj);
+

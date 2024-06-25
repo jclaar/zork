@@ -8,15 +8,16 @@ extern ObjectP binf;
 extern int beach_dig;
 
 bool balloon_burn();
-bool blast();
-bool breathe();
-bool burnup();
-bool digger();
 void fweep(int num, int slp = 0);
-bool geronimo();
-bool ledge_mung();
-bool safe_mung();
-bool shaker();
-bool swimmer();
-bool volgnome();
+
+RAPPLIC(blast);
+RAPPLIC(breathe);
+RAPPLIC(burnup);
+RAPPLIC(digger);
+RAPPLIC(geronimo);
+RAPPLIC(ledge_mung);
+RAPPLIC(safe_mung);
+RAPPLIC(shaker);
+RAPPLIC(swimmer);
+RAPPLIC(volgnome);
 

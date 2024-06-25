@@ -4,9 +4,7 @@
 #define D "%D%"
 #define W "%W%"
 
-const tofmsgs &cyclops_melee()
-{
-    static const tofmsgs cm =
+const tofmsgs cyclops_melee =
     {
         {   "The Cyclops misses, but the backwash almost knocks you over.",
             "The Cyclops rushes you, but runs into the wall.",
@@ -57,11 +55,7 @@ const tofmsgs &cyclops_melee()
             "The Cyclops, no sportsman, dispatches his unconscious victim."
         }
     };
-    return cm;
-};
-const tofmsgs &knife_melee()
-{
-    static const tofmsgs km =
+const tofmsgs knife_melee =
     {
         {
             "Your stab misses the " D " by an inch.",
@@ -100,12 +94,8 @@ const tofmsgs &knife_melee()
             "The " D " is disarmed by a subtle feint past his guard."
         }
     };
-    return km;
-}
 
-const tofmsgs &sword_melee()
-{
-    static const tofmsgs sm =
+const tofmsgs sword_melee =
     {
         {
             "Your swing misses the " D " by an inch.",
@@ -144,12 +134,8 @@ const tofmsgs &sword_melee()
             "The " D "'s weapon is knocked to the floor, leaving him unarmed."
         }
     };
-    return sm;
-}
 
-const tofmsgs &thief_melee()
-{
-    static const tofmsgs tm =
+const tofmsgs thief_melee =
     {
         {
             "The thief stabs nonchalantly with his stiletto and misses.",
@@ -206,12 +192,8 @@ const tofmsgs &thief_melee()
             "The thief, who is essentially a pragmatist, dispatches you as a\nthreat to his livelihood."
         }
     };
-    return tm;
-}
 
-const tofmsgs &troll_melee()
-{
-    static const tofmsgs tm =
+const tofmsgs troll_melee =
     {
         {
             "The troll swings his axe, but it misses.",
@@ -262,5 +244,3 @@ const tofmsgs &troll_melee()
             "Conquering his fears, the troll puts you to death."
         }
     };
-    return tm;
-}

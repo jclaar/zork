@@ -4,7 +4,7 @@
 #include "defs.h"
 #include "room.h"
 
-enum SpeechType
+enum class SpeechType
 {
     kVerb,
     kPrep,
@@ -44,11 +44,11 @@ class AVSyntax
 public:
     AVSyntax(std::string_view name, rapplic fn) : _name(name), _fn(fn) {}
 
-    const std::string &verb() const { return _name; }
+    std::string_view verb() const { return _name; }
     rapplic fn() const { return _fn; }
 
 private:
-    std::string _name;
+    std::string_view _name;
     rapplic _fn;
 };
 typedef std::variant<const char *, obj, nrobj, AL, AVSyntax, driver, flip> ParseItem;

@@ -1,30 +1,69 @@
 #pragma once
-#include "dung.h"
+#include <optional>
+#include "defs.h"
 #include "parser.h"
 
-std::array<NumObjs, 8>::const_iterator memq(const ObjectP &o, const std::array<NumObjs, 8> &nm);
-DirVec::const_iterator memq(direction d, const DirVec &dv);
-const ScolRooms &memq(direction dir, const ScolRoomsV &cont);
-CpExitV::const_iterator memq(direction d, const CpExitV &v);
-BestWeaponsList::const_iterator memq(const ObjectP &v, const BestWeaponsList &bwl);
-bool memq(const AdjectiveP &adj, const std::vector<std::string> &adjs);
-bool memq(char c, const std::string &s);
-cpwall_vec::const_iterator memq(const ObjectP &obj, const cpwall_vec &v);
-bool memq(const ObjectP &op, Iterator<ObjVector> ol);
-Iterator<ParseVec> memq(const ObjectP &o, ParseVec pv);
-bool memq(const RoomP &p, const std::vector<Ex> &exits);
-const Ex *memq(direction dir, const std::vector<Ex> &rexits);
-RoomList::iterator memq(const RoomP &rm, RoomList &lst);
-
-// Generic memq for string containers
-template <typename T>
-bool memq(const std::string &s, const T &c)
+// Class to simulate returns from memq on standard containers.
+// MEMQ in MDL returns an object or FALSE, so this returns an object
+// that can be used as an iterator into a container. The bool operator
+// is overloaded to return true if the the iterator is valid, false
+// if it points to end.
+// Accessing a MemqRet value that is not valid (aka returned FALSE from
+// memq), is considered a runtime error and throws a std::runtime_error.
+template <typename Cont>
+class MemqRet
 {
-    return std::find(c.begin(), c.end(), s) != c.end();
-}
+    // Constructor is private. Only friend memq can create one.
+    MemqRet(typename Cont::const_iterator iter, const Cont& c)
+    {
+        if (iter != c.end())
+            val = iter;
+    }
+public:
+    operator bool() const
+    {
+        return val.has_value();
+    }
+    const typename Cont::const_iterator &operator->() const
+    {
+        ThrowIfEmpty();
+        return val.value();
+    }
+    const typename Cont::value_type& operator*() const
+    {
+        ThrowIfEmpty();
+        return *val.value();
+    }
+    operator typename Cont::const_iterator() const
+    {
+        ThrowIfEmpty();
+        return val.value();
+    }
+    void advance(size_t offset)
+    {
+        ThrowIfEmpty();
+        std::advance(val.value(), offset);
+    }
+
+private:
+    std::optional<typename Cont::const_iterator> val;
+
+    void ThrowIfEmpty() const
+    {
+        if (!val)
+            throw std::runtime_error("Attempted to access an invalid memq return value.");
+    }
+
+    template<typename T, typename Container>
+    friend MemqRet<Container> memq(const T& i, const Container& c);
+};
 
 template <typename T, typename Container>
-bool memq(const T& i, const Container& c)
+MemqRet<Container> memq(const T& i, const Container& c)
 {
-    return std::find(std::begin(c), std::end(c), i) != c.end();
+    return MemqRet(std::find(std::begin(c), std::end(c), i), c);
 }
+
+bool memq(const ObjectP& op, Iterator<ObjVector> ol);
+Iterator<ParseVec> memq(const ObjectP& o, ParseVec pv);
+

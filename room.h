@@ -7,7 +7,6 @@
 #include <bitset>
 #include <variant>
 #include <tuple>
-#include <any>
 #include "defs.h"
 #include "globals.h"
 #include "object.h"
@@ -18,7 +17,7 @@ typedef std::tuple<ObjectSlots, RPValue> RP;
 inline RP rg(const std::initializer_list<Bits> &rb)
 {
     std::vector<Bits> bits(rb);
-    return RP(ksl_rglobal, bits);
+    return RP(ObjectSlots::ksl_rglobal, bits);
 }
 
 // Special message on no exit
@@ -27,9 +26,9 @@ class NExit
 public:
 	explicit NExit(const char *desc) : nexit_desc(desc) {}
 
-    const std::string &desc() const { return nexit_desc; }
+    std::string_view desc() const { return nexit_desc; }
 private:
-    std::string nexit_desc;
+    std::string_view nexit_desc;
 };
 
 // Special exit conditions
@@ -45,14 +44,6 @@ public:
         _fn(fn)
     {
         flag; 
-    }
-    CExit(FlagVar flag_name, const std::string &rmid, const std::string &(*desc)(), bool flag = false, ex_rapplic fn = nullptr) :
-        _flid(flag_name),
-        _rmid(rmid),
-        _desc(desc()),
-        _fn(fn)
-    {
-        flag;
     }
 
     ex_rapplic cxaction() const { return _fn; }
@@ -112,7 +103,7 @@ public:
     SetgExit(std::string_view name, const CExitPtr &cep) : sname(name), ce(cep) {}
 
     const std::string &name() const { return sname; }
-    CExitPtr cexit() { return ce; }
+    const CExitPtr &cexit() const { return ce; }
 private:
     std::string sname;
     CExitPtr ce;
@@ -120,7 +111,9 @@ private:
 typedef std::shared_ptr<SetgExit> SetgExitP;
 
 typedef std::variant<std::monostate, NExit, CExitPtr, DoorExitPtr, SetgExitP, std::string, RoomP> ExitType;
-typedef std::tuple<direction, ExitType> Ex;
+using Ex = std::tuple<direction, ExitType>;
+inline bool operator==(const Ex& e, direction d) { return std::get<0>(e) == d; }
+inline bool operator==(direction d, const Ex& e) { return e == d; }
 
 class Room
 {
@@ -129,7 +122,7 @@ public:
         const std::initializer_list<Ex> &exits,
         const std::initializer_list<const char*> &contents,
         rapplic roomf,
-        const std::initializer_list<Bits> &rb,
+        const std::initializer_list<RoomBit> &rb,
         const std::initializer_list<RP> &room_slots);
 
     const std::string &rid() const { return _id; }
@@ -141,7 +134,7 @@ public:
     const std::vector<Ex> &rexits() const { return _exits; }
     const std::vector<Bits> &rglobal() const { return _rglobal; }
     void rglobal(Bits new_global) { _rglobal.push_back(new_global); }
-    std::bitset<numbits> &rbits() { return _room_bits; }
+    RoomBits &rbits() { return _room_bits; }
     rapplic raction() const { return _room_fn; }
     int rval() const;
     void rval(int new_val);
@@ -194,7 +187,7 @@ private:
     std::string _desc1;
     std::string _desc2;
     int _rval = 0;
-    std::bitset<numbits> _room_bits;
+    RoomBits _room_bits;
     std::vector<Bits> _rglobal;
     std::vector<Ex> _exits;
     ObjList _contents;
@@ -211,20 +204,31 @@ RoomMap &room_map();
 
 inline RoomList::iterator rest(RoomList::iterator i, int count = 1)
 {
-    std::advance(i, count);
-    return i;
+    return std::next(i);
 }
 
 // Set or 0 room bit
-template <Bits b>
-bool rtro(const RoomP &p)
+inline bool rtro(const RoomP &p, RoomBit b)
 {
-	p->rbits().set(b);
+	p->rbits()[b] = true;
 	return true;
 }
-template <Bits b>
-bool rtrz(const RoomP &p)
+
+inline bool rtrz(const RoomP& p, RoomBit b)
 {
-	p->rbits().reset(b);
-	return true;
+    p->rbits()[b] = false;
+    return true;
 }
+
+// Used for memq
+inline bool operator==(const RoomP& p, const Ex& exit)
+{
+    auto rid = std::get_if<std::string>(&std::get<1>(exit));
+    return rid ? (*rid == p->rid()) : false;
+}
+
+inline bool operator==(const Ex& exit, const RoomP& p)
+{
+    return p == exit;
+}
+

@@ -7,37 +7,35 @@
 #include "parser.h"
 #include "ZorkException.h"
 
+namespace
+{
+    template <typename T>
+    struct mw
+    {
+        WordP operator()(std::string_view val) const
+        {
+            return std::make_shared<T>(val);
+        }
+    };
+}
+
 WordP make_word(SpeechType st, std::string_view val)
 {
-    WordP wp;
-    switch (st)
+    static_assert((int) SpeechType::kVerb == 0 && (int) SpeechType::kPrep == 1);
+    static_assert((int)SpeechType::kAdj == 2 && (int)SpeechType::kBuzz == 3);
+    using WordFn = std::function<WordP(std::string_view)>;
+    const WordFn fns[] =
     {
-        case kPrep:
-            wp = std::make_shared<prep_t>(val);
-            break;
-        case kBuzz:
-            wp = std::make_shared<buzz>(val);
-            break;
-        case kVerb:
-            wp = std::make_shared<verb>(val);
-            break;
-        case kAdj:
-            wp = std::make_shared<adjective>(val);
-            break;
-    }
-    _ASSERT(wp);
-    return wp;
+        mw<verb>(),
+        mw<prep_t>(),
+        mw<adjective>(),
+        mw<buzz>()
+    };
+    return fns[(int) st](val);
 }
 
 void add_demon(const HackP &x)
 {
-    for (HackP &y : demons)
-    {
-        if (y->haction() == x->haction())
-        {
-            *y = *x;
-        }
-    }
     demons.push_front(x);
 }
 
@@ -46,10 +44,11 @@ VerbP find_verb(std::string_view verbo)
     auto viter = words_pobl.find(verbo);
     if (viter == words_pobl.end())
     {
-        viter = words_pobl.insert(std::pair(std::string(verbo), make_word(kVerb, verbo))).first;
+        viter = words_pobl.insert(std::pair(std::string(verbo), make_word(SpeechType::kVerb, verbo))).first;
     }
     const WordP &wp = viter->second;
-    VerbP vp = std::dynamic_pointer_cast<verb>(wp);
+    _ASSERT(typeid(*wp.get()) == typeid(verb));
+    VerbP vp = std::static_pointer_cast<verb>(wp);
     if (!vp)
     {
         error("Requested verb that wasn't a verb.");
@@ -73,9 +72,9 @@ PrepP find_prep(std::string_view prepo)
     WordsPobl::iterator wpi;
     if ((wpi = words_pobl.find(prepo)) == words_pobl.end())
     {
-        wpi = words_pobl.insert(std::pair(std::string(prepo), make_word(kPrep, prepo))).first;
+        wpi = words_pobl.insert(std::pair(std::string(prepo), make_word(SpeechType::kPrep, prepo))).first;
     }
-    auto wp = wpi->second;
+    auto &wp = wpi->second;
     PrepP pp = std::dynamic_pointer_cast<prep_t>(wp);
     if (!pp)
         error("Requested preposition that wasn't a preposition");
@@ -199,26 +198,26 @@ namespace
             }
 
             vv->vprep = pd.prep;
-            std::bitset<numvbits> vbits;
+            Flags<vword_flag, numvbits> vbits;
             pd.prep = nullptr;
             if (memq<aobjs>(al))
-                vbits.set(vabit);
+                vbits[vword_flag::vabit] = true;
             if (memq<robjs>(al))
-                vbits.set(vrbit);
+                vbits[vword_flag::vrbit] = true;
             if (memq<no_take>(al))
             {
                 // NOP
             }
             if (memq<have>(al))
-                vbits.set(vcbit);
+                vbits[vword_flag::vcbit] = true;
             if (memq<reach>(al))
-                vbits.set(vfbit);
+                vbits[vword_flag::vfbit] = true;
             if (memq<try_>(al))
-                vbits.set(vtbit);
+                vbits[vword_flag::vtbit] = true;
             if (memq<take>(al))
             {
-                vbits.set(vtbit);
-                vbits.set(vcbit);
+                vbits[vword_flag::vtbit] = true;
+                vbits[vword_flag::vcbit] = true;
             }
             vv->vword = vbits;
 
@@ -236,12 +235,12 @@ namespace
         if (std::holds_alternative<driver>(itm))
         {
             found = true;
-            pd.syntax_->sflags[sdriver] = 1;
+            pd.syntax_->sflags[SyntaxBits::sdriver] = 1;
         }
         if (std::holds_alternative<flip>(itm))
         {
             found = true;
-            pd.syntax_->sflags[sflip] = 1;
+            pd.syntax_->sflags[SyntaxBits::sflip] = 1;
         }
         if (!found)
             error("Invalid action");
@@ -255,9 +254,9 @@ const VargP evarg = std::make_shared<_varg>();
 void make_action(const AnyV& av, vspec& vs)
 {
     ParseData pd;
-    for (AnyV::const_iterator i = av.begin(); i != av.end(); ++i)
+    for (auto& i : av)
     {
-        parse_item(*i, pd);
+        parse_item(i, pd);
     }
     // Default syntax for slots not specified.
     for (auto& v : pd.syntax_->syn)
@@ -298,13 +297,13 @@ void onenradd_action(const char *str1, const char *str2, rapplic atm)
 void add_action(const char* nam, const char* str, const AnyV& av)
 {
     vspec vs = make_action(av);
-    actions_pobl[nam] = std::make_shared<action>(nam, vs, str);
+    actions_pobl[nam] = std::make_shared<Action>(nam, vs, str);
 }
 
 void add_action(const char *nam, const char *str, const ActionVec &decl)
 {
     vspec vs = make_action(decl);
-    actions_pobl[nam] = std::make_shared<action>(nam, vs, str);
+    actions_pobl[nam] = std::make_shared<Action>(nam, vs, str);
 }
 
 void sadd_action(const char *name, rapplic action)

@@ -27,7 +27,7 @@ typedef SV::iterator SVI;
 
 namespace
 {
-    const int save_version = 5;
+    const int save_version = 6;
     RoomP room_from_str(const std::string &s)
     {
         return (s.empty() ? RoomP() : sfind_room(s));
@@ -132,7 +132,7 @@ void restore_robber(archive &ar)
     ar & btemp;
     robber->hflag(btemp);
     ar & btemp;
-    robber->haction(btemp ? ::robber : nullptr);
+    robber->haction(btemp ? ::robber() : hackfn());
 }
 
 template <class archive>
@@ -172,9 +172,9 @@ void dump_winners(archive &oa)
 template <class archive>
 void restore_winners(archive &ia)
 {
-    std::array<AdvP, oa_none> rest_actors;
+    AdvArray rest_actors;
     ia & rest_actors;
-    for (size_t i = 0; i < oa_none; ++i)
+    for (size_t i = 0; i < rest_actors.size(); ++i)
     {
         actors()[i]->restore(*rest_actors[i].get());
     }
@@ -286,7 +286,7 @@ bool restore_game(const std::string &f)
         std::ifstream sf(f);
         if (!sf.is_open())
         {
-            tell("Unable to open save file " + f + ".");
+            tell("Unable to open save file ", 1, f, ".");
             rv = false;
         }
         else
@@ -299,7 +299,8 @@ bool restore_game(const std::string &f)
             sf >> sv;
             if (sv != save_version)
             {
-                tell("ERROR--Save file is incompatible with this version of Dungeon.");
+                tell("ERROR--Save file is incompatible with this version of Zork.");
+                tell("{Expected version ", 1, save_version, ", read version ", sv, ".)");
                 rv = false;
             }
             else
@@ -309,7 +310,7 @@ bool restore_game(const std::string &f)
                 restore_robber(ia);
                 bool btemp;
                 ia & btemp;
-                sword_demon->haction(btemp ? sword_glow : nullptr);
+                sword_demon->haction(btemp ? sword_glow() : hackfn());
                 restore_clockers(ia);
                 restore_winners(ia);
                 // Restore various globals.

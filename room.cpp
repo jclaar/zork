@@ -15,8 +15,8 @@
 #define notree_FORE5 notree_FORE1
 #define kitchen_window_EHOUS std::make_shared<DoorExit>("WINDO", "KITCH", "EHOUS")
 #define kitchen_window_KITCH kitchen_window_EHOUS
-#define magcmach_MAGNE std::make_shared<CExit>(frobozz, "CMACH", "", false, exit_funcs::magnet_room_exit)
-#define magalice_MAGNE std::make_shared<CExit>(frobozz, "CMACH", "", false, exit_funcs::magnet_room_exit)
+#define magcmach_MAGNE std::make_shared<CExit>(frobozz(), "CMACH", "", false, exit_funcs::magnet_room_exit())
+#define magalice_MAGNE std::make_shared<CExit>(frobozz(), "CMACH", "", false, exit_funcs::magnet_room_exit())
 #define current_RIVR1 NExit("You cannot go upstream due to strong currents.")
 #define current_RIVR2 current_RIVR1
 #define current_RIVR3 current_RIVR1
@@ -24,17 +24,17 @@
 #define current_RIVR5 current_RIVR1
 #define cliffs_RIVR1 NExit("The White Cliffs prevent your landing here.")
 #define cliffs_RIVR2 cliffs_RIVR1
-#define crain_POG std::make_shared<CExit>(rainbow, "RAINB")
-#define cxgnome_LEDG2 std::make_shared<CExit>(gnome_door, "VLBOT")
+#define crain_POG std::make_shared<CExit>(FlagId::rainbow, "RAINB")
+#define cxgnome_LEDG2 std::make_shared<CExit>(FlagId::gnome_door, "VLBOT")
 #define cxgnome_LEDG4 cxgnome_LEDG2
 #define palandoor_PALAN std::make_shared<DoorExit>("PDOOR", "PALAN", "PRM")
 #define palandoor_PRM palandoor_PALAN
 #define palanwind_PALAN std::make_shared<DoorExit>("PWIND", "PALAN", "PRM")
 #define palanwind_PRM palanwind_PALAN
-#define mg_r std::make_shared<CExit>(frobozz, "MRG", "", false, exit_funcs::mrgo)
-#define mr_g_MRD std::make_shared<CExit>(frobozz, "MRG", "", false, exit_funcs::mrgo)
+#define mg_r std::make_shared<CExit>(frobozz(), "MRG", "", false, exit_funcs::mrgo())
+#define mr_g_MRD std::make_shared<CExit>(frobozz(), "MRG", "", false, exit_funcs::mrgo())
 #define mr_g_MRC mr_g_MRD
-#define mr_d_MRG std::make_shared<CExit>(frobozz, "MRD", "", false, exit_funcs::mrgo)
+#define mr_d_MRG std::make_shared<CExit>(frobozz(), "MRD", "", false, exit_funcs::mrgo())
 #define cd_TOMB std::make_shared<DoorExit>("TOMB", "TOMB", "CRYPT")
 #define cd_CRYPT cd_TOMB
 #define cd_NCORR std::make_shared<DoorExit>("CDOOR", "NCORR", "CELL")
@@ -42,7 +42,7 @@
 #define smdrop_ALISM NExit("There is a chasm too large to jump across.")
 #define fout_PCELL NExit("The door is securely fastened.")
 #define fout_NCELL fout_PCELL
-#define mirex_MRAW std::make_shared<CExit>(mirror_open, "INMIR", "", false, exit_funcs::mirin)
+#define mirex_MRAW std::make_shared<CExit>(FlagId::mirror_open, "INMIR", "", false, exit_funcs::mirin())
 #define mirex_MRBW mirex_MRAW
 #define mirex_MRAE mirex_MRAW
 #define mirex_MRBE mirex_MRAW
@@ -51,16 +51,16 @@
 #define mirex_MRA  mirex_MRAW
 #define mirex_MRB  mirex_MRAW
 #define mirex_MRC  mirex_MRAW
-#define mout_INMIR std::make_shared<CExit>(frobozz, "MRA", "", false, exit_funcs::mirout)
-#define mr_a_MREYE std::make_shared<CExit>(frobozz, "MRA", "", false, exit_funcs::mrgo)
+#define mout_INMIR std::make_shared<CExit>(frobozz(), "MRA", "", false, exit_funcs::mirout())
+#define mr_a_MREYE std::make_shared<CExit>(frobozz(), "MRA", "", false, exit_funcs::mrgo())
 #define mr_a_MPB mr_a_MREYE
 #define mr_a_MRB mr_a_MREYE
-#define mr_b_MRA std::make_shared<CExit>(frobozz, "MRB", "", false, exit_funcs::mrgo)
+#define mr_b_MRA std::make_shared<CExit>(frobozz(), "MRB", "", false, exit_funcs::mrgo())
 #define mr_b_MRC mr_b_MRA
-#define mr_c_MRG std::make_shared<CExit>(frobozz, "MRC", "", false, exit_funcs::mrgo)
+#define mr_c_MRG std::make_shared<CExit>(frobozz(), "MRC", "", false, exit_funcs::mrgo())
 #define mr_c_MRB mr_c_MRG
-#define mr_d_FDOOR std::make_shared<CExit>(frobozz, "MRD", "", false, exit_funcs::mrgo)
-#define od_SCORR std::make_shared<DoorExit>("ODOOR", "SCORR", "CELL", "", exit_funcs::maybe_door)
+#define mr_d_FDOOR std::make_shared<CExit>(frobozz(), "MRD", "", false, exit_funcs::mrgo())
+#define od_SCORR std::make_shared<DoorExit>("ODOOR", "SCORR", "CELL", "", exit_funcs::maybe_door())
 #define od_CELL od_SCORR
 #define wd_BDOOR std::make_shared<DoorExit>("QDOOR", "BDOOR", "FDOOR")
 #define wd_FDOOR wd_BDOOR
@@ -82,7 +82,7 @@ namespace
 {
     RoomP mr(std::string_view id, std::string_view d1, std::string_view d2, const std::initializer_list<Ex> &exits,
         const std::initializer_list<const char*> &contents = {}, rapplic roomf = nullptr,
-        const std::initializer_list<Bits> &rb = { rlandbit },
+        const std::initializer_list<RoomBit> &rb = { RoomBit::rlandbit },
         const std::initializer_list<RP> &props = {})
     {
         return std::make_shared<Room>(id, d1, d2, exits, contents, roomf, rb, props);
@@ -128,7 +128,7 @@ const RoomP &DoorExit::droom2() const
 
 
 Room::Room(std::string_view rid, std::string_view d1, std::string_view d2, const std::initializer_list<Ex> &exits,
-    const std::initializer_list<const char*> &cntnts, rapplic roomf, const std::initializer_list<Bits> &rb,
+    const std::initializer_list<const char*> &cntnts, rapplic roomf, const std::initializer_list<RoomBit> &rb,
     const std::initializer_list<RP> &props) :
  _id(rid),
  _desc1(d1),
@@ -136,11 +136,10 @@ Room::Room(std::string_view rid, std::string_view d1, std::string_view d2, const
  _room_fn(roomf),
  _exits(exits)
 {
-	std::transform(cntnts.begin(), cntnts.end(), std::back_inserter(_contents),
-		[](const char *n)
-	{
-		return get_obj(n);
-	});
+    for (auto c : cntnts)
+    {
+        _contents.push_back(get_obj(c));
+    }
     for (auto b : rb)
     {
         _room_bits[b] = 1;
@@ -150,7 +149,7 @@ Room::Room(std::string_view rid, std::string_view d1, std::string_view d2, const
     {
         switch (std::get<0>(p))
         {
-        case ksl_rglobal:
+        case ObjectSlots::ksl_rglobal:
         {
             auto &prop = std::get<1>(p);
             // Must be a vector of bits.
@@ -158,11 +157,11 @@ Room::Room(std::string_view rid, std::string_view d1, std::string_view d2, const
             _rglobal = pvb;
             break;
         }
-        case ksl_rval:
+        case ObjectSlots::ksl_rval:
         {
             int val = std::get<int>(std::get<1>(p));
             _rval = val;
-            if (_room_bits[rendgame])
+            if (_room_bits[RoomBit::rendgame])
             {
                 eg_score_max += val;
             }
@@ -207,18 +206,14 @@ const RoomP &get_room(std::string_view sid, RoomP init_val)
 void init_rooms()
 {
     auto &rooms = get_rooms();
-	auto cur_iter = rooms.begin();
-	while (cur_iter != rooms.end())
+    for (auto& cur_room : rooms)
     {
-        RoomP cur_room = *cur_iter++;
-        RoomP p = get_room(cur_room->rid(), cur_room);
+        auto &p = get_room(cur_room->rid(), cur_room);
         if (p.get() != cur_room.get())
         {
             *(p.get()) = *(cur_room.get());
-
         }
-        // Make sure all objects have their room pointers set.
-        for (const ObjectP &op : p->robjs())
+        for (auto& op : p->robjs())
         {
             op->oroom(p);
         }

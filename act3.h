@@ -9,49 +9,48 @@ extern ObjectP timber_tie;
 extern ObjectP matobj;
 
 bool bad_egg(const ObjectP &begg);
-bool chomp();
-bool climb_up(direction dir, bool noobj = false);
-bool climb_up();
-bool climb_down();
-bool climb_foo();
-bool count();
 bool cpgoto(int fx);
-bool enter();
-bool frobozz();
-ScolWalls get_wall(const RoomP &rm);
-bool go_and_look(RoomP rm);
-bool held(const ObjectP &obj);
-bool knock();
-bool maker();
-void numtell(int num, std::string_view str);
-bool oops();
-void pcheck();
-bool pdoor(std::string_view str, ObjectP lid, ObjectP keyhole);
+ScolWalls get_wall(const RoomP& rm);
+bool held(const ObjectP& obj);
+bool pdoor(std::string_view str, const ObjectP& lid, const ObjectP& keyhole);
 ObjectP pkh(ObjectP keyhole, bool this_ = false);
-bool play();
-const ObjectP &plid(const ObjectP &obj1 = sfind_obj("PLID1"), const ObjectP &obj2 = sfind_obj("PLID2"));
-void plookat(const RoomP &rm);
-bool put_under();
-bool rope_away(const ObjectP &rope, const RoomP &rm);
-bool scol_clock();
-bool scol_obj(ObjectP obj, int cint, RoomP rm);
-bool scol_through(int cint, const RoomP &rm);
-bool sender();
-bool slider(const ObjectP &obj);
-bool smeller();
-bool through(ObjectP obj);
-bool untie_from();
-inline bool through() { return through(ObjectP()); }
+const ObjectP& plid(const ObjectP& obj1 = sfind_obj("PLID1"), const ObjectP& obj2 = sfind_obj("PLID2"));
+bool rope_away(const ObjectP& rope, const RoomP& rm);
+bool scol_obj(const ObjectP& obj, int cint, const RoomP& rm);
+bool scol_through(int cint, const RoomP& rm);
+bool slider(const ObjectP& obj);
 std::string username();
-inline bool win() { return tell("Naturally!"); }
-bool wind();
-bool wisher();
-bool yell();
-bool zgnome_init();
-bool pass_the_bucket(const RoomP &r, const ObjectP &b);
+bool pass_the_bucket(const RoomP& r, const ObjectP& b);
+
+RAPPLIC(chomp);
+struct climb_up
+{
+    bool operator()(Rarg arg = Rarg(), direction dir = direction::Up, bool noobj = false) { return (*this)(dir, noobj); }
+    bool operator()(direction dir = direction::Up, bool noobj = false) const;
+};
+RAPPLIC(climb_down);
+RAPPLIC(climb_foo);
+RAPPLIC(count);
+RAPPLIC(enter);
+RAPPLIC(frobozz);
+RAPPLIC(knock);
+RAPPLIC(maker);
+RAPPLIC(oops);
+RAPPLIC(play);
+RAPPLIC(put_under);
+RAPPLIC(scol_clock);
+RAPPLIC(sender);
+RAPPLIC(smeller);
+RAPPLIC(untie_from);
+RAPPLIC_DEF(through, ObjectP, ObjectP());
+RAPPLIC(win);
+RAPPLIC(wind);
+RAPPLIC(wisher);
+RAPPLIC(yell);
+RAPPLIC(zgnome_init);
 
 namespace obj_funcs
 {
-    bool scol_object(const ObjectP &obj);
-    bool slide_cint();
+    bool scol_object_(const ObjectP &obj);
+    RAPPLIC(slide_cint);
 }

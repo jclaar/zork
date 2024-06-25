@@ -9,10 +9,9 @@
 #include "funcs.h"
 #include "melee.h"
 
-typedef std::map<std::string, WordP, std::less<>> WordsPobl;
-typedef std::pair<std::string, WordP> WordsPoblPair;
-typedef std::map<std::string, direction, std::less<>> DirectionsPobl;
-typedef std::map<std::string, ActionP, std::less<>> ActionsPobl;
+using WordsPobl = std::map<std::string, WordP, std::less<>>;
+using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;
+using ActionsPobl = std::map<std::string, ActionP, std::less<>>;
 
 extern WordsPobl words_pobl;
 extern DirectionsPobl directions_pobl;
@@ -31,9 +30,10 @@ extern HackP sword_demon;
 extern HackP fight_demon;
 extern HackP clocker;
 extern VerbP buncher;
-extern const std::vector<std::vector<attack_state>> def1_res;
-extern const std::vector<std::vector<attack_state>> def2_res;
-extern const std::vector<std::vector<attack_state>> def3_res;
+using ASSpan = std::span<const attack_state>;
+extern const std::vector<ASSpan> def1_res;
+extern const std::vector<ASSpan> def2_res;
+extern const std::vector<ASSpan> def3_res;
 extern int cyclowrath;
 extern std::vector<VerbP> robot_actions;
 extern std::vector<VerbP> master_actions;
@@ -46,17 +46,36 @@ extern const ObjList nobjs;
 extern const ObjList pobjs;
 extern std::array<ObjList, 8> cells;
 
-typedef std::pair<ObjectP, int> NumObjs;
-extern std::array<NumObjs, 8> numobjs;
+using NumObjs = std::pair<std::string_view, int>;
+constexpr std::array numobjs =
+{
+    NumObjs{"ONE", 1},
+    NumObjs{"TWO", 2},
+    NumObjs{"THREE", 3},
+    NumObjs{"FOUR", 4},
+    NumObjs{"FIVE", 5},
+    NumObjs{"SIX", 6},
+    NumObjs{"SEVEN", 7},
+    NumObjs{"EIGHT", 8}
+};
 
 // Direction vector for mirror
-typedef std::pair<direction, int> DVPair;
-typedef std::array<DVPair, 8> DirVec;
-extern const DirVec dirvec;
+using DVPair = std::pair<direction, int>;
+inline bool operator==(const DVPair& dp, direction d) { return std::get<0>(dp) == d; }
+inline bool operator==(direction d, const DVPair& dp) { return dp == d; }
+constexpr std::array dirvec = {
+    DVPair(direction::North, 0),
+    DVPair(direction::Ne, 45),
+    DVPair(direction::East, 90),
+    DVPair(direction::Se, 135),
+    DVPair(direction::South, 180),
+    DVPair(direction::Sw, 225),
+    DVPair(direction::West, 270),
+    DVPair(direction::Nw, 315),
+};
 
 class hack
 {
-    typedef std::variant<CEventP, ObjectP> HobjsValue;
 public:
     hack(hackfn ha, const ObjList &ho, const RoomList &hr, const RoomP &rm, const ObjectP &obj) :
         _haction(ha), _room(rm), _hobj(obj), _hobjs_ob(ho), _hrooms(hr), _hflag(false)
@@ -143,16 +162,17 @@ struct CpExit
     int offset;
     constexpr CpExit(direction d, int o) : dir(d), offset(o) {}
 };
-typedef std::array<CpExit, 8> CpExitV;
-constexpr CpExitV cpexits = {
-    CpExit(North, -8),
-    CpExit(South, 8),
-    CpExit(East, 1),
-    CpExit(West, -1),
-    CpExit(Ne, -7),
-    CpExit(Nw, -9),
-    CpExit(Se, 9),
-    CpExit(Sw, 7),
+inline bool operator==(const CpExit& cp, direction d) { return cp.dir == d; }
+inline bool operator==(direction d, const CpExit& cp) { return cp == d; }
+constexpr std::array cpexits = {
+    CpExit(direction::North, -8),
+    CpExit(direction::South, 8),
+    CpExit(direction::East, 1),
+    CpExit(direction::West, -1),
+    CpExit(direction::Ne, -7),
+    CpExit(direction::Nw, -9),
+    CpExit(direction::Se, 9),
+    CpExit(direction::Sw, 7),
 };
 
 // Bank puzzle
@@ -161,42 +181,45 @@ extern RoomP scol_active;
 struct ScolRooms
 {
     direction dir;
-    RoomP rm;
+    const char *rm;
 };
-typedef std::vector<ScolRooms> ScolRoomsV;
+inline bool operator==(direction d, const ScolRooms& sr) { return sr.dir == d; }
+inline bool operator==(const ScolRooms& sr, direction d) { return d == sr; }
 
 struct ScolWalls
 {
-    RoomP rm1;
-    ObjectP obj;
-    RoomP rm2;
+    std::string_view rm1;
+    std::string_view obj;
+    std::string_view rm2;
 };
-typedef std::vector<ScolWalls> ScolWallsV;
 
-extern ScolRoomsV scol_rooms;
-extern ScolWallsV scol_walls;
+using namespace std::string_view_literals;
+
+constexpr std::array scol_walls =
+{
+    ScolWalls{ "BKVW"sv, "WEAST"sv, "BKVE"sv },
+    ScolWalls{ "BKVE"sv, "WWEST"sv, "BKVW"sv },
+    ScolWalls{ "BKTWI"sv, "WSOUT"sv, "BKVAU"sv },
+    ScolWalls{ "BKVAU"sv, "WNORT"sv, "BKTWI"sv }
+};
+
+constexpr std::array scol_rooms =
+{
+    ScolRooms{direction::East, "BKVE"},
+    ScolRooms{direction::West, "BKVW"},
+    ScolRooms{direction::North, "BKTWI"},
+    ScolRooms{direction::South, "BKVAU"}
+};
 
 extern const ObjList villains;
 extern ObjList oppv;
 extern std::vector<int> villain_probs;
 
 extern const ObjList weapons;
-class BestWeapons
-{
-public:
-    BestWeapons(ObjectP v, ObjectP w, int va) :
-        vill(v), weap(w), val(va) {}
-
-    const ObjectP &villain() const { return vill; }
-    const ObjectP &weapon() const { return weap; }
-    int value() const { return val; }
-private:
-    ObjectP vill;
-    ObjectP weap;
-    int val;
-};
-typedef std::shared_ptr<BestWeapons> BestWeaponsP;
-typedef std::vector<BestWeaponsP> BestWeaponsList;
+typedef std::tuple<ObjectP, ObjectP, int> BestWeapons;
+bool operator==(const ObjectP& villain, const BestWeapons& bw);
+inline bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
+typedef std::array<BestWeapons, 2> BestWeaponsList;
 extern const BestWeaponsList best_weapons;
 
 // Parse vector is defined in parser.mud. It is a 3-element vector,
@@ -210,32 +233,23 @@ typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction
 
 inline ParseVecVal as_pvv(const ParseAval &pv)
 {
-    ParseVecVal pvv;
-    if (auto ap = std::get_if<ActionP>(&pv))
-        pvv = *ap;
-    else if (auto vp = std::get_if<VerbP>(&pv))
-        pvv = *vp;
-    else if (auto op = std::get_if<ObjectP>(&pv))
-        pvv = *op;
-    else if (auto pp = std::get_if<PhraseP>(&pv))
-        pvv = *pp;
-    else if (auto dp = std::get_if<direction>(&pv))
-        pvv = *dp;
-    else
-        error("Invalid parse vector value");
-    return pvv;
+    return std::visit(overload{
+            [](const ActionP& ap) { return ParseVecVal(ap); },
+            [](const VerbP& vp) { return ParseVecVal(vp); },
+            [](const ObjectP& op) { return ParseVecVal(op); },
+            [](const PhraseP& pp) { return ParseVecVal(pp); },
+            [](direction d) { return ParseVecVal(d); },
+            [](auto unused) { return ParseVecVal(); }
+        }, pv);
 }
 
 inline OrphanSlotType as_ost(ParseVecVal pv)
 {
-    OrphanSlotType ost;
-    ObjectP *op;
-    PhraseP *pp;
-    if (op = std::get_if<ObjectP>(&pv))
-        ost = *op;
-    else if (pp = std::get_if<PhraseP>(&pv))
-        ost = *pp;
-    return ost;
+    return std::visit(overload{
+        [](const ObjectP& op) { return OrphanSlotType(op); },
+        [](const PhraseP& pp) { return OrphanSlotType(pp); },
+        [](auto unused) { return OrphanSlotType(); }
+        }, pv);
 }
 
 inline direction as_dir(const ParseVecVal &a)
@@ -243,10 +257,16 @@ inline direction as_dir(const ParseVecVal &a)
     return std::get<direction>(a);
 }
 
-inline ObjectP as_obj(ParseVecVal pvv)
+inline ObjectP as_obj(const ParseVecVal &pvv)
 {
-    ObjectP *op = std::get_if<ObjectP>(&pvv);
-    return op ? *op : ObjectP();
+    try
+    {
+        return std::get<ObjectP>(pvv);
+    }
+    catch (std::bad_variant_access&)
+    {
+        return ObjectP();
+    }
 }
 
 inline WordP as_word(const ParseAval &a)
@@ -256,8 +276,14 @@ inline WordP as_word(const ParseAval &a)
 
 inline VerbP as_verb(const ParseVecVal &a)
 {
-    const VerbP *p = std::get_if<VerbP>(&a);
-    return p ? *p : VerbP();
+    try
+    {
+        return std::get<VerbP>(a);
+    }
+    catch (std::bad_variant_access&)
+    {
+        return VerbP();
+    }
 }
 
 void dir_syns();
@@ -284,13 +310,6 @@ inline void dsynonym(const char *dir, const char *syn)
     if (iter == directions_pobl.end())
         error("Invalid direction synonym added");
     directions_pobl[syn] = iter->second;
-}
-
-template <typename T, typename ...Args>
-void dsynonym(const char *dir, T first, Args... args)
-{
-    dsynonym(dir, first);
-    dsynonym(dir, args...);
 }
 
 template <typename T>
@@ -330,7 +349,7 @@ void add_zork(SpeechType st, T first, Args... args)
 template <typename T>
 void add_buzz(T w)
 {
-    add_zork(kBuzz, w);
+    add_zork(SpeechType::kBuzz, w);
 }
 
 template <typename T, typename ...Args>

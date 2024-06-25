@@ -17,7 +17,7 @@ extern std::chrono::steady_clock::time_point start_time;
 
 extern ObjectP last_it;
 
-enum FlagId
+enum class FlagId
 {
     null_flag,
     rug_moved,
@@ -88,16 +88,26 @@ enum FlagId
     safe_flag,
     num_flag_bits
 };
+constexpr size_t num_flag_bits = static_cast<int>(FlagId::num_flag_bits);
+
+typedef Flags<FlagId, num_flag_bits> FlagBits;
 
 // Puzzle room
 extern int cphere;
 typedef std::array<ObjList, 64> PuzzleContents;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
-typedef std::tuple<ObjectP, int> cpwall_val;
-typedef std::array<cpwall_val, 4> cpwall_vec;
-extern cpwall_vec cpwalls;
-extern std::bitset<num_flag_bits> flags;
+typedef std::tuple<std::string_view, int> cpwall_val;
+bool operator==(const ObjectP& o, const cpwall_val& cp);
+bool operator==(const cpwall_val& cp, const ObjectP& o);
+
+constexpr std::array cpwalls = {
+            cpwall_val("CPSWL", 8),
+            cpwall_val("CPNWL", -8),
+            cpwall_val("CPEWL", 1),
+            cpwall_val("CPWWL", -1)
+};
+extern FlagBits flags;
 
 int load_max();
 void load_max(int new_load);

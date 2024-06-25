@@ -138,57 +138,15 @@ void add_buncher(T first, Args... args)
     add_buncher(args...);
 }
 
-template <class... Types>
-class PrsoTypeT : public std::variant<Types...>
+inline void add_buncher(const std::initializer_list<const char*>& verbs)
 {
-    typedef std::variant<Types...> Base;
-public:
-    template <typename Value>
-    PrsoTypeT<Types...> &operator=(Value ms)
+    for (auto vb : verbs)
     {
-        Base::operator=(ms);
-        return *this;
+        bunchers.push_front(find_verb(vb));
     }
-
-    operator ObjectP()
-    {
-        return std::get<ObjectP>(*this);
-    }
-
-    operator direction()
-    {
-        return std::get<direction>(*this);
-    }
-};
-typedef PrsoTypeT<std::monostate, ObjectP, direction> PrsoType;
-
-inline PrsoType prso()
-{
-    PrsoType rv;
-    ObjectP *op;
-    direction *d;
-    if (op = std::get_if<ObjectP>(&prsvec[1]))
-    {
-        rv = *op;
-    }
-    else if (d = std::get_if<direction>(&prsvec[1]))
-    {
-        rv = *d;
-    }
-    return rv;
 }
 
-inline bool operator==(const PrsoType &prso, const ObjectP &obj)
-{
-    auto op = std::get_if<ObjectP>(&prso);
-    return op ? (*op == obj) : false;
-}
-
-inline bool operator==(const ObjectP &obj, const PrsoType &prso)
-{
-    return prso == obj;
-}
-
+ObjectP prso();
 ObjectP prsi();
 
 
@@ -224,32 +182,32 @@ class cwin
 typedef std::variant<std::monostate, cwin, ParseVec, bool> SParseVal;
 SParseVal sparse(Iterator<ParseContV> sv, bool vb);
 Nefals search_list(const std::string &objname, const ObjList &slist, const AdjectiveP &adj, bool first = true, const Globals &global = Globals());
-bool this_it(const std::string &objname, ObjectP obj, AdjectiveP adj, Globals global);
+bool this_it(const std::string &objname, const ObjectP &obj, const AdjectiveP &adj, Globals global);
 Nefals get_object(const std::string &objnam, AdjectiveP adj);
-StuffVecP stuff_obj(ObjectP obj, PrepP prep, PrepVec prepvec, ParseVec pvr, bool vb);
-ObjectP get_last(ObjList &l);
+StuffVecP stuff_obj(const ObjectP &obj, const PrepP &prep, PrepVec prepvec, ParseVec pvr, bool vb);
+ObjectP get_last(const ObjList &l);
 ObjectP get_it_obj();
 
-const OrphanP &orphan(bool flag = false, ActionP action = nullptr, OrphanSlotType slot1 = std::monostate(), PrepP prep = PrepP(),
-    const std::string &name = std::string(), OrphanSlotType slot2 = std::monostate());
-bool ortell(VargP varg, ActionP action, ObjectP gwim, OrphanSlotType slot2 = std::monostate());
+const Orphans &orphan(bool flag = false, const ActionP &action = nullptr, const OrphanSlotType &slot1 = std::monostate(), const PrepP &prep = PrepP(),
+    std::string_view name = "", const OrphanSlotType &slot2 = std::monostate());
+bool ortell(const VargP &varg, const ActionP &action, const ObjectP &gwim, OrphanSlotType slot2 = std::monostate());
 std::string lcify(const std::string &str, size_t len = std::string::npos);
 bool syn_match(ParseVec pv);
-bool syn_equal(VargP varg, OrphanSlotType pobj);
+bool syn_equal(const VargP &varg, const OrphanSlotType &pobj);
 bool take_it_or_leave_it(const SyntaxP &syn, ParseVec pv);
 bool take_it(const ObjectP &obj, VargP varg);
 bool orfeo(int slot, const VargP &syn, ParseVec objs);
 ObjectP gwim_slot(int fx, const VargP &varg, ParseVec &objs);
-Nefals gwim(const std::bitset<numbits> &bits, VargP fword);
+Nefals gwim(const Flags<Bits, numbits> &bits, VargP fword);
 Nefals fwim(Bits b, const ObjList &objs, bool no_care);
-Nefals fwim(const std::bitset<numbits> &bits, const ObjList &objs, bool no_care);
+Nefals fwim(const Flags<Bits, numbits> &bits, const ObjList &objs, bool no_care);
 bool do_take(ObjectP obj);
 std::string foostr(std::string nam, bool first = true, bool lc = false);
 std::string prstr(const std::string &sp);
 std::string prlcstr(const std::string &str);
-std::string prfunny(WordP prep);
+std::string prfunny(const WordP &prep);
 
 void swap_em();
 
 // Verb functions
-bool bunchem();
+RAPPLIC(bunchem);

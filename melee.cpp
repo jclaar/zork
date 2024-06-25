@@ -9,6 +9,7 @@
 #include "cevent.h"
 #include "ZorkException.h"
 #include "memq.h"
+#include "act1.h"
 
 namespace
 {
@@ -32,17 +33,21 @@ int villain_strength(const ObjectP &villain)
     int od = villain->ostrength();
     if (od > 0)
     {
-        if (villain == sfind_obj("THIEF") && flags[thief_engrossed])
+        if (villain == sfind_obj("THIEF") && flags[FlagId::thief_engrossed])
         {
             od = std::min(od, 2);
-            flags[thief_engrossed] = 0;
+            flags[FlagId::thief_engrossed] = 0;
         }
         if (auto prsi = ::prsi())
         {
-            trnn(prsi, weaponbit);
+            trnn(prsi, Bits::weaponbit);
             auto wv = memq(villain, best_weapons);
-            if (wv != best_weapons.end() && (*wv)->weapon() == prsi)
-                od = std::max(1, (od - (*wv)->value()));
+            if (wv)
+            {
+                auto &[v, weapon, val] = *wv;
+                if (weapon == prsi)
+                    od = std::max(1, (od - val));
+            }
         }
     }
     return od;
@@ -64,18 +69,18 @@ bool winning(const ObjectP &v, const AdvP &h)
         return prob(10, 0);
 }
 
-bool fighting(const HackP &dem)
+bool fighting::operator()(const HackP &dem) const
 {
     auto opps = oppv.begin();
     const AdvP &hero = player();
     bool fight = false;
-    ObjectP thief = sfind_obj("THIEF");
+    const ObjectP &thief = sfind_obj("THIEF");
     ObjList::const_iterator oo = villains.begin();
     auto ov = oppv.begin();
     auto vout = villain_probs.begin();
     rapplic random_action;
 
-    if (flags[parse_won] && !flags[dead])
+    if (flags[FlagId::parse_won] && !flags[FlagId::dead])
     {
         while (oo != villains.end())
         {
@@ -86,9 +91,9 @@ bool fighting(const HackP &dem)
 
             if (here == o->oroom())
             {
-                if (o == thief && flags[thief_engrossed])
+                if (o == thief && flags[FlagId::thief_engrossed])
                 {
-                    flags[thief_engrossed] = false;
+                    flags[FlagId::thief_engrossed] = false;
                 }
                 else if (s < 0)
                 {
@@ -103,7 +108,7 @@ bool fighting(const HackP &dem)
                         *vout = *vout + 10;
                     }
                 }
-                else if (trnn(o, fightbit))
+                else if (trnn(o, Bits::fightbit))
                 {
                     fight = true;
                     *ov = o;
@@ -113,7 +118,7 @@ bool fighting(const HackP &dem)
                     if (perform(random_action, find_verb("1ST?")))
                     {
                         fight = true;
-                        tro(o, fightbit);
+                        tro(o, Bits::fightbit);
                         parse_cont.clear();
                         *ov = o;
                     }
@@ -121,7 +126,7 @@ bool fighting(const HackP &dem)
             }
             else if (here != o->oroom())
             {
-                    if (trnn(o, fightbit))
+                    if (trnn(o, Bits::fightbit))
                     {
                         if (random_action)
                         {
@@ -131,12 +136,12 @@ bool fighting(const HackP &dem)
 
                 if (o == thief)
                 {
-                    flags[thief_engrossed] = false;
+                    flags[FlagId::thief_engrossed] = false;
                 }
 
-                atrz(hero, astaggered);
-                trz(o, staggered);
-                trz(o, fightbit);
+                atrz(hero, AdvBits::astaggered);
+                trz(o, Bits::staggered);
+                trz(o, Bits::fightbit);
 
                 if (s < 0)
                 {
@@ -154,7 +159,8 @@ bool fighting(const HackP &dem)
         if (fight)
         {
             clock_int(curin);
-            std::optional<int> out, res;
+            std::optional<int> out;
+            std::optional<attack_state> res;
 
             while (1)
             {
@@ -173,7 +179,7 @@ bool fighting(const HackP &dem)
                         success = false;
                         break;
                     }
-                    else if (res == unconscious)
+                    else if (res == attack_state::unconscious)
                     {
                         out = 2 + rand() % 3;
                         success = true;
@@ -199,7 +205,7 @@ bool fighting(const HackP &dem)
     return fight;
 }
 
-bool cure_clock()
+bool cure_clock::operator()() const
 {
     const AdvP &hero = player();
     int s = hero->astrength();
@@ -223,7 +229,7 @@ bool cure_clock()
     return true;
 }
 
-bool diagnose()
+bool diagnose::operator()() const
 {
     const AdvP &w = *winner;
     int ms = fight_strength(w);
@@ -258,20 +264,23 @@ bool diagnose()
         tell(" moves.");
     }
 
-    if (rs == 0)
-        tell("You are at death's door.");
-    else if (rs == 1)
-        tell("You can be killed by one more light wound.");
-    else if (rs == 2)
-        tell("You can be killed by a serious wound.");
-    else if (rs == 3)
-        tell("You can survive one serious wound.");
-    else if (rs > 3)
-        tell("You are strong enough to take several wounds.");
+    if (rs >= 0)
+    {
+        static const std::array msgs =
+        {
+            "You are at death's door.",
+            "You can be killed by one more light wound.",
+            "You can be killed by a serious wound.",
+            "You can survive one serious wound.",
+            "You are strong enough to take several wounds."
+        };
+        const char* msg = (rs < msgs.size() - 1) ? msgs[rs] : msgs.back();
+        tell(msg);
+    }
 
     if (deaths != 0)
     {
-        tell("You have been killed " + std::string((deaths == 1 ? "once." : "twice.")));
+        tell("You have been killed ", post_crlf, deaths == 1 ? "once." : "twice.");
     }
 
     return true;
@@ -304,17 +313,16 @@ bool pres(const tofmsg &tab, std::string_view a, std::string_view d, std::string
 std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::optional<int> out)
 {
     ObjectP dweapon;
-    const std::string &vdesc = villain->odesc2();
+    std::string_view vdesc = villain->odesc2();
     int att, def, oa, od;
 	std::optional<attack_state> res;
-    const std::vector<attack_state> *tbl = nullptr;
-    ObjectP nweapon;
+    const ASSpan *tbl = nullptr;
     rapplic random_action;
 
     if (heroq)
     {
-        tro(villain, fightbit);
-        if (atrnn(hero, astaggered))
+        tro(villain, Bits::fightbit);
+        if (atrnn(hero, AdvBits::astaggered))
         {
             tell("You are still recovering from that last blow, so your attack is\n"
                 "ineffective.");
@@ -328,7 +336,7 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
                 jigs_up("Well, you really did it that time.  Is suicide painless?");
 				return res;
             }
-            tell("Attacking the " + vdesc + " is pointless.", 1);
+            tell("Attacking the ", 1, vdesc, " is pointless.");
             return res;
         }
 
@@ -338,12 +346,12 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
     else
     {
         parse_cont.clear();
-        if (atrnn(hero, astaggered))
-            atrz(hero, astaggered);
-        if (trnn(villain, staggered))
+        if (atrnn(hero, AdvBits::astaggered))
+            atrz(hero, AdvBits::astaggered);
+        if (trnn(villain, Bits::staggered))
         {
-            tell("The " + vdesc + " slowly regains his feet.", 1);
-            trz(villain, staggered);
+            tell("The ", 1, vdesc, " slowly regains his feet.");
+            trz(villain, Bits::staggered);
             return res;
         }
 
@@ -351,16 +359,16 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
         if ((def = fight_strength(hero)) <= 0)
             return res;
         od = fight_strength(hero, false);
-        dweapon = fwim(weaponbit, hero->aobjs(), true).first;
+        dweapon = fwim(Bits::weaponbit, hero->aobjs(), true).first;
     }
 
     if (def < 0)
     {
         if (heroq)
         {
-            tell("The unconscious " + vdesc + " cannot defend himself: He dies.");
+            tell("The unconscious ", post_crlf, vdesc, " cannot defend himself: He dies.");
         }
-        res = killed;
+        res = attack_state::killed;
     }
     else
     {
@@ -387,68 +395,65 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
 
         if (out.has_value())
         {
-            if (res == stagger)
-                res = hesitate;
+            if (res == attack_state::stagger)
+                res = attack_state::hesitate;
             else
-                res = sitting_duck;
+                res = attack_state::sitting_duck;
         }
-        if (res == stagger && dweapon && prob(25, heroq ? 10 : 50))
+        if (res == attack_state::stagger && dweapon && prob(25, heroq ? 10 : 50))
         {
-            res = lose_weapon;
+            res = attack_state::lose_weapon;
         }
 
-        pres((*remarks)[res.value()], heroq ? "Adventurer" : vdesc, heroq ? vdesc : "Adventurer", dweapon ? dweapon->odesc2() : std::string_view());
+        pres((*remarks)[static_cast<size_t>(res.value())], heroq ? "Adventurer" : vdesc, heroq ? vdesc : "Adventurer", dweapon ? dweapon->odesc2() : std::string_view());
     }
 
-    if (res == missed || res == hesitate)
+    switch (res.value())
     {
-    }
-    else if (res == unconscious)
-    {
+    case attack_state::missed:
+    case attack_state::hesitate:
+        break;
+    case attack_state::unconscious:
         if (heroq)
             def = -def;
-    }
-    else if (res == killed || res == sitting_duck)
-    {
+        break;
+    case attack_state::killed:
+    case attack_state::sitting_duck:
         def = 0;
-    }
-    else if (res == light_wound)
-    {
+        break;
+    case attack_state::light_wound:
         def = std::max(0, def - 1);
-    }
-    else if (res == serious_wound)
-    {
+        break;
+    case attack_state::serious_wound:
         def = std::max(0, def - 2);
-    }
-    else if (res == stagger)
-    {
+        break;
+    case attack_state::stagger:
         if (heroq)
         {
-            tro(villain, staggered);
+            tro(villain, Bits::staggered);
         }
         else
-            atro(hero, astaggered);
-    }
-    else if (res == lose_weapon && dweapon)
-    {
-        if (heroq)
+            atro(hero, AdvBits::astaggered);
+        break;
+    case attack_state::lose_weapon:
+        if (dweapon)
         {
-            remove_object(dweapon);
-            insert_object(dweapon, here);
-        }
-        else
-        {
-            drop_object(dweapon, hero);
-            insert_object(dweapon, here);
-            if (nweapon = fwim(weaponbit, hero->aobjs(), true).first)
+            if (heroq)
             {
-                tell("Fortunately, you still have a " + nweapon->odesc2() + ".");
+                remove_object(dweapon);
+                insert_object(dweapon, here);
+            }
+            else
+            {
+                drop_object(dweapon, hero);
+                insert_object(dweapon, here);
+                if (ObjectP nweapon = fwim(Bits::weaponbit, hero->aobjs(), true).first)
+                {
+                    tell("Fortunately, you still have a " + nweapon->odesc2() + ".");
+                }
             }
         }
-    }
-    else
-    {
-        error("Invalid res?");
+        break;
     }
 
     // Line 256
@@ -473,10 +478,10 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
         villain->ostrength(def);
         if (def == 0)
         {
-            trz(villain, fightbit);
-            tell("Almost as soon as the " + vdesc + " breathes his last breath, a cloud\n"
+            trz(villain, Bits::fightbit);
+            tell("Almost as soon as the ", long_tell, vdesc, " breathes his last breath, a cloud\n"
                 "of sinister black fog envelops him, and when the fog lifts, the\n"
-                "carcass has disappeared.", long_tell);
+                "carcass has disappeared.");
             remove_object(villain);
             if (random_action = villain->oaction())
             {
@@ -484,7 +489,7 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
             }
             tell("");
         }
-        else if (res == unconscious)
+        else if (res == attack_state::unconscious)
         {
             if (random_action = villain->oaction())
             {

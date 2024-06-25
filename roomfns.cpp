@@ -4,7 +4,7 @@
 
 namespace room_funcs
 {
-    bool time()
+    bool time::operator()() const
     {
         return false;
     }

@@ -3,19 +3,20 @@
 #include "room.h"
 #include <map>
 #include <memory>
+#include "globals.h"
 
-enum AdvBits
+enum class AdvBits
 {
     astaggered,
     anumbits
 };
+typedef Flags<AdvBits, static_cast<size_t>(AdvBits::anumbits)> AdvBitset;
 
 class Adv
 {
 public:
 
-    Adv(RoomP r, const std::initializer_list<ObjectP> &objs, int score, const ObjectP &vehicle,
-        const ObjectP &obj, rapplic action, int strength);
+    Adv(RoomP r, const ObjectP &obj, rapplic action, int strength);
 
     const ObjectP &aobj() const { return _aobj; }
 
@@ -25,7 +26,7 @@ public:
     int ascore() const { return _ascore; }
     void ascore(int new_score) { _ascore = new_score; }
 
-    rapplic aaction() { return _aaction; }
+    const rapplic &aaction() const { return _aaction; }
     void aaction(rapplic new_action) { _aaction = new_action; }
 
     const RoomP &aroom() const { return _aroom; }
@@ -37,8 +38,8 @@ public:
     const ObjList &aobjs() const { return _aobjs; }
     ObjList &aobjs() { return _aobjs; }
 
-    std::bitset<anumbits> &flags() { return bits; }
-    const std::bitset<anumbits> &flags() const { return bits; }
+    AdvBitset &flags() { return bits; }
+    const AdvBitset &flags() const { return bits; }
 
     void restore(const Adv &a)
     {
@@ -103,7 +104,7 @@ private:
     ObjectP _aobj;                   // What he is
     rapplic _aaction = nullptr;      // Special action for robot, etc.
     int _astrength = 0;              // Fighting strength
-    std::bitset<anumbits> bits;
+    AdvBitset bits;
 };
 
 inline bool atrnn(const AdvP &adv, AdvBits b)
@@ -121,16 +122,16 @@ inline void atro(const AdvP &adv, AdvBits b)
     adv->flags()[b] = 1;
 }
 
-void add_actor(e_oactor actor_name, const RoomP &room, const std::initializer_list<ObjectP> &objs,
-    int score, const ObjectP &vehicle, const ObjectP &obj, rapplic action, int strength);
-std::array<AdvP, oa_none> &actors();
+void add_actor(e_oactor actor_name, const RoomP &room, 
+    const ObjectP &obj, rapplic action, int strength);
+AdvArray &actors();
 
-inline const AdvP &player() { return actors()[oa_player]; }
+inline const AdvP &player() { return actors()[static_cast<size_t>(e_oactor::player)]; }
 
 // Actor functions
 namespace actor_funcs
 {
-    bool master_actor();
-    bool dead_function();
-    bool robot_actor();
+    RAPPLIC(master_actor);
+    RAPPLIC(dead_function);
+    RAPPLIC(robot_actor);
 }

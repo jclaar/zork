@@ -1,35 +1,33 @@
 #include "stdafx.h"
 #include <numeric>
+#include "defs.h"
+#include "funcs.h"
+#include "dung.h"
+#include "adv.h"
+#include "parser.h"
+#include "memq.h"
+#include "zstring.h"
+#include "util.h"
 #include "act1.h"
 #include "act3.h"
 #include "act4.h"
-#include "dung.h"
-#include "room.h"
-#include "rooms.h"
-#include "makstr.h"
-#include "funcs.h"
-#include "zstring.h"
-#include "parser.h"
-#include "util.h"
-#include "ZorkException.h"
-#include "cevent.h"
-#include <sstream>
-#include "adv.h"
 #include "objfns.h"
-#include "memq.h"
 
-std::optional<int> dcell;
-int pnumb = 1; // cell pointed at
-int lcell = 1; // cell in slot
-int nqatt = 0;
-int mdir = 270;
 std::vector<QuestionP> qvec;
-std::string spell_flag;
-bool incant_ok = false;
-int poleup = 0;
-const char *wood_closes = "The pine wall closes quietly.";
-std::array<QuestionP, 3> nqvecb;
-Iterator<std::array<QuestionP, 3>> nqvec(nqvecb);
+int mdir = 270;
+
+namespace
+{
+    int pnumb = 1; // cell pointed at
+    int lcell = 1; // cell in slot
+    int nqatt = 0;
+    bool incant_ok = false;
+    int poleup = 0;
+    const char* wood_closes = "The pine wall closes quietly.";
+    std::array nqvecb = { QuestionP(), QuestionP(), QuestionP() };
+    Iterator<decltype(nqvecb)> nqvec(nqvecb);
+    std::string spell_flag;
+}
 
 namespace
 {
@@ -47,7 +45,7 @@ bool eg_infested(const RoomP &r)
         r == sfind_room("MRGW"));
 }
 
-bool follow()
+bool follow::operator()() const
 {
     const AdvP &win = *winner;
     auto mastp = sfind_obj("MASTE")->oactor();
@@ -64,18 +62,18 @@ bool follow()
         {
             if (memq(mast->aobj(), mroom->robjs()))
             {
-                mroom->robjs() = splice_out(mast->aobj(), mroom->robjs());
+                splice_out_in_place(mast->aobj(), mroom->robjs());
             }
 
             mast->aroom(here);
-            flags[folflag] = true;
+            flags[FlagId::folflag] = true;
             insert_object(mast->aobj(), here);
             tell(memq(here, mroom->rexits()) ? "The dungeon master follows you." : "The dungeon master catches up to you.");
         }
-        else if (flags[folflag])
+        else if (flags[FlagId::folflag])
         {
             tell("You notice that the dungeon master does not follow.");
-            flags[folflag] = false;
+            flags[FlagId::folflag] = false;
         }
     }
     else if (win == mast)
@@ -85,10 +83,9 @@ bool follow()
     }
     else if (!is_empty(prsvec[1]))
     {
-        ObjectP prso = ::prso();
-        if (trnn(prso, villain))
+        if (ObjectP prso = ::prso(); trnn(prso, Bits::villain))
         {
-            tell("The " + prso->odesc2() + " eludes you.", 1);
+            tell("The ", 1, prso->odesc2(), " eludes you.");
         }
         else
         {
@@ -105,7 +102,7 @@ bool follow()
 const RoomP &go_e_w(const RoomP &rm, direction dir)
 {
     const std::string &spr = rm->rid();
-    std::string str = std::string((dir != Ne && dir != Se) ? mrwstr : mrestr);
+    std::string str = std::string((dir != direction::Ne && dir != direction::Se) ? mrwstr : mrestr);
     return find_room(substruc(spr, 0, 3, str));
 }
 
@@ -113,8 +110,8 @@ bool member(const std::string &s1, const std::vector<QuestionValue> &qv)
 {
     auto i = std::find_if(qv.begin(), qv.end(), [&s1](const QuestionValue &q)
     {
-        const std::string *s;
-        return ((s = std::get_if<std::string>(&q)) && *s == s1);
+        const std::string_view *s;
+        return ((s = std::get_if<std::string_view>(&q)) && *s == s1);
     });
     return i != qv.end();
 }
@@ -133,7 +130,7 @@ bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue> &correct
         WordP w;
         if (!(a = ans[0]->s1).empty() &&
             (w = plookup(a, words)) &&
-            std::dynamic_pointer_cast<buzz>(w))
+            typeid(*w.get()) == typeid(buzz))
         {
             ans = rest(ans);
         }
@@ -142,7 +139,7 @@ bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue> &correct
     }
 
     bool rv = false;
-    if (std::holds_alternative<std::string>(onecorr))
+    if (std::holds_alternative<std::string_view>(onecorr))
     {
         return member(ans[0]->s1, correct);
     }
@@ -166,8 +163,7 @@ bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue> &correct
             }
             else if (WordP w = plookup(str, words))
             {
-                if (std::dynamic_pointer_cast<adjective>(w))
-                    adj = std::dynamic_pointer_cast<adjective>(w);
+                adj = std::dynamic_pointer_cast<adjective>(w);
             }
             else if (!(o = plookup(str, object_obl)).empty())
             {
@@ -184,12 +180,12 @@ bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue> &correct
     return false;
 }
 
-bool answer()
+bool answer::operator()() const
 {
-    auto lv = lexv;
+    Iterator<ParseContV> lv = lexv;
     auto m = member("", lv);
 
-    if (m && here == sfind_room("RIDDL") && !flags[riddle_flag])
+    if (m && here == sfind_room("RIDDL") && !flags[FlagId::riddle_flag])
     {
         Iterator<ParseContV> nv;
         if (nv = member("", rest(m)))
@@ -202,14 +198,14 @@ bool answer()
         }
         if (correct(rest(m, 1), std::vector<QuestionValue>({ "WELL" })))
         {
-            flags[riddle_flag] = true;
+            flags[FlagId::riddle_flag] = true;
             tell("There is a clap of thunder and the east door opens.");
             parse_cont.clear();
         }
     }
-    else if (m && flags[end_game_flag] && here == sfind_room("FDOOR"))
+    else if (m && flags[FlagId::end_game_flag] && here == sfind_room("FDOOR"))
     {
-        inquisitor(rest(m, 1));
+        inquisitor()(rest(m, 1));
     }
     else
     {
@@ -226,13 +222,13 @@ bool enter_end_game()
     const AdvP &w = *winner;
 
     clock_disable(egher);
-    tro(lamp, lightbit);
-    trz(lamp, onbit);
+    tro(lamp, Bits::lightbit);
+    trz(lamp, Bits::onbit);
     const OlintP &c = lamp->olint();
     c->val(0);
     c->ev()->ctick(350);
     c->ev()->cflag(false);
-    sword_demon->haction(sword_glow);
+    sword_demon->haction(sword_glow());
     robber_demon->haction(nullptr);
 
     // Disable all active events in the adventurer's possession.
@@ -242,18 +238,16 @@ bool enter_end_game()
             clock_disable(o->olint()->ev());
     }
 
-    tro(lamp, touchbit);
-    tro(sword, touchbit);
-    lamp->oroom(nullptr);
-    lamp->ocan(nullptr);
-    sword->oroom(nullptr);
-    sword->ocan(nullptr);
+    tro(lamp, Bits::touchbit);
+    tro(sword, Bits::touchbit);
+    lamp->oroom(nullptr).ocan(nullptr);
+    sword->oroom(nullptr).ocan(nullptr);
     //w->aobjs().swap(ObjList{ lamp, sword });
     w->aobjs() = { lamp, sword };
-    flags[end_game_flag] = true;
+    flags[FlagId::end_game_flag] = true;
     score_room(sfind_room("CRYPT"));
     goto_(sfind_room("TSTRS"));
-    room_desc();
+    room_desc()();
     return true;
 }
 
@@ -261,11 +255,12 @@ ObjectP beam_stopped()
 {
     const ObjectP &beam = sfind_obj("BEAM");
     auto &rp = sfind_room("MREYE");
-    auto iter = std::find_if(rp->robjs().begin(), rp->robjs().end(), [&beam](const ObjectP &o)
+    for (auto& o : rp->robjs())
     {
-        return o != beam;
-    });
-    return iter == rp->robjs().end() ? ObjectP() : *iter;
+        if (o != beam)
+            return o;
+    }
+    return ObjectP();
 }
 
 ObjList movies(const RoomP &rm)
@@ -284,6 +279,7 @@ ObjList movies(const RoomP &rm)
 
 void stuff(const RoomP &r, const ObjList &l1, const ObjList &l2)
 {
+    // Combines l1 and l2 into r->robjs.
     r->robjs() = l1;
     r->robjs().insert(r->robjs().end(), l2.begin(), l2.end());
     for (const ObjectP &o : r->robjs())
@@ -297,7 +293,6 @@ void cell_move()
     int new_ = pnumb;
     int old = lcell;
     const ObjectP &d = sfind_obj("ODOOR");
-    ObjList po;
     const AdvP &me = player();
 
     dclose(sfind_obj("CDOOR"));
@@ -308,7 +303,7 @@ void cell_move()
         const RoomP& cell = sfind_room("CELL");
         const RoomP& ncell = sfind_room("NCELL");
         const RoomP& pcell = sfind_room("PCELL");
-        cells[old-1] = po = movies(cell);
+        const ObjList &po = cells[old-1] = movies(cell);
         stuff(cell, cells[new_ - 1], cobjs);
         cells[new_-1].clear();
         if (old == 4)
@@ -320,41 +315,37 @@ void cell_move()
             stuff(pcell, po, pobjs);
         }
         if (new_ == 4)
-            tro(d, ovison);
+            tro(d, Bits::ovison);
         else
-            trz(d, ovison);
+            trz(d, Bits::ovison);
         if (me->aroom() == cell)
         {
-            goto_(old == 4 ? (tro(d, ovison), ncell) : pcell, me);
-        }
-        if (dcell == new_)
-        {
-            dcell.reset();
+            goto_(old == 4 ? (tro(d, Bits::ovison), ncell) : pcell, me);
         }
         lcell = new_;
     }
 }
 
-const std::string dpr(const ObjectP &obj)
+std::string_view dpr(const ObjectP &obj)
 {
-    return trnn(obj, openbit) ? "open." : "closed.";
+    return trnn(obj, Bits::openbit) ? "open."sv : "closed."sv;
 }
 
 namespace
 {
-    std::array<int, 5> swu = { 0 };
-    std::array<int, 5> kwu = { 0 };
+    std::array swu = { 0, 0, 0, 0, 0 };
+    std::array kwu = { 0, 0, 0, 0, 0 };
     std::string str("     ");
 }
 
 std::string pw(SIterator unm, SIterator key)
 {
-    Iterator<std::array<int, 5>> su = swu;
-    Iterator<std::array<int, 5>> ku = kwu;
+    auto su = Iterator(swu);
+    auto ku = Iterator(kwu);
     SIterator str = ::str;
     int usum;
 
-    auto fn = [&](SIterator s, Iterator<std::array<int, 5>> su, SIterator k, Iterator<std::array<int, 5>> ku) -> bool
+    auto fn = [&](SIterator s, Iterator<decltype(swu)> su, SIterator k, Iterator<decltype(kwu)> ku) -> bool
     {
         while (1)
         {
@@ -381,7 +372,7 @@ std::string pw(SIterator unm, SIterator key)
 
     std::fill(str.begin(), str.end(), 0);
 
-    auto fn2 = [&usum](Iterator<std::array<int, 5>> su, Iterator<std::array<int, 5>> ku, SIterator str)
+    auto fn2 = [&usum](Iterator<decltype(swu)> su, Iterator<decltype(kwu)> ku, SIterator str)
     {
         _ASSERT(su.size() == ku.size());
         _ASSERT(su.size() == str.size());
@@ -406,7 +397,7 @@ bool incantation(Iterator<ParseContV> lv)
 {
     std::string w1, w2;
     std::string unm = username();
-    if (!spell_flag.empty() || rtrnn(sfind_room("MRANT"), rseenbit))
+    if (!spell_flag.empty() || rtrnn(sfind_room("MRANT"), RoomBit::rseenbit))
     {
         tell("Incantations are useless once you have gotten this far.");
     }
@@ -420,12 +411,12 @@ bool incantation(Iterator<ParseContV> lv)
         {
             tell("Sorry, only one incantation to a customer.");
         }
-        else if (incant_ok && flags[end_game_flag])
+        else if (incant_ok && flags[FlagId::end_game_flag])
         {
             w2 = pw(SIterator(unm), SIterator(w1));
-            tell("A hollow voice replies: \"" + w1 + " ", 0);
-            tell(w2 + "\".", 1);
-            spell_flag = w1;
+            tell("A hollow voice replies: \"", 0, w1, " ");
+            tell(w2, 1, "\".");
+            spell_flag.swap(w1);
         }
         else
         {
@@ -437,7 +428,7 @@ bool incantation(Iterator<ParseContV> lv)
     {
         tell("As the last syllable of your spell fades into silence, darkness\n"
             "envelops you, and the earth shakes briefly.  Then all is quiet.");
-        spell_flag = w1;
+        spell_flag.swap(w1);
         enter_end_game();
     }
     else
@@ -445,7 +436,7 @@ bool incantation(Iterator<ParseContV> lv)
     return true;
 }
 
-bool incant()
+bool incant::operator()() const
 {
     auto m = member("", lexv);
     if (m)
@@ -474,13 +465,13 @@ bool inqstart()
     const auto &qv = qvec;
     auto &nqv = nqvec;
 
-    if (!flags[inqstartflag])
+    if (!flags[FlagId::inqstartflag])
     {
         clock_enable(clock_int(inqin, 2));
         tell(quiz_rules, long_tell1);
-        flags[inqstartflag] = true;
+        flags[FlagId::inqstartflag] = true;
         select(qv, nqv);
-        tell("The booming voice asks:\n'" + nqv[0]->qstr() + "'", 1);
+        tell("The booming voice asks:\n'", 1, nqv[0]->qstr(), "'");
     }
     else
     {
@@ -491,16 +482,16 @@ bool inqstart()
     return true;
 }
 
-bool inquisitor(Iterator<ParseContV> ans)
+bool inquisitor::operator()(Iterator<ParseContV> ans) const
 {
-    auto nqv = nqvec;
+    Iterator<std::array<QuestionP, 3>> nqv = nqvec;
     const QuestionP &ques = nqv[0];
     if (verbq("C-INT"))
     {
-        tell("The booming voice asks:\n'" + ques->qstr() + "'");
+        tell("The booming voice asks:\n'", 1, ques->qstr(), "'");
         clock_int(inqin, 2);
     }
-    else if(ans && flags[inqstartflag] && nqatt < 5)
+    else if(ans && flags[FlagId::inqstartflag] && nqatt < 5)
     {
         if (correct(ans, ques->qans()))
         {
@@ -515,7 +506,7 @@ bool inquisitor(Iterator<ParseContV> ans)
             {
                 nqatt = 0;
                 nqvec = nqv;
-                tell("The booming voice asks:\n'" + nqv[0]->qstr() + "'", 1);
+                tell("The booming voice asks:\n'", 1, nqv[0]->qstr(), "'");
                 clock_int(inqin, 2);
             }
         }
@@ -529,8 +520,7 @@ bool inquisitor(Iterator<ParseContV> ans)
             }
             else
             {
-                tell(" You have " + nums[5 - nqatt - 1] + " more chance", 0);
-                tell(nqatt == 4 ? ".'" : "s.'");
+                tell(" You have ", 1, nums[5 - nqatt - 1], " more chance", nqatt == 4 ? ".'" : "s.'");
             }
         }
     }
@@ -546,23 +536,20 @@ bool n_s(int dir)
     return dir % 180 == 0;
 }
 
-std::optional<int> mirror_dir(direction dir, RoomP rm)
+std::optional<int> mirror_dir(direction dir, const RoomP &rm)
 {
-    const Ex * mex = memq(North, rm->rexits());
-    CExitPtr m;
+    auto mex = memq(direction::North, rm->rexits());
+    const CExitPtr *m = nullptr;
     if (mex)
     {
-        const CExitPtr *cep;
-        if (!(cep = std::get_if<CExitPtr>(&std::get<1>(*mex))))
+        if (!(m = std::get_if<CExitPtr>(&std::get<1>(*mex))))
             return std::optional<int>();
-        _ASSERT(cep != nullptr);
-        m = *cep;
     }
 
-    if (m && mloc == m->cxroom())
+    if (m && mloc == (*m)->cxroom())
     {
-        if ((dir == North && mdir > 180 && mdir < 360) ||
-            dir == South && mdir > 0 && mdir < 180)
+        if ((dir == direction::North && mdir > 180 && mdir < 360) ||
+            dir == direction::South && mdir > 0 && mdir < 180)
         {
             return 1;
         }
@@ -573,43 +560,34 @@ std::optional<int> mirror_dir(direction dir, RoomP rm)
 }
 
 bool look_to(std::string_view nstr,
-    std::optional<std::string_view> sstr,
+    std::string_view sstr,
     LookToVal ntell,
     LookToVal stell,
     bool htell)
 {
-    bool north, *p;
     bool mir;
     bool m1 = false;
-    RoomP nrm, srm;
     std::string_view dir;
-    const char **s;
 
-    if (!nstr.empty())
-        nrm = find_room(nstr);
-    if (sstr.has_value())
-        srm = find_room(sstr.value());
+    RoomP nrm(nstr.empty() ? nullptr : find_room(nstr));
+    RoomP srm(sstr.empty() ? nullptr : find_room(sstr));
 
     if (htell)
         tell(hallway, long_tell1);
 
-    if ((p = std::get_if<bool>(&ntell)) && *p)
+    auto tell_fn = [](std::string_view prefix, LookToVal lv)
     {
-        tell("Somewhat to the north" + guardstr, long_tell1);
-    }
-    else if (s = std::get_if<const char *>(&ntell))
-    {
-        tell(*s);
-    }
-    if ((p = std::get_if<bool>(&stell)) && *p)
-    {
-        tell("Somewhat to the south" + guardstr, long_tell1);
-    }
-    else if (s = std::get_if<const char *>(&stell))
-    {
-        tell(*s);
-    }
+        std::visit(overload{
+            [prefix](bool b) { if (b) tell(prefix, long_tell1, guardstr); },
+            [](const char* s) { tell(s); },
+            [](auto unused) {}
+            }, lv);
+    };
 
+    tell_fn("Somewhat to the north", ntell);
+    tell_fn("Somewhat to the south", stell);
+
+    bool north = false;
     auto prog = [&]() ->bool
     {
         bool rv = true;
@@ -631,18 +609,18 @@ bool look_to(std::string_view nstr,
 
     if (prog())
     {
-        mir = (((north && mdir > 180 && mdir < 359) || (!north && mdir > 0 && mdir < 179)) && (m1 = true)) ? flags[mr1] : flags[mr2];
+        mir = (((north && mdir > 180 && mdir < 359) || (!north && mdir > 0 && mdir < 179)) && (m1 = true)) ? flags[FlagId::mr1] : flags[FlagId::mr2];
 
         if (n_s(mdir))
         {
-            tell("The " + dir + " side of the room is divided by a wooden wall into small\nhallways to the ", 0);
-            tell(dir + "east and ", 0);
-            tell(dir + "west.", 1);
+            tell("The ", 0, dir, " side of the room is divided by a wooden wall into small\nhallways to the ");
+            tell(dir, 0, "east and ");
+            tell(dir, 1, "west.");
         }
         else
         {
-            tell((mir ? "A large mirror fills the " : "A large panel fills the ") + dir + " side of the hallway.", 1);
-            m1 && flags[mirror_open] && tell(mir ? miropen : panopen, long_tell1);
+            tell(mir ? "A large mirror fills the " : "A large panel filles the ", 1, dir, " side of the hallyway.");
+            m1 && flags[FlagId::mirror_open] && tell(mir ? miropen : panopen, long_tell1);
             mir || tell("The shattered pieces of a mirror cover the floor.");
         }
     }
@@ -653,15 +631,15 @@ bool look_to(std::string_view nstr,
         bool sm = is_empty(stell);
         if (nm && sm)
         {
-            tell("The corridor continues north and south.");
+            tell("The corridor continues north and south."sv);
         }
         else if (nm)
         {
-            tell("The corridor continues north.");
+            tell("The corridor continues north."sv);
         }
         else if (sm)
         {
-            tell("The corridor continues south.");  
+            tell("The corridor continues south."sv);  
         }
     }
     return true;
@@ -679,8 +657,7 @@ bool mirmove(bool northq, const RoomP &rm)
     using namespace std::string_view_literals;
     const RoomP &mrg = sfind_room("MRG");
     bool pu = poleup != 0;
-    tell((pu ? "The structure wobbles " : "The structure slides ") + (northq ? "north"sv : "south"sv) +
-        " and stops over another compass rose.");
+    tell(pu ? "The structure wobbles " : "The structure slides ", 1, northq ? "north" : "south", " and stops over another compass rose.");
     mloc = rm;
     if (rm == mrg &&
         here == sfind_room("INMIR"))
@@ -688,12 +665,12 @@ bool mirmove(bool northq, const RoomP &rm)
         bool dead = true;
         if (pu)
             tell("The structure wobbles as it moves, alerting the Guardians.");
-        else if (!flags[mr1] || !flags[mr2])
+        else if (!flags[FlagId::mr1] || !flags[FlagId::mr2])
         {
             tell("A Guardian notices a wooden structure creeping by, and his\n"
                 "suspicions are aroused.");
         }
-        else if (flags[mirror_open] || flags[wood_open])
+        else if (flags[FlagId::mirror_open] || flags[FlagId::wood_open])
         {
             tell("A Guardian notices the open side of the structure, and his suspicions\n"
                 "are aroused.");
@@ -709,41 +686,36 @@ bool mirmove(bool northq, const RoomP &rm)
 RoomP mirns(bool northq, bool exitq)
 {
     RoomP rv;
+    const RoomP &mloc = ::mloc;
     const std::vector<Ex> &rex = mloc->rexits();
-    const Ex *m;
     if (!exitq &&
         ((northq && mloc == northend) || (!northq && mloc == southend)))
     {
         // Do nothing
     }
-    else if (m = memq(northq ? North : South, rex))
+    else if (auto m = memq(northq ? direction::North : direction::South, rex))
     {
         ExitType exit = std::get<1>(*m);
-        if (auto cep = std::get_if<CExitPtr>(&exit))
-            rv = (*cep)->cxroom();
-        else if (auto roomp = std::get_if<RoomP>(&exit))
-            rv = *roomp;
-        else if (auto sp = std::get_if<std::string>(&exit))
-            rv = sfind_room(*sp);
+        rv = std::visit(overload{
+                [](const CExitPtr& ep) { return ep->cxroom(); },
+                [](const RoomP& rp) { return rp; },
+                [](const std::string& s) { return sfind_room(s); },
+                [](auto p) { return RoomP(); }
+            }, exit);
     }
     return rv;
 }
 
 bool mirblock(direction dir, int mdir)
 {
-    if (dir == South)
+    if (dir == direction::South)
     {
         mdir = (mdir + 180) % 360;
     }
-    if ((mdir == 270 && !flags[mr1]) || (mdir == 90 && !flags[mr2]))
-    {
-        tell("There is a large broken mirror blocking your way.");
-    }
-    else
-    {
-        tell("There is a large mirror blocking your way.");
-    }
-    return true;
+    const char *msg = (mdir == 270 && !flags[FlagId::mr1]) || (mdir == 90 && !flags[FlagId::mr2]) ?
+        "There is a large broken mirror blocking your way." :
+        "There is a large mirror blocking your way.";
+    return tell(msg);
 }
 
 std::optional<int> mirror_here(RoomP rm)
@@ -763,16 +735,16 @@ std::optional<int> mirror_here(RoomP rm)
     {
         // Returns empty
     }
-    else if (rv = mirror_dir(North, rm))
+    else if (rv = mirror_dir(direction::North, rm))
     {
 
     }
     else 
-        rv = mirror_dir(South, rm);
+        rv = mirror_dir(direction::South, rm);
     return rv;
 }
 
-bool start_end()
+bool start_end::operator()() const
 {
     bool rv = false;
     RoomP here = ::here;
@@ -793,47 +765,40 @@ bool start_end()
     return rv;
 }
 
-bool stats()
+bool stats::operator()() const
 {
-    tell("Room count: " + std::to_string(rooms().size()));
-    tell("Object count: " + std::to_string(object_pobl().size()));
-    tell("Max score: " + std::to_string(score_max()) + ", endgame max score " + std::to_string(eg_score_max));
-    tell("Verbs: " + std::to_string(actions_pobl.size()));
+    tell("Room count: ", post_crlf, rooms().size());
+    tell("Object count: ", post_crlf, object_pobl().size());
+    tell("Max score: ", post_crlf, score_max(), ", endgame max score ", eg_score_max);
+    tell("Verbs: ", post_crlf, actions_pobl.size());
     return true;
 }
 
-bool stay()
+bool stay::operator()() const
 {
     bool rv = true;
-    if (*winner == *sfind_obj("MASTE")->oactor())
+    if (winner == sfind_obj("MASTE")->oactor())
     {
         clock_int(folin, 0);
-        tell("The dungeon master says, 'I will stay.'");
+        tell("The dungeon master says, 'I will stay.'"sv);
     }
     else if (*winner == player())
     {
-        tell("You will be lost without me.");
+        tell("You will be lost without me."sv);
     }
     else
         rv = false;
     return rv;
 }
 
-bool turnto()
+bool turnto::operator()() const
 {
-    if (object_action())
-    {
-    }
-    else
-    {
-        tell("That cannot be turned.");
-    }
-    return true;
+    return object_action() ? true : tell("That cannot be turned.");
 }
 
 namespace obj_funcs
 {
-    bool locked_door()
+    bool locked_door::operator()() const
     {
         bool rv = false;
         if (verbq("OPEN"))
@@ -843,33 +808,32 @@ namespace obj_funcs
         return rv;
     }
 
-    bool take_five()
+    bool take_five::operator()() const
     {
-        bool rv = false;
         if (verbq("TAKE"))
         {
-            rv = perform(wait, find_verb("WAIT"));
+            return perform(wait(), find_verb("WAIT"));
         }
-        return rv;
+        return false;
     }
 
-    bool panel_function()
+    bool panel_function::operator()() const
     {
         bool rv = true;
         std::optional<int> mirror = mirror_here(here);
         if (!mirror.has_value())
         {
-            tell("I can't see a panel here.");
+            tell("I can't see a panel here."sv);
         }
         else if (verbq("OPEN", "MOVE" ))
         {
-            tell("I don't see a way to open the panel here.");
+            tell("I don't see a way to open the panel here."sv);
         }
         else if (verbq( "POKE", "MUNG" ))
         {
             if (mirror == 1)
             {
-                if (flags[mr1])
+                if (flags[FlagId::mr1])
                 {
                     tell(panelbreak, long_tell1);
                 }
@@ -878,7 +842,7 @@ namespace obj_funcs
                     tell(panelbroke, long_tell1);
                 }
             }
-            else if (flags[mr2])
+            else if (flags[FlagId::mr2])
             {
                 tell(panelbreak, long_tell1);
             }
@@ -892,11 +856,11 @@ namespace obj_funcs
             if (mirror == 1)
             {
                 tell("The wooden panel moves slightly inward as you push, and back out\n"
-                    "when you let go.");
+                    "when you let go."sv);
             }
             else
             {
-                tell("The panel is unyielding.");
+                tell("The panel is unyielding."sv);
             }
         }
         else
@@ -904,19 +868,17 @@ namespace obj_funcs
         return rv;
     }
 
-    bool beam_function()
+    bool beam_function::operator()() const
     {
         ObjectP prso = ::prso();
         ObjectP prsi = ::prsi();
-        RoomP here = ::here;
-        ObjectP beam = sfind_obj("BEAM");
+        const ObjectP &beam = sfind_obj("BEAM");
         bool rv = true;
         if (verbq( "PUT", "POKE", "MUNG" ))
         {
             if (verbq("PUT"))
             {
-                prsi = prso;
-                prso = ::prsi();
+                std::swap(prsi, prso);
             }
             if (!prsi || prso != beam)
                 return false;
@@ -924,15 +886,15 @@ namespace obj_funcs
             if (drop_if(prsi))
             {
                 insert_object(prsi, here);
-                tell("The beam is now interrupted by a " + prsi->odesc2() + " lying on the floor.");
+                tell("The beam is now interrupted by a ", 1, prsi->odesc2(), " lying on the floor.");
             }
             else if (memq(prsi, here->robjs()))
             {
-                tell("The " + prsi->odesc2() + " already breaks the beam.", 1);
+                tell("The ", 1, prsi->odesc2(), " already breaks the beam.");
             }
             else
             {
-                tell("You can't break the beam with a " + prsi->odesc2() + ".", 1);
+                tell("You can't break the beam with a ", 1, prsi->odesc2(), ".");
             }
         }
         else if (verbq("TAKE") && beam == prso)
@@ -944,19 +906,19 @@ namespace obj_funcs
         return rv;
     }
 
-    bool crypt_object()
+    bool crypt_object::operator()() const
     {
         bool rv = false;
-        bool eg = flags[end_game_flag];
+        bool eg = flags[FlagId::end_game_flag];
         const ObjectP &c = sfind_obj("TOMB");
-        if (!eg && (rv = obj_funcs::head_function()))
+        if (!eg && (rv = obj_funcs::head_function()()))
         {
 
         }
         else if (eg && verbq("OPEN"))
         {
             rv = true;
-            if (!trnn(c, openbit))
+            if (!trnn(c, Bits::openbit))
             {
                 dopen(c);
                 tell("The door of the crypt is extremely heavy, but it opens easily.");
@@ -969,7 +931,7 @@ namespace obj_funcs
         else if (eg && verbq("CLOSE"))
         {
             rv = true;
-            if (trnn(c, openbit))
+            if (trnn(c, Bits::openbit))
             {
                 dclose(c);
                 tell("The crypt is closed.");
@@ -986,7 +948,7 @@ namespace obj_funcs
         return rv;
     }
 
-    bool bronze_door()
+    bool bronze_door::operator()() const
     {
         bool rv = false;
         RoomP here = ::here;
@@ -1011,10 +973,10 @@ namespace obj_funcs
         return rv;
     }
 
-    bool dialbutton()
+    bool dialbutton::operator()() const
     {
         bool rv = false;
-        bool cdoor = trnn(sfind_obj("CDOOR"), openbit);
+        bool cdoor = trnn(sfind_obj("CDOOR"), Bits::openbit);
         if (verbq("PUSH"))
         {
             rv = true;
@@ -1025,52 +987,51 @@ namespace obj_funcs
         return rv;
     }
 
-    bool dial()
+    bool dial::operator()() const
     {
         bool rv = true;
         if (verbq( "SET", "PUT", "MOVE", "TRNTO" ))
         {
-            if (!empty(prsi()))
+            if (ObjectP prsio = prsi(); !empty(prsio))
             {
-                std::array<NumObjs, 8>::const_iterator n;
-                if ((n = memq(prsi(), numobjs)) != numobjs.end())
+                auto n = memq(prsio, numobjs);
+                if (n != numobjs.end())
                 {
                     pnumb = n->second;
-                    tell("The dial now points to '" + nums[pnumb - 1] + "'.");
+                    tell("The dial now points to '", post_crlf, nums[pnumb - 1], "'.");
                 }
                 else
                 {
-                    tell("The dial face only contains numbers.");
+                    tell("The dial face only contains numbers."sv);
                 }
             }
             else
             {
-                tell("You must specify what to set the dial to.");
+                tell("You must specify what to set the dial to."sv);
             }
         }
         else if (verbq("SPIN"))
         {
             pnumb = (rand() % 8) + 1;
-            tell("The dial spins and comes to a stop pointing at '" + std::string(nums[pnumb - 1]) + "'.");
+            tell("The dial spins and comes to a stop pointing at '", post_crlf, nums[pnumb - 1], "'.");
         }
         else
             rv = false;
         return rv;
     }
 
-    bool master_function()
+    bool master_function::operator()() const
     {
         bool rv = true;
-        RoomP here = ::here;
         if (here == sfind_room("PCELL") || here == sfind_room("NCELL"))
         {
             if (verbq("TELL"))
             {
-                tell("He can't hear you.");
+                tell("He can't hear you."sv);
             }
             else
             {
-                tell("He is not here.");
+                tell("He is not here."sv);
             }
         }
         else if (verbq("ATTAC"))
@@ -1079,14 +1040,14 @@ namespace obj_funcs
         }
         else if (verbq("TAKE"))
         {
-            tell("'I'm willing to accompany you, but not ride in your pocket!'");
+            tell("'I'm willing to accompany you, but not ride in your pocket!'"sv);
         }
         else
             rv = false;
         return rv;
     }
 
-    bool cell_door()
+    bool cell_door::operator()() const
     {
         bool rv = false;
         if (verbq( "OPEN", "CLOSE" ))
@@ -1097,26 +1058,20 @@ namespace obj_funcs
         return rv;
     }
 
-    bool wood_door()
+    bool wood_door::operator()() const
     {
-        bool rv = true;
         if (verbq( "OPEN", "CLOSE" ))
         {
-            tell("The door won't budge.");
+            return tell("The door won't budge.");
         }
         else if (verbq("KNOCK"))
         {
-            if (flags[inqstartflag])
-                tell("There is no answer.");
-            else
-                inqstart();
+            return flags[FlagId::inqstartflag] ? tell("There is no answer.") : inqstart();
         }
-        else
-            rv = false;
-        return rv;
+        return false;
     }
 
-    bool mpanels()
+    bool mpanels::operator()() const
     {
         int mdir = ::mdir;
         bool rv = false;
@@ -1140,9 +1095,9 @@ namespace obj_funcs
                     tell("The structure rotates counterclockwise.");
                 }
                 tell("The compass rose now indicates " + longdirs[mdir / 45] + ".");
-                if (flags[wood_open])
+                if (flags[FlagId::wood_open])
                 {
-                    flags[wood_open] = false;
+                    flags[FlagId::wood_open] = false;
                     tell(wood_closes);
                 }
                 ::mdir = mdir;
@@ -1159,7 +1114,7 @@ namespace obj_funcs
         return rv;
     }
 
-    bool mends()
+    bool mends::operator()() const
     {
         bool rv = true;
         int mdir = ::mdir;
@@ -1194,15 +1149,15 @@ namespace obj_funcs
                     tell("The pine door opens into the field of view of the Guardians.");
                     jigs_up(guardkill);
                 }
-                flags[wood_open] = true;
+                flags[FlagId::wood_open] = true;
                 clock_enable(clock_int(pinin, 5));
             }
         }
         else if (verbq("C-INT"))
         {
-            if (flags[wood_open])
+            if (flags[FlagId::wood_open])
             {
-                flags[wood_open] = false;
+                flags[FlagId::wood_open] = false;
                 tell(wood_closes);
             }
         }
@@ -1211,47 +1166,40 @@ namespace obj_funcs
         return rv;
     }
 
-    bool short_pole()
+    bool short_pole::operator()() const
     {
         bool rv = true;
         int mdir = ::mdir;
         int pu = poleup;
         if (verbq("RAISE"))
         {
-            if (poleup == 2)
-            {
-                tell("The pole cannot be raised further.");
-            }
-            else
-            {
-                poleup = 2;
-                tell("The pole is now slightly above the floor.");
-            }
+            poleup = 2;
+            tell(pu == 2 ? "The pole cannot be raised further."sv : "The pole is now slightly above the floor."sv);
         }
         else if (verbq( "PUSH", "LOWER" ))
         {
             if (pu == 0)
             {
-                tell("The pole cannot be lowered further.");
+                tell("The pole cannot be lowered further."sv);
             }
             else if (n_s(mdir))
             {
-                tell("The pole is lowered into the channel.");
                 poleup = 0;
+                tell("The pole is lowered into the channel."sv);
             }
             else if (mdir == 270 && mloc == sfind_room("MRB"))
             {
                 poleup = 0;
-                tell("The pole is lowered into the stone hole.");
+                tell("The pole is lowered into the stone hole."sv);
             }
             else if (poleup == 1)
             {
-                tell("The pole is already resting on the floor.");
+                tell("The pole is already resting on the floor."sv);
             }
             else
             {
                 poleup = 1;
-                tell("The pole now rests on the stone floor.");
+                tell("The pole now rests on the stone floor."sv);
             }
         }
         else
@@ -1259,7 +1207,7 @@ namespace obj_funcs
         return rv;
     }
 
-    bool mirror_function()
+    bool mirror_function::operator()() const
     {
         bool rv = true;
         std::optional<int> mirror;
@@ -1273,22 +1221,22 @@ namespace obj_funcs
         }
         else if (verbq("LKIN"))
         {
-            if (mirror == 1 && flags[mr1] || flags[mr2])
+            if (mirror == 1 && flags[FlagId::mr1] || flags[FlagId::mr2])
             {
-                tell("A disheveled adventurer stares back at you.");
+                tell("A disheveled adventurer stares back at you."sv);
             }
             else
             {
-                tell("The mirror is broken into little pieces.");
+                tell("The mirror is broken into little pieces."sv);
             }
         }
         else if (verbq( "POKE", "MUNG" ))
         {
             if (mirror == 1)
             {
-                if (flags[mr1])
+                if (flags[FlagId::mr1])
                 {
-                    flags[mr1] = false;
+                    flags[FlagId::mr1] = false;
                     tell(mirbreak, long_tell1);
                 }
                 else
@@ -1296,9 +1244,9 @@ namespace obj_funcs
                     tell(mirbroke, long_tell1);
                 }
             }
-            else if (flags[mr2])
+            else if (flags[FlagId::mr2])
             {
-                flags[mr2] = false;
+                flags[FlagId::mr2] = false;
                 tell(mirbreak, long_tell1);
             }
             else
@@ -1306,7 +1254,7 @@ namespace obj_funcs
                 tell(mirbroke, long_tell1);
             }
         }
-        else if (mirror == 1 && !flags[mr1] || !flags[mr2])
+        else if (mirror == 1 && !flags[FlagId::mr1] || !flags[FlagId::mr2])
         {
             tell("Shards of a broken mirror are dangerous to play with.");
         }
@@ -1321,13 +1269,12 @@ namespace obj_funcs
         return rv;
     }
 
-    bool mrswitch()
+    bool mrswitch::operator()() const
     {
         bool rv = true;
-        RoomP here = ::here;
         if (verbq("PUSH"))
         {
-            if (flags[mrswpush])
+            if (flags[FlagId::mrswpush])
             {
                 tell("The button is already depressed.");
             }
@@ -1337,8 +1284,8 @@ namespace obj_funcs
                 if (beam_stopped())
                 {
                     clock_enable(clock_int(mrint, 7));
-                    flags[mrswpush] = true;
-                    flags[mirror_open] = true;
+                    flags[FlagId::mrswpush] = true;
+                    flags[FlagId::mirror_open] = true;
                 }
                 else
                 {
@@ -1348,8 +1295,8 @@ namespace obj_funcs
         }
         else if (verbq("C-INT"))
         {
-            flags[mrswpush] = false;
-            flags[mirror_open] = false;
+            flags[FlagId::mrswpush] = false;
+            flags[FlagId::mirror_open] = false;
             if (mirror_here(here) == 1 || here == sfind_room("INMIR"))
             {
                 tell("The mirror quietly swings shut.");
@@ -1364,28 +1311,26 @@ namespace obj_funcs
         return rv;
     }
 
-    bool wall_function()
+    bool wall_function::operator()() const
     {
         bool rv = false;
-        bool north = false;
-        RoomP here = ::here;
-        if (flags[end_game_flag] &&
+        if (flags[FlagId::end_game_flag] &&
             n_s(mdir) &&
-            (north = mirror_dir(North, here) || mirror_dir(South, here)))
+            (mirror_dir(direction::North, here) || mirror_dir(direction::South, here)))
         {
             if (verbq("PUSH"))
             {
                 rv = tell("The structure won't budge.");
             }
         }
-        else if (rtrnn(here, rnwallbit))
+        else if (rtrnn(here, RoomBit::rnwallbit))
         {
             rv = tell("I can't see any wall here.");
         }
         return rv;
     }
 
-    bool guardians()
+    bool guardians::operator()() const
     {
         bool rv = true;
         if (verbq("GO-IN"))
@@ -1408,22 +1353,21 @@ namespace obj_funcs
     }
 }
 
-bool ewtell(RoomP rm)
+bool ewtell(const RoomP &rm)
 {
     bool eastq = rm->rid()[3] == 'E';
     bool m1q, mwin;
-    mwin = (m1q = (mdir + eastq ? 0 : 180) == 180) ? flags[mr1] : flags[mr2];
-    tell("You are in a narrow room, whose " +
-        std::string(eastq ? "west" : "east") + " wall is a large ", 0);
+    mwin = (m1q = (mdir + eastq ? 0 : 180) == 180) ? flags[FlagId::mr1] : flags[FlagId::mr2];
+    tell("You are in a narrow room, whose ", 0, eastq ? "west" : "east", " wall is a large ");
     tell(mwin ? "mirror." : "wooden panel\nwhich once contained a mirror.");
-    m1q && flags[mirror_open] && tell(mwin ? miropen : panopen);
+    m1q && flags[FlagId::mirror_open] && tell(mwin ? miropen : panopen);
     tell("The opposite wall is solid rock.");
     return true;
 }
 
 namespace room_funcs
 {
-    bool mraew()
+    bool mraew::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
@@ -1435,7 +1379,7 @@ namespace room_funcs
         return rv;
     }
 
-    bool mrbew()
+    bool mrbew::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
@@ -1447,7 +1391,7 @@ namespace room_funcs
         return rv;
     }
 
-    bool mrcew()
+    bool mrcew::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
@@ -1455,14 +1399,15 @@ namespace room_funcs
             rv = true;
             ewtell(here);
             tell("Somewhat to the north" + guardstr, long_tell1);
+            tell("Somewhat to the north", long_tell1, guardstr);
         }
         return rv;
     }
 
-    bool crypt_function()
+    bool crypt_function::operator()() const
     {
         bool rv = false;
-        bool eg = flags[end_game_flag];
+        bool eg = flags[FlagId::end_game_flag];
         if (eg && verbq("LOOK"))
         {
             rv = true;
@@ -1471,7 +1416,7 @@ namespace room_funcs
         return rv;
     }
 
-    bool ncell_room()
+    bool ncell_room::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
@@ -1484,7 +1429,7 @@ namespace room_funcs
         return rv;
     }
 
-    bool pcell_room()
+    bool pcell_room::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
@@ -1496,13 +1441,13 @@ namespace room_funcs
         return rv;
     }
 
-    bool cell_room()
+    bool cell_room::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
         {
             tell("You are in a featureless prison cell.  You can see " +
-                std::string(trnn(sfind_obj("CDOOR"), openbit) ? "the east-west\n"
+                std::string(trnn(sfind_obj("CDOOR"), Bits::openbit) ? "the east-west\n"
                     "corridor outside the open wooden door in front of you." :
                     "only the flames\n"
                     "and smoke of the pit out the small window in a closed door in front\n"
@@ -1510,14 +1455,14 @@ namespace room_funcs
             if (lcell == 4)
             {
                 tell("Behind you is a bronze door which seems to be " +
-                    std::string(trnn(sfind_obj("ODOOR"), openbit) ? "open." : "closed."), 1);
+                    std::string(trnn(sfind_obj("ODOOR"), Bits::openbit) ? "open." : "closed."), 1);
             }
             rv = true;
         }
         return rv;
     }
 
-    bool parapet()
+    bool parapet::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
@@ -1528,18 +1473,18 @@ namespace room_funcs
         return rv;
     }
 
-    bool ncorr_room()
+    bool ncorr_room::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
         {
             rv = true;
-            tell(ewc_desc + dpr(sfind_obj("CDOOR")), long_tell1);
+            tell(ewc_desc, long_tell1, dpr(sfind_obj("CDOOR")));
         }
         return rv;
     }
 
-    bool scorr_room()
+    bool scorr_room::operator()() const
     {
         bool rv = true;
         if (verbq("LOOK"))
@@ -1549,8 +1494,10 @@ namespace room_funcs
                 "additional passage leads south at the center of the corridor.", long_tell1);
             if (lcell == 4)
             {
+                //tell("In the center of the north wall of the passage is a bronze door\n"
+                //    "which is " + dpr(sfind_obj("ODOOR")), 1);
                 tell("In the center of the north wall of the passage is a bronze door\n"
-                    "which is " + dpr(sfind_obj("ODOOR")), 1);
+                    "which is ", 1, dpr(sfind_obj("ODOOR")));
             }
         }
         else
@@ -1558,7 +1505,7 @@ namespace room_funcs
         return rv;
     }
 
-    bool bdoor_function()
+    bool bdoor_function::operator()() const
     {
         bool rv = true;
         if (verbq("GO-IN"))
@@ -1575,7 +1522,7 @@ namespace room_funcs
         return rv;
     }
 
-    bool fdoor_function()
+    bool fdoor_function::operator()() const
     {
         bool rv = true;
         if (verbq("GO-IN"))
@@ -1586,26 +1533,25 @@ namespace room_funcs
         {
             look_to("", "MRD", "You are in a north-south hallway which ends in a large wooden door.", LookToVal(), false);
             tell("The wooden door has a barred panel in it at about head height.  The\n"
-                "panel is " + std::string((inqin->cflag() && inqin->ctick() != 0) ? "open" : "closed"), long_tell);
-            tell(" and the door is " + dpr(sfind_obj("QDOOR")), 1);
+                "panel is ", 1, (inqin->cflag() && inqin->ctick() != 0) ? "open" : "closed",
+                " and the door is ", dpr(sfind_obj("QDOOR")));
         }
         else
             rv = false;
         return rv;
     }
 
-    bool mrdf()
+    bool mrdf::operator()() const
     {
-        bool rv = false;
-        if (verbq("LOOK"))
+        bool rv;
+        if (rv = verbq("LOOK"))
         {
-            rv = true;
             look_to("FDOOR", "MRG", LookToVal(), true);
         }
         return rv;
     }
 
-    bool mrcf()
+    bool mrcf::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
@@ -1616,7 +1562,7 @@ namespace room_funcs
         return rv;
     }
 
-    bool mrbf()
+    bool mrbf::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
@@ -1627,21 +1573,21 @@ namespace room_funcs
         return rv;
     }
 
-    bool mraf()
+    bool mraf::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
         {
             rv = true;
-            look_to("MRB", std::optional<std::string>(), LookToVal(), "A passage enters from the south.");
+            look_to("MRB", "", LookToVal(), "A passage enters from the south.");
         }
         return rv;
     }
 
-    bool magic_mirror()
+    bool magic_mirror::operator()() const
     {
         int mdir = ::mdir;
-        RoomP mloc = ::mloc;
+        const RoomP &mloc = ::mloc;
         bool starter = false;
         bool rv = false;
         if (verbq("LOOK"))
@@ -1655,39 +1601,31 @@ namespace room_funcs
                 {
                     tell("has been lifted out\n"
                         "of a hole carved in the stone floor.  There is evidently enough\n"
-                        "friction to keep the pole from dropping back down.", long_tell1);
+                        "friction to keep the pole from dropping back down."sv, long_tell1);
                 }
                 else
                 {
                     tell("has been dropped\n"
-                        "into a hole carved in the stone floor.");
+                        "into a hole carved in the stone floor."sv);
                 }
             }
             else if (mdir == 0 || mdir == 180)
             {
-                if (poleup != 0)
-                {
-                    tell("is positioned above\n"
-                        "the stone channel in the floor.");
-                }
-                else
-                {
-                    tell("has been dropped\n"
-                        "into the stone channel incised in the floor.");
-                }
+                tell(poleup != 0 ? "is positioned above\nthe stone channel in the floor."sv :
+                    "has been dropped\ninto the stone channel incised in the floor."sv);
             }
             else
             {
                 tell("is resting on the\n"
-                    "stone floor.");
+                    "stone floor."sv);
             }
 
-            tell(mirror_pole_desc + longdirs[mdir / 45] + ".", long_tell1);
+            tell(mirror_pole_desc, long_tell1, longdirs[mdir / 45], ".");
         }
         return rv;
     }
 
-    bool mreye_room()
+    bool mreye_room::operator()() const
     {
         bool rv = false;
         if (verbq("LOOK"))
@@ -1699,35 +1637,34 @@ namespace room_funcs
 
             if (const ObjectP &o = beam_stopped())
             {
-                tell("  The beam is stopped halfway across the\n"
-                    "room by a " + o->odesc2() + " lying on the floor.", 1);
+                tell("  The beam is stopped halfway across the\nroom by a ", 1, o->odesc2(), " lying on the floor.");
             }
             else
             {
                 tell("", 1);
             }
 
-            look_to("MRA", std::optional<std::string>(), LookToVal(), LookToVal(), false);
+            look_to("MRA","", LookToVal(), LookToVal(), false);
         }
         return rv;
     }
 
-    bool guardians()
+    bool guardians::operator()() const
     {
-        return obj_funcs::guardians();
+        return obj_funcs::guardians()();
     }
 
-    bool tomb_function()
+    bool tomb_function::operator()() const
     {
-        bool rv = verbq("LOOK");
-        if (rv)
+        bool rv;
+        if (rv = verbq("LOOK"))
         {
-            tell(tomb_desc1 + dpr(sfind_obj("TOMB")) + tomb_desc2, long_tell1);
+            tell(tomb_desc1, long_tell1, dpr(sfind_obj("TOMB")), tomb_desc2);
         }
         return rv;
     }
 
-    bool nirvana()
+    bool nirvana::operator()() const
     {
         bool rv = false;
         if (verbq("GO-IN"))
@@ -1735,7 +1672,7 @@ namespace room_funcs
             rv = true;
             dclose(sfind_obj("ODOOR"));
             tell(win_totally);
-            finish(". Won Totally!");
+            finish()(Rarg(), ". Won Totally!");
         }
         return rv;
     }
@@ -1743,28 +1680,23 @@ namespace room_funcs
 
 namespace exit_funcs
 {
-    ExitFuncVal maybe_door()
+    ExitFuncVal maybe_door::operator()() const
     {
         ExitFuncVal rv;
-        if (!trnn(sfind_obj("ODOOR"), openbit))
+        if (!trnn(sfind_obj("ODOOR"), Bits::openbit))
         {
-            if (lcell == 4)
-            {
-                rv = tell("The bronze door is closed.");
-            }
-            else
-                rv = tell("You can't go that way.");
+            rv = tell(lcell == 4 ? "The bronze door is closed." : "You can't go that way.");
         }
         return rv;
     }
 
-    ExitFuncVal mirout()
+    ExitFuncVal mirout::operator()() const
     {
         ExitFuncVal rv;
         RoomP rm;
         int mdir = ::mdir;
         std::variant<bool, direction, int> dir;
-        if (as_dir(prsvec[1]) == Exit)
+        if (as_dir(prsvec[1]) == direction::Exit)
         {
             dir = true;
         }
@@ -1774,28 +1706,21 @@ namespace exit_funcs
             _ASSERT(dvp != dirvec.end());
             dir = dvp->second;
         }
-        if (flags[mirror_open])
+        if (flags[FlagId::mirror_open])
         {
             if (dir.index() != 2 || (mdir + 270) % 360 == std::get<2>(dir))
             {
-                if (n_s(mdir))
-                {
-                    rv = mirew();
-                }
-                else
-                {
-                    rv = mirns(mdir < 180, true);
-                }
+                rv = n_s(mdir) ? mirew() : mirns(mdir < 180, true);
             }
         }
-        else if (flags[wood_open])
+        else if (flags[FlagId::wood_open])
         {
             if (dir.index() != 2 || (mdir + 180) % 360 == std::get<2>(dir))
             {
                 if (rm = mirns(mdir != 0, true))
                 {
                     tell("As you leave, the door swings shut.");
-                    flags[wood_open] = false;
+                    flags[FlagId::wood_open] = false;
                 }
                 rv = rm;
             }
@@ -1803,12 +1728,12 @@ namespace exit_funcs
         return rv;
     }
 
-    ExitFuncVal mirin()
+    ExitFuncVal mirin::operator()() const
     {
         ExitFuncVal rv;
         if (mirror_here(here) == 1)
         {
-            if (flags[mirror_open])
+            if (flags[FlagId::mirror_open])
                 rv = sfind_room("INMIR");
             else
                 rv = tell("The panel is closed.");
@@ -1820,15 +1745,15 @@ namespace exit_funcs
         return rv;
     }
 
-    ExitFuncVal mrgo()
+    ExitFuncVal mrgo::operator()() const
     {
         direction dir = as_dir(prsvec[1]);
-        const Ex *nrm = memq(dir, here->rexits());
-        auto cex = std::get<CExitPtr>(std::get<1>(*nrm));
+        auto nrm = memq(dir, here->rexits());
+        auto &cex = std::get<CExitPtr>(std::get<1>(*nrm));
         RoomP torm = cex->cxroom();
         int mdir = ::mdir;
 
-        if (memq(dir, { North, South }))
+        if (memq(dir, std::array<direction,2>({ direction::North, direction::South })))
         {
             if (mloc == torm)
             {
@@ -1862,18 +1787,18 @@ namespace exit_funcs
 
 namespace actor_funcs
 {
-    bool master_actor()
+    bool master_actor::operator()() const
     {
         bool rv = true;
-        if (!trnn(sfind_obj("QDOOR"), openbit))
+        if (!trnn(sfind_obj("QDOOR"), Bits::openbit))
         {
             tell("There is no reply.");
         }
         else if (verbq("WALK"))
         {
             direction prso = as_dir(prsvec[1]);
-            if ((prso == South || prso == Enter) && here == sfind_room("NCORR") ||
-                (prso == North || prso == Enter) && here == sfind_room("SCORR"))
+            if ((prso == direction::South || prso == direction::Enter) && here == sfind_room("NCORR") ||
+                (prso == direction::North || prso == direction::Enter) && here == sfind_room("SCORR"))
             {
                 tell("'I am not permitted to enter the prison cell.'");
             }
@@ -1884,11 +1809,7 @@ namespace actor_funcs
         }
         else if (memq(prsa(), master_actions))
         {
-            if (verbq( "STAY", "FOLLO" ))
-            {
-
-            }
-            else
+            if (!verbq( "STAY", "FOLLO" ))
             {
                 tell("'If you wish,' he replies.");
             }

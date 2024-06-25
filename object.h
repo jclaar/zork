@@ -8,14 +8,14 @@
 #include <list>
 #include <memory>
 #include <bitset>
-#include <any>
 #include "funcs.h"
 #include "defs.h"
 #include "strings.h"
+#include "cevent.h"
 
 typedef std::initializer_list<const char*> StringList;
 
-enum ObjectSlots
+enum class ObjectSlots
 {
 	ksl_odesco,
 	ksl_odesc1,
@@ -40,7 +40,10 @@ enum ObjectSlots
 class olint_t
 {
 public:
-    olint_t(int v, bool enable, const CEventP &ev, int init_val);
+    olint_t(int v, const CEventP& ev, int init_val) :_val(v), _ev(ev)
+    {
+        _ev->ctick(init_val);
+    }
 
     const CEventP &ev() const { return _ev; }
     int val() const { return _val; }
@@ -65,17 +68,17 @@ typedef std::shared_ptr<olint_t> OlintP;
 class OP
 {
 public:
-    typedef const tofmsgs &(*melee_func)();
-    typedef std::variant<int, std::string, melee_func, olint_t> PropVal;
+    using melee_func = const tofmsgs*;
+    typedef std::variant<int, std::string, melee_func, olint_t, RoomBit> PropVal;
     OP(ObjectSlots os, const PropVal &v) : sl(os), val(v) {}
     explicit OP(ObjectSlots os, int i) : sl(os), val(i) {}
+    explicit OP(ObjectSlots os, RoomBit b) : sl(os), val(b) {}
+    explicit OP(ObjectSlots os, e_oactor actor) : sl(os), val(static_cast<int>(actor)) {}
     explicit OP(ObjectSlots os, std::string_view v) : sl(os), val(std::string(v)) {}
     explicit OP(ObjectSlots os, const char* p) : sl(os)
     {
         if (p)
             val = p;
-        else
-            val = (melee_func) nullptr;
     }
     ObjectSlots slot() const { return sl; }
     const PropVal &value() const { return val; }
@@ -84,11 +87,13 @@ private:
     PropVal val;
 };
 
+typedef Flags<Bits, numbits> OFlags;
+
 class Object
 {
 public:
 
-    Object() {}
+    Object() : _melee_func(nullptr) {}
 
     Object(const StringList &syns, const StringList &adj = {}, const char *desc = "",
         const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr, const StringList &contents = {},
@@ -109,7 +114,7 @@ public:
     const std::string &odesco() const { return _odesco; }
     const std::string &odesc1() const;
     void odesc1(std::string_view s) { _odesc1 = s; }
-    const std::string &odesc2() const { return desc; }
+    std::string_view odesc2() const { return desc; }
     void odesc2(const char *new_desc) { desc = new_desc; }
     int otval() const;
     void otval(int new_value);
@@ -127,16 +132,16 @@ public:
     }
     const AdvP *oactor() const;
     std::optional<Bits> oglobal() const { return _oglobal; }
-    const std::bitset<numbits> &oflags() const { return flags; }
-    std::bitset<numbits> &oflags() { return flags; }
-    rapplic oaction() const { return objfn; }
+    const OFlags &oflags() const { return flags; }
+    OFlags &oflags() { return flags; }
+    const rapplic &oaction() const { return objfn; }
     const RoomP &oroom() const { return _oroom; }
-    void oroom(const RoomP &r) { _oroom = r; }
+    Object& oroom(const RoomP& r) { _oroom = r; return *this; }
     const ObjectP &ocan() const { return _ocan; }
-    void ocan(const ObjectP &op) { _ocan = op; }
-    Bits ovtype() const;
+    Object& ocan(const ObjectP& op) { _ocan = op; return *this; }
+    RoomBit ovtype() const;
 
-    VerbP obverb() const { return _obverb; }
+    const VerbP &obverb() const { return _obverb; }
     void obverb(const VerbP &v) { _obverb = v; }
 
     void restore(const Object &o);
@@ -154,7 +159,7 @@ private:
 protected:
     std::vector<std::string> synonyms;
     std::vector<std::string> adjec;
-    std::list<ObjectP> contents;
+    ObjList contents;
     std::string desc;
     std::string _odesco;
     std::string _odesc1;
@@ -165,16 +170,16 @@ protected:
     int _ostrength = 0;
     ObjectP _ocan; // What contains this object.
     RoomP _oroom;  // What room it's in.
-    std::bitset<numbits> flags;
-    rapplic objfn = nullptr;
+    OFlags flags;
+    rapplic objfn;
     OlintP _olint;
     VerbP _obverb;
     std::optional<Bits> _oglobal;
     int _omatch = 0;
     int _ocapac = 0;
-    e_oactor _oactor = oa_none;
-    Bits _ovtype = numbits;
-    OP::melee_func _melee_func = nullptr;
+    e_oactor _oactor = e_oactor::none;
+    RoomBit _ovtype = RoomBit::rnumbits;
+    OP::melee_func _melee_func;
 };
 
 class GObject : public Object
@@ -183,7 +188,7 @@ public:
     GObject(Bits gbits, const StringList &syns, const StringList &adj = {},
         const char * = "", const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr,
         const std::initializer_list<const char*> &contents = {},
-        const std::initializer_list<OP> &props = { OP(ksl_oglobal, OP::PropVal(0)) });
+        const std::initializer_list<OP> &props = { OP(ObjectSlots::ksl_oglobal, OP::PropVal(0)) });
 
     const std::optional<Bits> &gbits() const { return _gbits; }
 
@@ -204,8 +209,6 @@ void init_objects();
 void init_gobjects();
 void init_synonyms();
 
-inline int length(const ObjList &ol) { return (int)ol.size(); }
-
 inline bool empty(const ObjectP &op)
 {
     return !op;
@@ -220,10 +223,17 @@ bool is_obj(const std::string &obj);
 const ObjectP &find_obj(std::string_view name);
 const ObjectP &sfind_obj(std::string_view name);
 
-template <Bits b>
-bool trnnt(const ObjectP &op)
+inline bool trnn(const ObjectP &op, Bits b)
 {
     return op->oflags().test(b);
+}
+
+template <typename... Args>
+bool trnn(const ObjectP& op, Bits first, Args... args)
+{
+    if (trnn(op, first))
+        return true;
+    return trnn(op, args...);
 }
 
 template <typename T>
@@ -254,3 +264,9 @@ const ObjectP &tro(const ObjectP &op, T first, Args... args)
     tro(op, args...);
     return op;
 }
+
+inline bool openable(const ObjectP& op)
+{
+    return trnn(op, Bits::doorbit, Bits::contbit);
+}
+

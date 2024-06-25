@@ -22,4 +22,7 @@
 #include <array>
 #include <optional>
 #include <map>
+#include <string_view>
+
+using namespace std::string_view_literals;
 #endif

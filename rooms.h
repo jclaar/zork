@@ -3,6 +3,7 @@
 #include <string>
 #include <optional>
 #include <random>
+#include <any>
 #include <fstream>
 #include "defs.h"
 #include "funcs.h"
@@ -32,7 +33,7 @@ extern int moves;
 extern std::list<HackP> demons;
 extern std::unique_ptr<std::ofstream> script_channel;
 
-const CEventP &clock_int(const CEventP &cev, std::optional<int> num = std::optional<int>(), bool flag = false);
+const CEventP &clock_int(const CEventP &cev, std::optional<int> num  = std::optional<int>(), bool flag = false);
 bool clock_disable(const CEventP &cev);
 bool clock_enable(const CEventP &cev);
 
@@ -59,123 +60,116 @@ typedef std::array<ParseContP, lexsize> ParseContV;
 extern Iterator<ParseContV> parse_cont;
 
 std::string unspeakable_code();
-const char *remarkably_disgusting_code();
-void start(std::string_view &rm, std::string_view st = std::string());
+std::string_view remarkably_disgusting_code();
+void start(std::string_view rm, std::string_view st);
 void save_it(bool start = true);
 void contin(bool foo = false);
 bool goto_(const RoomP &rm, const AdvP &win = *winner);
-bool room_info(std::optional<int> full);
-inline bool room_info() { return room_info(std::optional<int>()); }
 bool object_action();
 bool long_desc_obj(const ObjectP &obj, int full = 1, bool fullq = false, bool first = false);
-bool command();
-bool find();
-bool find_frob(const ObjList &objl, const std::string &str1, const std::string &str2, const std::string &str3);
+bool find_frob(const ObjList &objl, std::string_view str1, std::string_view str2, std::string_view str3);
 bool kill_cints();
-bool invent(const AdvP &win);
-inline bool invent() { return invent(*winner); }
 void print_contents(const ObjList &olst);
 void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &win, SIterator indent, bool cse = true);
 bool quit();
 void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
 // recout's quit parameter can be a boolean or a string. If it's a string,
 // print that instead of Quit or Died.
-typedef std::variant<bool, std::string> RecOutQuit;
+typedef std::variant<bool, std::string_view> RecOutQuit;
 void record(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc);
 inline void record(int score, int movs, int deaths, const char *quit, RoomP loc)
 {
     record(score, movs, deaths, std::string(quit), loc);
 }
 void recout(int score, int moves, int deaths, const RecOutQuit &quit, const RoomP &loc);
-bool room_obj();
-bool room_name();
-bool room_room();
 void score_room(const RoomP &rm);
-void mung_room(RoomP rm, std::string_view str);
-inline bool room_desc() { return room_info(3); }
+void mung_room(const RoomP &rm, std::string_view str);
+RAPPLIC(room_desc);
 bool jigs_up(std::string_view desc, bool player = false);
 void score_upd(int num);
 void score_bless();
-bool nogo(const std::string &str, direction dir);
+bool nogo(std::string_view str, direction dir);
 int weight(const ObjList &objl);
 void score_obj(const ObjectP &obj);
-int score(bool ask);
-inline bool score() { score(false); return true; }
 const RoomP &get_door_room(const RoomP &rm, const DoorExitPtr &leavings);
+bool valchk(const std::any& flg, const ObjectP& obj, Iterator<ObjVector> allbut);
 
-bool takefn2(bool take_);
-inline bool takefn() { return takefn2(true); }
-bool backer();
-bool board();
-bool brief();
-bool bugger(bool feech);
-inline bool bugger() { return bugger(false); }
-bool clock_demon(const HackP &hack);
-bool closer();
-bool do_restore();
-bool do_save();
-bool do_script();
-bool do_unscript();
-bool do_unscript(bool verbose);
-bool doc();
-bool dropper();
-bool end_game_herald();
-bool feech();
-bool finish(const RecOutQuit &ask);
-inline bool finish(const char *ask) { return finish(std::string(ask)); }
-inline bool finish(bool ask) { return finish(RecOutQuit(ask)); }
-inline bool finish() { return finish(true); }
+RAPPLIC_DEF(takefn, bool, true);
+HACKFN(clock_demon);
 bool frob_lots(Iterator<ObjVector> uv);
-bool help();
-bool info();
-bool lamp_off();
-bool lamp_on();
-bool move();
-bool no_obj_hack();
-bool opener();
-bool play_time(bool loser);
-inline bool play_time() {
-    return play_time(true);
-}
-bool putter(bool objact);
-inline bool putter() {
-    return putter(true);
-}
-inline bool putter_noarg() { return putter(true); }
-bool restart();
-bool superbrief();
-bool unboard();
-bool valchk(const std::any &flg, const ObjectP &obj, Iterator<ObjVector> allbut);
-bool verbose();
-bool version();
-bool wait(int turns);
-inline bool wait() { return wait(3); }
-bool walk();
+
+RAPPLIC(backer);
+RAPPLIC(board);
+RAPPLIC(brief);
+RAPPLIC_DEF(bugger, bool, false);
+RAPPLIC(closer);
+RAPPLIC(command);
+RAPPLIC(do_restore);
+RAPPLIC(do_save);
+RAPPLIC(do_script);
+RAPPLIC_DEF(do_unscript, bool, true);
+RAPPLIC(doc);
+RAPPLIC(dropper);
+RAPPLIC(end_game_herald);
+RAPPLIC(feech);
+RAPPLIC(find);
+
+struct finish
+{
+    bool operator()(Rarg arg, bool ask = true) const { return (*this)(arg, RecOutQuit(ask)); }
+    bool operator()(Rarg arg, const char* ask) const { return (*this)(arg, RecOutQuit(std::string_view(ask))); }
+    bool operator()(Rarg arg, const RecOutQuit& ask) const;
+
+    bool operator()(bool ask = true) const { return (*this)(Rarg(), ask); }
+    bool operator()(const char* ask) const { return (*this)(Rarg(), ask); }
+    bool operator()(const RecOutQuit& ask) const { return (*this)(Rarg(), ask); }
+};
+
+RAPPLIC(help);
+RAPPLIC(info);
+RAPPLIC_DEF(invent, const AdvP&, *winner);
+RAPPLIC(lamp_off);
+RAPPLIC(lamp_on);
+RAPPLIC(move);
+RAPPLIC(no_obj_hack);
+RAPPLIC(opener);
+RAPPLIC_DEF(play_time, bool, true);
+RAPPLIC_DEF(putter, bool, true);
+RAPPLIC(restart);
+RAPPLIC_DEF(room_info, std::optional<int>, std::optional<int>());
+RAPPLIC(room_name);
+RAPPLIC(room_obj);
+RAPPLIC(room_room);
+struct score
+{
+    score() {}
+    int operator()(bool ask = false) const;
+    int operator()(Rarg arg = Rarg(), bool ask = false) { return (*this)(ask); }
+};
+RAPPLIC(superbrief);
+RAPPLIC(unboard);
+RAPPLIC(verbose);
+RAPPLIC(version);
+RAPPLIC_DEF(wait, int, 3);
+RAPPLIC(walk);
 
 namespace obj_funcs
 {
-    bool valuables_c(std::any everything, const Iterator<ObjVector> &allbut);
+    bool valuables_c_(std::any everything, const Iterator<ObjVector> &allbut);
 }
 
-inline bool rtrnn(const RoomP &p, Bits bits)
+inline bool rtrnn(const RoomP &p, RoomBit bits)
 {
     return p->rbits().test(bits);
 }
 
 // Returns true if any bit in the room bits is set.
 template <typename... Args>
-bool rtrnn(const RoomP &p, Bits first, Args... bits)
+bool rtrnn(const RoomP &p, RoomBit first, Args... bits)
 {
     if (rtrnn(p, first))
         return true;
     return rtrnn(p, bits...);
-}
-
-template <typename T>
-bool rtrz(const RoomP &p, T bit)
-{
-    p->rbits().reset(bit);
-    return true;
 }
 
 template <typename T, typename... Args>

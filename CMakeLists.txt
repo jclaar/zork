@@ -4,7 +4,7 @@ cmake_policy( VERSION 3.14 )
 
 project( zork VERSION 1.0.0 )
 
-set( CMAKE_CXX_STANDARD 17 )
+set( CMAKE_CXX_STANDARD 20 )
 
 find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem )
 set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -31,7 +31,7 @@ add_executable(zork
 	ZorkException.h
 	act2.h
 	act4.h
-	b.h
+	
 	clock.h
 	dung.h
 	globals.h
@@ -60,7 +60,7 @@ add_executable(zork
 	util.cpp
 	act2.cpp
 	act4.cpp
-	b.cpp
+	
 	defs.cpp
 	funcs.cpp
 	info.cpp
@@ -70,6 +70,7 @@ add_executable(zork
 	roomfns.cpp
 	sr.cpp
 	strings.cpp
+	FlagSupport.h
 	zstring.cpp )
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -ldl)

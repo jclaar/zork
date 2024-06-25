@@ -28,20 +28,26 @@ ObjList splice_out(const ObjectP &op, const ObjList &al)
     return new_list;
 }
 
+ObjList &splice_out_in_place(const ObjectP& op, ObjList& al)
+{
+    al.remove(op);
+    return al;
+}
+
 bool remove_object(const ObjectP &obj, const AdvP &winner)
 {
     // Remove it from the object that it's contained in.
     if (auto &ocan = obj->ocan())
     {
-        ocan->ocontents() = splice_out(obj, ocan->ocontents());
+        splice_out_in_place(obj, ocan->ocontents());
     }
     else if (auto &oroom = obj->oroom())
     {
-        oroom->robjs() = splice_out(obj, oroom->robjs());
+        splice_out_in_place(obj, oroom->robjs());
     }
     else if (memq(obj, winner->aobjs()))
     {
-        winner->aobjs() = splice_out(obj, winner->aobjs());
+        splice_out_in_place(obj, winner->aobjs());
     }
     obj->oroom(RoomP());
     obj->ocan(ObjectP());
@@ -65,29 +71,28 @@ void insert_into(const ObjectP &cnt, const ObjectP &obj)
 
 void remove_from(const ObjectP &cnt, const ObjectP &obj)
 {
-    cnt->ocontents() = splice_out(obj, cnt->ocontents());
+    splice_out_in_place(obj, cnt->ocontents());
     obj->ocan(ObjectP());
 }
 
 void take_object(const ObjectP &obj, const AdvP &winner)
 {
-    tro(obj, touchbit);
+    tro(obj, Bits::touchbit);
     obj->oroom(RoomP());
     winner->aobjs().push_front(obj);
 }
 
 void drop_object(const ObjectP &obj, const AdvP &winner)
 {
-    winner->aobjs() = splice_out(obj, winner->aobjs());
+    splice_out_in_place(obj, winner->aobjs());
 }
 
 bool drop_if(const ObjectP &obj, const AdvP &winner)
 {
-    bool rv = false;
-    if (memq(obj, winner->aobjs()))
+    bool rv;
+    if (rv = memq(obj, winner->aobjs()))
     {
         drop_object(obj, winner);
-        rv = true;
     }
     return rv;
 }
@@ -113,7 +118,7 @@ bool in_room(const ObjectP &obj, const RoomP &here)
         {
             found = true;
         }
-        else if (trnn(tobj, searchbit))
+        else if (trnn(tobj, Bits::searchbit))
         {
             found = in_room(tobj, here);
         }
@@ -130,14 +135,8 @@ bool hackable(const ObjectP &obj, const RoomP &rm)
     bool h = false;
     const AdvP &winner = *::winner;
     const ObjectP &av = winner->avehicle();
-    if (av)
-    {
-        h = search_list(obj->oid(), av->ocontents(), AdjectiveP()).first != ObjectP();
-    }
-    else
-    {
-        h = search_list(obj->oid(), rm->robjs(), AdjectiveP()).first != ObjectP();
-    }
+    const ObjList& ol = av ? av->ocontents() : rm->robjs();
+    h = search_list(obj->oid(), ol, AdjectiveP()).first != ObjectP();
     return h;
 }
 
@@ -146,19 +145,19 @@ bool lfcn(const ObjList &l)
 {
     for (auto &x : l)
     {
-        if (trnn(x, onbit))
+        if (trnn(x, Bits::onbit))
             return true;
-        if (trnn(x, ovison) && (trnn(x, openbit) || trnn(x, transbit)))
+        if (trnn(x, Bits::ovison) && (trnn(x, Bits::openbit) || trnn(x, Bits::transbit)))
         {
             for (auto &x2 : x->ocontents())
             {
-                if (trnn(x2, onbit))
+                if (trnn(x2, Bits::onbit))
                 {
                     return true;
                 }
             }
         }
-        if (trnn(x, actorbit) && lfcn((*x->oactor())->aobjs()))
+        if (trnn(x, Bits::actorbit) && lfcn((*x->oactor())->aobjs()))
         {
             return true;
         }
@@ -170,7 +169,7 @@ bool lit(const RoomP &rm)
 {
     const AdvP &win = *winner;
     bool is_lit = false;
-    if (rtrnn(rm, rlightbit) ||
+    if (rtrnn(rm, RoomBit::rlightbit) ||
         lfcn(rm->robjs()) || 
         rm == here && lfcn(win->aobjs()) ||
         win != player() && here == player()->aroom() || lfcn(player()->aobjs()) ||
@@ -181,30 +180,36 @@ bool lit(const RoomP &rm)
     return is_lit;
 }
 
-bool prob(int goodluck, std::optional<int> badluck)
+bool prob(int goodluck, int badluck)
 {
-    if (!badluck.has_value())
+    if (badluck == -1)
         badluck = goodluck;
     int val = rand() % 100;
-    return val < (flags[lucky] ? goodluck : badluck);
+    return val < (flags[FlagId::lucky] ? goodluck : badluck);
 }
 
-bool perform(rapplic fcn, VerbP vb, ObjectP obj1, ObjectP obj2)
+bool perform(rapplic fcn, const VerbP &vb, const ObjectP &obj1, const ObjectP &obj2)
 {
-    bool rv = false;
-    ParseVec &pv = prsvec;
+    ParseVec& pv = prsvec;
+    // Save old parse vector.
+    auto oldpv0 = pv[0];
+    auto oldpv1 = pv[1];
+    auto oldpv2 = pv[2];
     pv[0] = vb;
     pv[1] = obj1 ? obj1 : ParseVecVal();
     pv[2] = obj2 ? obj2 : ParseVecVal();
-    rv = (*fcn)();
+    bool rv = fcn(Rarg());
+    // Restore original pv
+    pv[2] = oldpv2;
+    pv[1] = oldpv1;
+    pv[0] = oldpv0;
     return rv;
 }
 
 
 bool yes_no(bool no_is_bad)
 {
-    std::string inbuf;
-    readst(inbuf, "");
+    std::string inbuf = readst("");
     bool rv;
     if (no_is_bad)
     {
@@ -224,7 +229,7 @@ ObjList rob_adv(const AdvP &win, ObjList newlist)
     ObjList &aobjs = win->aobjs();
     auto end_val = std::partition(aobjs.begin(), aobjs.end(), [](const ObjectP &o)
     {
-        return o->otval() > 0 && !trnn(o, sacredbit);
+        return o->otval() > 0 && !trnn(o, Bits::sacredbit);
     });
     newlist.splice(newlist.begin(), aobjs, aobjs.begin(), end_val);
     return newlist;
@@ -235,10 +240,10 @@ ObjList rob_room(const RoomP &rm, ObjList newlist, int prob)
     ObjList robjs = rm->robjs();
     for (const ObjectP &x : robjs)
     {
-        if (x->otval() > 0 && !trnn(x, sacredbit) && trnn(x, ovison) && ::prob(prob))
+        if (x->otval() > 0 && !trnn(x, Bits::sacredbit) && trnn(x, Bits::ovison) && ::prob(prob))
         {
             remove_object(x);
-            tro(x, touchbit);
+            tro(x, Bits::touchbit);
             newlist.push_front(x);
         }
         else if (x->oactor())

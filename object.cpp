@@ -122,93 +122,92 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
     desc(description),
     objfn(objfun)
 {
-	std::transform(cntnts.begin(), cntnts.end(), std::back_inserter(contents),
-		[](const char *obj)
-	{
-		return get_obj(obj);
-	});
+    for (auto c : cntnts)
+    {
+        contents.push_back(get_obj(c));
+    }
     // All objects must at least have an id in syns[0].
     _ASSERT(syns.size() > 0);
     for (Bits b : bits)
     {
         // The Bits enum corresponds to a bit in flags.
-        flags.set(b);
+        flags[b] = true;
     }
 
     // Add all adjectives to the main word list.
     for (const std::string &adj : adjec)
     {
-        add_zork(kAdj, adj);
+        add_zork(SpeechType::kAdj, adj);
     }
 
     for (const OP &obj_prop : props)
     {
         switch (obj_prop.slot())
         {
-        case ksl_oread:
+        case ObjectSlots::ksl_oread:
         {
             _oread = std::get<std::string>(obj_prop.value());
             break;
         }
-        case ksl_odesco:
+        case ObjectSlots::ksl_odesco:
         {
             _odesco = std::get<std::string>(obj_prop.value());
             break;
         }
-        case ksl_odesc1:
+        case ObjectSlots::ksl_odesc1:
         {
             _odesc1 = std::get<std::string>(obj_prop.value());
             break;
         }
-        case ksl_otval:
+        case ObjectSlots::ksl_otval:
         {
             _otval = std::get<int>(obj_prop.value());
             break;
         }
-        case ksl_ofval:
+        case ObjectSlots::ksl_ofval:
         {
             _ofval = std::get<int>(obj_prop.value());
             break;
         }
-        case ksl_olint:
+        case ObjectSlots::ksl_olint:
         {
             _olint = std::make_shared<olint_t>(std::get<olint_t>(obj_prop.value()));
             clock_disable(clock_int(_olint->ev(), _olint->ev()->ctick()));
             break;
         }
-        case ksl_ostrength:
+        case ObjectSlots::ksl_ostrength:
         {
             _ostrength = std::get<int>(obj_prop.value());
             break;
         }
-        case ksl_osize:
+        case ObjectSlots::ksl_osize:
         {
             _osize = std::get<int>(obj_prop.value());
             break;
         }
-        case ksl_omatch:
+        case ObjectSlots::ksl_omatch:
         {
             _omatch = std::get<int>(obj_prop.value());
             break;
         }
-        case ksl_ocapac:
+        case ObjectSlots::ksl_ocapac:
         {
             _ocapac = std::get<int>(obj_prop.value());
             break;
         }
-        case ksl_oglobal:
+        case ObjectSlots::ksl_oglobal:
             _oglobal = (Bits) std::get<int>(obj_prop.value());
             break;
-        case ksl_oactor:
+        case ObjectSlots::ksl_oactor:
             _oactor = (e_oactor)std::get<int>(obj_prop.value());
             break;
-        case ksl_ovtype:
-            _ovtype = (Bits)std::get<int>(obj_prop.value());
+        case ObjectSlots::ksl_ovtype:
+            _ovtype = std::get<RoomBit>(obj_prop.value());
             break;
-        case ksl_ofmsgs:
+        case ObjectSlots::ksl_ofmsgs:
             _melee_func = std::get<OP::melee_func>(obj_prop.value());
             break;
-        case ksl_obverb:
+        case ObjectSlots::ksl_obverb:
             // Never used? Just ignore.
             break;
         default:
@@ -222,14 +221,14 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
 const AdvP *Object::oactor() const
 {
     const AdvP *actor = nullptr;
-    if (_oactor != oa_none)
+    if (_oactor != e_oactor::none)
     {
-        actor = &actors()[_oactor];
+        actor = &actors()[static_cast<size_t>(_oactor)];
     }
     return actor;
 }
 
-Bits Object::ovtype() const
+RoomBit Object::ovtype() const
 {
     return _ovtype;
 }
@@ -297,12 +296,7 @@ void Object::restore(const Object &o)
 
 const tofmsgs *Object::ofmsgs() const
 {
-    const tofmsgs *ofmsg = nullptr;
-    if (_melee_func)
-    {
-        ofmsg = &_melee_func();
-    }
-    return ofmsg;
+    return _melee_func;
 }
 
 const std::string &Object::odesc1() const
@@ -315,19 +309,17 @@ const std::string &Object::oread() const
     return _oread;
 }
 
-std::map<std::string, int64_t> gobject_map;
-
 GObject::GObject(Bits g_bits, const StringList &syns, const StringList &adj,
     const char *desc, const std::initializer_list<Bits> &_bits, rapplic obj_fun,
 const std::initializer_list<const char *> &contents, const std::initializer_list<OP> &props) :
 Object(syns, adj, desc, _bits, obj_fun, contents, props)
 {
-    if (g_bits != numbits)
+    if (g_bits != Bits::numbits)
     {
         _gbits = g_bits;
         _oglobal = g_bits;
     }
-    flags.set(::oglobal);
+    flags[Bits::oglobal] = true;
 }
 
 void init_objects()
@@ -368,7 +360,7 @@ void init_synonyms()
     // all names are unique. 
 #if _DEBUG
     const ObjectPobl &ob = Objects();
-    for (auto iter : ob)
+    for (auto &iter : ob)
     {
         _ASSERT(iter.second.size() == 1);
     }
@@ -380,13 +372,11 @@ void init_synonyms()
     {
         auto p = get_obj((*cur)->oid());
         _ASSERT(p);
-        if (p->onames().size() > 1)
-        {
-            for (auto iter = p->onames().begin() + 1; iter != p->onames().end(); ++iter)
+        _ASSERT(p->onames().size() >= 1);
+        std::for_each(p->onames().begin() + 1, p->onames().end(), [&p](const std::string& s)
             {
-                Objects()[*iter].push_back(p);
-            }
-        }
+                Objects()[s].push_back(p);
+            });
 		++cur;
     }
 
@@ -395,16 +385,14 @@ void init_synonyms()
 	auto gobj_iter = gobjs.begin();
 	while (gobj_iter != gobjs.end())
     {
-        auto cur = *gobj_iter;
+        GObjectPtr cur = *gobj_iter;
         auto p = get_obj(cur->oid());
         _ASSERT(p);
-        if (p->onames().size() > 1)
-        {
-            for (auto iter = p->onames().begin() + 1; iter != p->onames().end(); ++iter)
+        _ASSERT(p->onames().size() >= 1);
+        std::for_each(p->onames().begin() + 1, p->onames().end(), [&p](const std::string& s)
             {
-                Objects()[*iter].push_back(p);
-            }
-        }
+                Objects()[s].push_back(p);
+            });
 		++gobj_iter;
     }
 }
@@ -416,16 +404,18 @@ void init_gobjects()
     ObjectPobl &obj_pobl = Objects();
     while (objs_iter != objs.end())
     {
-        auto cur = *objs_iter;
+        GObjectPtr cur = *objs_iter;
         // Make sure this object is not already in the global list.
         auto &gl = global_objects();
-        if (std::find_if(gl.begin(), gl.end(), [cur](ObjectP p)
+#ifdef _DEBUG
+        if (std::find_if(gl.begin(), gl.end(), [&cur](const ObjectP &p)
         {
             return p->oid() == cur->oid();
         }) != gl.end())
         {
             error("Duplicate gobject added.");
         }
+#endif
         gl.push_back(cur);
 
         // Make sure that this is the correct object in the object list.
@@ -444,15 +434,14 @@ void init_gobjects()
 		++objs_iter;
     }
 
-    ObjList::iterator it = std::find_if(global_objects().begin(), global_objects().end(), [](ObjectP p) { return p->oid() == "IT"; });
+    ObjList::iterator it = std::find_if(global_objects().begin(), global_objects().end(), [](const ObjectP &p) { return p->oid() == "IT"; });
     _ASSERT(it != global_objects().end());
-    it_object = std::dynamic_pointer_cast<GObject>(*it);
+    it_object = std::static_pointer_cast<GObject>(*it);
 }
 
 
 ObjectP get_obj(std::string_view sname, ObjectP init_val)
 {
-    ObjectP op;
     std::string name(sname);
     auto o = Objects().find(name);
     if (o == Objects().end())
@@ -463,20 +452,14 @@ ObjectP get_obj(std::string_view sname, ObjectP init_val)
             init_val = make_obj({ name.c_str() }, {}, "", {});
         }
         Objects()[name].push_front(init_val);
-        op = init_val;
     }
     else
     {
-        op = o->second.front();
+        init_val = o->second.front();
     }
-    return op;
+    return init_val;
 }
 
-
-olint_t::olint_t(int v, bool enable, const CEventP &ev, int init_val) : _val(v), _ev(ev)
-{
-    _ev->ctick(init_val);
-}
 
 const ObjectPobl &object_pobl()
 {

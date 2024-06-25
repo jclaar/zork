@@ -6,54 +6,56 @@
 #include <chrono>
 #include <thread>
 
-namespace
-{
-    bool term_sim = false;
-}
-
-bool terminal()
-{
-    term_sim = !term_sim;
-    tell(term_sim ? "Terminal mode enabled." : "Terminal mode disabled.");
-    return true;
-}
-
 // Output stream, supporting scripting.
 class TtyBuff : public std::basic_stringbuf<char, std::char_traits<char>>
 {
+public:
+    bool IsTerminal() const { return term_sim; }
+    void SetTerminal(bool on) { term_sim = on; }
+
 protected:
     int sync() override
     {
-        auto s = this->str();
-        if (!term_sim)
+        using namespace std::chrono_literals;
+        auto delay = term_sim ? 10ms : 0ms;
+        char c;
+        if (term_sim)
         {
-            std::cout << s;
+            std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 200));
         }
-        else
+        while ((c = this->sbumpc()) != (char) traits_type::eof())
         {
-            // Method for simulating output on an older terminal.
-            // Just prints one character at a time with a 10ms
-            // delay between each one.
-            for (auto c : s)
+            std::cout << c;
+            if (delay != 0ms)
             {
-                using namespace std::chrono_literals;
-                std::cout << c;
                 std::cout.flush();
-                std::this_thread::sleep_for(10ms);
+                std::this_thread::sleep_for(delay);
+            }
+            if (script_channel)
+            {
+                (*script_channel) << c;
             }
         }
         if (script_channel)
-        {
-            (*script_channel) << s;
             script_channel->flush();
-        }
-        this->str("");
         return 0;
     }
+
+private:
+    bool term_sim = false;
 };
 
-TtyBuff tty_buf;
+namespace
+{
+    TtyBuff tty_buf;
+}
 std::ostream tty(&tty_buf);
+
+bool terminal::operator()() const
+{
+    tty_buf.SetTerminal(!tty_buf.IsTerminal());
+    return tell(tty_buf.IsTerminal() ? "Terminal mode enabled." : "Terminal mode disabled.");
+}
 
 std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest)
 {
@@ -73,20 +75,27 @@ char *substruc(const char *src, size_t start, size_t end, char *dest)
     return dest;
 }
 
-int readst(std::string &buffer, std::string_view prompt)
+std::string readst(std::string_view prompt)
 {
     tty << prompt;
     tty.flush();
+    std::string buffer;
     std::getline(std::cin, buffer);
     if (script_channel)
     {
         (*script_channel) << buffer << std::endl;
     }
-    return (int) buffer.size();
+    return buffer;
 }
 
 SIterator uppercase(SIterator src)
 {
     std::transform(src.begin(), src.end(), src.begin(), [](char c) { return toupper(c); });
     return src;
+}
+
+bool tell(std::string_view s, uint32_t flags)
+{
+    //return ctellt(s, flags);
+    return tell(s, flags, std::monostate());
 }

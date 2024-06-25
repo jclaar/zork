@@ -2,14 +2,13 @@
 //
 
 #include "stdafx.h"
+#include <boost/process.hpp>
+#include <boost/process/v2/process.hpp>
+#include <boost/dll.hpp>
 #include <string>
 #include "funcs.h"
 #include "dung.h"
 #include "rooms.h"
-#pragma warning(disable: 4244)
-#include <boost/process.hpp>
-#include <boost/dll.hpp>
-#pragma warning(default: 4244)
 
 std::string pw(SIterator unm, SIterator key);
 std::string username();
@@ -19,7 +18,7 @@ using namespace std::string_view_literals;
 int run_zork()
 {
 	// Option to print incantation to skip directly to the endgame.
-#if 0
+#if 1
     std::string un = username();
     std::string hello("HELLO");
 	std::cerr << "Hello : " << pw(un, hello) << std::endl;
@@ -53,11 +52,11 @@ int main(int argc, char *argv[])
 		// happen easily. If the child process returns 1, 
 		// a restart will occur. If it returns 0 the shell will
 		// exit.
-		while (status == 1)
+        boost::asio::io_context ctx;
+        while (status == 1)
         {
-            boost::process::child c(boost::dll::program_location(), "-go");
-            c.wait();
-            status = c.exit_code();
+            boost::process::v2::process proc(ctx, boost::dll::program_location(), { "-go" });
+            status = proc.wait();
         }
     }
     else

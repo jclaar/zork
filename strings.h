@@ -7,8 +7,8 @@
 typedef std::vector<const char *> tofmsg;
 typedef std::vector<tofmsg> tofmsgs;
 
-const tofmsgs &cyclops_melee();
-const tofmsgs &knife_melee();
-const tofmsgs &sword_melee();
-const tofmsgs &thief_melee();
-const tofmsgs &troll_melee();
+extern const tofmsgs cyclops_melee;
+extern const tofmsgs knife_melee;
+extern const tofmsgs sword_melee;
+extern const tofmsgs thief_melee;
+extern const tofmsgs troll_melee;

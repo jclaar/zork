@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include <time.h>
 #include <sstream>
-#include <any>
+#include <boost/serialization/serialization.hpp>
 
 #include "sr.h"
 #include "adv.h"
 #include "dung.h"
 #include "util.h"
+#include "objfns.h"
 #include "rooms.h"
 #include <algorithm>
 #include "makstr.h"
@@ -20,6 +21,8 @@
 #include "info.h"
 #include "memq.h"
 
+using namespace std::string_view_literals;
+
 ObjVector obj_uv_b(20);
 Iterator<ObjVector> obj_uv(obj_uv_b, obj_uv_b.end());
 RoomP here;
@@ -27,7 +30,7 @@ rapplic dead_player = nullptr;
 int raw_score = 0;
 int moves = 0;
 const AdvP *winner;
-direction fromdir = NumDirs;
+direction fromdir = direction::NumDirs;
 Iterator<ParseContV> parse_cont;
 bool bugflag = false;
 std::list<HackP> demons;
@@ -51,7 +54,7 @@ void excruciatingly_untasteful_code()
     // ???
 }
 
-const char *remarkably_disgusting_code()
+std::string_view remarkably_disgusting_code()
 {
     return "This Zork created " __DATE__ ".";
 }
@@ -59,28 +62,27 @@ const char *remarkably_disgusting_code()
 std::string unspeakable_code()
 {
     const ObjectP &O = sfind_obj("PAPER");
-    const std::string &oread = O->oread();
+    std::string_view oread = O->oread();
     auto pos = oread.find_first_of('/');
     pos -= (oread[pos - 2] == '1' ? 2 : 1);
-    std::stringstream ss;
-    ss << "There is an issue of US NEWS & DUNGEON REPORT dated ";
-    ss << std::string_view(&oread[pos], oread.find_first_of(' ', pos) - pos);
-    ss << " here.";
-    return ss.str();
+    std::string ss = "There is an issue of US NEWS & DUNGEON REPORT dated " +
+        std::string_view(&oread[pos], oread.find_first_of(' ', pos) - pos) +
+        " here.";
+    return ss;
 }
 
 void contin(bool foo)
 {
     excruciatingly_untasteful_code();
     winner = &player();
-    room_info(3);
+    room_info()(3);
 }
 
-int score(bool ask)
+int score::operator()(bool ask) const
 {
-    bool eg = flags[end_game_flag];
+    bool eg = flags[FlagId::end_game_flag];
     int scor, smax;
-    flags[tell_flag] = true;
+    flags[FlagId::tell_flag] = true;
     princ("Your score ");
     if (eg)
         princ("in the end game ");
@@ -88,10 +90,7 @@ int score(bool ask)
         princ("would be ");
     else
         princ("is ");
-    if (eg)
-        prin1(scor = eg_score);
-    else
-        prin1(scor = (*winner)->ascore());
+    prin1(eg ? (scor = eg_score) : (scor = (*winner)->ascore()));
 
     princ(" [total of ");
     prin1(smax = (eg ? eg_score_max : score_max()));
@@ -135,15 +134,15 @@ bool goto_(const RoomP &rm, const AdvP &win)
 {
     bool rv = false;
     const ObjectP &av = (*winner)->avehicle();
-    bool lb = rtrnn(rm, rlandbit);
+    bool lb = rtrnn(rm, RoomBit::rlandbit);
     if (!lb && (!av || !rtrnn(rm, av->ovtype())) ||
-        (rtrnn(here, rlandbit) && lb && av && !rtrnn(rm, av->ovtype())))
+        (rtrnn(here, RoomBit::rlandbit) && lb && av && !rtrnn(rm, av->ovtype())))
     {
         if (av)
         {
-            tell("You can't go there in a " + av->odesc2() + ".");
+            tell("You can't go there in a ", 1, av->odesc2(), ".");
         }
-        else if (rm->rbits() == 0)
+        else if (rm->rbits().none())
         {
             tell("		Halt! Excavation in Progress!\n"
                 "      Frobozz Magic Implementation Company");
@@ -154,7 +153,7 @@ bool goto_(const RoomP &rm, const AdvP &win)
         }
         // rv remains false.
     }
-    else if (rtrnn(rm, rmungbit))
+    else if (rtrnn(rm, RoomBit::rmungbit))
     {
         tell(rm->rdesc1(), long_tell1);
     }
@@ -190,10 +189,9 @@ int weight(const ObjList &objl)
 
 void score_room(const RoomP &rm)
 {
-    int temp = rm->rval();
-    if (temp > 0)
+    if (rm->rval() > 0)
     {
-        score_upd(temp);
+        score_upd(rm->rval());
         rm->rval(0);
     }
 }
@@ -224,16 +222,14 @@ void save_it(bool strt)
 bool object_action()
 {
     bool rv = false;
-    if (auto pi = prsi())
+    ObjectP temp = prsi();
+    if (temp)
     {
-        rv = apply_object(pi);
+        rv = apply_object(temp);
     }
-    if (!rv && !is_empty(prso()))
+    if (!rv && (temp = prso()))
     {
-        if (ObjectP op = prso())
-        {
-            rv = apply_object(op);
-        }
+        rv = apply_object(temp);
     }
     return rv;
 }
@@ -241,18 +237,18 @@ bool object_action()
 bool long_desc_obj(const ObjectP &obj, int full, bool fullq, bool first)
 {
     bool rv = false;
-    if (!full && (flags[super_brief] || (!fullq && flags[brief_flag])))
+    if (!full && (flags[FlagId::super_brief] || (!fullq && flags[FlagId::brief_flag])))
     {
         if (first)
         {
             tell("You can see: ");
         }
-        tell("a " + obj->odesc2(), 0);
+        tell("a ", 0, obj->odesc2());
         rv = true;
     }
     else if (full == 1)
     {
-        if (!obj->odesco().empty() && !trnn(obj, touchbit))
+        if (!obj->odesco().empty() && !trnn(obj, Bits::touchbit))
         {
             tell(obj->odesco(), long_tell);
         }
@@ -262,50 +258,47 @@ bool long_desc_obj(const ObjectP &obj, int full, bool fullq, bool first)
         }
         else
         {
-            tell("There is a " + obj->odesc2() + " here.", long_tell);
+            tell("There is a ", long_tell, obj->odesc2(), " here.");
         }
         rv = true;
     }
     else
     {
-        const std::string *str;
-        if (trnn(obj, touchbit) || obj->odesco().empty())
+        auto& str = (trnn(obj, Bits::touchbit) || obj->odesco().empty()) ? obj->odesc1() : obj->odesco();
+        if (!str.empty())
         {
-            str = &obj->odesc1();
-        }
-        else
-        {
-            str = &obj->odesco();
-        }
-        if (!str->empty())
-        {
-            tell(*str, long_tell);
+            tell(str, long_tell);
             rv = true;
         }
     }
     return rv;
 }
 
-bool room_room()
-{
-    return room_info(2);
+bool room_desc::operator()() const
+{ 
+    return room_info()(3);
 }
 
-bool room_name()
+bool room_room::operator()() const
+{
+    return room_info()(2);
+}
+
+bool room_name::operator()() const
 {
     _ASSERT(here);
     return tell(here->rdesc2());
 }
 
-bool room_obj()
+bool room_obj::operator()() const
 {
-    room_info(1);
-    if (!flags[tell_flag])
+    room_info()(1);
+    if (!flags[FlagId::tell_flag])
         tell("I see no objects here.");
     return true;
 }
 
-bool room_info(std::optional<int> full)
+bool room_info::operator()(std::optional<int> full) const
 {
     auto &av = (*winner)->avehicle();
     RoomP rm = ::here;
@@ -322,10 +315,11 @@ bool room_info(std::optional<int> full)
         prsvec[1] = ParseVecVal();
     }
 
-    if (!rtrnn(rm, rseenbit))
+    if (!rtrnn(rm, RoomBit::rseenbit))
         fullq = true;
 
-    if (!full || !((full.value()) & 2) == 0)
+    // True if full does not have a value, or if bit 1 is set.
+    if (!full || (full.value() & 2))
     {
         if (here != player()->aroom())
         {
@@ -340,7 +334,7 @@ bool room_info(std::optional<int> full)
             }
             else
             {
-                tell("I see nothing special about the " + std::get<ObjectP>(prso)->odesc2() + ".");
+                tell("I see nothing special about the ", 1, std::get<ObjectP>(prso)->odesc2(), ".");
             }
             return true;
         }
@@ -352,7 +346,7 @@ bool room_info(std::optional<int> full)
 
         tell(rm->rdesc2());
 
-        if (!full && flags[super_brief] || rtrnn(rm, rseenbit) && (flags[brief_flag] || prob(80)) && !full)
+        if (!full && flags[FlagId::super_brief] || rtrnn(rm, RoomBit::rseenbit) && (flags[FlagId::brief_flag] || prob(80)) && !full)
         {
         }
         else if (empty(rm->rdesc1()) && (ra = rm->raction()))
@@ -366,26 +360,23 @@ bool room_info(std::optional<int> full)
             tell(rm->rdesc1(), long_tell1);
         }
 
-        rtro<rseenbit>(rm);
+        rtro(rm, RoomBit::rseenbit);
 
-        av && tell("You are in the " + av->odesc2() + ".", post_crlf);
+        av && tell("You are in the ", post_crlf, av->odesc2(), ".");
     }
 
     if (!lit(here))
     {
         tell("I can't see anything.");
     }
-    else if (!full && !flags[no_obj_print] || full && !((full.value() & 1) == 0))
+    else if (!full && !flags[FlagId::no_obj_print] || full && !((full.value() & 1) == 0))
     {
         for (auto &x : rm->robjs())
         {
-            if (trnn(x, ovison) &&
+            if (trnn(x, Bits::ovison) &&
                 ( (full && (full.value() == 1)) || describable(x)))
             {
-                if (x == av)
-                {
-                }
-                else
+                if (x != av)
                 {
                     if (long_desc_obj(x, full ? full.value() : 1, fullq, first))
                     {
@@ -394,13 +385,13 @@ bool room_info(std::optional<int> full)
                         tell("", 1);
                     }
                 }
-                if (trnn(x, actorbit))
+                if (trnn(x, Bits::actorbit))
                 {
-                    invent(*x->oactor());
+                    invent()(*x->oactor());
                 }
                 else if (see_inside(x))
                 {
-                    print_cont(x, av, winobj, indentstr, full.has_value() || !flags[super_brief] && !flags[brief_flag]);
+                    print_cont(x, av, winobj, indentstr, full.has_value() || !flags[FlagId::super_brief] && !flags[FlagId::brief_flag]);
                 }
             }
         }
@@ -416,12 +407,12 @@ bool room_info(std::optional<int> full)
     return true;
 }
 
-bool invent(const AdvP &win)
+bool invent::operator()(const AdvP &win) const
 {
     bool any = false;
     for (auto &x : win->aobjs())
     {
-        if (trnn(x, ovison))
+        if (trnn(x, Bits::ovison))
         {
             if (!any)
             {
@@ -431,11 +422,11 @@ bool invent(const AdvP &win)
                 }
                 else
                 {
-                    tell("The " + win->aobj()->odesc2() + " is carrying:", post_crlf);
+                    tell("The ", post_crlf, win->aobj()->odesc2(), " is carrying:");
                 }
                 any = true;
             }
-            tell("A " + x->odesc2(), 0);
+            tell("A ", 0, x->odesc2());
 
             if (!x->ocontents().empty() && see_inside(x))
             {
@@ -461,7 +452,7 @@ void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &winobj, SI
     bool also = false;
     if (!cont.empty())
     {
-        if (flags[super_brief] || obj == sfind_obj("TCASE"))
+        if (flags[FlagId::super_brief] || obj == sfind_obj("TCASE"))
         {
             tobj = true;
         }
@@ -476,8 +467,8 @@ void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &winobj, SI
                 else
                 {
                     const std::string *str;
-                    if (trnn(y, ovison) &&
-                        !trnn(y, touchbit) &&
+                    if (trnn(y, Bits::ovison) &&
+                        !trnn(y, Bits::touchbit) &&
                         !(str = &y->odesco())->empty())
                     {
                         also = true;
@@ -515,7 +506,7 @@ void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &winobj, SI
                 {
 
                 }
-                else if (trnn(y, ovison) && 
+                else if (trnn(y, Bits::ovison) && 
                     describable(y) &&
                     !empty(y->odesc2()))
                 {
@@ -528,44 +519,39 @@ void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &winobj, SI
     }
 }
 
-void mung_room(RoomP rm, std::string_view str)
+void mung_room(const RoomP &rm, std::string_view str)
 {
-    rtro<rmungbit>(rm);
+    rtro(rm, RoomBit::rmungbit);
     rm->rdesc1() = str;
 }
 
 void print_contents(const ObjList &olst)
 {
-    auto iter = olst.begin();
-    for (; iter != olst.end(); ++iter)
+    size_t count = olst.size();
+    for (auto& o : olst)
     {
         princ("a ");
-        princ((*iter)->odesc2());
-        // If there two or more items left, print
-        // a comma. If there is one more left, print
-        // "and".
-        size_t remain = std::distance(iter, olst.end());
-        if (remain > 2)
+        princ(o->odesc2());
+        if (count > 2)
             princ(", ");
-        else if (remain == 2)
+        else if (count == 2)
             princ(" and ");
+        --count;
     }
 }
 
 void rdcom(Iterator<ParseContV> ivec)
 {
-    ParseVec rvec;
     int inplen = 1;
     std::string inbuf;
     ObjectP av;
     ParseVecVal cv;
     Iterator<ParseContV> rv;
-    rapplic random_action = nullptr;
 
     if (!ivec)
     {
-        if (!flags[tell_flag])
-            room_info(0);
+        if (!flags[FlagId::tell_flag])
+            room_info()(0);
     }
 
     Iterator<ParseContV> vc;
@@ -582,9 +568,9 @@ void rdcom(Iterator<ParseContV> ivec)
         }
         else if (!ivec)
         {
-            flags[tell_flag] = false;
+            flags[FlagId::tell_flag] = false;
             static const std::string prompt = ">";
-            inplen = readst(inbuf, prompt);
+            inplen = (int) (inbuf = readst(prompt)).size();
             if (inplen > 0 && inbuf[0] == ';' || inplen == 0)
                 continue;
 
@@ -593,15 +579,16 @@ void rdcom(Iterator<ParseContV> ivec)
                 std::transform(inbuf.begin(), inbuf.end(), inbuf.begin(), toupper);
                 auto pos = inbuf.find_first_of(' ');
                 ++pos;
-                RoomP rm = sfind_room(inbuf.substr(pos));
+                auto inbuf_view = std::string_view(&inbuf[pos]);
+                RoomP rm = sfind_room(inbuf_view);
                 if (!rm)
                 {
-                    tell("Room " + inbuf.substr(pos) + " not found.");
+                    tell("Room ", 1, inbuf_view, " not found.");
                     continue;
                 }
                 goto_(rm);
                 parse_cont.clear();
-                room_info();
+                room_info()();
                 continue;
             }
 
@@ -615,14 +602,14 @@ void rdcom(Iterator<ParseContV> ivec)
                 rv = ivec ? ivec : (pc ? pc : vc);
                 return (rv &&
                     eparse(rv, false) &&
-                    std::get_if<VerbP>(&(cv = (rvec = prsvec)[0])));
+                    std::get_if<VerbP>(&(cv = (prsvec)[0])));
             };
-            if (flags[parse_won] = pfn())   // 728
+            if (flags[FlagId::parse_won] = pfn())   // 728
             {
                 no_tell = false;
-                if (random_action = (*winner)->aaction())
+                if ((*winner)->aaction())
                 {
-                    if (apply_random(random_action))
+                    if (apply_random((*winner)->aaction()))
                     {
                         if (ivec)
                             break;
@@ -631,42 +618,42 @@ void rdcom(Iterator<ParseContV> ivec)
                     }
                 }
                 if ((av = (*winner)->avehicle()) &&
-                    (random_action = av->oaction()))  // 736
+                    (av->oaction()))  // 736
                 {
-                    vval = !apply_random(random_action, read_in);
+                    vval = !apply_random(av->oaction(), ApplyRandomArg::read_in);
                 }
 
                 no_tell = false;        // 739
-                if (vval && (random_action = std::get<VerbP>(cv)->vfcn()) && apply_random(random_action))  // 740
+                if (vval && std::get<VerbP>(cv)->vfcn() && apply_random(std::get<VerbP>(cv)->vfcn()))  // 740
                 {
                     no_tell = false;
                     // If the room has changed due to the open, display the room info.
                     RoomP there = here;
                     if (!lit && there == (here = ::here) && ::lit(here))
                     {
-                        perform(room_info, find_verb("LOOK"));
+                        perform(room_info(), find_verb("LOOK"));
                     }
 
-                    if (random_action = ::here->raction())
+                    if (::here->raction())
                     {
-                        apply_random(random_action);
+                        apply_random(::here->raction());
                     }
                 }
             }
             else if (ivec)
             {
-                if (flags[tell_flag])
-                    tell("Please input the entire command again.");
+                if (flags[FlagId::tell_flag])
+                    tell("Please input the entire command again."sv);
                 else
-                    tell("Nothing happens.");
+                    tell("Nothing happens."sv);
                 return;
             }
 
-            flags[tell_flag] || tell("Nothing happens.");
+            flags[FlagId::tell_flag] || tell("Nothing happens.");
         }
         else
         {
-            flags[parse_won] = false;
+            flags[FlagId::parse_won] = false;
         }
         if (bugflag)
         {
@@ -685,9 +672,9 @@ void rdcom(Iterator<ParseContV> ivec)
             }
         }
         no_tell = 0;
-        if (flags[parse_won] && (av = (*winner)->avehicle()) && (random_action = av->oaction()))
+        if (flags[FlagId::parse_won] && (av = (*winner)->avehicle()) && av->oaction())
         {
-            apply_random(random_action, read_out);
+            apply_random(av->oaction(), ApplyRandomArg::read_out);
         }
         if (ivec)
             break;
@@ -710,7 +697,7 @@ void score_bless()
 
 void score_upd(int num)
 {
-    if (flags[end_game_flag])
+    if (flags[FlagId::end_game_flag])
     {
         eg_score += num;
     }
@@ -725,8 +712,6 @@ void score_upd(int num)
 bool jigs_up(std::string_view desc, bool player)
 {
     const ObjectP &lamp = sfind_obj("LAMP");
-    ObjList val_list;
-    ObjectP c;
     ObjList aobjs = (*winner)->aobjs();
 
     no_tell = 0;
@@ -734,7 +719,7 @@ bool jigs_up(std::string_view desc, bool player)
 
     if (*winner != ::player() && !player)
     {
-        tell("The " + (*winner)->aobj()->odesc2() + " has died.");
+        tell("The ", 1, (*winner)->aobj()->odesc2(), " has died.");
         remove_object((*winner)->aobj());
         (*winner)->aroom(sfind_room("FCHMP"));
 		return false;
@@ -743,40 +728,40 @@ bool jigs_up(std::string_view desc, bool player)
     score_upd(-10);
     (*winner)->avehicle(nullptr);
     remove_object(sfind_obj("#####"));
-    if (flags[end_game_flag])
+    if (flags[FlagId::end_game_flag])
     {
         tell("Normally I could attempt to rectify your condition, but I'm ashamed\n"
             "to say my abilities are not equal to dealing with your present state\n"
             "of disrepair.  Permit me to express my profoundest regrets.");
-        finish(false);
+        finish()(false);
         return true;
     }
 
     if (deaths >= 2)
     {
         tell(suicidal, long_tell1);
-        finish(false);
+        finish()(false);
         return true;
     }
 
     ++deaths;
     tell(death, 3);
-    flags[dead] = true;
+    flags[FlagId::dead] = true;
     gwim_disable = true;
     always_lit = true;
     ::player()->aaction(dead_player);
 
     for (ObjectP &x : here->robjs())
     {
-        trz(x, fightbit);
+        trz(x, Bits::fightbit);
     }
-    tro(sfind_obj("ROBOT"), ovison);
+    tro(sfind_obj("ROBOT"), Bits::ovison);
 
     if (const RoomP &lamp_location = lamp->oroom())
     {
         if (const ObjectP &lc = lamp->ocan())
         {
-            lc->ocontents() = splice_out(lamp, lc->ocontents());
+            splice_out_in_place(lamp, lc->ocontents());
             lamp->oroom(nullptr);
             lamp->ocan(nullptr);
         }
@@ -793,7 +778,7 @@ bool jigs_up(std::string_view desc, bool player)
                 {
                     if (memq(lamp, *y))
                     {
-                        *y = splice_out(lamp, *y);
+                        splice_out_in_place(lamp, *y);
                         break;
                     }
                 }
@@ -810,15 +795,15 @@ bool jigs_up(std::string_view desc, bool player)
         ((*winner)->aobjs() = splice_out(lamp, aobjs)).push_front(lamp);
     }
 
-    trz(sfind_obj("DOOR"), touchbit);
+    trz(sfind_obj("DOOR"), Bits::touchbit);
     goto_(sfind_room("LLD1"));
     parse_cont.clear();
-    flags[egypt_flag] = true;
-    val_list = rob_adv(*winner, val_list);
+    flags[FlagId::egypt_flag] = true;
+    auto val_list = rob_adv(*winner, ObjList());
 
-    if (memq(c = sfind_obj("COFFI"), (*winner)->aobjs()))
+    if (const ObjectP &c = sfind_obj("COFFI"); memq(c, (*winner)->aobjs()))
     {
-        (*winner)->aobjs() = splice_out(c, (*winner)->aobjs());
+        splice_out_in_place(c, (*winner)->aobjs());
         insert_object(c, sfind_room("EGYPT"));
     }
 
@@ -854,8 +839,7 @@ bool jigs_up(std::string_view desc, bool player)
         {
             break;
         }
-        RoomP rm;
-        if (!rtrnn(rm = *riter, rendgame, rairbit, rwaterbit ))
+        if (const RoomP &rm = *riter; !rtrnn(rm, RoomBit::rendgame, RoomBit::rairbit, RoomBit::rwaterbit ))
         {
             insert_object(*oiter, rm);
             ++oiter;
@@ -868,11 +852,11 @@ bool jigs_up(std::string_view desc, bool player)
     return true;
 }
 
-bool command()
+bool command::operator()() const
 {
     const AdvP &win = *winner;
     const AdvP &play = player();
-    auto lv = lexv;
+    Iterator<ParseContV> lv = lexv;
     auto v = rest(member("", lv), 1);
     auto nv = rest(member("", v), 1);
     bool rv = true;
@@ -884,7 +868,7 @@ bool command()
     else if (object_action())
     {
     }
-    else if (trnn(prso, actorbit))
+    else if (trnn(prso, Bits::actorbit))
     {
         winner = prso->oactor();
         here = (*winner)->aroom();
@@ -901,16 +885,16 @@ bool command()
         winner = &play;
         here = play->aroom();
     }
-    else if (trnn(prso, vicbit))
+    else if (trnn(prso, Bits::vicbit))
     {
-        tell("The " + prso->odesc2() + " pays no attention.", 1);
+        tell("The ", 1, prso->odesc2(), " pays no attention.");
     }
     else
         tell("You cannot talk to that!");
     return true;
 }
 
-bool find()
+bool find::operator()() const
 {
     if (object_action())
     {
@@ -924,22 +908,50 @@ bool find()
     return true;
 }
 
-bool find_frob(const ObjList &objl, const std::string &str1, const std::string &str2, const std::string &str3)
+bool or_(bool b)
+{
+    return b;
+}
+
+// Returns true if any argument is true.
+template <typename... Args>
+bool or_(bool b, Args... args)
+{
+    if (b)
+        return true;
+    return or_(args...);
+}
+
+bool and_(bool b)
+{
+    return b;
+}
+
+// Returns true if all arguments are true.
+template <typename... Args>
+bool and_(bool b, Args... args)
+{
+    if (!b)
+        return false;
+    return and_(args...);
+}
+
+bool find_frob(const ObjList &objl, std::string_view str1, std::string_view str2, std::string_view str3)
 {
     for (const ObjectP &x : objl)
     {
         if (prso() == x)
         {
-            tell(str2 + x->odesc2() + str3, post_crlf);
+            tell(str2, post_crlf, x->odesc2(), str3);
         }
-        else if (trnn(x, transbit) || openable(x) && trnn(x, openbit))
+        else if (or_(trnn(x, Bits::transbit), and_(openable(x), trnn(x, Bits::openbit))))
         {
             for (const ObjectP &y : x->ocontents())
             {
                 if (y == prso())
                 {
-                    tell(str2 + y->odesc2() + str3, post_crlf);
-                    tell("It is in the " + x->odesc2() + str1, post_crlf);
+                    tell(str2, post_crlf, y->odesc2(), str3);
+                    tell("It is in the ", post_crlf, x->odesc2(), str1);
                 }
             }
         }
@@ -990,11 +1002,11 @@ bool clock_enable(const CEventP &cev)
     return true;
 }
 
-bool clock_demon(const HackP &hack)
+bool clock_demon::operator()(const HackP &hack) const
 {
     bool flg = false;
     VerbP cint = find_verb("C-INT");
-    if (flags[parse_won])
+    if (flags[FlagId::parse_won])
     {
         for (const CEventP &ev : hack->hobjs_ev())
         {
@@ -1026,35 +1038,31 @@ bool clock_demon(const HackP &hack)
     return flg;
 }
 
-bool backer()
+bool backer::operator()() const
 {
     return tell(backstr);
 }
 
-bool board()
+bool board::operator()() const
 {
     const AdvP &win = *winner;
     const ObjectP &av = win->avehicle();
     ObjectP prso = ::prso();
-    if (trnn(prso, vehbit))
+    if (trnn(prso, Bits::vehbit))
     {
         if (!memq(prso, here->robjs()))
         {
-            tell("The " + prso->odesc2() + " must be on the ground to be boarded.", post_crlf);
+            tell("The ", post_crlf, prso->odesc2(), " must be on the ground to be boarded.");
         }
         else if (av)
         {
-            tell("You are already in the " + prso->odesc2() + ", cretin!", post_crlf);
+            tell("You are already in the ", post_crlf, prso->odesc2(), ", cretin!");
         }
         else
         {
-            if (object_action())
+            if (!object_action())
             {
-
-            }
-            else
-            {
-                tell("You are now in the " + prso->odesc2() + ".", post_crlf);
+                tell("You are now in the ", post_crlf, prso->odesc2(), ".");
                 win->avehicle(prso);
                 insert_into(prso, sfind_obj("#####"));
                 return true;
@@ -1063,13 +1071,13 @@ bool board()
     }
     else
     {
-        tell("I suppose you have a theory on boarding a " + prso->odesc2() + "?");
+        tell("I suppose you have a theory on boarding a ", 1, prso->odesc2(), "?");
     }
     parse_cont.clear();
     return true;
 }
 
-bool unboard()
+bool unboard::operator()() const
 {
     const AdvP &win = *winner;
     const ObjectP &av = win->avehicle();
@@ -1080,7 +1088,7 @@ bool unboard()
         {
 
         }
-        else if (rtrnn(here, rlandbit))
+        else if (rtrnn(here, RoomBit::rlandbit))
         {
             tell("You are on your own feet again.");
             win->avehicle(nullptr);
@@ -1097,7 +1105,7 @@ bool unboard()
     return true;
 }
 
-bool takefn2(bool take_)
+bool takefn::operator()(bool take_) const
 {
     const AdvP &win = *winner;
     const RoomP &rm = win->aroom();
@@ -1109,7 +1117,7 @@ bool takefn2(bool take_)
     int load_max = ::load_max();
 
     ObjectP prsoo = prso();
-    if (trnn(prsoo, no_check_bit))
+    if (trnn(prsoo, Bits::no_check_bit))
     {
         return object_action();
     }
@@ -1133,7 +1141,7 @@ bool takefn2(bool take_)
         tell("You are in it, loser!");
         return false;
     }
-    else if (!trnn(prsoo, takebit))
+    else if (!trnn(prsoo, Bits::takebit))
     {
         apply_object(prsoo) || tell(pick_one(yuks));
         return false;
@@ -1182,9 +1190,9 @@ void score_obj(const ObjectP &obj)
     }
 }
 
-bool do_restore()
+bool do_restore::operator()() const
 {
-    if (rtrnn(sfind_room("TSTRS"), rseenbit))
+    if (rtrnn(sfind_room("TSTRS"), RoomBit::rseenbit))
     {
         tell("Restores are not permitted in the end game.");
         return true;
@@ -1200,9 +1208,9 @@ bool do_restore()
     return true;
 }
 
-bool do_save()
+bool do_save::operator()() const
 {
-    if (rtrnn(sfind_room("TSTRS"), rseenbit))
+    if (rtrnn(sfind_room("TSTRS"), RoomBit::rseenbit))
     {
         tell("Saves not permitted from end game.");
     }
@@ -1219,16 +1227,14 @@ bool do_save()
     return true;
 }
 
-bool do_script()
+bool do_script::operator()() const
 {
-    bool rv;
     if (script_channel)
     {
-        rv = tell("You are already scripting.");
+        tell("You are already scripting.");
     }
     else
     {
-        rv = true;
         tell("Script file name: ", no_crlf);
         tty.flush();
         std::string s;
@@ -1237,7 +1243,7 @@ bool do_script()
         script_channel = std::make_unique<std::ofstream>(s);
         if (script_channel->is_open())
         {
-            tell("Scripting to " + s);
+            tell("Scripting to ", 1, s, ".");
         }
         else
         {
@@ -1245,53 +1251,47 @@ bool do_script()
             tell("Unable to open scripting file.");
         }
     }
-    return rv;
+    return true;
 }
 
-bool do_unscript()
-{
-    return do_unscript(true);
-}
-
-bool do_unscript(bool verbose)
+bool do_unscript::operator()(bool verbose) const
 {
     if (script_channel)
     {
-        script_channel->close();
+        // Automatically closes the file.
         script_channel.reset();
-        verbose && tell("Scripting off.");
+        verbose && tell("Scripting off."sv);
     }
     else
     {
-        verbose && tell("Scripting wasn't on.");
+        verbose && tell("Scripting wasn't on."sv);
     }
     return true;
 }
 
-bool doc()
+bool doc::operator()() const
 {
-    tell("This is where the documentation goes.");
-    return true;
+    return tell("This is where the documentation goes.");
 }
 
-bool dropper()
+bool dropper::operator()() const
 {
     const AdvP &winner = *::winner;
     const ObjectP &av = winner->avehicle();
     const ObjList &aobjs = winner->aobjs();
     bool getter = false;
-    auto vec = prsvec;
+    ParseVec vec = prsvec;
     RoomP rm = winner->aroom();
-    ObjectP nobj;
-    VerbP vb = prsa();
+    auto &vb = prsa();
 
     ObjectP prsoo = prso();
     if (prsoo == av)
-        return perform(unboard, find_verb("DISEM"), prsoo);
-    else if (trnn(prsoo, no_check_bit))
+        return perform(unboard(), find_verb("DISEM"), prsoo);
+    else if (trnn(prsoo, Bits::no_check_bit))
         return object_action();
 
-    if (prsoo->ocan() && (nobj = prsoo->ocan()) && memq(nobj, aobjs))
+    const ObjectP& nobj = prsoo->ocan();
+    if (nobj && memq(nobj, aobjs))
     {
         getter = true;
     }
@@ -1304,13 +1304,13 @@ bool dropper()
         }
         else if (getter)
         {
-            if (trnn(nobj, openbit))
+            if (trnn(nobj, Bits::openbit))
             {
                 remove_from(nobj, prsoo);
             }
             else
             {
-                tell("The " + nobj->odesc2() + " is closed.", 1);
+                tell("The ", 1, nobj->odesc2(), " is closed.");
                 return false;
             }
         }
@@ -1321,7 +1321,7 @@ bool dropper()
         {
             put(vec, 1, prsoo);
             put(vec, 2, av);
-            putter(false);
+            putter()(false);
             put(vec, 2, std::monostate());
             put(vec, 0, vb);
         }
@@ -1340,22 +1340,22 @@ bool dropper()
         }
         else if (verbq( "DROP", "POUR" ))
         {
-            tell("Dropped.");
+            tell("Dropped."sv);
         }
         else if (verbq("THROW"))
         {
-            tell("Thrown.");
+            tell("Thrown."sv);
         }
     }
     else
     {
-        tell("You are not carrying that.");
+        tell("You are not carrying that."sv);
     }
 
     return true;
 }
 
-bool putter(bool objact)
+bool putter::operator()(bool objact) const
 {
     ParseVec pv = prsvec;
     const ObjList &robjs = here->robjs();
@@ -1363,7 +1363,7 @@ bool putter(bool objact)
     ObjectP prsoo = prso();
     ObjectP prsio = prsi();
 
-    if (trnn(prsoo, no_check_bit))
+    if (trnn(prsoo, Bits::no_check_bit))
     {
         return object_action();
     }
@@ -1373,37 +1373,35 @@ bool putter(bool objact)
         return object_action() ? true : tell("Nice try.");
     }
 
-    if (trnn(prsio, openbit) || openable(prsio) || trnn(prsio, vehbit))
+    if (trnn(prsio, Bits::openbit) || openable(prsio) || trnn(prsio, Bits::vehbit))
     {
         can = prsio;
         crock = prsoo;
     }
     else
     {
-        tell("I can't do that.");
+        tell("I can't do that."sv);
         return false;
     }
 
-    if (!trnn(can, openbit))
+    if (!trnn(can, Bits::openbit))
     {
-        tell("I can't reach inside.");
+        tell("I can't reach inside."sv);
         return false;
     }
     else if (can == crock)
     {
-        tell("How can you do that?");
+        tell("How can you do that?"sv);
         return false;
     }
     else if (crock->ocan() == can)
     {
-        tell("The " + crock->odesc2() + " is already in the ", 0);
-        tell(can->odesc2());
-        return true;
+        return tell("The ", 1, crock->odesc2(), " is already in the ", can->odesc2(), ".");
     }
 
     if (can->ocan() && can->ocan() == crock)
     {
-        if (!(perform(takefn, find_verb("TAKE"), can)))
+        if (!(perform(takefn(), find_verb("TAKE"), can)))
             return false;
     }
 
@@ -1411,7 +1409,7 @@ bool putter(bool objact)
     {
         if (can == (*winner)->avehicle())
         {
-            tell("There isn't enough room in the " + can->odesc2() + ".", 1);
+            tell("There isn't enough room in the ", 1, can->odesc2(), ".");
         }
         else
         {
@@ -1428,7 +1426,7 @@ bool putter(bool objact)
         pv[1] = crock;
         pv[2] = std::monostate();
 
-        if (!takefn())
+        if (!takefn()())
         {
             pv[0] = find_verb("PUT");
             pv[1] = crock;
@@ -1459,28 +1457,25 @@ bool putter(bool objact)
     }
 }
 
-bool end_game_herald()
+bool end_game_herald::operator()() const
 {
-    flags[end_game_flag] = true;
-    tell(end_herald_1, long_tell1);
-    return true;
+    flags[FlagId::end_game_flag] = true;
+    return tell(end_herald_1, long_tell1);
 }
 
-bool feech()
+bool feech::operator()() const
 {
-    bugger(true);
-    return true;
+    return bugger()(true);
 }
 
-bool finish(const RecOutQuit &ask)
+bool finish::operator()(Rarg, const RecOutQuit &ask) const
 {
-    bool askq;
-    if (std::get_if<std::string>(&ask))
-        askq = false;
-    else
-        askq = *std::get_if<bool>(&ask);
+    bool askq = std::visit(overload{
+        [](std::string_view unused) { return false; },
+        [](bool b) { return b; }
+        }, ask);
     no_tell = 0;
-    int scor = score(askq);
+    int scor = score()(askq);
     if (askq && tell("Do you wish to leave the game? (Y is affirmative): ") && yes_no() || !askq)
     {
         record(scor, moves, deaths, ask, here);
@@ -1503,9 +1498,9 @@ void record(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc)
 void recout(int score, int moves, int deaths, const RecOutQuit &quit, const RoomP &loc)
 {
     crlf();
-    play_time();
+    play_time()();
     crlf();
-    if (!flags[end_game_flag])
+    if (!flags[FlagId::end_game_flag])
     {
         prin1(score);
     }
@@ -1517,10 +1512,7 @@ void recout(int score, int moves, int deaths, const RecOutQuit &quit, const Room
     princ(" points, ");
     prin1(moves);
     princ(" move");
-    if (moves == 1)
-        princ(", ");
-    else
-        princ("s, ");
+    princ(moves == 1 ? ", " : "s, ");
     prin1(deaths);
     princ(" death");
     if (deaths == 1)
@@ -1529,55 +1521,44 @@ void recout(int score, int moves, int deaths, const RecOutQuit &quit, const Room
         princ("s. ");
     princ(" In ");
     princ(loc->rdesc2());
-    const bool *bquit;
-    if (bquit = std::get_if<bool>(&quit))
-    {
-        if (*bquit)
-            princ(". Quit.");
-        else
-            princ(". Died.");
-    }
-    else
-    {
-        princ(*std::get_if<std::string>(&quit));
-    }
+    std::visit(overload{
+        [](bool bquit) { princ(bquit ? ". Quit." : ". Died."); },
+        [](std::string_view s) { princ(s); }
+        }, quit);
     crlf();
 }
 
-bool no_obj_hack()
+bool no_obj_hack::operator()() const
 {
-    return tell(flags.flip(no_obj_print).test(no_obj_print) ? "Don't print objects." : "Print objects.");
+    return tell(flags.flip(FlagId::no_obj_print).test(FlagId::no_obj_print) ? "Don't print objects." : "Print objects.");
 }
 
-bool opener()
+bool opener::operator()() const
 {
     ObjectP obj;
-    bool rv;
     if (object_action())
     {
-        rv = true;
     }
-    else if (!(trnn((obj = prso()), contbit)))
+    else if (!(trnn((obj = prso()), Bits::contbit)))
     {
-        rv = tell("You must tell me how to do that to a " + obj->odesc2() + ".", post_crlf);
+        tell("You must tell me how to do that to a ", post_crlf, obj->odesc2(), ".");
     }
     else if (obj->ocapac() != 0)
     {
-        if (trnn(obj, openbit))
+        if (trnn(obj, Bits::openbit))
         {
-            rv = tell("It is already open.");
+            tell("It is already open.");
         }
         else
         {
-            rv = true;
-            tro(obj, openbit);
-            if (empty(obj->ocontents()) || trnn(obj, transbit))
+            tro(obj, Bits::openbit);
+            if (empty(obj->ocontents()) || trnn(obj, Bits::transbit))
             {
                 tell("Opened.");
             }
-            else if (flags[tell_flag] = true) // Always true -- this is intentional.
+            else if (flags[FlagId::tell_flag] = true) // Always true -- this is intentional.
             {
-                tell("Opening the " + obj->odesc2() + " reveals ", 0);
+                tell("Opening the ", 0, obj->odesc2(), " reveals ");
                 print_contents(obj->ocontents());
                 princ('.');
                 princ('\n');
@@ -1586,20 +1567,16 @@ bool opener()
     }
     else
     {
-        rv = tell("The " + obj->odesc2() + " cannot be opened.", post_crlf);
+        tell("The ", post_crlf, obj->odesc2(), " cannot be opened.");
     }
-    return rv;
+    return true;
 }
 
-bool play_time(bool loser)
+bool play_time::operator()(bool loser) const
 {
     using namespace std::chrono;
     // Not an exact translation of the MDL code, but gets the point across...
-    flags[tell_flag] = true;
-    if (loser)
-        princ("You have been playing ZORK for ");
-    else
-        princ("Played for ");
+    flags[FlagId::tell_flag] = true;
 
     auto d = steady_clock::now() - start_time;
     auto h = duration_cast<hours>(d);
@@ -1608,93 +1585,96 @@ bool play_time(bool loser)
     d -= m;
     auto s = duration_cast<seconds>(d);
 
-    std::ostringstream ss;
-    ss << h.count() << " hour" << (h.count() != 1 ? "s" : "") << ", ";
-    ss << m.count() << " minute" << (m.count() != 1 ? "s" : "") << ", and ";
-    ss << s.count() << " second" << (s.count() != 1 ? "s" : "") << ".";
+    auto sfn = [](int c)
+    {
+        return c != 1 ? "s" : "";
+    };
+    auto sv = loser ? "You have been playing ZORK for " : "Played for ";
+    tell(sv, 1, h.count(), " hour", sfn(h.count()), ", ", m.count(), " minute", sfn(m.count()), ", and ",
+        s.count(), " second", sfn((int)s.count()), ".");
 
-    tell(ss.str());
     return false;
 }
 
-bool brief()
+bool brief::operator()() const
 {
-    flags[brief_flag] = true;
-    flags[super_brief] = false;
-    tell("Brief descriptions.");
-    return true;
+    flags[FlagId::brief_flag] = true;
+    flags[FlagId::super_brief] = false;
+    return tell("Brief descriptions.");
 }
 
-bool bugger(bool feech)
+bool bugger::operator()(bool feech) const
 {
     if (feech)
     {
         time_t t;
         time(&t);
         auto tm = localtime(&t);
-        std::string s = "This software was feature-complete approximately " + std::to_string(tm->tm_year - 81) + " years ago.\n"
+        tell("This software was feature-complete approximately ", 1, tm->tm_year - 81, " years ago.\n"
             "Perhaps you can contact the original authors to see if there\n"
-            "is an interest in adding any new features.";
-        tell(s);
+            "is an interest in adding any new features.");
     }
     else
     {
         const char *tell_str = 
-        "This software was ported in someone's spare time, for free.\n"
-        "How could there possibly be a bug in it?  Or, if there is,\n"
-        "why would you think that this person would want to hear about it?\n\n"
-        "Be proactive, fix it yourself and submit a pull request.  Have fun\n"
-        "and learn at the same time!\n\n"
-            "In your request, be sure to include:\n"
-            "    - A description of the bug.\n"
-            "    - A brief description of the fix.\n"
-            "    - Snide comments on the author's poor coding style.\n"
-            "    - Disparaging remarks on why C++ is a horrible language.\n"
-            "       (Make sure your primary reason is \"because Linus said so\".)\n"
-            "    - Sneering wisecracks asking why this software was primarily developed\n"
-            "      on Windows instead of Linux.\n"
-            "    - Spiteful criticism about the author using spaces instead of tabs.\n\n"
-        "The less C++-inclined can also submit an issue to\n"
-        "https://bitbucket.org/jclaar3/zork/issues.\n";
+R"~(This software was ported in someone's spare time, for free.
+How could there possibly be a bug in it?  Or, if there is,
+why would you think that this person would want to hear about it?
+Be proactive, fix it yourself and submit a pull request.  Have fun
+and learn at the same time!
+
+In your request, be sure to include:
+    - A description of the bug.
+    - A brief description of the fix.
+    - Snide comments on the author's poor coding style.
+    - Disparaging remarks on why C++ is a horrible language.
+       (Make sure your primary reason is "because Linus said so".)
+    - Sneering wisecracks asking why this software was primarily developed
+      on Windows instead of Linux.
+    - Spiteful criticism about the author using spaces instead of tabs.
+
+The less C++-inclined can also submit an issue to
+https://bitbucket.org/jclaar3/zork/issues.)~";
         tell(tell_str);
     }
     return true;
 }
 
-bool closer()
+bool closer::operator()() const
 {
     ObjectP prsoo;
     if (object_action())
     {
     }
-    else if (!trnn(prsoo = prso(), contbit))
+    else if (!trnn(prsoo = prso(), Bits::contbit))
     {
-        tell("You must tell me how to do that to a " + prsoo->odesc2() + ".", post_crlf);
+        tell("You must tell me how to do that to a ", post_crlf, prsoo->odesc2(), ".");
     }
     else if (prsoo->ocapac() != 0)
     {
-        if (trnn(prsoo, openbit))
+        if (trnn(prsoo, Bits::openbit))
         {
-            trz(prsoo, openbit);
-            tell("Closed.");
+            trz(prsoo, Bits::openbit);
+            tell("Closed."sv);
         }
         else
         {
-            tell("It is already closed.");
+            tell("It is already closed."sv);
         }
     }
     else
-        tell("You cannot close that.");
+        tell("You cannot close that."sv);
     return true;
 }
 
 const RoomP &get_door_room(const RoomP &rm, const DoorExitPtr &leavings)
 {
     _ASSERT(rm == leavings->droom1() || rm == leavings->droom2());
-    return rm == leavings->droom1() ? leavings->droom2() : leavings->droom1();
+    auto& dr1 = leavings->droom1();
+    return rm == dr1 ? leavings->droom2() : dr1;
 }
 
-bool walk()
+bool walk::operator()() const
 {
     direction where_;
     try
@@ -1703,7 +1683,7 @@ bool walk()
     }
     catch (...)
     {
-        where_ = NumDirs;
+        where_ = direction::NumDirs;
     }
     const AdvP &me = *winner;
     ex_rapplic random_action;
@@ -1711,10 +1691,10 @@ bool walk()
     ExitFuncVal nl;
     std::string losstr;
     bool dark = false;
-    const Ex *nrm;
     ExitType leavings;
 
-    if (nrm = memq(where_, rm->rexits()))
+    auto nrm = memq(where_, rm->rexits());
+    if (nrm)
     {
         CExitPtr *cep = nullptr;
         SetgExitP *setg = nullptr;
@@ -1728,13 +1708,7 @@ bool walk()
         else if ((cep = std::get_if<CExitPtr>(&leavings)) ||
             (setg = std::get_if<SetgExitP>(&leavings)))
         {
-            CExitPtr ce;
-            if (setg)
-            {
-                ce = (*setg)->cexit();
-            }
-            else
-                ce = *cep;
+            auto& ce = setg ? (*setg)->cexit() : *cep;
             
             _ASSERT(is_empty(nl));
             
@@ -1759,7 +1733,7 @@ bool walk()
         {
             DoorExitPtr dleavings = *dep;
             (random_action = dleavings->daction()) && (!is_empty(nl = apply_random(random_action)));
-            if (is_empty(nl) && trnn(dleavings->dobj(), openbit))
+            if (is_empty(nl) && trnn(dleavings->dobj(), Bits::openbit))
             {
                 nl = get_door_room(rm, dleavings);
             }
@@ -1784,7 +1758,7 @@ bool walk()
     bool rv = false;
     if (nrm && !is_empty(leavings) && (lit(rm) || lit(std::get<RoomP>(leavings))))
     {
-        rv = goto_(std::get<RoomP>(leavings)) && room_info();
+        rv = goto_(std::get<RoomP>(leavings)) && room_info()();
     }
     else if (me == player() && (dark = !lit(rm)) && prob(25, 50))
     {
@@ -1831,28 +1805,17 @@ bool walk()
 
 }
 
-bool nogo(const std::string &str, direction dir)
+bool nogo(std::string_view str, direction dir)
 {
     parse_cont.clear();
-    if (!str.empty())
-        tell(str);
-    else if (!rtrnn(here, rnwallbit))
+    if (str.empty())
     {
-        switch (dir)
-        {
-        case Up:
-            tell("There is no way up.");
-            break;
-        case Down:
-            tell("There is no way down.");
-            break;
-        default:
-            tell("There is a wall there.");
-        }
+        str = rtrnn(here, RoomBit::rnwallbit) ? "You can't go that way."sv :
+            dir == direction::Up ? "There is no way up."sv :
+            dir == direction::Down ? "There is no way down."sv :
+            "There is a wall there."sv;
     }
-    else
-        tell("You can't go that way.");
-    return true;
+    return tell(str);
 }
 
 bool frob_lots(Iterator<ObjVector> uv)
@@ -1873,7 +1836,7 @@ bool frob_lots(Iterator<ObjVector> uv)
         while (uv.cur() != uv.end())
         {
             const ObjectP &x = uv[0];
-            if (trnn(x, takebit) || trnn(x, trytakebit))
+            if (trnn(x, Bits::takebit, Bits::trytakebit))
             {
                 put(prsvec, 1, x);
                 tell(x->odesc2() + ":\n", 0);
@@ -1888,15 +1851,17 @@ bool frob_lots(Iterator<ObjVector> uv)
     }
     else if (verbq( "DROP", "PUT" ))
     {
-        if (verbq("PUT") && prso() == prsi())
+        if (verbq("PUT"))
         {
-            tell("I should recurse infinitely to teach you a lesson, but...");
-            return true;
-        }
-        else if (verbq("PUT") && !empty(prsi()) && !lit(here))
-        {
-            tell("It is too dark in here to see.");
-            return true;
+            ObjectP prsi = ::prsi();
+            if (prso() == prsi)
+            {
+                return tell("I should recurse infinitely to teach you a lesson, but..."sv);
+            }
+            else if (!empty(prsi) && !lit(here))
+            {
+                return tell("It is too dark to see in here."sv);
+            }
         }
 
         while (uv.cur() != uv.end())
@@ -1914,82 +1879,61 @@ bool frob_lots(Iterator<ObjVector> uv)
     return true;
 }
 
-bool help()
+bool help::operator()() const
 {
-    tell(help_str);
-    return true;
+    return tell(help_str);
 }
 
-bool info()
+bool info::operator()() const
 {
     tell(info_str);
-    tell("Also, use the TERMINAL command to switch into a terminal emulator\nfor a real 1970's feel!");
-    return true;
+    return tell("Also, use the TERMINAL command to switch into a terminal emulator\nfor a real 1970's feel!"sv);
 }
 
-bool lamp_off()
+bool lamp_off::operator()() const
 {
     const AdvP &me = *winner;
-    ObjectP prsoo = prso();
-    if (object_action())
+    if (!object_action())
     {
-
-    }
-    else
-    {
-        if (trnn(prsoo, lightbit) && memq(prsoo, me->aobjs()))
+        ObjectP prsoo = prso();
+        if (!trnn(prsoo, Bits::lightbit) || !memq(prsoo, me->aobjs()))
         {
+            tell("You can't turn that off."sv);
         }
-        else
-        {
-            tell("You can't turn that off.");
-            return true;
-        }
-        if (!trnn(prsoo, onbit))
+        else if (!trnn(prsoo, Bits::onbit))
             tell("It is already off.");
         else
         {
-            trz(prsoo, onbit);
-            tell("The " + prsoo->odesc2() + " is now off.");
-            lit(here) || tell("It is now pitch black.");
+            trz(prsoo, Bits::onbit);
+            tell("The ", 1, prsoo->odesc2(), " is now off.");
+            lit(here) || tell("It is now pitch black."sv);
         }
     }
     return true;
 }
 
-bool lamp_on()
+bool lamp_on::operator()() const
 {
     const AdvP &me = *winner;
-    bool lit = ::lit(here);
-    bool rv = false;
-    if (object_action())
-    {
-        rv = true;
-    }
-    else
+    if (!object_action())
     {
         ObjectP prsoo = prso();
-        if (trnn(prsoo, lightbit) && memq(prsoo, me->aobjs()))
+        if (!trnn(prsoo, Bits::lightbit) || !memq(prsoo, me->aobjs()))
         {
-            rv = true;
+            tell("You can't turn that on."sv);
         }
+        else if (trnn(prsoo, Bits::onbit))
+            tell("It is already on."sv);
         else
         {
-            tell("You can't turn that on.");
-            return true;
-        }
-        if (trnn(prsoo, onbit))
-            rv = tell("It is already on.");
-        else
-        {
-            tro(prsoo, onbit);
-            rv = tell("The " + prsoo->odesc2() + " is now on.", post_crlf);
+            tro(prsoo, Bits::onbit);
+            tell("The ", post_crlf, prsoo->odesc2(), " is now on.");
         }
     }
-    return rv;
+    return true;
 }
 
-bool move()
+bool move::operator()() const
 {
     bool rv = false;
     const RoomP &rm = (*winner)->aroom();
@@ -1998,27 +1942,27 @@ bool move()
     {
         if (object_action())
         {
-            rv = true;
         }
-        else if (trnn(prsoo, takebit))
+        else if (trnn(prsoo, Bits::takebit))
         {
-            rv = tell("Moving the " + prsoo->odesc2() + " reveals nothing.", post_crlf);
+            tell("Moving the ", post_crlf, prsoo->odesc2(), " reveals nothing.");
         }
         else
         {
-            rv = tell("You can't move the " + prsoo->odesc2() + ".", post_crlf);
+            tell("You can't move the ", post_crlf, prsoo->odesc2(), ".");
         }
+        rv = true;
     }
     else if (!empty(prsoo))
     {
-        rv = tell("I can't get to that to move it.");
+        rv = tell("I can't get to that to move it."sv);
     }
     return rv;
 }
 
-bool restart()
+bool restart::operator()() const
 {
-    int scor = score(true);
+    int scor = score()(true);
     no_tell = false;
     tell("Do you wish to restart? (Y is affirmative): ");
     if (yes_no())
@@ -2032,11 +1976,10 @@ bool restart()
     return false;
 }
 
-bool superbrief()
+bool superbrief::operator()() const
 {
-    flags[super_brief] = true;
-    tell("No long descriptions.");
-    return true;
+    flags[FlagId::super_brief] = true;
+    return tell("No long descriptions.");
 }
 
 // If FLG is T or a VECTOR, this is EVERYTHING;
@@ -2055,26 +1998,23 @@ bool valchk(const std::any &flg, const ObjectP &obj, Iterator<ObjVector> but)
     return false;
 }
 
-bool verbose()
+bool verbose::operator()() const
 {
-    flags[brief_flag] = false;
-    flags[super_brief] = false;
-    tell("Maximum verbosity.");
-    return true;
+    flags[FlagId::brief_flag] = flags[FlagId::super_brief] = false;
+    return tell("Maximum verbosity.");
 }
 
-bool version()
+bool version::operator()() const
 {
-    tell(remarkably_disgusting_code());
-    return true;
+    return tell(remarkably_disgusting_code());
 }
 
-bool wait(int num)
+bool wait::operator()(int num) const
 {
     tell("Time passes...");
     // Wait can break out if any of the demons
     // return non-zero.
-    while (num-- && !clock_demon(clocker) && !fighting(fight_demon))
+    while (num-- && !clock_demon()(clocker) && !fighting()(fight_demon))
     {
     }
     return true;
@@ -2082,7 +2022,7 @@ bool wait(int num)
 
 namespace obj_funcs
 {
-    bool valuables_c(std::any everything, const Iterator<ObjVector> &allbut)
+    bool valuables_c_(std::any everything, const Iterator<ObjVector> &allbut)
     {
         ParseVec prsvec = ::prsvec;
         Iterator<ObjVector> suv(obj_uv);
@@ -2099,9 +2039,9 @@ namespace obj_funcs
         }
         if (verbq("TAKE"))
         {
-            for (ObjectP x : room_list)
+            for (const ObjectP &x : room_list)
             {
-                if (trnn(x, ovison) && !trnn(x, actorbit) && valchk(everything, x, allbut))
+                if (trnn(x, Bits::ovison) && !trnn(x, Bits::actorbit) && valchk(everything, x, allbut))
                 {
                     if (suv == tuv)
                     {
@@ -2128,14 +2068,14 @@ namespace obj_funcs
         {
             auto putfn = [&]() -> bool
             {
-                for (ObjectP x : room_list)
+                for (const ObjectP &x : room_list)
                 {
                     if (suv == tuv && x != prsi())
                     {
                         tell(losstr);
                         return true;
                     }
-                    if (trnn(x, ovison) && valchk(everything, x, allbut))
+                    if (trnn(x, Bits::ovison) && valchk(everything, x, allbut))
                     {
                         suv = back(suv);
                         put(suv, 0, x);
@@ -2170,7 +2110,7 @@ namespace obj_funcs
         }
         else if (empty(suv))
         {
-            tell("I couldn't find any" + std::string((everything.has_value() ? "thing." : " valuables.")), 1);
+            tell("I couldn't find any", 1, everything.has_value() ? "thing." : " valuables.");
         }
         else
         {
@@ -2180,12 +2120,12 @@ namespace obj_funcs
         return true;
     }
 
-    bool valuables_c()
+    bool valuables_c::operator()() const
     {
         // Everything?
         auto iter = memq(sfind_obj("EVERY"), prsvec);
         bool everything = iter.cur() != Iterator<ParseVec>(prsvec).end();
-        return valuables_c(everything ? everything : std::any(), Iterator<ObjVector>());
+        return valuables_c_(everything ? everything : std::any(), Iterator<ObjVector>());
     }
 }
 
