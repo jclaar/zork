@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include <boost/process.hpp>
-#include <boost/process/v2/process.hpp>
 #include <boost/dll.hpp>
 #include <string>
 #include "funcs.h"
@@ -55,8 +54,8 @@ int main(int argc, char *argv[])
         boost::asio::io_context ctx;
         while (status == 1)
         {
-            boost::process::v2::process proc(ctx, boost::dll::program_location(), { "-go" });
-            status = proc.wait();
+            auto path = boost::dll::program_location().string();
+            status = boost::process::system(path + " -go");
         }
     }
     else
