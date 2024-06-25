@@ -51,7 +51,6 @@ int main(int argc, char *argv[])
 		// happen easily. If the child process returns 1, 
 		// a restart will occur. If it returns 0 the shell will
 		// exit.
-        boost::asio::io_context ctx;
         while (status == 1)
         {
             auto path = boost::dll::program_location().string();
