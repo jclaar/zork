@@ -43,7 +43,7 @@ public:
         _desc(desc),
         _fn(fn)
     {
-        flag; 
+        //flag; 
     }
 
     ex_rapplic cxaction() const { return _fn; }
