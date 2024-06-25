@@ -10,6 +10,9 @@ find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem )
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
+# Don't give warnings on Win32 Visual Studio builds.
+add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 add_executable(zork
