@@ -8,6 +8,7 @@
 #include "funcs.h"
 #include "dung.h"
 #include "rooms.h"
+#include "version.h"
 
 std::string pw(SIterator unm, SIterator key);
 std::string username();
@@ -25,7 +26,9 @@ int run_zork()
 
 	init_dung();
 
-	save_it(true);
+    tell("ZORK++ version "sv + sVersion);
+
+    save_it(true);
 
     bool restart = false;
     try
