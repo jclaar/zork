@@ -712,7 +712,7 @@ bool zgnome_init::operator()() const
 int cpnext(int rm, const ObjectP &obj)
 {
     auto m = memq(obj, cpwalls);
-    return rm + std::get<1>(*m);
+    return rm + std::get<1>(**m);
 }
 
 bool cpgoto(int fx)
@@ -2071,7 +2071,7 @@ namespace room_funcs
             auto dir_room = memq(fromdir, scol_rooms);
             if (!dir_room)
                 throw ZorkException("Requested an unsupported direction in the bank.");
-            scol_room = find_room(dir_room->rm);
+            scol_room = find_room((*dir_room)->rm);
         }
         return rv;
     }
@@ -2354,8 +2354,8 @@ namespace exit_funcs
         }
 
         auto m = memq(dir, cpexits);
-        _ASSERT(m != cpexits.end());
-        fx = m->offset;
+        _ASSERT(m);
+        fx = (*m)->offset;
 
         if ((abs(fx) >= 1 && abs(fx) <= 8) ||
             (fx > 0 && (uvec[rm + 8 - 1] == 0 || uvec[rm + (fx - 8) - 1] == 0)) ||
@@ -2450,7 +2450,7 @@ namespace actor_funcs
             // Special case for dark_room. Kind of kludgy...
             if (auto m = memq(as_dir(prsvec[1]), here->rexits()))
             {
-                if (auto *sgp = std::get_if<SetgExitP>(&std::get<1>(*m)))
+                if (auto *sgp = std::get_if<SetgExitP>(&std::get<1>(**m)))
                 {
                     if ((*sgp)->name() == "dark_room")
                     {

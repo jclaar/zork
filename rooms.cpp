@@ -1698,7 +1698,7 @@ bool walk::operator()() const
     {
         CExitPtr *cep = nullptr;
         SetgExitP *setg = nullptr;
-        leavings = std::get<1>(*nrm);
+        leavings = std::get<1>(**nrm);
         if (auto sp = std::get_if<std::string>(&leavings))
         {
             const std::string &rid = *sp;

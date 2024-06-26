@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <tuple>
 #include "defs.h"
 #include "room.h"
 
@@ -39,17 +40,13 @@ class driver {};
 class flip {};
 typedef std::variant<std::monostate, int, reach, robjs, aobjs, no_take, have, try_, take, Bits, std::list<Bits>> ALType;
 typedef std::list<ALType> AL;
-class AVSyntax
+class AVSyntax : private std::tuple<std::string_view, rapplic>
 {
 public:
-    AVSyntax(std::string_view name, rapplic fn) : _name(name), _fn(fn) {}
+    AVSyntax(std::string_view name, rapplic fn) : std::tuple<std::string_view, rapplic>(name, fn) {}
 
-    std::string_view verb() const { return _name; }
-    rapplic fn() const { return _fn; }
-
-private:
-    std::string_view _name;
-    rapplic _fn;
+    std::string_view verb() const { return std::get<0>(*this); }
+    rapplic fn() const { return std::get<1>(*this); }
 };
 typedef std::variant<const char *, obj, nrobj, AL, AVSyntax, driver, flip> ParseItem;
 typedef std::vector<ParseItem> AnyV;

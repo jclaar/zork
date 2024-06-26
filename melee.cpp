@@ -44,7 +44,7 @@ int villain_strength(const ObjectP &villain)
             auto wv = memq(villain, best_weapons);
             if (wv)
             {
-                auto &[v, weapon, val] = *wv;
+                auto &[v, weapon, val] = *(*wv);
                 if (weapon == prsi)
                     od = std::max(1, (od - val));
             }
@@ -483,7 +483,7 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
                 "of sinister black fog envelops him, and when the fog lifts, the\n"
                 "carcass has disappeared.");
             remove_object(villain);
-            if ((random_action = villain->oaction()))
+            if (random_action = villain->oaction())
             {
                 perform(random_action, find_verb("DEAD!"));
             }
@@ -491,7 +491,7 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
         }
         else if (res == attack_state::unconscious)
         {
-            if ((random_action = villain->oaction()))
+            if (random_action = villain->oaction())
             {
                 perform(random_action, find_verb("OUT!"));
             }

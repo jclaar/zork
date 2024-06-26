@@ -888,8 +888,8 @@ bool leaper::operator()() const
     else if (auto m = memq(direction::Down, exits))
     {
         const CExitPtr *cep;
-        if (std::get_if<NExit>(&std::get<1>(*m)) ||
-            (cep = std::get_if<CExitPtr>(&std::get<1>(*m))) && !(*cep)->cxflag())
+        if (std::get_if<NExit>(&std::get<1>(**m)) ||
+            (cep = std::get_if<CExitPtr>(&std::get<1>(**m))) && !(*cep)->cxflag())
         {
             jigs_up(pick_one(jumploss));
         }
@@ -1237,9 +1237,9 @@ namespace room_funcs
                     remove_object(hobj);
                 tro(hobj, Bits::fightbit);
                 hack->hroom(here);
-                auto tl = rest(memq(here, rooms));
+                auto tl = memq(here, rooms);
 
-                hack->hrooms() = !tl ? rooms : RoomList((RoomList::const_iterator) tl, rooms.cend());
+                hack->hrooms() = tl.has_value() ? rooms : RoomList(*tl, rooms.cend());
                 insert_object(hobj, here);
             }
             else

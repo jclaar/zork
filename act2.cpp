@@ -608,7 +608,7 @@ namespace obj_funcs
                     }
                     else
                     {
-                        ExitType rex = std::get<1>(*m);
+                        ExitType rex = std::get<1>(**m);
                         RoomP r;
                         _ASSERT(!std::get_if<RoomP>(&rex));
                         std::string *sp;

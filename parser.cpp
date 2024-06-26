@@ -886,7 +886,7 @@ bool this_it(const std::string &objname, const ObjectP &obj, const AdjectiveP &a
         }
         else
         {
-            rv = memq(adj, obj->oadjs());
+            rv = (bool) memq(adj, obj->oadjs());
         }
     }
     return rv;

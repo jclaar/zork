@@ -89,12 +89,12 @@ void drop_object(const ObjectP &obj, const AdvP &winner)
 
 bool drop_if(const ObjectP &obj, const AdvP &winner)
 {
-    bool rv;
-    if (rv = memq(obj, winner->aobjs()))
+    auto rv = memq(obj, winner->aobjs());
+    if (rv)
     {
         drop_object(obj, winner);
     }
-    return rv;
+    return (bool) rv;
 }
 
 const ObjectP &snarf_object(const ObjectP &who, const ObjectP &what)

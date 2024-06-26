@@ -542,7 +542,7 @@ std::optional<int> mirror_dir(direction dir, const RoomP &rm)
     const CExitPtr *m = nullptr;
     if (mex)
     {
-        if (!(m = std::get_if<CExitPtr>(&std::get<1>(*mex))))
+        if (!(m = std::get_if<CExitPtr>(&std::get<1>(**mex))))
             return std::optional<int>();
     }
 
@@ -695,7 +695,7 @@ RoomP mirns(bool northq, bool exitq)
     }
     else if (auto m = memq(northq ? direction::North : direction::South, rex))
     {
-        ExitType exit = std::get<1>(*m);
+        ExitType exit = std::get<1>(**m);
         rv = std::visit(overload{
                 [](const CExitPtr& ep) { return ep->cxroom(); },
                 [](const RoomP& rp) { return rp; },
@@ -995,9 +995,9 @@ namespace obj_funcs
             if (ObjectP prsio = prsi(); !empty(prsio))
             {
                 auto n = memq(prsio, numobjs);
-                if (n != numobjs.end())
+                if (n)
                 {
-                    pnumb = n->second;
+                    pnumb = (*n)->second;
                     tell("The dial now points to '", post_crlf, nums[pnumb - 1], "'.");
                 }
                 else
@@ -1703,8 +1703,8 @@ namespace exit_funcs
         else
         {
             auto dvp = memq(as_dir(prsvec[1]), dirvec);
-            _ASSERT(dvp != dirvec.end());
-            dir = dvp->second;
+            _ASSERT(dvp);
+            dir = (*dvp)->second;
         }
         if (flags[FlagId::mirror_open])
         {
@@ -1749,7 +1749,7 @@ namespace exit_funcs
     {
         direction dir = as_dir(prsvec[1]);
         auto nrm = memq(dir, here->rexits());
-        auto &cex = std::get<CExitPtr>(std::get<1>(*nrm));
+        auto &cex = std::get<CExitPtr>(std::get<1>(**nrm));
         RoomP torm = cex->cxroom();
         int mdir = ::mdir;
 
