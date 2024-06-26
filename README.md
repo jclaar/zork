@@ -1,6 +1,6 @@
 # README #
 
-This is a C++-17 port of the final 616-point Zork, written at MIT around 1978-1981. The goal was to do a port
+This is a C++-20 port of the final 616-point Zork, written at MIT around 1978-1981. The goal was to do a port
 as directly as possible, meaning that the original logic, structures, functions, modules, etc. are
 ported as-is. Therefore, it is not necessarily the most "C++" way of doing things. The main exceptions 
 to the MDL code are saving/restoring, which uses the Boost serialization libraries,
