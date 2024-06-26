@@ -25,12 +25,11 @@ is required.
 
 Build requirements:
 
-Boost (www.boost.org) - Requires the program\_options and the serialization libraries. This build used
-version 1.85.0, though earlier versions will probably work fine, within reason. If you're building it
-yourself, you need the filesystem, serialization, and system libraries.
+Boost (www.boost.org) - Requires the filesystem, serialization, and system libraries. This build used
+version 1.85.0, though earlier versions will probably work fine, within reason.
 
 ### CMAKE BUILD
 Presets have been added for Linux, Mac and Windows. Presets will be created in the "out" subdirectory.
-CMake Build Recipe (Tested in Ubuntu 18.04 w/ gcc 13.1.0).  
+CMake Build Recipe (Tested in Ubuntu 22.04 w/ gcc 13.1.0).  
 
 The presets use Ninja for the build. Other build systems are untested, but would presumably work.
