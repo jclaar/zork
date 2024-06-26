@@ -80,7 +80,6 @@
         "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
         "CMAKE_MAKE_PROGRAM": "/opt/homebrew/bin/ninja",
         "CMAKE_BUILD_TYPE": "Debug",
-        "wxBUILD_COMPATIBILITY": "3.1"
       },
       "condition": {
         "type": "equals",
