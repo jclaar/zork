@@ -79,7 +79,7 @@
         "CMAKE_C_COMPILER": "/usr/bin/clang",
         "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
         "CMAKE_MAKE_PROGRAM": "/opt/homebrew/bin/ninja",
-        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_BUILD_TYPE": "Debug"
       },
       "condition": {
         "type": "equals",
