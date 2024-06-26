@@ -1239,7 +1239,7 @@ namespace room_funcs
                 hack->hroom(here);
                 auto tl = memq(here, rooms);
 
-                hack->hrooms() = tl.has_value() ? rooms : RoomList(*tl, rooms.cend());
+                hack->hrooms() = !tl.has_value() ? rooms : RoomList(*tl, rooms.cend());
                 insert_object(hobj, here);
             }
             else
