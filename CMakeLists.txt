@@ -2,9 +2,11 @@ cmake_minimum_required( VERSION 3.1.0 )
 
 cmake_policy( VERSION 3.14 )
 
-project( zork VERSION 1.0.0 )
+project( zork VERSION 1.2.0 )
 
 set( CMAKE_CXX_STANDARD 20 )
+
+message("Ver is ${CMAKE_PROJECT_VERSION}")
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem system)
@@ -86,4 +88,28 @@ add_executable(zork
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -ldl)
 
-install(TARGETS zork DESTINATION bin)
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+	if (APPLE)
+		add_custom_command(TARGET zork 
+			POST_BUILD
+			COMMAND hdiutil create -volname "Zork" -srcfolder "${CMAKE_CURRENT_BINARY_DIR}/zork" -ov -format UDZO "Zork_mac_${CMAKE_PROJECT_VERSION}.dmg"
+		)
+	elseif(UNIX)
+	    add_custom_command(TARGET zork
+		    POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E tar "zcfv" "zork_linux_${CMAKE_PROJECT_VERSION}.gz" "zork"
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+			DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/zork"
+			COMMENT "Creating archive file for release."
+		)
+	else()
+	    add_custom_command(TARGET zork
+		    POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E tar "cfv" "zork_win64_${CMAKE_PROJECT_VERSION}.zip" --format=zip "zork.exe"
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+			DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/zork.exe"
+			COMMENT "Creating archive file for release."
+		)
+	endif()
+endif()
+
