@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.1.0 )
+cmake_minimum_required( VERSION 3.14 )
 
 cmake_policy( VERSION 3.14 )
 
@@ -6,8 +6,8 @@ project( zork VERSION 1.2.0 )
 
 set( CMAKE_CXX_STANDARD 20 )
 
-message("Ver is ${CMAKE_PROJECT_VERSION}")
-
+# Suppresses warning if Boost v1.70 or later is installed.
+set(Boost_NO_WARN_NEW_VERSIONS 1)
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem system)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
