@@ -25,8 +25,8 @@ The port has become more of a project for me to play around with new C++ feature
 that are posted recently probably aren't fixing anything or changing any functionality. Hopefully they're not 
 breaking things either...
 
-A map of the 585-point version is [here](https://2warpstoneptune.com/2015/05/13/hand-drawn-dungeon-map-1979-1981/).
-It is missing three puzzles, but I could not find a more complete one.
+There is a full map of Zork here: https://www.reddit.com/r/zork/comments/10tlxfd/new_zork_map/.
+
 One additional modification: Use the "TERMINAL" command in Zork to simulate the feel of a 1970's-era
 terminal output.
 
