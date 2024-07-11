@@ -1,11 +1,11 @@
 # README #
 
 ***
-UPDATE: Because I apparently have too much time on my hands (or an odd, borderline unhealthy, obsession with all of this)
+UPDATE: Because I either have too much time on my hands, or an odd (borderline unhealthy) obsession with all of this,
 I've been using AI image generators to create pictures of various locations in Zork. In a separate project
 I've put together an http server that will display room images as the user moves from place to place. It's
-not integrated here yet because I don't really have enough images to make it worthwhile, but it's been kind
-of a fun thing to play around with. Images I have so far are saved in the zork_pics folder. Filenames are
+not integrated here yet because I don't really have enough images to make it worthwhile, but it's been a fun thing
+to play around with. Images I have so far are saved in the zork_pics folder. Filenames are
 the room ID (the first string for each room in roomdefs.h). If I can come up with enough rooms I might add the server to display them as you play. My current
 server supports png and jpeg (as you can see by the various generators I've used, which create images in different 
 formats). If anyone wants to contribute, add an image and send a pull request! I can promise you neither fame
