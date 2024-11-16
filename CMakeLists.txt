@@ -13,10 +13,10 @@ find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem system)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-# Make sure we have at least gcc-13.
+# Make sure we have at least gcc-12.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
-        message(FATAL_ERROR "Must use at least gcc-13.")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "12")
+        message(FATAL_ERROR "Must use at least gcc-12.")
     endif()
 endif()
 

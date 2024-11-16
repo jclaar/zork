@@ -30,7 +30,7 @@ There is a full map of Zork here: https://www.reddit.com/r/zork/comments/10tlxfd
 One additional modification: Use the "TERMINAL" command in Zork to simulate the feel of a 1970's-era
 terminal output.
 
-Builds are supported for Linux (gcc-13 required), MacOS and Windows (32 and 64 bit, Visual Studio 2022 required).
+Builds are supported for Linux (gcc-12 required), MacOS and Windows (32 and 64 bit, Visual Studio 2022 required).
 There is nothing using any non-standard C++ anywhere in the code, so it should be simple to port to other
 platforms. It also makes extensive use of C++-20 features, and thus a C++-20-compliant compiler
 is required. 
@@ -38,7 +38,17 @@ is required.
 Build requirements:
 
 Boost (www.boost.org) - Requires the filesystem, serialization, and system libraries. This build used
-version 1.85.0, though earlier versions will probably work fine, within reason.
+version 1.85.0, though earlier versions will probably work fine, within reason. See www.boost.org for
+installation instructions. A simple method to build the requirements for Boost from source on Linux is:
+...
+git clone https://github.com/boostorg/boost.git
+cd boost
+git checkout boost-1.86.0
+git submodule update --init --recursive
+./bootstrap.sh
+./b2 --with-serialization --with-system --with-filesystem -j8
+sudo ./b2 --with-serialization --with-system --with-filesystem -j8 install
+...
 
 ### CMAKE BUILD
 Presets have been added for Linux, Mac and Windows. Presets will be created in the "out" subdirectory.
