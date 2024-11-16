@@ -44,7 +44,6 @@ add_executable(zork
 	ZorkException.h
 	act2.h
 	act4.h
-	
 	clock.h
 	dung.h
 	globals.h
@@ -73,7 +72,6 @@ add_executable(zork
 	util.cpp
 	act2.cpp
 	act4.cpp
-	
 	defs.cpp
 	funcs.cpp
 	info.cpp
