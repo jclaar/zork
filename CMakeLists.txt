@@ -31,63 +31,40 @@ add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 add_executable(zork
-	act1.h  
-	act3.h
-	adv.h
-	cevent.h
-	defs.h
-	funcs.h
-	gobject.h
-	makstr.h
-	memq.h
-	object.h
-	objser.h
-	roomdefs.h
-	room.h
-	sr.h
-	strings.h
-	ZorkException.h
-	act2.h
-	act4.h
+	act1.h act1.cpp
+	act2.h act2.cpp
+	act3.h act3.cpp
+	act4.h act4.cpp
+	adv.h adv.cpp
+	cevent.h cevent.cpp
 	clock.h
-	dung.h
-	globals.h
-	info.h
-	melee.h
-	objdefs.h
-	objfns.h
-	parser.h
-	roomfns.h
-	rooms.h
-	stdafx.h
-	util.h
-	zstring.h
-	act1.cpp
-	act3.cpp
-	adv.cpp
-	cevent.cpp
-	dung.cpp
-	globals.cpp
-	makstr.cpp
-	melee.cpp
-	object.cpp
-	room.cpp
-	rooms.cpp
-	stdafx.cpp
-	util.cpp
-	act2.cpp
-	act4.cpp
-	defs.cpp
-	funcs.cpp
-	info.cpp
-	mdlfun.cpp
-	memq.cpp
-	parser.cpp
-	roomfns.cpp
-	sr.cpp
-	strings.cpp
+	defs.h defs.cpp
+	dung.h dung.cpp
 	FlagSupport.h
-	zstring.cpp )
+	funcs.h funcs.cpp
+	globals.h globals.cpp
+	gobject.h 
+	info.h info.cpp
+	makstr.h makstr.cpp
+	mdlfun.cpp
+	melee.h melee.cpp
+	memq.h memq.cpp
+	objdefs.h
+	object.h object.cpp
+	objfns.h objser.h
+	parser.h parser.cpp
+	room.h room.cpp
+	roomdefs.h
+	roomfns.h roomfns.cpp
+	rooms.h rooms.cpp
+	sr.h sr.cpp
+	stdafx.h stdafx.cpp
+	strings.h strings.cpp
+	util.h util.cpp
+	version.h
+	ZorkException.h
+	zstring.h zstring.cpp
+)
 
 target_link_libraries(zork ${Boost_LIBRARIES})
 
