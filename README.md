@@ -38,17 +38,17 @@ is required.
 Build requirements:
 
 Boost (www.boost.org) - Requires the filesystem, serialization, and system libraries. This build used
-version 1.85.0, though earlier versions will probably work fine, within reason. See www.boost.org for
+version 1.85.0, though earlier (and later) versions will probably work fine, within reason. See www.boost.org for
 installation instructions. A simple method to build the requirements for Boost from source on Linux is:
-...
+```
 git clone https://github.com/boostorg/boost.git
 cd boost
-git checkout boost-1.86.0
+git checkout boost-1.85.0
 git submodule update --init --recursive
 ./bootstrap.sh
 ./b2 --with-serialization --with-system --with-filesystem -j8
 sudo ./b2 --with-serialization --with-system --with-filesystem -j8 install
-...
+```
 
 ### CMAKE BUILD
 Presets have been added for Linux, Mac and Windows. Presets will be created in the "out" subdirectory.
@@ -56,3 +56,5 @@ CMake Build Recipe (Tested in Ubuntu 22.04 w/ gcc 13.1.0).
 
 The presets use Ninja for the build. Other build systems are untested, but would presumably work.
 
+Windows:
+cmake --preset 
