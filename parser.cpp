@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "precomp.h"
 #include "defs.h"
 #include "parser.h"
 #include "dung.h"

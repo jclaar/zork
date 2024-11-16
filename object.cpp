@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "precomp.h"
 #include <algorithm>
 #include "object.h"
 #include "globals.h"

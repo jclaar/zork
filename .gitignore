@@ -264,7 +264,7 @@ __pycache__/
 *.o
 zork_linux
 .d/
-stdafx.h.gch
+precomp.h.gch
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake

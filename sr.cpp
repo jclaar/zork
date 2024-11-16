@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "precomp.h"
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/unique_ptr.hpp>
 #include <boost/archive/text_oarchive.hpp>

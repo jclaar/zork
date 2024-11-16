@@ -1,7 +1,7 @@
 // mdlfun.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
+#include "precomp.h"
 #include <boost/process.hpp>
 #include <boost/dll.hpp>
 #include <string>

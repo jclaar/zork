@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "precomp.h"
 #include "roomfns.h"
 #include <iostream>
 

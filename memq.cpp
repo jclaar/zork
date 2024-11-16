@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "precomp.h"
 #include "memq.h"
 
 bool memq(const ObjectP &op, Iterator<ObjVector> ol)

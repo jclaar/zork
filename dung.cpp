@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "precomp.h"
 #include <map>
 #include "dung.h"
 #include "memq.h"

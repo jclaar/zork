@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "precomp.h"
 #include "room.h"
 #include "zstring.h"
 #include "globals.h"

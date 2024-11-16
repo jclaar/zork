@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "precomp.h"
 #include <time.h>
 #include <sstream>
 #include <boost/serialization/serialization.hpp>

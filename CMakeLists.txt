@@ -58,7 +58,7 @@ add_executable(zork
 	roomfns.h roomfns.cpp
 	rooms.h rooms.cpp
 	sr.h sr.cpp
-	stdafx.h stdafx.cpp
+	precomp.h
 	strings.h strings.cpp
 	util.h util.cpp
 	version.h
@@ -67,6 +67,7 @@ add_executable(zork
 )
 
 target_link_libraries(zork ${Boost_LIBRARIES})
+target_precompile_headers(zork PRIVATE precomp.h)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 	if (APPLE)

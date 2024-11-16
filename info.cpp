@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "precomp.h"
 #include "info.h"
 
 const std::string_view info_str = R"(Welcome to Zork!
