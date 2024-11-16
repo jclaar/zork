@@ -1,4 +1,4 @@
-# README #
+# README
 
 ***
 UPDATE: Because I either have too much time on my hands, or an odd (borderline unhealthy) obsession with all of this,
@@ -50,11 +50,35 @@ git submodule update --init --recursive
 sudo ./b2 --with-serialization --with-system --with-filesystem -j8 install
 ```
 
-### CMAKE BUILD
+## CMAKE BUILD
 Presets have been added for Linux, Mac and Windows. Presets will be created in the "out" subdirectory.
 CMake Build Recipe (Tested in Ubuntu 22.04 w/ gcc 13.1.0).  
 
 The presets use Ninja for the build. Other build systems are untested, but would presumably work.
 
-Windows:
-cmake --preset 
+Windows presets:  
+x86-debug  
+x86-release  
+x64-debug  
+x64-release  
+
+Linux presets:  
+linux-debug  
+linux-release
+
+Mac presets:  
+macos-debug  
+macos-release
+
+Build files are placed in ./out/build/[preset name]  
+Final output is ./out/build/[preset name]/zork[.exe]  
+
+There is no installation implemented since everything is in a single file.
+Boost libraries are statically-linked so there are no other dependencies. 
+
+### Example
+```
+cmake --preset linux-debug  
+cmake --build out/build/linux-debug  
+out/build/linux-debug/zork  
+```
