@@ -1,17 +1,22 @@
-cmake_minimum_required( VERSION 3.14 )
+cmake_minimum_required( VERSION 3.15 )
 
-cmake_policy( VERSION 3.14 )
+cmake_policy( VERSION 3.15 )
+cmake_policy(SET CMP0091 NEW)
 
 project( zork VERSION 1.2.0 )
 
 set( CMAKE_CXX_STANDARD 20 )
 
+if (WIN32)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set(Boost_USE_STATIC_RUNTIME ON)
+add_compile_definitions(BOOST_ALL_NO_LIB)
+endif()
+
 # Suppresses warning if Boost v1.70 or later is installed.
 set(Boost_NO_WARN_NEW_VERSIONS 1)
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem system)
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
 
 # Make sure we have at least gcc-12.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -84,7 +89,7 @@ add_executable(zork
 	FlagSupport.h
 	zstring.cpp )
 
-target_link_libraries(zork ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -ldl)
+target_link_libraries(zork ${Boost_LIBRARIES})
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 	if (APPLE)
