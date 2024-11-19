@@ -27,13 +27,6 @@ public:
         ar& f;
     }
 
-    Flags<FlagType, sz> operator&(const Flags<FlagType, sz>::FlagBits& rhs)
-    {
-        Flags<FlagType, sz> rv;
-        rv.f = f & rhs;
-        return rv;
-    }
-
 private:
     FlagBits f;
 
