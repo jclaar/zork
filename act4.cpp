@@ -130,7 +130,7 @@ bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue> &correct
         WordP w;
         if (!(a = ans[0]->s1).empty() &&
             (w = plookup(a, words)) &&
-            typeid(*w.get()) == typeid(buzz))
+            std::dynamic_pointer_cast<buzz>(w)) 
         {
             ans = rest(ans);
         }
