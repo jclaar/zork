@@ -29,6 +29,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     endif()
 endif()
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	add_compile_options(-Wno-parentheses)
+endif()
+
 # Don't give warnings on Win32 Visual Studio builds.
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 
