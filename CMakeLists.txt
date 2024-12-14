@@ -16,7 +16,11 @@ endif()
 # Suppresses warning if Boost v1.70 or later is installed.
 set(Boost_NO_WARN_NEW_VERSIONS 1)
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem system)
+if (CMAKE_VERSION VERSION_LESS "3.30")
+    find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem system)
+else()
+    find_package(Boost CONFIG REQUIRED COMPONENTS serialization filesystem system)
+endif()
 
 # Make sure we have at least gcc-12.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
