@@ -11,7 +11,7 @@ class Flags : private std::bitset<sz>
 public:
     using Base::none;
     using Base::any;
-    using Base::reference;
+    using typename Base::reference;
 
     Flags() {}
 
