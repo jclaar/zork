@@ -18,6 +18,10 @@ int mdir = 270;
 
 namespace
 {
+    std::array swu = { 0, 0, 0, 0, 0 };
+    std::array kwu = { 0, 0, 0, 0, 0 };
+    std::string str("     ");
+
     int pnumb = 1; // cell pointed at
     int lcell = 1; // cell in slot
     int nqatt = 0;
@@ -27,12 +31,207 @@ namespace
     std::array nqvecb = { QuestionP(), QuestionP(), QuestionP() };
     Iterator<decltype(nqvecb)> nqvec(nqvecb);
     std::string spell_flag;
-}
 
-namespace
-{
     const std::string_view mrestr("   E");
     const std::string_view mrwstr("MBRW");
+
+    
+    bool member(const std::string& s1, const std::vector<QuestionValue>& qv)
+    {
+        auto i = std::find_if(qv.begin(), qv.end(), [&s1](const QuestionValue& q)
+            {
+                const std::string_view* s;
+                return ((s = std::get_if<std::string_view>(&q)) && *s == s1);
+            });
+        return i != qv.end();
+    }
+
+    bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue>& correct)
+    {
+        const QuestionValue& onecorr = correct[0];
+        const auto& words = words_pobl;
+        const auto& actions = actions_pobl;
+        const ObjectPobl& object_obl = object_pobl();
+        while (1)
+        {
+            if (empty(ans))
+                break;
+            std::string a;
+            WordP w;
+            if (!(a = ans[0]->s1).empty() &&
+                (w = plookup(a, words)) &&
+                std::dynamic_pointer_cast<buzz>(w))
+            {
+                ans = rest(ans);
+            }
+            else
+                break;
+        }
+
+        bool rv = false;
+        if (std::holds_alternative<std::string_view>(onecorr))
+        {
+            return member(ans[0]->s1, correct);
+        }
+        else
+        {
+            Iterator<ParseContV> lv = ans;
+            AdjectiveP adj;
+            while (1)
+            {
+                ObjList o;
+                std::string str;
+                if ((str = lv[0]->s1).empty())
+                {
+                    rv = false;
+                    break;
+                }
+                if (ActionP act = plookup(str, actions))
+                {
+                    const ActionP* qact = std::get_if<ActionP>(&onecorr);
+                    return qact && *qact == act;
+                }
+                else if (WordP w = plookup(str, words))
+                {
+                    adj = std::dynamic_pointer_cast<adjective>(w);
+                }
+                else if (!(o = plookup(str, object_obl)).empty())
+                {
+                    ObjectP obj;
+                    if (obj = search_list(str, inqobjs, adj).first)
+                    {
+                        const ObjectP* qo = std::get_if<ObjectP>(&onecorr);
+                        return qo && *qo == obj;
+                    }
+                }
+                lv = rest(lv);
+            }
+        }
+        return false;
+    }
+
+    ObjList movies(const RoomP& rm)
+    {
+        ObjList list;
+        const ObjList& co = cobjs;
+        for (const ObjectP& o : rm->robjs())
+        {
+            if (!memq(o, co))
+            {
+                list.push_back(o);
+            }
+        }
+        return list;
+    }
+
+    void stuff(const RoomP& r, const ObjList& l1, const ObjList& l2)
+    {
+        // Combines l1 and l2 into r->robjs.
+        r->robjs() = l1;
+        r->robjs().insert(r->robjs().end(), l2.begin(), l2.end());
+        for (const ObjectP& o : r->robjs())
+        {
+            o->oroom(r);
+        }
+    }
+
+    bool incantation(Iterator<ParseContV> lv)
+    {
+        std::string w1, w2;
+        std::string unm = username();
+        if (!spell_flag.empty() || rtrnn(sfind_room("MRANT"), RoomBit::rseenbit))
+        {
+            tell("Incantations are useless once you have gotten this far.");
+        }
+        else if (length(lv) < 2 || (w1 = lv[0]->s1).empty())
+        {
+            tell("That incantation seems to have been a failure.");
+        }
+        else if ((w2 = lv[1]->s1).empty())
+        {
+            if (!spell_flag.empty() && w1 != spell_flag)
+            {
+                tell("Sorry, only one incantation to a customer.");
+            }
+            else if (incant_ok && flags[FlagId::end_game_flag])
+            {
+                w2 = pw(SIterator(unm), SIterator(w1));
+                tell("A hollow voice replies: \"", 0, w1, " ");
+                tell(w2, 1, "\".");
+                spell_flag.swap(w1);
+            }
+            else
+            {
+                tell("That spell has no obvious effect.");
+            }
+        }
+        else if (w1 == pw(SIterator(unm), SIterator(w2)) ||
+            w2 == pw(SIterator(unm), SIterator(w1)))
+        {
+            tell("As the last syllable of your spell fades into silence, darkness\n"
+                "envelops you, and the earth shakes briefly.  Then all is quiet.");
+            spell_flag.swap(w1);
+            enter_end_game();
+        }
+        else
+            tell("That spell doesn't appear to have done anything useful.");
+        return true;
+    }
+
+    void select(std::vector<QuestionP> from, Iterator<std::array<QuestionP, 3>> to)
+    {
+        // This is only used in one place, and is used to
+        // fill to with random elements from "from". It uses
+        // the username and some other things to do the
+        // selection. To make it simpler, this just copies
+        // the from list to the to list, does a shuffle, and
+        // returns the required number of elements.
+        std::random_device rd;
+        std::mt19937 g(rd());
+        std::shuffle(from.begin(), from.end(), g);
+        std::copy(from.begin(), from.begin() + to.size(), to.begin());
+    }
+
+    bool n_s(int dir)
+    {
+        return dir % 180 == 0;
+    }
+
+    std::optional<int> mirror_dir(direction dir, const RoomP& rm)
+    {
+        auto mex = memq(direction::North, rm->rexits());
+        const CExitPtr* m = nullptr;
+        if (mex)
+        {
+            if (!(m = std::get_if<CExitPtr>(&std::get<1>(**mex))))
+                return std::optional<int>();
+        }
+
+        if (m && mloc == (*m)->cxroom())
+        {
+            if ((dir == direction::North && mdir > 180 && mdir < 360) ||
+                dir == direction::South && mdir > 0 && mdir < 180)
+            {
+                return 1;
+            }
+            else
+                return 2;
+        }
+        return std::optional<int>();
+    }
+
+    bool ewtell(const RoomP& rm)
+    {
+        bool eastq = rm->rid()[3] == 'E';
+        bool m1q, mwin;
+        mwin = (m1q = (mdir + eastq ? 0 : 180) == 180) ? flags[FlagId::mr1] : flags[FlagId::mr2];
+        tell("You are in a narrow room, whose ", 0, eastq ? "west" : "east", " wall is a large ");
+        tell(mwin ? "mirror." : "wooden panel\nwhich once contained a mirror.");
+        m1q&& flags[FlagId::mirror_open] && tell(mwin ? miropen : panopen);
+        tell("The opposite wall is solid rock.");
+        return true;
+    }
+
 }
 
 bool eg_infested(const RoomP &r)
@@ -104,80 +303,6 @@ const RoomP &go_e_w(const RoomP &rm, direction dir)
     const std::string &spr = rm->rid();
     std::string str = std::string((dir != direction::Ne && dir != direction::Se) ? mrwstr : mrestr);
     return find_room(substruc(spr, 0, 3, str));
-}
-
-bool member(const std::string &s1, const std::vector<QuestionValue> &qv)
-{
-    auto i = std::find_if(qv.begin(), qv.end(), [&s1](const QuestionValue &q)
-    {
-        const std::string_view *s;
-        return ((s = std::get_if<std::string_view>(&q)) && *s == s1);
-    });
-    return i != qv.end();
-}
-
-bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue> &correct)
-{
-    const QuestionValue &onecorr = correct[0];
-    const auto &words = words_pobl;
-    const auto &actions = actions_pobl;
-    const ObjectPobl  &object_obl = object_pobl();
-    while (1)
-    {
-        if (empty(ans))
-            break;
-        std::string a;
-        WordP w;
-        if (!(a = ans[0]->s1).empty() &&
-            (w = plookup(a, words)) &&
-            std::dynamic_pointer_cast<buzz>(w)) 
-        {
-            ans = rest(ans);
-        }
-        else
-            break;
-    }
-
-    bool rv = false;
-    if (std::holds_alternative<std::string_view>(onecorr))
-    {
-        return member(ans[0]->s1, correct);
-    }
-    else
-    {
-        Iterator<ParseContV> lv = ans;
-        AdjectiveP adj;
-        while (1)
-        {
-            ObjList o;
-            std::string str;
-            if ((str = lv[0]->s1).empty())
-            {
-                rv = false;
-                break;
-            }
-            if (ActionP act = plookup(str, actions))
-            {
-                const ActionP *qact = std::get_if<ActionP>(&onecorr);
-                return qact && *qact == act;
-            }
-            else if (WordP w = plookup(str, words))
-            {
-                adj = std::dynamic_pointer_cast<adjective>(w);
-            }
-            else if (!(o = plookup(str, object_obl)).empty())
-            {
-                ObjectP obj;
-                if (obj = search_list(str, inqobjs, adj).first)
-                {
-                    const ObjectP *qo = std::get_if<ObjectP>(&onecorr);
-                    return qo && *qo == obj;
-                }
-            }
-            lv = rest(lv);
-        }
-    }
-    return false;
 }
 
 bool answer::operator()() const
@@ -263,31 +388,6 @@ ObjectP beam_stopped()
     return ObjectP();
 }
 
-ObjList movies(const RoomP &rm)
-{
-    ObjList list;
-    const ObjList &co = cobjs;
-    for (const ObjectP &o : rm->robjs())
-    {
-        if (!memq(o, co))
-        {
-            list.push_back(o);
-        }
-    }
-    return list;
-}
-
-void stuff(const RoomP &r, const ObjList &l1, const ObjList &l2)
-{
-    // Combines l1 and l2 into r->robjs.
-    r->robjs() = l1;
-    r->robjs().insert(r->robjs().end(), l2.begin(), l2.end());
-    for (const ObjectP &o : r->robjs())
-    {
-        o->oroom(r);
-    }
-}
-
 void cell_move()
 {
     int new_ = pnumb;
@@ -331,111 +431,6 @@ std::string_view dpr(const ObjectP &obj)
     return trnn(obj, Bits::openbit) ? "open."sv : "closed."sv;
 }
 
-namespace
-{
-    std::array swu = { 0, 0, 0, 0, 0 };
-    std::array kwu = { 0, 0, 0, 0, 0 };
-    std::string str("     ");
-}
-
-std::string pw(SIterator unm, SIterator key)
-{
-    auto su = Iterator(swu);
-    auto ku = Iterator(kwu);
-    SIterator str = ::str;
-    int usum;
-
-    auto fn = [&](SIterator s, Iterator<decltype(swu)> su, SIterator k, Iterator<decltype(kwu)> ku) -> bool
-    {
-        while (1)
-        {
-            if (empty(su))
-                return true;
-            if (empty(k))
-                k = key;
-            if (empty(s))
-                s = unm;
-            su[0] = s[0] - 64;
-            ku[0] = k[0] - 64;
-            k = rest(k);
-            s = rest(s);
-            su = rest(su);
-            ku = rest(ku);
-        }
-        return true;
-    };
-    fn(unm, su, key, ku);
-
-    // usum is the sum of all items in su % 8 + 8 * (sum of all items in ku % 8)
-    usum = (std::accumulate(su.begin(), su.end(), 0) % 8) +
-        (std::accumulate(ku.begin(), ku.end(), 0) * 8) * 8;
-
-    std::fill(str.begin(), str.end(), 0);
-
-    auto fn2 = [&usum](Iterator<decltype(swu)> su, Iterator<decltype(kwu)> ku, SIterator str)
-    {
-        _ASSERT(su.size() == ku.size());
-        _ASSERT(su.size() == str.size());
-        for (; !empty(su); su = rest(su), ku = rest(ku), str = rest(str))
-        {
-            int s = su[0], k = ku[0];
-            s = ((s ^ k) ^ usum) & 31;
-            usum = (usum + 1) % 32;
-            if (s > 26)
-                s = s % 26;
-            if (s == 0)
-                s = 1;
-            str[0] = (char)(s + 64);
-        }
-    };
-    fn2(su, ku, str);
-
-    return str;
-}
-
-bool incantation(Iterator<ParseContV> lv)
-{
-    std::string w1, w2;
-    std::string unm = username();
-    if (!spell_flag.empty() || rtrnn(sfind_room("MRANT"), RoomBit::rseenbit))
-    {
-        tell("Incantations are useless once you have gotten this far.");
-    }
-    else if (length(lv) < 2 || (w1 = lv[0]->s1).empty())
-    {
-        tell("That incantation seems to have been a failure.");
-    }
-    else if ((w2 = lv[1]->s1).empty())
-    {
-        if (!spell_flag.empty() && w1 != spell_flag)
-        {
-            tell("Sorry, only one incantation to a customer.");
-        }
-        else if (incant_ok && flags[FlagId::end_game_flag])
-        {
-            w2 = pw(SIterator(unm), SIterator(w1));
-            tell("A hollow voice replies: \"", 0, w1, " ");
-            tell(w2, 1, "\".");
-            spell_flag.swap(w1);
-        }
-        else
-        {
-            tell("That spell has no obvious effect.");
-        }
-    }
-    else if (w1 == pw(SIterator(unm), SIterator(w2)) ||
-        w2 == pw(SIterator(unm), SIterator(w1)))
-    {
-        tell("As the last syllable of your spell fades into silence, darkness\n"
-            "envelops you, and the earth shakes briefly.  Then all is quiet.");
-        spell_flag.swap(w1);
-        enter_end_game();
-    }
-    else
-        tell("That spell doesn't appear to have done anything useful.");
-    return true;
-}
-
 bool incant::operator()() const
 {
     auto m = member("", lexv);
@@ -444,20 +439,6 @@ bool incant::operator()() const
         incantation(rest(m, 1));
     }
     return true;
-}
-
-void select(std::vector<QuestionP> from, Iterator<std::array<QuestionP, 3>> to)
-{
-    // This is only used in one place, and is used to
-    // fill to with random elements from "from". It uses
-    // the username and some other things to do the
-    // selection. To make it simpler, this just copies
-    // the from list to the to list, does a shuffle, and
-    // returns the required number of elements.
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(from.begin(), from.end(), g);
-    std::copy(from.begin(), from.begin() + to.size(), to.begin());
 }
 
 bool inqstart()
@@ -529,34 +510,6 @@ bool inquisitor::operator()(Iterator<ParseContV> ans) const
         tell("There is no reply.");
     }
     return true;
-}
-
-bool n_s(int dir)
-{
-    return dir % 180 == 0;
-}
-
-std::optional<int> mirror_dir(direction dir, const RoomP &rm)
-{
-    auto mex = memq(direction::North, rm->rexits());
-    const CExitPtr *m = nullptr;
-    if (mex)
-    {
-        if (!(m = std::get_if<CExitPtr>(&std::get<1>(**mex))))
-            return std::optional<int>();
-    }
-
-    if (m && mloc == (*m)->cxroom())
-    {
-        if ((dir == direction::North && mdir > 180 && mdir < 360) ||
-            dir == direction::South && mdir > 0 && mdir < 180)
-        {
-            return 1;
-        }
-        else
-            return 2;
-    }
-    return std::optional<int>();
 }
 
 bool look_to(std::string_view nstr,
@@ -1353,18 +1306,6 @@ namespace obj_funcs
     }
 }
 
-bool ewtell(const RoomP &rm)
-{
-    bool eastq = rm->rid()[3] == 'E';
-    bool m1q, mwin;
-    mwin = (m1q = (mdir + eastq ? 0 : 180) == 180) ? flags[FlagId::mr1] : flags[FlagId::mr2];
-    tell("You are in a narrow room, whose ", 0, eastq ? "west" : "east", " wall is a large ");
-    tell(mwin ? "mirror." : "wooden panel\nwhich once contained a mirror.");
-    m1q && flags[FlagId::mirror_open] && tell(mwin ? miropen : panopen);
-    tell("The opposite wall is solid rock.");
-    return true;
-}
-
 namespace room_funcs
 {
     bool mraew::operator()() const
@@ -1823,3 +1764,57 @@ namespace actor_funcs
     }
 }
 
+std::string pw(SIterator unm, SIterator key)
+{
+    auto su = Iterator(swu);
+    auto ku = Iterator(kwu);
+    SIterator str = ::str;
+    int usum;
+
+    auto fn = [&](SIterator s, Iterator<decltype(swu)> su, SIterator k, Iterator<decltype(kwu)> ku) -> bool
+        {
+            while (1)
+            {
+                if (empty(su))
+                    return true;
+                if (empty(k))
+                    k = key;
+                if (empty(s))
+                    s = unm;
+                su[0] = s[0] - 64;
+                ku[0] = k[0] - 64;
+                k = rest(k);
+                s = rest(s);
+                su = rest(su);
+                ku = rest(ku);
+            }
+            return true;
+        };
+    fn(unm, su, key, ku);
+
+    // usum is the sum of all items in su % 8 + 8 * (sum of all items in ku % 8)
+    usum = (std::accumulate(su.begin(), su.end(), 0) % 8) +
+        (std::accumulate(ku.begin(), ku.end(), 0) * 8) * 8;
+
+    std::fill(str.begin(), str.end(), 0);
+
+    auto fn2 = [&usum](Iterator<decltype(swu)> su, Iterator<decltype(kwu)> ku, SIterator str)
+        {
+            _ASSERT(su.size() == ku.size());
+            _ASSERT(su.size() == str.size());
+            for (; !empty(su); su = rest(su), ku = rest(ku), str = rest(str))
+            {
+                int s = su[0], k = ku[0];
+                s = ((s ^ k) ^ usum) & 31;
+                usum = (usum + 1) % 32;
+                if (s > 26)
+                    s = s % 26;
+                if (s == 0)
+                    s = 1;
+                str[0] = (char)(s + 64);
+            }
+        };
+    fn2(su, ku, str);
+
+    return str;
+}

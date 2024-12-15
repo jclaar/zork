@@ -26,6 +26,7 @@ RoomP mirew();
 bool mirmove(bool northq, const RoomP& rm);
 RoomP mirns(bool northq = (mdir < 180), bool exitq = false);
 std::optional<int> mirror_here(RoomP rm);
+std::string pw(SIterator unm, SIterator key);
 
 RAPPLIC(answer);
 RAPPLIC(follow);
