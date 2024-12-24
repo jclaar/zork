@@ -251,7 +251,7 @@ namespace
 // Empty syntax.
 const VargP evarg = std::make_shared<_varg>();
 
-void make_action(const AnyV& av, vspec& vs)
+static void make_action(const AnyV& av, vspec& vs)
 {
     ParseData pd;
     for (auto& i : av)
@@ -267,14 +267,14 @@ void make_action(const AnyV& av, vspec& vs)
     vs.push_back(pd.syntax_);
 }
 
-vspec make_action(const AnyV& av)
+static vspec make_action(const AnyV& av)
 {
     vspec vs;
     make_action(av, vs);
     return vs;
 }
 
-vspec make_action(const ActionVec &decl)
+static vspec make_action(const ActionVec &decl)
 {
     vspec vs;
     for (const AnyV &av : decl)
