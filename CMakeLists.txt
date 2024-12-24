@@ -11,15 +11,17 @@ if (WIN32)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 set(Boost_USE_STATIC_RUNTIME ON)
 add_compile_definitions(BOOST_ALL_NO_LIB)
+add_compile_definitions(WIN32_LEAN_AND_MEAN)
+set(NTDLL ntdll.lib)
 endif()
 
 # Suppresses warning if Boost v1.70 or later is installed.
 set(Boost_NO_WARN_NEW_VERSIONS 1)
 set(Boost_USE_STATIC_LIBS ON)
 if (CMAKE_VERSION VERSION_LESS "3.30")
-    find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization filesystem system)
+    find_package(Boost 1.65.0 REQUIRED COMPONENTS serialization system process)
 else()
-    find_package(Boost CONFIG REQUIRED COMPONENTS serialization filesystem system)
+    find_package(Boost CONFIG REQUIRED COMPONENTS serialization system process)
 endif()
 
 # Make sure we have at least gcc-12.
@@ -35,6 +37,7 @@ endif()
 
 # Don't give warnings on Win32 Visual Studio builds.
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+add_compile_definitions(BOOST_PROCESS_VERSION=2)
 
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
@@ -74,7 +77,7 @@ add_executable(zork
 	zstring.h zstring.cpp
 )
 
-target_link_libraries(zork ${Boost_LIBRARIES})
+target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL})
 target_precompile_headers(zork PRIVATE precomp.h)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")

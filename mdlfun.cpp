@@ -57,7 +57,9 @@ int main(int argc, char *argv[])
         while (status == 1)
         {
             auto path = boost::dll::program_location().string();
-            status = boost::process::system(path + " -go");
+            boost::asio::io_context ctx;
+            boost::process::v2::process proc(ctx, path, { "-go" });
+            status = proc.wait();
         }
     }
     else
