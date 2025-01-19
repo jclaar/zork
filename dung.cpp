@@ -206,8 +206,6 @@ std::vector<int> villain_probs(villains.size());
 const ObjList small_papers = build_olist("BLABE", "LABEL", "CARD", "WARNI", "PAPER", "GUIDE");
 const ObjList palobjs = build_olist("SCREW", "KEYS", "STICK", "PKEY");
 ObjList inqobjs;
-const RoomList random_list = build_rlist("LROOM", "KITCH", "CLEAR", "FORE3", "FORE2",
-    "SHOUS", "FORE2", "KITCH", "EHOUS");
 const RoomP &northend = get_room("MRD");
 RoomP mloc = get_room("MRB");
 const RoomP startroom = mloc;

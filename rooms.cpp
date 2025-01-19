@@ -808,10 +808,10 @@ bool jigs_up(std::string_view desc, bool player)
     }
 
     ObjList::iterator x = (*winner)->aobjs().begin();
-    RoomList::const_iterator y = random_list.begin();
+    auto y = random_list.begin();
     for (; x != (*winner)->aobjs().end() && y != random_list.end(); ++x, ++y)
     {
-        insert_object(*x, *y);
+        insert_object(*x, sfind_room(*y));
     }
 
     if (length(random_list) > length(aobjs))

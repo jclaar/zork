@@ -18,7 +18,8 @@ extern DirectionsPobl directions_pobl;
 extern ActionsPobl actions_pobl;
 extern const ObjList small_papers;
 extern const ObjList palobjs;
-extern const RoomList random_list;
+constexpr auto random_list = std::to_array({ "LROOM", "KITCH", "CLEAR", "FORE3", "FORE2",
+    "SHOUS", "FORE2", "KITCH", "EHOUS" });
 extern ObjList inqobjs;
 extern ObjectP bunch_obj;
 extern SIterator indentstr;
