@@ -216,7 +216,6 @@ extern const ObjList villains;
 extern ObjList oppv;
 extern std::vector<int> villain_probs;
 
-extern const ObjList weapons;
 typedef std::tuple<ObjectP, ObjectP, int> BestWeapons;
 bool operator==(const ObjectP& villain, const BestWeapons& bw);
 inline bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
