@@ -1,17 +1,10 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-#include <functional>
-#include <bitset>
 #include <algorithm>
-#include <set>
+#include <functional>
 #include <variant>
-#include <ranges>
 #include <list>
-#include <optional>
-#include <sstream>
-#include <string_view>
+#include <bitset>
 #include "FlagSupport.h"
 
 // For variant stuff.

@@ -2,6 +2,7 @@
 #include <map>
 #include <vector>
 #include <array>
+#include <span>
 #include <string>
 #include "defs.h"
 #include "makstr.h"
