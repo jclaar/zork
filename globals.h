@@ -4,7 +4,6 @@
 #include <limits.h>
 #include <string>
 #include <bitset>
-#include <chrono>
 #include "defs.h"
 
 int score_max();
@@ -13,7 +12,6 @@ extern int eg_score_max;
 const int bigfix = INT_MAX;
 extern std::string inbuf;
 extern std::string inbuf1;
-extern std::chrono::steady_clock::time_point start_time;
 
 extern ObjectP last_it;
 

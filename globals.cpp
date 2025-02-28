@@ -5,7 +5,6 @@
 
 std::string inbuf;
 std::string inbuf1;
-std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
 namespace
 {

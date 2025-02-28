@@ -1,6 +1,7 @@
 #include "precomp.h"
 #include <time.h>
 #include <sstream>
+#include <chrono>
 #include <boost/serialization/serialization.hpp>
 
 #include "sr.h"
@@ -47,6 +48,8 @@ namespace
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
+
+    auto start_time = std::chrono::steady_clock::now();
 }
 
 void excruciatingly_untasteful_code()
