@@ -50,6 +50,8 @@ namespace
     }
 
     auto start_time = std::chrono::steady_clock::now();
+    constexpr auto random_list = std::to_array({ "LROOM", "KITCH", "CLEAR", "FORE3", "FORE2",
+        "SHOUS", "FORE2", "KITCH", "EHOUS" });
 }
 
 void excruciatingly_untasteful_code()

@@ -3,8 +3,7 @@
 // are changed infrequently
 //
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#pragma once
 #define _WIN32_WINNT 0x0601
 #include <iostream>
 
@@ -21,9 +20,11 @@
 #include <vector>
 #include <array>
 #include <optional>
+#include <memory>
 
 #include <map>
 #include <string_view>
 
 using namespace std::string_view_literals;
-#endif
+
+#include "defs.h"

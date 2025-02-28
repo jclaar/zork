@@ -1,16 +1,6 @@
 #pragma once
 
-#include <boost/serialization/bitset.hpp>
-#include <string>
-#include <vector>
-#include <memory>
-#include <bitset>
-#include <variant>
-#include <tuple>
-#include "defs.h"
-#include "globals.h"
 #include "object.h"
-#include "roomfns.h"
 
 typedef std::variant<int, std::vector<Bits>> RPValue;
 typedef std::tuple<ObjectSlots, RPValue> RP;

@@ -14,6 +14,7 @@
 #include "adv.h"
 #include "parser.h"
 #include "ZorkException.h"
+#include "roomfns.h"
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {

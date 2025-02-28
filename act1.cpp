@@ -12,10 +12,11 @@
 #include "melee.h"
 #include "zstring.h"
 #include "object.h"
-#include "rooms.h"
 #include "adv.h"
 #include "cevent.h"
 #include "memq.h"
+#include "roomfns.h"
+
 namespace
 {
     // Number of times the player has said "Hello, Sailor"

@@ -13,6 +13,7 @@
 #include "adv.h"
 #include "makstr.h"
 #include "memq.h"
+#include "roomfns.h"
 
 using namespace std::string_view_literals;
 
