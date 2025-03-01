@@ -19,8 +19,6 @@ add_compile_definitions(WIN32_LEAN_AND_MEAN)
 set(NTDLL ntdll.lib)
 endif()
 
-# Suppresses warning if Boost v1.70 or later is installed.
-set(Boost_NO_WARN_NEW_VERSIONS 1)
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.71.0 REQUIRED COMPONENTS filesystem serialization system process)
 
