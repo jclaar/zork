@@ -1,4 +1,5 @@
 #include "precomp.h"
+#include <iostream>
 #include "funcs.h"
 #include "globals.h"
 #include "rooms.h"

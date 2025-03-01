@@ -1,5 +1,6 @@
 #include "precomp.h"
 #include <time.h>
+#include <iostream>
 #include <sstream>
 #include <chrono>
 #include <boost/serialization/serialization.hpp>

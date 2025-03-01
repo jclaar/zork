@@ -1,6 +1,9 @@
 #include "precomp.h"
 #include <map>
 #include <set>
+#ifdef _DEBUG
+#include <iostream>
+#endif
 #include "dung.h"
 #include "memq.h"
 #include "funcs.h"

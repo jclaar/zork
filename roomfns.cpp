@@ -1,6 +1,5 @@
 #include "precomp.h"
 #include "roomfns.h"
-#include <iostream>
 
 namespace room_funcs
 {

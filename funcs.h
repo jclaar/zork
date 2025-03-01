@@ -2,7 +2,6 @@
 #define FUNCS_H
 
 #include <list>
-#include <iostream>
 #include <cstring>
 #include <sstream>
 #include <streambuf>
