@@ -1,5 +1,6 @@
 #include "precomp.h"
 #include <map>
+#include <set>
 #include "dung.h"
 #include "memq.h"
 #include "funcs.h"
