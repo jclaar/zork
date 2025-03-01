@@ -3,6 +3,10 @@ cmake_minimum_required( VERSION 3.15 )
 cmake_policy( VERSION 3.15 )
 cmake_policy(SET CMP0091 NEW)
 
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.30")
+cmake_policy(SET CMP0167 NEW)
+endif()
+
 project( zork VERSION 1.2.0 )
 
 set( CMAKE_CXX_STANDARD 20 )
@@ -18,11 +22,7 @@ endif()
 # Suppresses warning if Boost v1.70 or later is installed.
 set(Boost_NO_WARN_NEW_VERSIONS 1)
 set(Boost_USE_STATIC_LIBS ON)
-if (CMAKE_VERSION VERSION_LESS "3.30")
-    find_package(Boost 1.65.0 REQUIRED COMPONENTS filesystem serialization system process)
-else()
-    find_package(Boost CONFIG REQUIRED COMPONENTS serialization system process)
-endif()
+find_package(Boost 1.71.0 REQUIRED COMPONENTS filesystem serialization system process)
 
 # Make sure we have at least gcc-12.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
