@@ -4,7 +4,6 @@
 #include "funcs.h"
 #include "dung.h"
 #include "adv.h"
-#include "parser.h"
 #include "memq.h"
 #include "zstring.h"
 #include "util.h"

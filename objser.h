@@ -1,8 +1,6 @@
 #ifndef OBJSER_H
 #define OBJSER_H
 
-#include "room.h"
-
 // Serialization functions for Object are defined here so
 // that room.h can be included properly.
 // For serialization
