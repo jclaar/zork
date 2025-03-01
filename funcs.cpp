@@ -52,6 +52,18 @@ namespace
 }
 std::ostream tty(&tty_buf);
 
+void tell_base::tell_pre(uint32_t flags)
+{
+    ::flags[FlagId::tell_flag] = true;
+    if (flags & pre_crlf)
+        tty << std::endl;
+}
+void tell_base::tell_post(uint32_t flags)
+{
+    if (flags & post_crlf)
+        tty << std::endl;
+}
+
 bool terminal::operator()() const
 {
     tty_buf.SetTerminal(!tty_buf.IsTerminal());

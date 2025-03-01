@@ -1,10 +1,7 @@
 #ifndef FUNCS_H
 #define FUNCS_H
 
-#include <list>
-#include <cstring>
-#include <sstream>
-#include <streambuf>
+#include <ostream>
 #include <string_view>
 #include "ZorkException.h"
 #include "globals.h"
@@ -21,17 +18,8 @@ constexpr uint32_t long_tell1 = long_tell | post_crlf;
 class tell_base
 {
 protected:
-    void tell_pre(uint32_t flags)
-    {
-        ::flags[FlagId::tell_flag] = true;
-        if (flags & pre_crlf)
-            tty << std::endl;
-    }
-    void tell_post(uint32_t flags)
-    {
-        if (flags & post_crlf)
-            tty << std::endl;
-    }
+    void tell_pre(uint32_t flags);
+    void tell_post(uint32_t flags);
 public:
     operator bool() const { return true; }
 };

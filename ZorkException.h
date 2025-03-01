@@ -1,4 +1,6 @@
 #pragma once
+#include <exception>
+#include <string>
 class ZorkException : public std::exception
 {
 public:
