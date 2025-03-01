@@ -38,7 +38,7 @@ is required.
 Build requirements:
 
 Boost (www.boost.org) - Requires the filesystem, serialization, and system libraries. This build used
-version 1.85.0, though earlier (and later) versions will probably work fine, within reason. See www.boost.org for
+version 1.85.0, though earlier (and later) versions (v1.70 or later) will probably work fine, within reason. See www.boost.org for
 installation instructions. A simple method to build the requirements for Boost from source on Linux is:
 ```
 git clone https://github.com/boostorg/boost.git

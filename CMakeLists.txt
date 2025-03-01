@@ -20,7 +20,7 @@ set(NTDLL ntdll.lib)
 endif()
 
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.71.0 REQUIRED COMPONENTS filesystem serialization system process)
+find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization system process)
 
 # Make sure we have at least gcc-12.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
