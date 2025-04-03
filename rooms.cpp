@@ -575,7 +575,7 @@ void rdcom(Iterator<ParseContV> ivec)
         else if (!ivec)
         {
             flags[FlagId::tell_flag] = false;
-            static const std::string prompt = ">";
+            const std::string_view prompt = ">";
             inplen = (int) (inbuf = readst(prompt)).size();
             if (inplen > 0 && inbuf[0] == ';' || inplen == 0)
                 continue;
