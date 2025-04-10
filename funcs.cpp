@@ -4,6 +4,7 @@
 #include "globals.h"
 #include "rooms.h"
 #include <vector>
+#include <sstream>
 #include <chrono>
 #include <thread>
 

@@ -22,10 +22,10 @@ endif()
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization system process)
 
-# Make sure we have at least gcc-12.
+# Make sure we have at least gcc-11.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "12")
-        message(FATAL_ERROR "Must use at least gcc-12.")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11")
+        message(FATAL_ERROR "Must use at least gcc-11.")
     endif()
 endif()
 
