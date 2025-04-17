@@ -231,11 +231,7 @@ public:
     typedef std::string &reference;
     typedef std::random_access_iterator_tag iterator_category;
 
-    SIterator() : Base() {}
-    SIterator(std::string &container) : Base(container) {}
-    SIterator(std::string &container, iterator i) : Base(container, i) {}
-    SIterator(std::string *container, iterator i) : Base(container, i) {}
-    SIterator(const SIterator &o) : Base(o) {}
+    using Iterator<std::string>::Iterator;
 
     operator std::string() const
     {
