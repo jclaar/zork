@@ -65,6 +65,11 @@ namespace {
         {std::begin(def3b) + 1, std::end(def3b)},
         {std::begin(def3c), std::end(def3c)}
     };
+
+    const BestWeaponsList best_weapons = {
+        BestWeapons(get_obj("TROLL"), get_obj("SWORD"), 1),
+        BestWeapons(get_obj("THIEF"), get_obj("KNIFE"), 1),
+    };
 }
 
 

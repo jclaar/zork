@@ -175,10 +175,6 @@ int deaths = 0;
 HackP robber_demon;
 HackP sword_demon;
 HackP fight_demon;
-const BestWeaponsList best_weapons = {
-    BestWeapons(get_obj("TROLL"), get_obj("SWORD"), 1),
-    BestWeapons(get_obj("THIEF"), get_obj("KNIFE"), 1),
-};
 std::vector<VerbP> robot_actions;
 std::vector<VerbP> master_actions;
 

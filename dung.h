@@ -215,7 +215,6 @@ typedef std::tuple<ObjectP, ObjectP, int> BestWeapons;
 bool operator==(const ObjectP& villain, const BestWeapons& bw);
 inline bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
 typedef std::array<BestWeapons, 2> BestWeaponsList;
-extern const BestWeaponsList best_weapons;
 
 // Parse vector is defined in parser.mud. It is a 3-element vector,
 // containing various items:
