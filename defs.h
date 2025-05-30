@@ -233,8 +233,6 @@ public:
     adjective(std::string_view s) : word(s) {}
 };
 using AdjectiveP = std::shared_ptr<adjective>;
-inline bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
-inline bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
 
 typedef std::shared_ptr<word> WordP;
 
