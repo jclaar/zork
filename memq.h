@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include <concepts>
 #include "defs.h"
 #include "parser.h"
 
@@ -16,8 +17,9 @@ MemqRet<Container> memq(const T& i, const Container& c)
     return iter == std::end(c) ? MemqRet<Container>() : MemqRet<Container>(iter);
 }
 
-template <typename T, typename Container, typename Pred>
-MemqRet<Container> memq(const T& i, const Container &c, Pred pred)
+template <typename Container, typename Pred>
+    requires std::invocable<Pred, typename Container::value_type>
+MemqRet<Container> memq(const Container &c, Pred pred)
 {
     typename Container::const_iterator iter = std::find_if(std::begin(c), std::end(c), pred);
     return iter == std::end(c) ? MemqRet<Container>() : MemqRet<Container>(iter);

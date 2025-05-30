@@ -712,7 +712,10 @@ bool zgnome_init::operator()() const
 
 int cpnext(int rm, const ObjectP &obj)
 {
-    auto m = memq(obj, cpwalls);
+    auto m = memq(cpwalls, [&](const cpwall_val& v)
+        {
+            return obj->oid() == std::get<0>(v);
+        });
     return rm + std::get<1>(**m);
 }
 

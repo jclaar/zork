@@ -96,8 +96,8 @@ typedef std::array<ObjList, 64> PuzzleContents;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
 typedef std::tuple<std::string_view, int> cpwall_val;
-bool operator==(const ObjectP& o, const cpwall_val& cp);
-bool operator==(const cpwall_val& cp, const ObjectP& o);
+//bool operator==(const ObjectP& o, const cpwall_val& cp);
+//bool operator==(const cpwall_val& cp, const ObjectP& o);
 
 constexpr std::array cpwalls = {
             cpwall_val("CPSWL", 8),

@@ -948,7 +948,10 @@ namespace obj_funcs
         {
             if (ObjectP prsio = prsi(); !empty(prsio))
             {
-                auto n = memq(prsio, numobjs);
+                auto n = memq(numobjs, [&](const NumObjs& no)
+                    {
+                        return prsio->oid() == std::get<0>(no);
+                    });
                 if (n)
                 {
                     pnumb = (*n)->second;
