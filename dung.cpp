@@ -20,11 +20,6 @@
 #include "ZorkException.h"
 #include "roomfns.h"
 
-bool operator==(const ObjectP& villain, const BestWeapons& bw)
-{
-    return villain == std::get<0>(bw);
-}
-
 namespace
 {
     void init_actors()

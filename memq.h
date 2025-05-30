@@ -16,6 +16,13 @@ MemqRet<Container> memq(const T& i, const Container& c)
     return iter == std::end(c) ? MemqRet<Container>() : MemqRet<Container>(iter);
 }
 
+template <typename T, typename Container, typename Pred>
+MemqRet<Container> memq(const T& i, const Container &c, Pred pred)
+{
+    typename Container::const_iterator iter = std::find_if(std::begin(c), std::end(c), pred);
+    return iter == std::end(c) ? MemqRet<Container>() : MemqRet<Container>(iter);
+}
+
 bool memq(const ObjectP& op, Iterator<ObjVector> ol);
 Iterator<ParseVec> memq(const ObjectP& o, ParseVec pv);
 

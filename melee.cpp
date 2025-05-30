@@ -97,7 +97,10 @@ int villain_strength(const ObjectP &villain)
         if (auto prsi = ::prsi())
         {
             trnn(prsi, Bits::weaponbit);
-            auto wv = memq(villain, best_weapons);
+            auto wv = memq(villain, best_weapons, [&](const BestWeapons& bw)
+                {
+                    return villain == std::get<0>(bw);
+                });
             if (wv)
             {
                 auto &[v, weapon, val] = *(*wv);
