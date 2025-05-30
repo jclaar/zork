@@ -49,5 +49,3 @@ void load_max(int new_load)
     max_load = new_load;
 }
 
-bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }
-bool operator==(const cpwall_val& cp, const ObjectP& o) { return o == cp; }
