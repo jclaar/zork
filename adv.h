@@ -1,9 +1,6 @@
 #pragma once
 #include <boost/serialization/split_member.hpp>
 #include "room.h"
-#include <map>
-#include <memory>
-#include "globals.h"
 
 enum class AdvBits
 {

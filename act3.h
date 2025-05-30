@@ -1,7 +1,6 @@
 #pragma once
 
 #include "defs.h"
-#include "room.h"
 #include "funcs.h"
 #include "dung.h"
 

@@ -9,7 +9,7 @@
 #define _ASSERT assert
 #endif
 
-#include "room.h"
+#include "defs.h"
 #include "rooms.h"
 
 extern bool always_lit;

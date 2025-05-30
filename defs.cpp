@@ -4,9 +4,7 @@
 #include "defs.h"
 #include "ZorkException.h"
 #include "object.h"
-#include "room.h"
 #include "dung.h"
-#include "parser.h"
 
 int no_tell = 0;
 int eg_score = 0;

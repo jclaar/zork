@@ -3,7 +3,6 @@
 #include "adv.h"
 #include "funcs.h"
 #include "rooms.h"
-#include "parser.h"
 #include "dung.h"
 #include "memq.h"
 

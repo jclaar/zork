@@ -3,7 +3,6 @@
 #include <string>
 #include <tuple>
 #include "defs.h"
-#include "room.h"
 
 enum class SpeechType
 {
