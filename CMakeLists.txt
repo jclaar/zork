@@ -21,6 +21,9 @@ endif()
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization system process)
+if(LINUX)
+find_package(Threads REQUIRED)
+endif()
 
 # Make sure we have at least gcc-11.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -75,7 +78,10 @@ add_executable(zork
 	zstring.h zstring.cpp
 )
 
-target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL})
+target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
+if (LINUX)
+target_link_libraries(zork Threads::Threads)
+endif()
 target_precompile_headers(zork PRIVATE precomp.h)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
