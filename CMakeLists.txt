@@ -20,7 +20,7 @@ set(NTDLL ntdll.lib)
 endif()
 
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization system process)
+find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization process)
 if(LINUX)
 find_package(Threads REQUIRED)
 endif()
