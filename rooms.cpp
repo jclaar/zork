@@ -22,6 +22,7 @@
 #include "cevent.h"
 #include "info.h"
 #include "memq.h"
+#include "ascii_art.h"
 
 using namespace std::string_view_literals;
 
@@ -351,6 +352,9 @@ bool room_info::operator()(std::optional<int> full) const
         }
 
         tell(rm->rdesc2());
+
+        // Display ASCII art image if available for this room
+        display_room_image(rm->rid());
 
         if (!full && flags[FlagId::super_brief] || rtrnn(rm, RoomBit::rseenbit) && (flags[FlagId::brief_flag] || prob(80)) && !full)
         {

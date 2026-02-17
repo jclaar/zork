@@ -24,6 +24,8 @@
 #include <map>
 #include <string_view>
 
+#include <boost/asio.hpp>
+
 using namespace std::string_view_literals;
 
 #include "defs.h"

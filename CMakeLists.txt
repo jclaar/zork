@@ -20,7 +20,7 @@ set(NTDLL ntdll.lib)
 endif()
 
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization system process)
+find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization system)
 if(LINUX)
 find_package(Threads REQUIRED)
 endif()
@@ -48,14 +48,16 @@ add_executable(zork
 	act3.h act3.cpp
 	act4.h act4.cpp
 	adv.h adv.cpp
+	ascii_art.h ascii_art.cpp
 	cevent.h cevent.cpp
-	
+	stb_image.h
+
 	defs.h defs.cpp
 	dung.h dung.cpp
 	FlagSupport.h
 	funcs.h funcs.cpp
 	globals.h globals.cpp
-	gobject.h 
+	gobject.h
 	info.h info.cpp
 	makstr.h makstr.cpp
 	mdlfun.cpp

@@ -3,6 +3,7 @@
 
 #include "precomp.h"
 #include <boost/process.hpp>
+#include <boost/process/v2.hpp>
 #include <boost/dll.hpp>
 #include <string>
 #include "funcs.h"
