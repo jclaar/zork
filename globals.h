@@ -84,6 +84,7 @@ enum class FlagId
     folflag,
     inqstartflag,
     safe_flag,
+    ascii_art,
     num_flag_bits
 };
 constexpr size_t num_flag_bits = static_cast<int>(FlagId::num_flag_bits);

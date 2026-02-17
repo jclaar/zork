@@ -353,8 +353,11 @@ bool room_info::operator()(std::optional<int> full) const
 
         tell(rm->rdesc2());
 
-        // Display ASCII art image if available for this room
-        display_room_image(rm->rid());
+        // Display ASCII art image if enabled and available for this room
+        if (flags[FlagId::ascii_art])
+        {
+            display_room_image(rm->rid());
+        }
 
         if (!full && flags[FlagId::super_brief] || rtrnn(rm, RoomBit::rseenbit) && (flags[FlagId::brief_flag] || prob(80)) && !full)
         {
