@@ -49,6 +49,7 @@ add_executable(zork
 	act4.h act4.cpp
 	adv.h adv.cpp
 	ascii_art.h ascii_art.cpp
+	chafa_wrapper.h chafa_wrapper.cpp
 	cevent.h cevent.cpp
 	stb_image.h
 

@@ -11,6 +11,8 @@
 #include "dung.h"
 #include "rooms.h"
 #include "version.h"
+#include "chafa_wrapper.h"
+#include "ascii_art.h"
 
 std::string pw(SIterator unm, SIterator key);
 std::string username();
@@ -29,6 +31,21 @@ int run_zork()
 	init_dung();
 
     tell("ZORK++ version "sv + sVersion);
+    // Determine ascii-art status
+    std::string ascii_status;
+    if (!flags[FlagId::ascii_art])
+    {
+        tell("ASCII art mode: none");
+    }
+    else if (chafa_available())
+    {
+        tell("ASCII art mode: chafa");
+    }
+    else
+    {
+        tell("ASCII art mode: builtin, install chafa for better look");
+    }
+
 
     save_it(true);
 

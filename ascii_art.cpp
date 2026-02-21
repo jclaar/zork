@@ -1,5 +1,6 @@
 #include "precomp.h"
 #include "ascii_art.h"
+#include "chafa_wrapper.h"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -75,6 +76,22 @@ bool display_room_image(const std::string& room_id)
     }
 
     fs::path img_path = *img_path_opt;
+
+    // Try Chafa first for high-quality terminal graphics
+    // We use it via CLI to keep it separate
+    if (chafa_available())
+    {
+        auto [term_width, term_height] = get_terminal_size();
+        const int margin = 4;
+        int max_width = term_width - margin;
+        int max_height = term_height - 12;
+
+        if (display_image_chafa(img_path.string(), max_width, max_height))
+        {
+            return true;
+        }
+        // Fall through to ASCII art if Chafa fails
+    }
 
     // Load image using stb_image (request 3 channels for RGB)
     int width, height, channels;
