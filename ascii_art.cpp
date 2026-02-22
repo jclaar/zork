@@ -1,6 +1,9 @@
 #include "precomp.h"
 #include "ascii_art.h"
 #include "chafa_wrapper.h"
+#include "raylib_wrapper.h"
+#include "raylib_console.h"
+#include "globals.h"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -72,13 +75,29 @@ bool display_room_image(const std::string& room_id)
     auto img_path_opt = find_image_file(room_id);
     if (!img_path_opt)
     {
+        std::cerr << "No image found for room: " << room_id << std::endl;
         return false;
     }
 
     fs::path img_path = *img_path_opt;
+    std::cerr << "Found image for room " << room_id << ": " << img_path << std::endl;
 
-    // Try Chafa first for high-quality terminal graphics
-    // We use it via CLI to keep it separate
+    // Try GUI console first if enabled
+    if (flags[FlagId::gui_mode] && raylib_console_available())
+    {
+        std::cerr << "Setting image in GUI console" << std::endl;
+        raylib_console_set_image(img_path.string());
+        return true;
+    }
+
+    // Try GUI window if enabled (fallback for when console isn't available)
+    if (flags[FlagId::gui_mode] && raylib_available())
+    {
+        char result = raylib_display_image_interactive(img_path.string());
+        return true;
+    }
+
+    // Try Chafa for terminal graphics
     if (chafa_available())
     {
         auto [term_width, term_height] = get_terminal_size();

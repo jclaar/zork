@@ -1,6 +1,15 @@
 # README
 
 ***
+This Fork update/changes (org README below)
+Support for showing the AI art mentioned below in Ascii art using buildin code or improved gfx with chafa (if installed) was added together with an inital GUI app to show the images properly. Start zork wiht --gui or --ascii-art to use this modes.
+A script to generate AI images that also support replacing images and edit the room description if needed to generate better images was added. It needs a huggingface token and you get some images for free, if you need/want to add money you can get a way with a very low amount, I used less then $0.20 (Jan 2026) to generate all images during development.
+
+This might get merged back to the main project and if so this part should be folded into the text below.
+***
+
+
+***
 UPDATE: Because I either have too much time on my hands, or an odd (borderline unhealthy) obsession with all of this,
 I've been using AI image generators to create pictures of various locations in Zork. In a separate project
 I've put together an http server that will display room images as the user moves from place to place. It's

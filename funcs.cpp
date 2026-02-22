@@ -3,12 +3,13 @@
 #include "funcs.h"
 #include "globals.h"
 #include "rooms.h"
+#include "raylib_console.h"
 #include <vector>
 #include <sstream>
 #include <chrono>
 #include <thread>
 
-// Output stream, supporting scripting.
+// Output stream, supporting scripting and raylib console.
 class TtyBuff : public std::basic_stringbuf<char, std::char_traits<char>>
 {
 public:
@@ -21,12 +22,16 @@ protected:
         using namespace std::chrono_literals;
         auto delay = term_sim ? 10ms : 0ms;
         char c;
+        std::string buffer;
+        
         if (term_sim)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 200));
         }
+        
         while ((c = this->sbumpc()) != (char) traits_type::eof())
         {
+            buffer += c;
             std::cout << c;
             if (delay != 0ms)
             {
@@ -38,6 +43,33 @@ protected:
                 (*script_channel) << c;
             }
         }
+        
+        // Output to raylib console if GUI mode is active
+        if (flags[FlagId::gui_mode] && raylib_console_available())
+        {
+            // Process the buffer and handle newlines
+            std::string line;
+            for (char ch : buffer)
+            {
+                if (ch == '\n')
+                {
+                    if (!line.empty())
+                    {
+                        raylib_console_print_ln(line);
+                        line.clear();
+                    }
+                }
+                else
+                {
+                    line += ch;
+                }
+            }
+            if (!line.empty())
+            {
+                raylib_console_print(line);
+            }
+        }
+        
         if (script_channel)
             script_channel->flush();
         return 0;
@@ -93,6 +125,20 @@ std::string readst(std::string_view prompt)
 {
     tty << prompt;
     tty.flush();
+    
+    // Use raylib console for input if GUI mode is active
+    if (flags[FlagId::gui_mode] && raylib_console_available())
+    {
+        raylib_console_set_prompt(std::string(prompt));
+        std::string buffer = raylib_console_get_input();
+        if (script_channel)
+        {
+            (*script_channel) << buffer << std::endl;
+        }
+        return buffer;
+    }
+    
+    // Standard terminal input
     std::string buffer;
     std::getline(std::cin, buffer);
     if (script_channel)

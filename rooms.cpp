@@ -353,8 +353,8 @@ bool room_info::operator()(std::optional<int> full) const
 
         tell(rm->rdesc2());
 
-        // Display ASCII art image if enabled and available for this room
-        if (flags[FlagId::ascii_art])
+        // Display room image if ascii-art or gui mode is enabled
+        if (flags[FlagId::ascii_art] || flags[FlagId::gui_mode])
         {
             display_room_image(rm->rid());
         }
