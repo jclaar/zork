@@ -10,6 +10,7 @@ import urllib.parse
 import argparse
 import subprocess
 import shutil
+import tempfile
 from pathlib import Path
 
 # Configuration
@@ -58,6 +59,50 @@ def display_image_chafa(image_path, max_width=80, max_height=20):
         pass
     
     return False
+
+
+def edit_text_in_editor(initial_text, editor_hint="text"):
+    """Open a text editor to edit the given text. Returns the edited text or None if cancelled."""
+    # Try to find an editor
+    editor = os.environ.get('EDITOR') or os.environ.get('VISUAL')
+    
+    # Fall back to common editors, Try text based first. As vim/vi is usually installed we check for some user installed first as if a user has
+    # installed something like emacs, nano, micro etc. they probably prefer that over vim/vi which is often just there by default
+    # e.g. the order is not in any "editor war" order.
+    if not editor:
+        for e in ['micro', 'nano', 'emacs', 'vim', 'vi', 'code', 'gedit']:
+            if shutil.which(e):
+                editor = e
+                break
+    
+    if not editor:
+        # No editor found, use simple inline editing
+        print(f"\n  Current {editor_hint}:")
+        print(f"  {initial_text}")
+        print()
+        new_text = input(f"  Enter new {editor_hint} (or press Enter to keep current): ").strip()
+        return new_text if new_text else initial_text
+    
+    # Create temp file with initial content
+    try:
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
+            f.write(initial_text)
+            temp_path = f.name
+        
+        # Open editor
+        subprocess.run([editor, temp_path])
+        
+        # Read back edited content
+        with open(temp_path, 'r') as f:
+            edited_text = f.read().strip()
+        
+        # Clean up
+        os.unlink(temp_path)
+        
+        return edited_text if edited_text else initial_text
+    except Exception as e:
+        print(f"  Error opening editor: {e}")
+        return initial_text
 
 
 def parse_roomdefs(filepath):
@@ -342,11 +387,10 @@ def main():
                     print("\n  Options:")
                     print("    [y] Yes - replace existing image")
                     print("    [n] No - keep existing image")
-                    print("    [r] Retry - regenerate with same prompt")
-                    print("    [s] Style - modify style suffix and retry")
-                    print("    [d] Description - add text to description and retry")
+                    print("    [r] Retry - regenerate with current prompt")
+                    print("    [e] Edit - edit prompt in editor and regenerate")
                     print("    [q] Quit - exit script")
-                    response = input("\n  Your choice [y/n/r/s/d/q]: ").strip().lower()
+                    response = input("\n  Your choice [y/n/r/e/q]: ").strip().lower()
                     
                     if response == 'y' or response == 'yes':
                         # Remove old and rename new
@@ -374,30 +418,14 @@ def main():
                             display_image_chafa(temp_path)
                             print()
                         continue
-                    elif response == 's' or response == 'style':
-                        # Modify style and retry
-                        new_style = input(f"      Current style: {args.style}\n      New style (or press Enter to keep): ").strip()
-                        if new_style:
-                            args.style = new_style
-                        print(f"      Using style: {args.style}")
+                    elif response == 'e' or response == 'edit':
+                        # Edit full prompt with editor
+                        print("\n  Opening editor for prompt...")
+                        full_prompt = prompt + " " + args.style
+                        edited_prompt = edit_text_in_editor(full_prompt, "prompt")
+                        print(f"      Using prompt: {edited_prompt}")
                         os.remove(temp_path)
-                        if not generate_image(prompt, temp_path, token, args.style):
-                            print("      Failed to generate image")
-                        elif chafa_available() and not args.no_display:
-                            print("\n  New image:")
-                            display_image_chafa(temp_path)
-                            print()
-                        continue
-                    elif response == 'd' or response == 'description':
-                        # Add text to description
-                        extra_text = input("      Additional text to add to description: ").strip()
-                        if extra_text:
-                            modified_prompt = prompt + " " + extra_text
-                        else:
-                            modified_prompt = prompt
-                        print(f"      Modified prompt: {modified_prompt}")
-                        os.remove(temp_path)
-                        if not generate_image(modified_prompt, temp_path, token, args.style):
+                        if not generate_image(edited_prompt, temp_path, token, ""):
                             print("      Failed to generate image")
                         elif chafa_available() and not args.no_display:
                             print("\n  New image:")
