@@ -5,17 +5,32 @@
 #include <functional>
 
 // Console configuration
-constexpr int CONSOLE_FONT_SIZE = 18;
-constexpr int CONSOLE_LINE_HEIGHT = 22;
-constexpr int CONSOLE_MARGIN = 10;
+constexpr int CONSOLE_FONT_SIZE = 16;
+constexpr int CONSOLE_LINE_HEIGHT = 10;
+constexpr int CONSOLE_MARGIN = 8;
 constexpr int CONSOLE_MAX_LINES = 1000;
 constexpr int INPUT_BUFFER_SIZE = 256;
+
+// Color schemes for retro terminals
+enum class TerminalColorScheme {
+    PHOSPHOR_GREEN,      // Classic green phosphor (1970s VT100 style)
+    PHOSPHOR_AMBER,      // Amber phosphor (1980s style)
+    LCD_WHITE,           // White/green LCD style
+    PHOSPHOR_BLUE        // Blue phosphor
+};
 
 // Initialize raylib console
 bool raylib_console_init(int width = 1024, int height = 768, const std::string& title = "Zork++");
 
 // Close raylib console
 void raylib_console_close();
+
+// Set color scheme
+void raylib_console_set_color_scheme(TerminalColorScheme scheme);
+
+// Load a custom TTF font (pass empty string to use default)
+// Returns true if font loaded successfully
+bool raylib_console_load_font(const std::string& font_path, int font_size = 18);
 
 // Check if console is running
 bool raylib_console_is_running();

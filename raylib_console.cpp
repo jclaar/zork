@@ -50,15 +50,58 @@ struct ConsoleState {
     int font_size = CONSOLE_FONT_SIZE;
     int line_height = CONSOLE_LINE_HEIGHT;
     
-    // Colors
-    Color bg_color = {20, 20, 30, 255};
-    Color text_color = {200, 200, 200, 255};
-    Color input_color = {255, 255, 100, 255};
-    Color prompt_color = {100, 200, 100, 255};
-    Color border_color = {60, 60, 80, 255};
+    // Colors - Retro green phosphor terminal style (1970s)
+    Color bg_color = {10, 20, 10, 255};           // Dark green-black background
+    Color text_color = {50, 255, 50, 255};        // Bright green text (phosphor)
+    Color input_color = {100, 255, 100, 255};     // Brighter green for input
+    Color prompt_color = {50, 200, 50, 255};      // Green prompt
+    Color border_color = {30, 60, 30, 255};        // Dark green border
+    Color dim_color = {30, 100, 30, 255};          // Dim green for less important text
 };
 
 ConsoleState g_console;
+
+// Set color scheme for retro terminal look
+void apply_color_scheme(TerminalColorScheme scheme) {
+    switch (scheme) {
+        case TerminalColorScheme::PHOSPHOR_GREEN:
+            // Classic green phosphor (1970s VT100)
+            g_console.bg_color = {10, 20, 10, 255};
+            g_console.text_color = {50, 255, 50, 255};
+            g_console.input_color = {100, 255, 100, 255};
+            g_console.prompt_color = {50, 200, 50, 255};
+            g_console.border_color = {30, 60, 30, 255};
+            g_console.dim_color = {30, 100, 30, 255};
+            break;
+        case TerminalColorScheme::PHOSPHOR_AMBER:
+            // Amber phosphor (1980s)
+            g_console.bg_color = {20, 15, 5, 255};
+            g_console.text_color = {255, 200, 50, 255};
+            g_console.input_color = {255, 220, 100, 255};
+            g_console.prompt_color = {200, 160, 40, 255};
+            g_console.border_color = {60, 45, 15, 255};
+            g_console.dim_color = {100, 80, 25, 255};
+            break;
+        case TerminalColorScheme::LCD_WHITE:
+            // White/green LCD style
+            g_console.bg_color = {20, 20, 20, 255};
+            g_console.text_color = {200, 255, 200, 255};
+            g_console.input_color = {255, 255, 255, 255};
+            g_console.prompt_color = {150, 255, 150, 255};
+            g_console.border_color = {50, 50, 50, 255};
+            g_console.dim_color = {100, 120, 100, 255};
+            break;
+        case TerminalColorScheme::PHOSPHOR_BLUE:
+            // Blue phosphor
+            g_console.bg_color = {5, 10, 25, 255};
+            g_console.text_color = {100, 150, 255, 255};
+            g_console.input_color = {150, 200, 255, 255};
+            g_console.prompt_color = {80, 130, 220, 255};
+            g_console.border_color = {20, 30, 60, 255};
+            g_console.dim_color = {50, 70, 120, 255};
+            break;
+    }
+}
 
 // Helper: Word wrap text to fit console width
 std::vector<std::string> wrap_text(const std::string& text, int max_width) {
@@ -104,23 +147,41 @@ std::vector<std::string> wrap_text(const std::string& text, int max_width) {
 
 // Calculate console area dimensions
 void update_layout() {
+    // Help text height at top
+    const int help_text_height = 25;
+    const int min_console_height = 200;  // Minimum height for console area
+    
     // If we have an image, console starts below it
     if (g_console.current_image.id != 0) {
-        int img_height = (int)(g_console.current_image.height * g_console.image_scale);
-        g_console.console_y = std::min(img_height + 10, g_console.window_height / 2);
+        float scale = (float)(g_console.window_width - 20) / g_console.current_image.width;
+        scale = std::min(scale, 0.5f);
+        int img_height = (int)(g_console.current_image.height * scale);
+        
+        // Console starts below image, but ensure minimum console height
+        int max_image_area = g_console.window_height - min_console_height - help_text_height - 20;
+        int actual_image_height = std::min(img_height, max_image_area);
+        g_console.console_y = help_text_height + actual_image_height + 15;
     } else {
-        g_console.console_y = 10;
+        g_console.console_y = help_text_height + 10;
     }
     
     // Calculate visible lines
     int console_height = g_console.window_height - g_console.console_y - CONSOLE_MARGIN * 2 - g_console.line_height;
-    g_console.max_visible_lines = console_height / g_console.line_height;
+    g_console.max_visible_lines = std::max(5, console_height / g_console.line_height);
 }
 
 // Render the console
 void render_console() {
     BeginDrawing();
     ClearBackground(g_console.bg_color);
+    
+    // Draw help text at top first
+    DrawText("ZORK++ GUI Mode | ENTER=submit | UP/DOWN=scroll | ESC=quit", 
+             10, 5, 14, g_console.dim_color);
+    
+    // Image starts below help text
+    const int image_top = 25;
+    const int min_console_height = 200;
     
     // Draw image if available
     if (g_console.current_image.id != 0) {
@@ -130,9 +191,18 @@ void render_console() {
         float scale = (float)(g_console.window_width - 20) / g_console.current_image.width;
         scale = std::min(scale, 0.5f);  // Max 50% of original size for console mode
         
+        int img_height = (int)(g_console.current_image.height * scale);
+        int max_image_area = g_console.window_height - min_console_height - image_top - 20;
+        int actual_image_height = std::min(img_height, max_image_area);
+        
+        // Recalculate scale if image needs to be smaller
+        if (img_height > max_image_area) {
+            scale = (float)actual_image_height / g_console.current_image.height;
+        }
+        
         Rectangle dest = {
             (g_console.window_width - g_console.current_image.width * scale) / 2,
-            5,
+            (float)image_top,
             g_console.current_image.width * scale,
             g_console.current_image.height * scale
         };
@@ -157,7 +227,9 @@ void render_console() {
         
         for (int i = start_line; i < (int)g_console.lines.size() - g_console.scroll_offset && i < start_line + g_console.max_visible_lines; i++) {
             if (i >= 0 && i < (int)g_console.lines.size()) {
-                DrawText(g_console.lines[i].c_str(), CONSOLE_MARGIN, y, g_console.font_size, g_console.text_color);
+                // Use DrawTextEx for proper font rendering with spacing
+                Vector2 pos = {(float)CONSOLE_MARGIN, (float)y};
+                DrawTextEx(g_console.font, g_console.lines[i].c_str(), pos, (float)g_console.font_size, 1.0f, g_console.text_color);
                 y += g_console.line_height;
             }
         }
@@ -168,21 +240,24 @@ void render_console() {
     DrawRectangle(CONSOLE_MARGIN - 2, input_y - 2, 
                   g_console.window_width - CONSOLE_MARGIN * 2 + 4,
                   g_console.line_height + 4,
-                  {30, 30, 40, 255});
+                  {30, 60, 30, 255});
     
     // Draw prompt
-    DrawText(g_console.prompt.c_str(), CONSOLE_MARGIN, input_y, g_console.font_size, g_console.prompt_color);
+    Vector2 prompt_pos = {(float)CONSOLE_MARGIN, (float)input_y};
+    DrawTextEx(g_console.font, g_console.prompt.c_str(), prompt_pos, (float)g_console.font_size, 1.0f, g_console.prompt_color);
     
     // Draw input buffer
     {
         std::lock_guard<std::mutex> lock(g_console.input_mutex);
-        int prompt_width = MeasureText(g_console.prompt.c_str(), g_console.font_size);
-        DrawText(g_console.input_buffer.c_str(), CONSOLE_MARGIN + prompt_width, input_y, g_console.font_size, g_console.input_color);
+        Vector2 prompt_size = MeasureTextEx(g_console.font, g_console.prompt.c_str(), (float)g_console.font_size, 1.0f);
+        Vector2 input_pos = {(float)(CONSOLE_MARGIN + prompt_size.x), (float)input_y};
+        DrawTextEx(g_console.font, g_console.input_buffer.c_str(), input_pos, (float)g_console.font_size, 1.0f, g_console.input_color);
         
         // Draw cursor
-        int cursor_x = CONSOLE_MARGIN + prompt_width + MeasureText(g_console.input_buffer.c_str(), g_console.font_size);
+        Vector2 input_size = MeasureTextEx(g_console.font, g_console.input_buffer.c_str(), (float)g_console.font_size, 1.0f);
+        int cursor_x = CONSOLE_MARGIN + (int)prompt_size.x + (int)input_size.x;
         if ((GetTime() - (int)GetTime()) < 0.5) {  // Blinking cursor
-            DrawRectangle(cursor_x, input_y, 8, g_console.font_size, g_console.input_color);
+            DrawRectangle(cursor_x, input_y, 2, g_console.font_size, g_console.input_color);
         }
     }
     
@@ -200,10 +275,6 @@ void render_console() {
             DrawRectangle(g_console.window_width - 15, scroll_bar_y, 8, scroll_bar_height, {80, 80, 100, 255});
         }
     }
-    
-    // Draw help text at top
-    DrawText("ZORK++ GUI Mode | UP/DOWN=scroll | ESC=quit", 
-             10, 5, 14, {100, 100, 120, 255});
     
     EndDrawing();
 }
@@ -233,7 +304,7 @@ void handle_input() {
     // Handle text input
     int key = GetCharPressed();
     while (key > 0) {
-        if ((key >= 32 && key <= 126) || IsKeyPressed(KEY_SPACE)) {  // Printable ASCII
+        if (key >= 32 && key <= 126) {  // Printable ASCII (includes space at 32)
             g_console.input_buffer += (char)key;
         }
         key = GetCharPressed();
@@ -283,6 +354,31 @@ void handle_resize() {
 
 }  // anonymous namespace
 
+void raylib_console_set_color_scheme(TerminalColorScheme scheme) {
+    apply_color_scheme(scheme);
+}
+
+bool raylib_console_load_font(const std::string& font_path, int font_size) {
+    if (font_path.empty()) {
+        g_console.font = GetFontDefault();
+        g_console.font_size = font_size;
+        return true;
+    }
+    
+    Font new_font = LoadFont(font_path.c_str());
+    if (new_font.texture.id != 0) {
+        // Unload previous custom font if any
+        if (g_console.font.texture.id != 0 && g_console.font.texture.id != GetFontDefault().texture.id) {
+            UnloadFont(g_console.font);
+        }
+        g_console.font = new_font;
+        g_console.font_size = font_size;
+        return true;
+    }
+    
+    return false;
+}
+
 bool raylib_console_available() {
     return true;
 }
@@ -305,11 +401,21 @@ bool raylib_console_init(int width, int height, const std::string& title) {
     g_console.initialized = true;
     g_console.running = true;
     
-    // Load default font
+    // Load default font first
     g_console.font = GetFontDefault();
+    g_console.font_size = CONSOLE_FONT_SIZE;
     
+    // Try to load a custom font if available
+    if (!raylib_console_load_font("fonts/VT323-Regular.ttf", 18)) {
+        // Fall back to default font with larger size
+        g_console.font = GetFontDefault();
+        g_console.font_size = 18;
+    }
+    
+    raylib_console_set_color_scheme(TerminalColorScheme::PHOSPHOR_GREEN);   // 1970s green
+
     update_layout();
-    
+
     // Print welcome message
     raylib_console_print_ln("ZORK++ GUI Mode Started");
     raylib_console_print_ln("Type commands and press ENTER to submit");
@@ -401,8 +507,14 @@ void raylib_console_clear_image() {
 }
 
 std::string raylib_console_get_input() {
-    if (!g_console.initialized || !g_console.running) {
-        return "";
+    // If console was already closed, return quit
+    if (!g_console.initialized) {
+        return "quit";
+    }
+    
+    if (!g_console.running || WindowShouldClose()) {
+        g_console.running = false;
+        return "quit";
     }
     
     // Run event loop until input is received
@@ -421,6 +533,7 @@ std::string raylib_console_get_input() {
         }
     }
     
+    // Window was closed
     g_console.running = false;
     return "quit";
 }
@@ -476,6 +589,8 @@ void raylib_console_set_input_callback(InputCallback callback) {
 bool raylib_console_available() { return false; }
 bool raylib_console_init(int, int, const std::string&) { return false; }
 void raylib_console_close() {}
+void raylib_console_set_color_scheme(TerminalColorScheme) {}
+bool raylib_console_load_font(const std::string&, int) { return false; }
 bool raylib_console_is_running() { return false; }
 void raylib_console_print(const std::string&) {}
 void raylib_console_print_ln(const std::string&) {}
