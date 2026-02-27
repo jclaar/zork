@@ -8,6 +8,7 @@ A script to generate AI images that also support replacing images and edit the r
 This might get merged back to the main project and if so this part should be folded into the text below.
 ***
 
+Main project README:
 
 ***
 UPDATE: Because I either have too much time on my hands, or an odd (borderline unhealthy) obsession with all of this,

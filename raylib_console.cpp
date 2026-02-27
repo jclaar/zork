@@ -25,11 +25,17 @@ struct ConsoleState {
     
     // Input
     std::string input_buffer;
+    int cursor_pos = 0;
     std::string prompt = "> ";
     std::mutex input_mutex;
     std::condition_variable input_cv;
     bool input_ready = false;
     std::string pending_input;
+    
+    // Command history
+    std::vector<std::string> history;
+    int history_index = -1;
+    std::string saved_input;
     
     // Image
     Texture2D current_image = {0};
@@ -43,20 +49,25 @@ struct ConsoleState {
     // Window dimensions
     int window_width = 1024;
     int window_height = 768;
-    int console_y = 300;  // Y position where console starts (below image)
+    int console_y = 300;
     
     // Font
     Font font = {0};
     int font_size = CONSOLE_FONT_SIZE;
     int line_height = CONSOLE_LINE_HEIGHT;
     
+    // Scrollbar state
+    bool scrollbar_dragging = false;
+    
     // Colors - Retro green phosphor terminal style (1970s)
-    Color bg_color = {10, 20, 10, 255};           // Dark green-black background
-    Color text_color = {50, 255, 50, 255};        // Bright green text (phosphor)
-    Color input_color = {100, 255, 100, 255};     // Brighter green for input
-    Color prompt_color = {50, 200, 50, 255};      // Green prompt
-    Color border_color = {30, 60, 30, 255};        // Dark green border
-    Color dim_color = {30, 100, 30, 255};          // Dim green for less important text
+    Color bg_color = {10, 20, 10, 255};
+    Color text_color = {50, 255, 50, 255};
+    Color input_color = {100, 255, 100, 255};
+    Color prompt_color = {50, 200, 50, 255};
+    Color border_color = {30, 60, 30, 255};
+    Color dim_color = {30, 100, 30, 255};
+    Color scrollbar_color = {60, 120, 60, 200};
+    Color scrollbar_bg_color = {20, 40, 20, 100};
 };
 
 ConsoleState g_console;
@@ -176,7 +187,7 @@ void render_console() {
     ClearBackground(g_console.bg_color);
     
     // Draw help text at top first
-    DrawText("ZORK++ GUI Mode | ENTER=submit | UP/DOWN=scroll | ESC=quit", 
+    DrawText("ZORK++ GUI Mode | ENTER=submit | UP/DOWN=history | LEFT/RIGHT=cursor | DEL/BKSP=delete | ESC=quit", 
              10, 5, 14, g_console.dim_color);
     
     // Image starts below help text
@@ -246,33 +257,57 @@ void render_console() {
     Vector2 prompt_pos = {(float)CONSOLE_MARGIN, (float)input_y};
     DrawTextEx(g_console.font, g_console.prompt.c_str(), prompt_pos, (float)g_console.font_size, 1.0f, g_console.prompt_color);
     
-    // Draw input buffer
+    // Draw input buffer with cursor position
     {
         std::lock_guard<std::mutex> lock(g_console.input_mutex);
         Vector2 prompt_size = MeasureTextEx(g_console.font, g_console.prompt.c_str(), (float)g_console.font_size, 1.0f);
-        Vector2 input_pos = {(float)(CONSOLE_MARGIN + prompt_size.x), (float)input_y};
-        DrawTextEx(g_console.font, g_console.input_buffer.c_str(), input_pos, (float)g_console.font_size, 1.0f, g_console.input_color);
         
-        // Draw cursor
-        Vector2 input_size = MeasureTextEx(g_console.font, g_console.input_buffer.c_str(), (float)g_console.font_size, 1.0f);
-        int cursor_x = CONSOLE_MARGIN + (int)prompt_size.x + (int)input_size.x;
-        if ((GetTime() - (int)GetTime()) < 0.5) {  // Blinking cursor
-            DrawRectangle(cursor_x, input_y, 2, g_console.font_size, g_console.input_color);
+        // Draw text before cursor
+        std::string text_before = g_console.input_buffer.substr(0, g_console.cursor_pos);
+        Vector2 input_pos = {(float)(CONSOLE_MARGIN + prompt_size.x), (float)input_y};
+        DrawTextEx(g_console.font, text_before.c_str(), input_pos, (float)g_console.font_size, 1.0f, g_console.input_color);
+        
+        // Calculate cursor position
+        Vector2 before_size = MeasureTextEx(g_console.font, text_before.c_str(), (float)g_console.font_size, 1.0f);
+        int cursor_x = CONSOLE_MARGIN + (int)prompt_size.x + (int)before_size.x;
+        
+        // Draw cursor (blinking)
+        if ((GetTime() - (int)GetTime()) < 0.5) {
+            DrawRectangle(cursor_x, input_y, 8, g_console.font_size, g_console.input_color);
+        }
+        
+        // Draw text after cursor
+        std::string text_after = g_console.input_buffer.substr(g_console.cursor_pos);
+        if (!text_after.empty()) {
+            Vector2 after_pos = {(float)(cursor_x + 8), (float)input_y};
+            DrawTextEx(g_console.font, text_after.c_str(), after_pos, (float)g_console.font_size, 1.0f, g_console.input_color);
         }
     }
     
-    // Draw scroll indicator if needed
+    // Draw interactive scrollbar
     {
         std::lock_guard<std::mutex> lock(g_console.lines_mutex);
-        if (g_console.lines.size() > (size_t)g_console.max_visible_lines) {
-            int total_lines = g_console.lines.size();
-            int visible_lines = g_console.max_visible_lines;
+        int total_lines = g_console.lines.size();
+        int visible_lines = g_console.max_visible_lines;
+        
+        if (total_lines > visible_lines) {
+            int console_area_height = g_console.window_height - console_top - CONSOLE_MARGIN * 2 - g_console.line_height;
+            int scrollbar_area_x = g_console.window_width - 20;
+            int scrollbar_area_y = console_top + CONSOLE_MARGIN;
+            int scrollbar_area_height = console_area_height;
+            
+            // Draw scrollbar track
+            DrawRectangle(scrollbar_area_x, scrollbar_area_y, 12, scrollbar_area_height, 
+                         g_console.scrollbar_bg_color);
+            
+            // Calculate scrollbar thumb position and size
             float scroll_ratio = (float)g_console.scroll_offset / (total_lines - visible_lines);
+            float thumb_height = std::max(30.0f, (float)scrollbar_area_height * visible_lines / total_lines);
+            int thumb_y = scrollbar_area_y + (int)((scrollbar_area_height - thumb_height) * (1 - scroll_ratio));
             
-            int scroll_bar_height = 100;
-            int scroll_bar_y = console_top + (int)((g_console.window_height - console_top - scroll_bar_height - 50) * (1 - scroll_ratio));
-            
-            DrawRectangle(g_console.window_width - 15, scroll_bar_y, 8, scroll_bar_height, {80, 80, 100, 255});
+            // Draw scrollbar thumb
+            Color thumb_color = g_console.scrollbar_dragging ? g_console.input_color : g_console.scrollbar_color;
+            DrawRectangle(scrollbar_area_x + 2, thumb_y, 8, (int)thumb_height, thumb_color);
         }
     }
     
@@ -281,43 +316,126 @@ void render_console() {
 
 // Handle keyboard input
 void handle_input() {
+    // Handle mouse wheel scrolling first (doesn't need input mutex)
+    float wheel_move = GetMouseWheelMove();
+    if (wheel_move != 0) {
+        std::lock_guard<std::mutex> lines_lock(g_console.lines_mutex);
+        int new_offset = g_console.scroll_offset + (int)wheel_move;
+        g_console.scroll_offset = std::max(0, std::min(new_offset, (int)g_console.lines.size() - g_console.max_visible_lines));
+    }
+    
+    // Check for scrollbar click/drag
+    Vector2 mouse_pos = GetMousePosition();
+    int console_top = g_console.console_y;
+    int console_area_height = g_console.window_height - console_top - CONSOLE_MARGIN * 2 - g_console.line_height;
+    int scrollbar_area_x = g_console.window_width - 20;
+    int scrollbar_area_y = console_top + CONSOLE_MARGIN;
+    int scrollbar_area_height = console_area_height;
+    
+    bool in_scrollbar = mouse_pos.x >= scrollbar_area_x && mouse_pos.x <= scrollbar_area_x + 12 &&
+                        mouse_pos.y >= scrollbar_area_y && mouse_pos.y <= scrollbar_area_y + scrollbar_area_height;
+    
+    if (in_scrollbar && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        g_console.scrollbar_dragging = true;
+    }
+    
+    if (g_console.scrollbar_dragging) {
+        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+            std::lock_guard<std::mutex> lines_lock(g_console.lines_mutex);
+            float scroll_ratio = (float)(mouse_pos.y - scrollbar_area_y) / scrollbar_area_height;
+            scroll_ratio = std::max(0.0f, std::min(1.0f, scroll_ratio));
+            int new_offset = (int)(scroll_ratio * (g_console.lines.size() - g_console.max_visible_lines));
+            g_console.scroll_offset = std::max(0, std::min(new_offset, (int)g_console.lines.size() - g_console.max_visible_lines));
+        } else {
+            g_console.scrollbar_dragging = false;
+        }
+    }
+    
     std::lock_guard<std::mutex> lock(g_console.input_mutex);
     
-    // Handle scrolling
-    if (IsKeyPressed(KEY_UP)) {
-        std::lock_guard<std::mutex> lines_lock(g_console.lines_mutex);
-        g_console.scroll_offset = std::min(g_console.scroll_offset + 1, 
-                                           std::max(0, (int)g_console.lines.size() - g_console.max_visible_lines));
+    // Handle command history navigation (UP/DOWN when not dragging scrollbar)
+    if (IsKeyPressed(KEY_UP) && !g_console.scrollbar_dragging) {
+        if (!g_console.history.empty()) {
+            if (g_console.history_index == -1) {
+                g_console.saved_input = g_console.input_buffer;
+                g_console.history_index = (int)g_console.history.size() - 1;
+            } else if (g_console.history_index > 0) {
+                g_console.history_index--;
+            }
+            g_console.input_buffer = g_console.history[g_console.history_index];
+            g_console.cursor_pos = (int)g_console.input_buffer.length();
+        }
     }
-    if (IsKeyPressed(KEY_DOWN)) {
-        g_console.scroll_offset = std::max(0, g_console.scroll_offset - 1);
+    
+    if (IsKeyPressed(KEY_DOWN) && !g_console.scrollbar_dragging) {
+        if (g_console.history_index != -1) {
+            g_console.history_index++;
+            if (g_console.history_index >= (int)g_console.history.size()) {
+                g_console.history_index = -1;
+                g_console.input_buffer = g_console.saved_input;
+            } else {
+                g_console.input_buffer = g_console.history[g_console.history_index];
+            }
+            g_console.cursor_pos = (int)g_console.input_buffer.length();
+        }
     }
+    
+    // Handle page up/down for scrolling
     if (IsKeyPressed(KEY_PAGE_UP)) {
         std::lock_guard<std::mutex> lines_lock(g_console.lines_mutex);
         g_console.scroll_offset = std::min(g_console.scroll_offset + g_console.max_visible_lines,
                                            std::max(0, (int)g_console.lines.size() - g_console.max_visible_lines));
     }
     if (IsKeyPressed(KEY_PAGE_DOWN)) {
+        std::lock_guard<std::mutex> lines_lock(g_console.lines_mutex);
         g_console.scroll_offset = std::max(0, g_console.scroll_offset - g_console.max_visible_lines);
     }
     
-    // Handle text input
+    // Handle text input (insert at cursor position)
     int key = GetCharPressed();
     while (key > 0) {
-        if (key >= 32 && key <= 126) {  // Printable ASCII (includes space at 32)
-            g_console.input_buffer += (char)key;
+        if (key >= 32 && key <= 126) {
+            g_console.input_buffer.insert(g_console.cursor_pos, 1, (char)key);
+            g_console.cursor_pos++;
         }
         key = GetCharPressed();
     }
     
-    // Handle special keys
-    if (IsKeyPressed(KEY_BACKSPACE) && !g_console.input_buffer.empty()) {
-        g_console.input_buffer.pop_back();
+    // Handle cursor movement
+    if (IsKeyPressed(KEY_LEFT) && g_console.cursor_pos > 0) {
+        g_console.cursor_pos--;
+    }
+    if (IsKeyPressed(KEY_RIGHT) && g_console.cursor_pos < (int)g_console.input_buffer.length()) {
+        g_console.cursor_pos++;
+    }
+    
+    // Handle backspace (delete before cursor)
+    if (IsKeyPressed(KEY_BACKSPACE) && g_console.cursor_pos > 0) {
+        g_console.input_buffer.erase(g_console.cursor_pos - 1, 1);
+        g_console.cursor_pos--;
+    }
+    
+    // Handle delete key (delete at cursor)
+    if (IsKeyPressed(KEY_DELETE) && g_console.cursor_pos < (int)g_console.input_buffer.length()) {
+        g_console.input_buffer.erase(g_console.cursor_pos, 1);
+    }
+    
+    // Handle home/end keys
+    if (IsKeyPressed(KEY_HOME)) {
+        g_console.cursor_pos = 0;
+    }
+    if (IsKeyPressed(KEY_END)) {
+        g_console.cursor_pos = (int)g_console.input_buffer.length();
     }
     
     if (IsKeyPressed(KEY_ENTER)) {
         // Submit input
         if (!g_console.input_buffer.empty()) {
+            // Add to history
+            g_console.history.push_back(g_console.input_buffer);
+            g_console.history_index = -1;
+            g_console.saved_input.clear();
+            
             g_console.pending_input = g_console.input_buffer;
             g_console.input_ready = true;
             
@@ -325,6 +443,7 @@ void handle_input() {
             raylib_console_print_ln(g_console.prompt + g_console.input_buffer);
             
             g_console.input_buffer.clear();
+            g_console.cursor_pos = 0;
             g_console.input_cv.notify_one();
             
             // Call callback if set
