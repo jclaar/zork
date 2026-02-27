@@ -119,20 +119,305 @@ def parse_roomdefs(filepath):
     matches = re.findall(pattern, content, re.DOTALL)
     
     for room_id, description, short_name in matches:
-        # Clean up the data
         room_id = room_id.strip()
         description = description.strip()
         short_name = short_name.strip()
         
-        # Skip rooms with empty descriptions (they use variables)
-        if description and not description.startswith('st') and len(description) > 10:
+        # Skip rooms with empty descriptions - they use variables or dynamic descriptions
+        if not description:
+            continue
+            
+        # Skip rooms where description is a variable reference (starts with lowercase letter)
+        if description[0].islower() and not description.startswith('"'):
+            continue
+            
+        # Only include inline descriptions
+        if len(description) > 10:
             rooms.append({
                 'id': room_id.lower(),
                 'description': description,
-                'name': short_name
+                'name': short_name,
+                'source': 'inline'
             })
     
     return rooms
+
+
+def parse_variable_descriptions(zstring_path):
+    """Parse zstring.h for variable-based descriptions."""
+    var_descriptions = {}
+    
+    if not os.path.exists(zstring_path):
+        return var_descriptions
+    
+    with open(zstring_path, 'r') as f:
+        content = f.read()
+    
+    # Match raw strings that may span multiple lines
+    # Pattern: constexpr std::string_view  varname = R"~(content)~";
+    # Use [\s\S]*? to match any character including newlines, non-greedy
+    pattern = r'constexpr\s+std::string_view\s+(\w+)\s*=\s*R"~\(([\s\S]*?)\)~"'
+    
+    matches = re.findall(pattern, content)
+    
+    for varname, description in matches:
+        varname = varname.strip()
+        description = description.strip()
+        if description:
+            var_descriptions[varname] = description
+    
+    return var_descriptions
+    
+    with open(zstring_path, 'r') as f:
+        content = f.read()
+    
+    pattern = r'constexpr\s+std::string_view\s+(\w+)\s*=\s*R"~\(([^)]*)\)~"'
+    
+    matches = re.findall(pattern, content, re.DOTALL)
+    
+    for varname, description in matches:
+        varname = varname.strip()
+        description = description.strip()
+        if description:
+            var_descriptions[varname] = description
+    
+    return var_descriptions
+
+
+def parse_roomdefs_with_vars(filepath, zstring_path):
+    """Parse roomdefs.h including rooms with variable descriptions.
+    Returns a dict with room info including the room function name if present."""
+    rooms = []
+    room_func_map = {}
+    
+    with open(filepath, 'r') as f:
+        content = f.read()
+    
+    # Get variable descriptions
+    var_descriptions = parse_variable_descriptions(zstring_path)
+    
+    # Pattern to find the start of mr() - room_id
+    pattern = r'mr\s*\(\s*R"~\(([^)]+)\)~"'
+    
+    for match in re.finditer(pattern, content):
+        room_id = match.group(1).strip()
+        start = match.end()
+        
+        # Parse the remaining arguments manually to handle multiline raw strings
+        rest = content[start:]
+        
+        # Skip whitespace and comma
+        rest = re.sub(r'^\s*,\s*', '', rest)
+        
+        # Parse description argument
+        description = None
+        source = None
+        if rest.startswith('R"~('):
+            # Raw string - find the matching )~"
+            depth = 1
+            i = 4
+            while i < len(rest) and depth > 0:
+                if rest[i:i+3] == ')~"':
+                    depth -= 1
+                    if depth == 0:
+                        break
+                elif rest[i:i+4] == 'R"~(':
+                    depth += 1
+                    i += 4
+                    continue
+                i += 1
+            desc = rest[4:i].strip()
+            remaining = rest[i+3:]
+            if desc and len(desc) > 5:
+                description = desc
+                source = 'inline'
+        else:
+            # Variable - find the next comma
+            comma_pos = rest.find(',')
+            var_name = rest[:comma_pos].strip()
+            remaining = rest[comma_pos+1:]
+            if var_name in var_descriptions:
+                description = var_descriptions[var_name]
+                source = f'variable:{var_name}'
+        
+        # Skip whitespace and comma before short_name
+        remaining = re.sub(r'^\s*,\s*', '', remaining)
+        
+        # Parse short_name argument
+        short_name = ''
+        if remaining.startswith('R"~('):
+            # Raw string
+            depth = 1
+            i = 4
+            while i < len(remaining) and depth > 0:
+                if remaining[i:i+3] == ')~"':
+                    depth -= 1
+                    if depth == 0:
+                        break
+                elif remaining[i:i+4] == 'R"~(':
+                    depth += 1
+                    i += 4
+                    continue
+                i += 1
+            short_name = remaining[4:i].strip()
+            remaining = remaining[i+3:]
+        else:
+            # Variable - find the next comma
+            comma_pos = remaining.find(',')
+            var_name = remaining[:comma_pos].strip()
+            remaining = remaining[comma_pos+1:]
+            if var_name in var_descriptions:
+                short_name = var_descriptions[var_name]
+            else:
+                short_name = var_name
+        
+        # Search for room_funcs:: in the remaining content
+        func_match = re.search(r'room_funcs::(\w+)\s*\(\s*\)', remaining)
+        if func_match:
+            room_func_map[room_id.lower()] = func_match.group(1)
+        
+        rooms.append({
+            'id': room_id.lower(),
+            'description': description,
+            'name': short_name,
+            'source': source
+        })
+    
+    return rooms, room_func_map
+
+
+def parse_dynamic_descriptions(act_path, zstring_path):
+    """Parse act files for dynamically generated room descriptions.
+    Returns dict keyed by function name (not room_id)."""
+    func_descriptions = {}
+    
+    # Get variable descriptions from zstring.h
+    var_descriptions = parse_variable_descriptions(zstring_path)
+    
+    # Parse all act files (act1.cpp through act4.cpp)
+    act_files = []
+    if os.path.isdir(act_path):
+        act_files = [os.path.join(act_path, f) for f in os.listdir(act_path) 
+                     if f.startswith('act') and f.endswith('.cpp')]
+    elif os.path.isfile(act_path):
+        act_files = [act_path]
+    else:
+        # Try act1.cpp through act4.cpp in the same directory
+        base_dir = os.path.dirname(act_path) or '.'
+        act_files = [os.path.join(base_dir, f'act{i}.cpp') for i in range(1, 5)]
+        act_files = [f for f in act_files if os.path.exists(f)]
+    
+    room_func_pattern = r'bool\s+(\w+)::operator\(\)\s*\(\s*\)\s*const'
+    
+    for act_file in act_files:
+        if not os.path.exists(act_file):
+            continue
+            
+        with open(act_file, 'r') as f:
+            content = f.read()
+        
+        room_funcs = re.findall(room_func_pattern, content)
+        
+        for func_name in room_funcs:
+            # Find the function with balanced braces
+            func_start_pattern = rf'bool\s+{func_name}::operator\(\)\s*\(\s*\)\s*const\s*\{{'
+            func_start_match = re.search(func_start_pattern, content)
+            
+            if not func_start_match:
+                continue
+            
+            # Find matching closing brace by counting
+            start = func_start_match.end()
+            depth = 1
+            pos = start
+            while pos < len(content) and depth > 0:
+                if content[pos] == '{':
+                    depth += 1
+                elif content[pos] == '}':
+                    depth -= 1
+                pos += 1
+            
+            func_body = content[start:pos-1]
+            
+            # Look for tell() calls with string literals (may be concatenated)
+            # Handle: tell("string1" "string2" ...) or tell("string"...)
+            tell_pattern = r'tell\s*\(\s*"([^"]*)"'
+            tell_matches = re.findall(tell_pattern, func_body)
+            
+            # Also try to find tell() with the full first argument including concatenated strings
+            full_tell_pattern = r'tell\s*\(\s*((?:"[^"]*"\s*)+)'
+            full_tell_matches = re.findall(full_tell_pattern, func_body)
+            
+            # Combine all string parts from each match
+            for strings_concat in full_tell_matches:
+                # Extract all string parts
+                parts = re.findall(r'"([^"]*)"', strings_concat)
+                desc = ' '.join(p.strip() for p in parts if p.strip())
+                desc = desc.replace('\\n', ' ').replace('\\t', ' ')
+                if desc and len(desc) > 5:
+                    func_descriptions[func_name] = {
+                        'description': desc,
+                        'source': f'function:{func_name}'
+                    }
+                    break
+            
+            # Also try simple tell patterns
+            if func_name not in func_descriptions:
+                for desc in tell_matches:
+                    desc = desc.strip()
+                    desc = desc.replace('\\n', ' ').replace('\\t', ' ')
+                    if desc and len(desc) > 5:
+                        func_descriptions[func_name] = {
+                            'description': desc,
+                            'source': f'function:{func_name}'
+                        }
+                        break
+            
+            # If not found, look for description variables in the function body
+            if func_name not in func_descriptions:
+                # Find all potential description variable names
+                desc_vars = re.findall(r'\b(\w*_desc\w*)\b', func_body)
+                desc_vars += re.findall(r'\b(\w*desc)\b', func_body)
+                
+                for var_name in desc_vars:
+                    if var_name in var_descriptions:
+                        desc = var_descriptions[var_name]
+                        if len(desc) > 5:
+                            func_descriptions[func_name] = {
+                                'description': desc,
+                                'source': f'zstring:{var_name}'
+                            }
+                            break
+    
+    return func_descriptions
+
+
+def parse_roomdefs_complete(roomdefs_path, zstring_path, act_path):
+    """Parse all room definitions from multiple sources."""
+    all_rooms = {}
+    
+    # Get rooms from roomdefs.h with variable resolution and room function map
+    rooms, room_func_map = parse_roomdefs_with_vars(roomdefs_path, zstring_path)
+    
+    # Get dynamic descriptions from act files
+    func_descriptions = parse_dynamic_descriptions(act_path, zstring_path)
+    
+    # Build the final room list
+    for room in rooms:
+        room_id = room['id']
+        
+        # If no description, try to get from room function
+        if not room['description'] and room_id in room_func_map:
+            func_name = room_func_map[room_id]
+            if func_name in func_descriptions:
+                room['description'] = func_descriptions[func_name]['description']
+                room['source'] = func_descriptions[func_name]['source']
+        
+        # Only include rooms with descriptions
+        if room['description'] and len(room['description']) > 5:
+            all_rooms[room_id] = room
+    
+    return list(all_rooms.values())
 
 
 def generate_image_huggingface(prompt, output_path, token, style_suffix, max_retries=3):
@@ -242,7 +527,7 @@ def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     
     # Parse room definitions
-    rooms = parse_roomdefs(ROOMDEFS_FILE)
+    rooms = parse_roomdefs_complete(ROOMDEFS_FILE, "zstring.h", ".")
     
     # Check for existing images
     existing = {}
