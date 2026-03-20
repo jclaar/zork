@@ -1,6 +1,16 @@
 # README
 
 ***
+This Fork update/changes (org README below)
+Support for showing the AI art mentioned below in Ascii art using buildin code or improved gfx with chafa (if installed) was added together with an inital GUI app to show the images properly. Start zork wiht --gui or --ascii-art to use this modes.
+A script to generate AI images that also support replacing images and edit the room description if needed to generate better images was added. It needs a huggingface token and you get some images for free, if you need/want to add money you can get a way with a very low amount, I used less then $0.20 (Jan 2026) to generate all images during development.
+
+This might get merged back to the main project and if so this part should be folded into the text below.
+***
+
+Main project README:
+
+***
 UPDATE: Because I either have too much time on my hands, or an odd (borderline unhealthy) obsession with all of this,
 I've been using AI image generators to create pictures of various locations in Zork. In a separate project
 I've put together an http server that will display room images as the user moves from place to place. It's
@@ -81,4 +91,66 @@ Boost libraries are statically-linked so there are no other dependencies.
 cmake --preset linux-debug  
 cmake --build out/build/linux-debug  
 out/build/linux-debug/zork  
+```
+
+## Building with GUI Support
+
+The GUI mode uses raylib to display room images in a graphical window. To enable it:
+
+### 1. Install raylib
+
+**On Ubuntu/Debian:**
+```bash
+sudo apt install libraylib-dev
+```
+
+**On Fedora:**
+```bash
+sudo dnf install raylib-devel
+```
+
+**On macOS (using Homebrew):**
+```bash
+brew install raylib
+```
+
+**Building from source (all platforms):**
+```bash
+git clone https://github.com/raysan5/raylib.git
+cd raylib
+mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..
+make -j4
+sudo make install
+```
+
+### 2. Build with raylib enabled
+
+```bash
+# Using presets
+cmake --preset linux-debug -DUSE_RAYLIB=ON
+cmake --build out/build/linux-debug
+
+# Or using direct cmake
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Debug -DUSE_RAYLIB=ON ..
+make -j4
+```
+
+### 3. Run with GUI
+
+```bash
+./zork --gui
+```
+
+### Troubleshooting
+
+If CMake reports "raylib not found", ensure raylib is installed and CMake can find it. You may need to set:
+```bash
+export CMAKE_PREFIX_PATH=/usr/local
+```
+
+Or specify the path directly:
+```bash
+cmake -DCMAKE_BUILD_TYPE=Debug -DUSE_RAYLIB=ON -Draylib_ROOT=/path/to/raylib ..
 ```

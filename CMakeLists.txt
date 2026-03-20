@@ -20,9 +20,21 @@ set(NTDLL ntdll.lib)
 endif()
 
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization system process)
+find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization system)
 if(LINUX)
 find_package(Threads REQUIRED)
+endif()
+
+# Optional raylib support for GUI image display
+option(USE_RAYLIB "Enable raylib for GUI image display" OFF)
+if(USE_RAYLIB)
+    find_package(raylib QUIET)
+    if(raylib_FOUND)
+        message(STATUS "raylib found - GUI image display enabled")
+        add_compile_definitions(RAYLIB_SUPPORT)
+    else()
+        message(STATUS "raylib not found - building without GUI support")
+    endif()
 endif()
 
 # Make sure we have at least gcc-11.
@@ -48,14 +60,19 @@ add_executable(zork
 	act3.h act3.cpp
 	act4.h act4.cpp
 	adv.h adv.cpp
+	ascii_art.h ascii_art.cpp
+	chafa_wrapper.h chafa_wrapper.cpp
+	raylib_wrapper.h raylib_wrapper.cpp
+	raylib_console.h raylib_console.cpp
 	cevent.h cevent.cpp
-	
+	stb_image.h
+
 	defs.h defs.cpp
 	dung.h dung.cpp
 	FlagSupport.h
 	funcs.h funcs.cpp
 	globals.h globals.cpp
-	gobject.h 
+	gobject.h
 	info.h info.cpp
 	makstr.h makstr.cpp
 	mdlfun.cpp
@@ -81,6 +98,11 @@ add_executable(zork
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
 target_link_libraries(zork Threads::Threads)
+endif()
+
+# Link raylib if found
+if(USE_RAYLIB AND raylib_FOUND)
+    target_link_libraries(zork raylib)
 endif()
 target_precompile_headers(zork PRIVATE precomp.h)
 

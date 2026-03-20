@@ -3,12 +3,18 @@
 
 #include "precomp.h"
 #include <boost/process.hpp>
+#include <boost/process/v2.hpp>
 #include <boost/dll.hpp>
 #include <string>
+#include <iostream>
 #include "funcs.h"
 #include "dung.h"
 #include "rooms.h"
 #include "version.h"
+#include "chafa_wrapper.h"
+#include "ascii_art.h"
+#include "raylib_wrapper.h"
+#include "raylib_console.h"
 
 std::string pw(SIterator unm, SIterator key);
 std::string username();
@@ -26,7 +32,42 @@ int run_zork()
 
 	init_dung();
 
+    // Initialize GUI mode if requested
+    if (flags[FlagId::gui_mode])
+    {
+        if (raylib_console_available())
+        {
+            if (!raylib_console_init(1024, 768, "Zork++"))
+            {
+                tell("Failed to initialize GUI mode, falling back to terminal");
+                flags[FlagId::gui_mode] = false;
+            }
+        }
+        else
+        {
+            tell("GUI mode: NOT AVAILABLE - raylib not installed");
+            tell("To enable GUI, install raylib and rebuild with: cmake -DUSE_RAYLIB=ON ..");
+            flags[FlagId::gui_mode] = false;
+        }
+    }
+    
     tell("ZORK++ version "sv + sVersion);
+    
+    // Determine ascii-art status
+    std::string ascii_status;
+    if (!flags[FlagId::ascii_art])
+    {
+        tell("ASCII art mode: none");
+    }
+    else if (chafa_available())
+    {
+        tell("ASCII art mode: chafa");
+    }
+    else
+    {
+        tell("ASCII art mode: builtin, install chafa for better look");
+    }
+
 
     save_it(true);
 
@@ -39,34 +80,93 @@ int run_zork()
     {
         restart = e.restart_flag();
     }
+    
+    // Close GUI if it was opened
+    if (flags[FlagId::gui_mode])
+    {
+        raylib_console_close();
+    }
 
 	return restart;
+}
+
+void print_usage(const char* program_name)
+{
+    std::cerr << "Usage: " << program_name << " [options]\n"
+              << "Options:\n"
+              << "  -go           Run the game (internal use)\n"
+              << "  --ascii-art   Enable ASCII art images for rooms\n"
+              << "  --gui         Enable GUI window for room images (requires raylib)\n"
+              << "  -h, --help    Show this help message\n";
 }
 
 int main(int argc, char *argv[])
 {
     int rv = 0;
+    bool ascii_art_enabled = false;
+    bool gui_enabled = false;
+    bool go_flag = false;
+
+    // Parse command line arguments
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string arg = argv[i];
+        if (arg == "--ascii-art")
+        {
+            ascii_art_enabled = true;
+        }
+        else if (arg == "--gui")
+        {
+            gui_enabled = true;
+        }
+        else if (arg == "-h" || arg == "--help")
+        {
+            print_usage(argv[0]);
+            return 0;
+        }
+        else if (arg == "-go")
+        {
+            // Internal use flag - indicates we're the child process
+            go_flag = true;
+        }
+    }
+
+    // If no arguments, spawn child process with -go flag
     if (argc == 1)
     {
         intptr_t status = 1;
 		// If no arguments are passed, spawn the same process
 		// with the "-go" parameter. This allows restarts to
-		// happen easily. If the child process returns 1, 
+		// happen easily. If the child process returns 1,
 		// a restart will occur. If it returns 0 the shell will
 		// exit.
         while (status == 1)
         {
             auto path = boost::dll::program_location().string();
             boost::asio::io_context ctx;
-            boost::process::v2::process proc(ctx, path, { "-go" });
+            std::vector<std::string> args = { "-go" };
+            if (ascii_art_enabled)
+                args.push_back("--ascii-art");
+            if (gui_enabled)
+                args.push_back("--gui");
+            boost::process::v2::process proc(ctx, path, args);
             status = proc.wait();
         }
     }
+    else if (go_flag)
+    {
+        // We're the child process (spawned with -go), run the game
+        flags[FlagId::ascii_art] = ascii_art_enabled;
+        flags[FlagId::gui_mode] = gui_enabled;
+        rv = run_zork();
+    }
     else
     {
-	    rv = run_zork();
+        // Run with user-provided arguments
+        flags[FlagId::ascii_art] = ascii_art_enabled;
+        flags[FlagId::gui_mode] = gui_enabled;
+        rv = run_zork();
     }
 
     return rv;
 }
-
