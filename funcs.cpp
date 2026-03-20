@@ -32,11 +32,15 @@ protected:
         while ((c = this->sbumpc()) != (char) traits_type::eof())
         {
             buffer += c;
-            std::cout << c;
-            if (delay != 0ms)
+            // Only output to stdout if not in GUI mode
+            if (!flags[FlagId::gui_mode])
             {
-                std::cout.flush();
-                std::this_thread::sleep_for(delay);
+                std::cout << c;
+                if (delay != 0ms)
+                {
+                    std::cout.flush();
+                    std::this_thread::sleep_for(delay);
+                }
             }
             if (script_channel)
             {
