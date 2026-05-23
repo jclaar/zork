@@ -20,7 +20,7 @@ set(NTDLL ntdll.lib)
 endif()
 
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization system)
+find_package(Boost 1.70.0 REQUIRED COMPONENTS filesystem serialization process)
 if(LINUX)
 find_package(Threads REQUIRED)
 endif()
@@ -98,6 +98,10 @@ add_executable(zork
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
 target_link_libraries(zork Threads::Threads)
+add_custom_command(TARGET zork
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/zork_pics ${CMAKE_CURRENT_BINARY_DIR}/zork_pics
+)
 endif()
 
 # Link raylib if found
