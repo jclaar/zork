@@ -94,10 +94,12 @@ bool display_image_chafa(const std::string& image_path, int max_width, int max_h
     // --color-space din99d gives better color reproduction
     char cmd[1024];
     snprintf(cmd, sizeof(cmd),
-#ifndef _MSC_VER
-        "chafa --format symbols --color-space din99d --size %dx%d \"%s\" 2>/dev/null",
-#else
+#ifdef _MSC_VER
         "chafa --color-space din99d --format sixels --size %dx%d \"%s\" 2>nul",
+#elif defined(__APPLE__)
+        "chafa --color-space din99d --size %dx%d \"%s\" 2>/dev/null",
+#else
+        "chafa --format symbols --color-space din99d --size %dx%d \"%s\" 2>/dev/null",
 #endif
         max_width, max_height, image_path.c_str());
 
