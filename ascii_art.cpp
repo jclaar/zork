@@ -9,9 +9,10 @@
 #include <iostream>
 
 // STB image library
-#if defined(_MSC_VER) || defined(__APPLE__)
+#if !defined(RAYLIB_SUPPORT)
 #define STB_IMAGE_IMPLEMENTATION
-#else
+#endif
+#if !defined(_MSC_VER) && !defined(__APPLE__)
 #include <sys/ioctl.h>
 #include <unistd.h>
 #endif
