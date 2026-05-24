@@ -75,6 +75,8 @@ std::string unspeakable_code()
     std::string ss = "There is an issue of US NEWS & DUNGEON REPORT dated " +
         std::string_view(&oread[pos], oread.find_first_of(' ', pos) - pos) +
         " here.";
+
+    O->oread(usnews);
     return ss;
 }
 

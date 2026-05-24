@@ -9,6 +9,8 @@
 #include <chrono>
 #include <thread>
 
+using namespace std::string_literals;
+
 // Output stream, supporting scripting and raylib console.
 class TtyBuff : public std::basic_stringbuf<char, std::char_traits<char>>
 {
@@ -99,6 +101,12 @@ void tell_base::tell_post(uint32_t flags)
 {
     if (flags & post_crlf)
         tty << std::endl;
+}
+
+bool images::operator()() const
+{
+	flags[FlagId::ascii_art] = !flags[FlagId::ascii_art];
+	return tell("Console art "s + (flags[FlagId::ascii_art] ? "enabled." : "disabled."));
 }
 
 bool terminal::operator()() const

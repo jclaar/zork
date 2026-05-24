@@ -818,6 +818,7 @@ namespace
         sadd_action("ZORK", zork());
 
         sadd_action("TERMI", terminal());
+        sadd_action("IMAGE", images());
 
 #ifdef _DEBUG
         // Handy function to locate any object.

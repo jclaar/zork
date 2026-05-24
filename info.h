@@ -4,6 +4,7 @@
 // Strings for info, help
 extern const std::string_view info_str;
 extern const std::string_view help_str;
+extern const std::string_view usnews;
 
 #endif
 

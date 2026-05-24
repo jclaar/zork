@@ -139,3 +139,30 @@ the following types of things--
         that it should be used.  Otherwise, the parser will ask.
         Most questions asked by the parser can be answered.)"
 ;
+
+// Updates for US News. This is included here because objdefs.h is auto-
+// generated from a tool, and I don't want to update the MDL code from
+// which it's created. It's updated in the appropriately named function
+// "unspeakable_code" in rooms.cpp.
+const std::string_view usnews = 
+R"(		US NEWS & DUNGEON REPORT
+05/24/26  				       Latest G.U.E. Edition
+
+Art has been added for many rooms. Use the "IMAGE" verb to toggle it
+on and off. This requires that chafa be installed for your system.
+(See https://hpjansson.org/chafa/download/)
+
+For posterity's sake, the following was the final issue of US News &
+Dungeon Report:
+
+This version of ZORK is no longer being supported on this or any other
+machine.  In particular, bugs and feature requests will, most likely, be
+read and ignored.  There are updated versions of ZORK, including some
+altogether new problems, available for PDP-11s and various
+microcomputers (TRS-80, APPLE, maybe more later).  For information, send
+a SASE to:
+
+                Infocom, Inc.
+                P.O. Box 120, Kendall Station
+                Cambridge, Ma. 02142
+)";

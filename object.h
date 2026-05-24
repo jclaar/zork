@@ -111,6 +111,7 @@ public:
     ObjList &ocontents() { return contents; }
     const tofmsgs *ofmsgs() const;
 	const std::string &oread() const;
+	void oread(std::string_view s) { _oread = s; }
     const std::string &odesco() const { return _odesco; }
     const std::string &odesc1() const;
     void odesc1(std::string_view s) { _odesc1 = s; }
