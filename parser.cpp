@@ -488,7 +488,8 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
                 }
                 else if (andflg)                            // 215
                 {
-                    bunchflg || (put(bobjs = back(bobjs), 0, as_obj((andloc = back(pvr))[0])), true);
+                    if (!bunchflg)
+                        put(bobjs = back(bobjs), 0, as_obj((andloc = back(pvr))[0]));
                     put(bobjs = back(bobjs), 0, obj.first);
                     adj.reset();
                     bunchflg = true;

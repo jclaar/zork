@@ -47,7 +47,9 @@ VerbP find_verb(std::string_view verbo)
         viter = words_pobl.insert(std::pair(std::string(verbo), make_word(SpeechType::kVerb, verbo))).first;
     }
     const WordP &wp = viter->second;
+#ifndef __APPLE__ // Avoid annoying warning on Mac builds.
     _ASSERT(typeid(*wp.get()) == typeid(verb));
+#endif
     VerbP vp = std::static_pointer_cast<verb>(wp);
     if (!vp)
     {
