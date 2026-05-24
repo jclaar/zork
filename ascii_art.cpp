@@ -7,11 +7,14 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <sys/ioctl.h>
-#include <unistd.h>
 
 // STB image library
+#ifdef _MSC_VER
 #define STB_IMAGE_IMPLEMENTATION
+#else
+#include <sys/ioctl.h>
+#include <unistd.h>
+#endif
 #include "stb_image.h"
 
 namespace fs = std::filesystem;
@@ -23,6 +26,14 @@ const int NUM_ASCII_CHARS = 70;
 // Get terminal size
 std::pair<int, int> get_terminal_size()
 {
+#if _MSC_VER
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    int width = 80, height = 24; // Default fallback
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
+        width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+        height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+    }
+#else
     struct winsize ws;
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0)
     {
@@ -33,6 +44,7 @@ std::pair<int, int> get_terminal_size()
     const char* rows = getenv("LINES");
     int width = cols ? atoi(cols) : 80;
     int height = rows ? atoi(rows) : 24;
+#endif
     return { width, height };
 }
 
@@ -104,6 +116,10 @@ bool display_room_image(const std::string& room_id)
         const int margin = 4;
         int max_width = term_width - margin;
         int max_height = term_height - 12;
+
+        // Change to 32x16 to try to regulate the size, since AI images can be all over the place.
+        max_width = 32;
+        max_height = 16;
 
         if (display_image_chafa(img_path.string(), max_width, max_height))
         {

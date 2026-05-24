@@ -7,8 +7,11 @@
 #include <memory>
 #include <stdexcept>
 #include <iostream>
-#include <sys/ioctl.h>
-#include <unistd.h>
+
+#ifdef _MSC_VER
+#define popen _popen
+#define pclose _pclose
+#endif
 
 // Check if chafa CLI is available
 bool chafa_cli_available()
@@ -18,7 +21,11 @@ bool chafa_cli_available()
         return available;
 
     // Try to run "chafa --version" to check if it exists
+#ifdef _MSC_VER
+	FILE* fp = popen("chafa --version 2", "r");
+#else
     FILE* fp = popen("chafa --version 2>/dev/null", "r");
+#endif
     if (fp) {
         // Must read all output before pclose
         char buf[256];
@@ -48,6 +55,14 @@ using PipePtr = std::unique_ptr<FILE, PipeDeleter>;
 // Get terminal size
 static std::pair<int, int> get_terminal_size()
 {
+#if _MSC_VER
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	int width = 80, height = 24; // Default fallback
+	if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
+		width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+		height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+	}
+#else
     struct winsize ws;
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == 0)
     {
@@ -58,6 +73,7 @@ static std::pair<int, int> get_terminal_size()
     const char* rows = getenv("LINES");
     int width = cols ? atoi(cols) : 80;
     int height = rows ? atoi(rows) : 24;
+#endif
     return { width, height };
 }
 
@@ -78,8 +94,14 @@ bool display_image_chafa(const std::string& image_path, int max_width, int max_h
     // --color-space din99d gives better color reproduction
     char cmd[1024];
     snprintf(cmd, sizeof(cmd),
+#ifndef _MSC_VER
         "chafa --format symbols --color-space din99d --size %dx%d \"%s\" 2>/dev/null",
+#else
+        "chafa --color-space din99d --format sixels --size %dx%d \"%s\" 2>nul",
+#endif
         max_width, max_height, image_path.c_str());
+
+	std::cerr << "Running command: " << cmd << std::endl;
 
     // Run chafa and capture output
     PipePtr fp(popen(cmd, "r"));

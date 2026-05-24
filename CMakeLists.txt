@@ -98,11 +98,11 @@ add_executable(zork
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
 target_link_libraries(zork Threads::Threads)
+endif()
 add_custom_command(TARGET zork
 	POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/zork_pics ${CMAKE_CURRENT_BINARY_DIR}/zork_pics
 )
-endif()
 
 # Link raylib if found
 if(USE_RAYLIB AND raylib_FOUND)
