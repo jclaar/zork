@@ -128,7 +128,8 @@ int main(int argc, char *argv[])
     }
     catch (std::exception& e)
     {
-
+        std::cerr << "Invalid options." << std::endl;
+        return 2; // Causes the main program to abort.
     }
 
     // If no arguments, spawn child process with -go flag
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
         {
             auto path = boost::dll::program_location().string();
             boost::asio::io_context ctx;
-            std::vector<std::string> args = { "-go" };
+            std::vector<std::string> args = { "--go" };
             if (ascii_art_enabled)
                 args.push_back("--ascii-art");
             if (gui_enabled)
