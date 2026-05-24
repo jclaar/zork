@@ -9,7 +9,7 @@
 #include <iostream>
 
 // STB image library
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__APPLE__)
 #define STB_IMAGE_IMPLEMENTATION
 #else
 #include <sys/ioctl.h>
