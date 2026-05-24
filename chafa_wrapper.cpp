@@ -101,8 +101,6 @@ bool display_image_chafa(const std::string& image_path, int max_width, int max_h
 #endif
         max_width, max_height, image_path.c_str());
 
-	std::cerr << "Running command: " << cmd << std::endl;
-
     // Run chafa and capture output
     PipePtr fp(popen(cmd, "r"));
     if (!fp)

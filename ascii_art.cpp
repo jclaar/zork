@@ -92,7 +92,7 @@ bool display_room_image(const std::string& room_id)
     }
 
     fs::path img_path = *img_path_opt;
-    std::cerr << "Found image for room " << room_id << ": " << img_path << std::endl;
+    //std::cerr << "Found image for room " << room_id << ": " << img_path << std::endl;
 
     // Try GUI console first if enabled
     if (flags[FlagId::gui_mode] && raylib_console_available())

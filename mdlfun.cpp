@@ -3,6 +3,7 @@
 
 #include "precomp.h"
 #include <boost/process.hpp>
+#include <boost/program_options.hpp>
 //#include <boost/process/v2.hpp>
 #include <boost/dll.hpp>
 #include <string>
@@ -90,49 +91,48 @@ int run_zork()
 	return restart;
 }
 
-void print_usage(const char* program_name)
+namespace po = boost::program_options;
+
+void print_usage(const char* program_name, po::options_description &od)
 {
-    std::cerr << "Usage: " << program_name << " [options]\n"
-              << "Options:\n"
-              << "  -go           Run the game (internal use)\n"
-              << "  --ascii-art   Enable ASCII art images for rooms\n"
-              << "  --gui         Enable GUI window for room images (requires raylib)\n"
-              << "  -h, --help    Show this help message\n";
+    std::cerr << "Usage: " << program_name << " [options]\n" << od << std::endl;
 }
 
 int main(int argc, char *argv[])
 {
     int rv = 0;
-    bool ascii_art_enabled = false;
-    bool gui_enabled = false;
-    bool go_flag = false;
+    bool ascii_art_enabled;
+    bool gui_enabled;
+    bool help;
+    bool go_flag;
 
-    // Parse command line arguments
-    for (int i = 1; i < argc; ++i)
+    po::options_description desc("Options");
+    po::variables_map vm;
+    desc.add_options()
+		("ascii-art", po::value(&ascii_art_enabled)->default_value(false)->implicit_value(true), "Enable ASCII art images for rooms")
+		("gui", po::value(&gui_enabled)->default_value(false)->implicit_value(true), "Enable GUI window for room images (requires raylib)")
+		("help,h", po::value(&help)->default_value(false)->implicit_value(true), "Show this help message")
+		("go", po::value(&go_flag)->default_value(false)->implicit_value(true), "Internal use flag - indicates we're the child process")
+    ;
+
+    try
     {
-        std::string arg = argv[i];
-        if (arg == "--ascii-art")
-        {
-            ascii_art_enabled = true;
-        }
-        else if (arg == "--gui")
-        {
-            gui_enabled = true;
-        }
-        else if (arg == "-h" || arg == "--help")
-        {
-            print_usage(argv[0]);
-            return 0;
-        }
-        else if (arg == "-go")
-        {
-            // Internal use flag - indicates we're the child process
-            go_flag = true;
-        }
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        vm.notify();
+
+        if (help)
+		{
+			print_usage(argv[0], desc);
+			return 0;
+		}
+    }
+    catch (std::exception& e)
+    {
+
     }
 
     // If no arguments, spawn child process with -go flag
-    if (argc == 1)
+    if (!go_flag)
     {
         intptr_t status = 1;
 		// If no arguments are passed, spawn the same process
@@ -153,16 +153,9 @@ int main(int argc, char *argv[])
             status = proc.wait();
         }
     }
-    else if (go_flag)
-    {
-        // We're the child process (spawned with -go), run the game
-        flags[FlagId::ascii_art] = ascii_art_enabled;
-        flags[FlagId::gui_mode] = gui_enabled;
-        rv = run_zork();
-    }
     else
     {
-        // Run with user-provided arguments
+        // We're the child process (spawned with -go), run the game
         flags[FlagId::ascii_art] = ascii_art_enabled;
         flags[FlagId::gui_mode] = gui_enabled;
         rv = run_zork();
