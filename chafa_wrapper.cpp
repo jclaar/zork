@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <optional>
 #include <array>
 #include <memory>
 #include <stdexcept>
@@ -16,26 +17,27 @@
 // Check if chafa CLI is available
 bool chafa_cli_available()
 {
-    static int available = -1;
-    if (available != -1)
-        return available;
-
-    // Try to run "chafa --version" to check if it exists
+    static std::optional<bool> available;
+    if (!available.has_value())
+    {
+        // Try to run "chafa --version" to check if it exists
 #ifdef _MSC_VER
-	FILE* fp = popen("chafa --version 2", "r");
+        FILE* fp = popen("chafa2 --version 2>nul", "r");
 #else
-    FILE* fp = popen("chafa --version 2>/dev/null", "r");
+        FILE* fp = popen("chafa --version 2>/dev/null", "r");
 #endif
-    if (fp) {
-        // Must read all output before pclose
-        char buf[256];
-        while (fgets(buf, sizeof(buf), fp)) {}
-        int status = pclose(fp);
-        available = (status == 0) ? 1 : 0;
-    } else {
-        available = 0;
+        if (fp) {
+            // Must read all output before pclose
+            char buf[256];
+            while (fgets(buf, sizeof(buf), fp)) {}
+            int status = pclose(fp);
+            available = (status == 0);
+        }
+        else {
+            available = false;
+        }
     }
-    return available;
+    return available.value();
 }
 
 bool chafa_available()

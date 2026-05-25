@@ -3,6 +3,7 @@
 #include "funcs.h"
 #include "globals.h"
 #include "rooms.h"
+#include "chafa_wrapper.h"
 #include "raylib_console.h"
 #include <vector>
 #include <sstream>
@@ -106,7 +107,18 @@ void tell_base::tell_post(uint32_t flags)
 bool images::operator()() const
 {
 	flags[FlagId::ascii_art] = !flags[FlagId::ascii_art];
-	return tell("Console art "s + (flags[FlagId::ascii_art] ? "enabled." : "disabled."));
+    tell("Console art "s + (flags[FlagId::ascii_art] ? "enabled." : "disabled."));
+
+    static bool first_call = true;
+    if (first_call)
+    {
+        if (flags[FlagId::ascii_art] && !chafa_available())
+        {
+            tell("Chafa is not available. ASCII art is available but will be...interesting.");
+        }
+        first_call = false;
+    }
+    return true;
 }
 
 bool terminal::operator()() const
