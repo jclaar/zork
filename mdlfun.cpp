@@ -56,10 +56,22 @@ int main(int argc, char *argv[])
 		// exit.
         while (status == 1)
         {
+#if BOOST_VERSION >= 108100
             auto path = boost::dll::program_location().string();
             boost::asio::io_context ctx;
             boost::process::v2::process proc(ctx, path, { "-go" });
             status = proc.wait();
+#else
+			// Must use v1 of the boost::process library because v2 is not available until Boost 1.81.0.
+            boost::filesystem::path exe_path = boost::filesystem::system_complete(argv[0]);
+            boost::system::error_code ec;
+            auto canonical_path = boost::filesystem::canonical(exe_path, ec);
+            std::vector<std::string> new_args;
+            new_args.push_back("-go");
+			boost::process::child c(canonical_path.string(), new_args);
+            c.wait();
+            status = c.exit_code();
+#endif
         }
     }
     else
