@@ -100,13 +100,17 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 			COMMAND hdiutil create -volname "Zork" -srcfolder "${CMAKE_CURRENT_BINARY_DIR}/zork" -ov -format UDZO "Zork_mac_${CMAKE_PROJECT_VERSION}.dmg"
 		)
 	elseif(UNIX)
+	    set_target_properties(zork PROPERTIES OUTPUT_NAME "zorkpp")
 	    add_custom_command(TARGET zork
 		    POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E tar "zcfv" "zork_linux_${CMAKE_PROJECT_VERSION}.gz" "zork"
+			COMMAND ${CMAKE_COMMAND} -E tar "zcfv" "zork_linux_${CMAKE_PROJECT_VERSION}.gz" "zorkpp"
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-			DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/zork"
+			DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/zorkpp"
 			COMMENT "Creating archive file for release."
 		)
+		install(TARGETS zork DESTINATION bin)
+		install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/snap/local/com.zork.zorkpp.desktop
+		    DESTINATION usr/share/applications)
 	else()
 	    add_custom_command(TARGET zork
 		    POST_BUILD

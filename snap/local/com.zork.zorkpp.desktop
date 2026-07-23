@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Zork++
+Comment=MIT Zork ported to C++ from 1981
+Exec=zorkpp
+Terminal=true
+Type=Application

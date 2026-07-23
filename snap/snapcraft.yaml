@@ -1,0 +1,40 @@
+
+name: zorkpp
+title: Zork++
+base: core22
+version: '1.2'
+summary: Zork from the 1981 final version of the MIT game.
+description: |
+  Zork is a text-based adventure game that was first developed in the late 1970s
+  and early 1980s by a group of programmers at MIT. The game is set in a fictional
+  underground world filled with treasures, puzzles, and dangerous creatures.
+
+contact: jclaar3@gmail.com
+source-code: https://github.com/jclaar/zork
+license: CC0-1.0
+grade: stable
+confinement: strict
+
+apps:
+  zorkpp:
+    command: bin/zorkpp
+    desktop: usr/share/applications/com.zork.zorkpp.desktop
+
+parts:
+  zorkpp:
+    plugin: cmake
+    source: .
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DCMAKE_BUILD_TYPE=Release
+    build-packages:
+      - build-essential
+      - cmake
+      - ninja-build
+      - libboost-all-dev
+    stage-packages:
+      - libstdc++6
+    override-build: |
+      cmake --preset linux-release -S $CRAFT_PART_SRC -B $CRAFT_PART_BUILD
+      cmake --build $CRAFT_PART_BUILD
+      cmake --install $CRAFT_PART_BUILD --prefix $CRAFT_PART_INSTALL

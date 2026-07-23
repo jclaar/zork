@@ -268,3 +268,4 @@ precomp.h.gch
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
+out/
