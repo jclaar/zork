@@ -1,4 +1,5 @@
 #pragma once
+#include <utility>
 #include <boost/serialization/serialization.hpp>
 
 template <typename FlagType, size_t sz>
@@ -15,14 +16,14 @@ public:
 
     Flags() {}
 
-    bool operator[](FlagType flag) const { return Base::operator[](static_cast<int>(flag)); }
-    Base::reference operator[](FlagType flag) { return Base::operator[](static_cast<int>(flag)); }
-    bool test(FlagType flag) const { return Base::test(static_cast<int>(flag)); }
+    bool operator[](FlagType flag) const { return Base::operator[](std::to_underlying(flag)); }
+    Base::reference operator[](FlagType flag) { return Base::operator[](std::to_underlying(flag)); }
+    bool test(FlagType flag) const { return Base::test(std::to_underlying(flag)); }
     Flags<FlagType, sz>& set() { Base::set(); return *this; }
 
     Flags& flip(FlagType flag)
     {
-        Base::flip(static_cast<int>(flag));
+        Base::flip(std::to_underlying(flag));
         return *this;
     }
 

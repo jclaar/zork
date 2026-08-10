@@ -471,9 +471,9 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
                 {
                     Bits fx;
                     if (length(pvr) != 2 &&
-                        ( (obj.first = as_obj(back(pvr)[0])) == sfind_obj("EVERY") && (static_cast<int>(fx = Bits::climbbit))) ||
-                        ( obj.first == sfind_obj("VALUA") && (static_cast<int>(fx = Bits::tiebit))) ||
-                        ( obj.first == sfind_obj("POSSE") && (static_cast<int>(fx = Bits::staggered))) )
+                        ( (obj.first = as_obj(back(pvr)[0])) == sfind_obj("EVERY") && (std::to_underlying(fx = Bits::climbbit))) ||
+                        ( obj.first == sfind_obj("VALUA") && (std::to_underlying(fx = Bits::tiebit))) ||
+                        ( obj.first == sfind_obj("POSSE") && (std::to_underlying(fx = Bits::staggered))) )
                     {
                         andloc = back(pvr);
                         put(andloc, 0, tro(sfind_obj("*BUN*"), fx));

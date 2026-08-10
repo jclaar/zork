@@ -111,7 +111,7 @@ enum class Bits
     masterbit,
     numbits
 };
-constexpr size_t numbits = static_cast<int>(Bits::numbits);
+constexpr size_t numbits = std::to_underlying(Bits::numbits);
 
 enum class RoomBit
 {
@@ -129,7 +129,7 @@ enum class RoomBit
     rnwallbit,   // "This room doesn't have walls"
     rnumbits
 };
-constexpr size_t rnumbits = static_cast<int>(RoomBit::rnumbits);
+constexpr size_t rnumbits = std::to_underlying(RoomBit::rnumbits);
 using RoomBits = Flags<RoomBit, rnumbits>;
 
 using BitsList = std::list<Bits>;
@@ -171,7 +171,7 @@ typedef std::shared_ptr<CEvent> CEventP;
 typedef std::list<CEventP> EventList;
 class Adv;
 typedef std::unique_ptr<Adv> AdvP;
-typedef std::array <AdvP, static_cast<size_t>(e_oactor::none)> AdvArray;
+typedef std::array <AdvP, std::to_underlying(e_oactor::none)> AdvArray;
 
 class hack;
 typedef std::shared_ptr<hack> HackP;
@@ -199,7 +199,7 @@ enum class vword_flag
     vfbit,      // true: Care if can't reach the object.
     numvbits
 };
-constexpr size_t numvbits = static_cast<size_t>(vword_flag::numvbits);
+constexpr size_t numvbits = std::to_underlying(vword_flag::numvbits);
 
 class word
 {
@@ -274,7 +274,7 @@ struct syntax
 {
     VargP syn[2];
     VerbP sfcn;
-    Flags<SyntaxBits, static_cast<size_t>(SyntaxBits::snumflags)> sflags;
+    Flags<SyntaxBits, std::to_underlying(SyntaxBits::snumflags)> sflags;
 };
 typedef std::shared_ptr<syntax> SyntaxP;
 

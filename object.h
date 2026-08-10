@@ -73,7 +73,7 @@ public:
     OP(ObjectSlots os, const PropVal &v) : sl(os), val(v) {}
     explicit OP(ObjectSlots os, int i) : sl(os), val(i) {}
     explicit OP(ObjectSlots os, RoomBit b) : sl(os), val(b) {}
-    explicit OP(ObjectSlots os, e_oactor actor) : sl(os), val(static_cast<int>(actor)) {}
+    explicit OP(ObjectSlots os, e_oactor actor) : sl(os), val(std::to_underlying(actor)) {}
     explicit OP(ObjectSlots os, std::string_view v) : sl(os), val(std::string(v)) {}
     explicit OP(ObjectSlots os, const char* p) : sl(os)
     {

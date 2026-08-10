@@ -223,7 +223,7 @@ const AdvP *Object::oactor() const
     const AdvP *actor = nullptr;
     if (_oactor != e_oactor::none)
     {
-        actor = &actors()[static_cast<size_t>(_oactor)];
+        actor = &actors()[std::to_underlying(_oactor)];
     }
     return actor;
 }

@@ -2,6 +2,7 @@
 
 #include "defs.h"
 #include <memory>
+#include <utility>
 #include <boost/serialization/access.hpp>
 
 // CEVENT structure
@@ -81,18 +82,18 @@ enum class Event
     numevs
 };
 
-class CEventContainer : private std::array<CEventP, static_cast<size_t>(Event::numevs)>
+class CEventContainer : private std::array<CEventP, std::to_underlying(Event::numevs)>
 {
-    using Base = std::array<CEventP, static_cast<size_t>(Event::numevs)>;
+    using Base = std::array<CEventP, std::to_underlying(Event::numevs)>;
 public:
     using Base::begin;
     using Base::end;
 
     CEventContainer();
 
-    const CEventP& operator[](Event event) const { return Base::operator[](static_cast<size_t>(event)); }
+    const CEventP& operator[](Event event) const { return Base::operator[](std::to_underlying(event)); }
     CEventP& operator[](Event event) { 
-        return Base::operator[](static_cast<size_t>(event)); 
+        return Base::operator[](std::to_underlying(event));
     }
 };
 

@@ -9,7 +9,7 @@ endif()
 
 project( zork VERSION 1.2.0 )
 
-set( CMAKE_CXX_STANDARD 20 )
+set( CMAKE_CXX_STANDARD 23 )
 
 if (WIN32)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

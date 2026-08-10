@@ -405,7 +405,7 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
             res = attack_state::lose_weapon;
         }
 
-        pres((*remarks)[static_cast<size_t>(res.value())], heroq ? "Adventurer" : vdesc, heroq ? vdesc : "Adventurer", dweapon ? dweapon->odesc2() : std::string_view());
+        pres((*remarks)[std::to_underlying(res.value())], heroq ? "Adventurer" : vdesc, heroq ? vdesc : "Adventurer", dweapon ? dweapon->odesc2() : std::string_view());
     }
 
     switch (res.value())

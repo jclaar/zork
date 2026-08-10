@@ -86,7 +86,7 @@ enum class FlagId
     safe_flag,
     num_flag_bits
 };
-constexpr size_t num_flag_bits = static_cast<int>(FlagId::num_flag_bits);
+constexpr size_t num_flag_bits = std::to_underlying(FlagId::num_flag_bits);
 
 typedef Flags<FlagId, num_flag_bits> FlagBits;
 

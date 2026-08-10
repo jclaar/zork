@@ -1,4 +1,5 @@
 #pragma once
+#include <utility>
 #include <boost/serialization/split_member.hpp>
 #include "room.h"
 
@@ -7,7 +8,7 @@ enum class AdvBits
     astaggered,
     anumbits
 };
-typedef Flags<AdvBits, static_cast<size_t>(AdvBits::anumbits)> AdvBitset;
+typedef Flags<AdvBits, std::to_underlying(AdvBits::anumbits)> AdvBitset;
 
 class Adv
 {
@@ -123,7 +124,7 @@ void add_actor(e_oactor actor_name, const RoomP &room,
     const ObjectP &obj, rapplic action, int strength);
 AdvArray &actors();
 
-inline const AdvP &player() { return actors()[static_cast<size_t>(e_oactor::player)]; }
+inline const AdvP &player() { return actors()[std::to_underlying(e_oactor::player)]; }
 
 // Actor functions
 namespace actor_funcs
