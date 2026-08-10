@@ -1694,7 +1694,7 @@ namespace exit_funcs
         RoomP torm = cex->cxroom();
         int mdir = ::mdir;
 
-        if (memq(dir, std::array<direction,2>({ direction::North, direction::South })))
+        if (memq(dir, std::to_array({ direction::North, direction::South })))
         {
             if (mloc == torm)
             {
