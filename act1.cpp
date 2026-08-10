@@ -598,7 +598,7 @@ bool killer::operator()(std::string_view str) const
     }
     else
     {
-        blow(player(), prsoo, prsi()->ofmsgs(), true, std::optional<int>());
+        blow(player(), prsoo, prsi()->ofmsgs(), true, std::nullopt);
     }
     return true;
 }
@@ -1060,7 +1060,7 @@ bool munger::operator()() const
             }
             else if (trnn(prsi(), Bits::weaponbit))
             {
-                blow(player(), prsoo, prsi()->ofmsgs(), true, std::optional<int>());
+                blow(player(), prsoo, prsi()->ofmsgs(), true, std::nullopt);
             }
             else
             {

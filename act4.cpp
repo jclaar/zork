@@ -204,7 +204,7 @@ namespace
         if (mex)
         {
             if (!(m = std::get_if<CExitPtr>(&std::get<1>(**mex))))
-                return std::optional<int>();
+                return std::nullopt;
         }
 
         if (m && mloc == (*m)->cxroom())
@@ -217,7 +217,7 @@ namespace
             else
                 return 2;
         }
-        return std::optional<int>();
+        return std::nullopt;
     }
 
     bool ewtell(const RoomP& rm)

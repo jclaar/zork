@@ -33,7 +33,7 @@ extern int moves;
 extern std::list<HackP> demons;
 extern std::unique_ptr<std::ofstream> script_channel;
 
-const CEventP &clock_int(const CEventP &cev, std::optional<int> num  = std::optional<int>(), bool flag = false);
+const CEventP &clock_int(const CEventP &cev, std::optional<int> num  = std::nullopt, bool flag = false);
 bool clock_disable(const CEventP &cev);
 bool clock_enable(const CEventP &cev);
 
@@ -136,7 +136,7 @@ RAPPLIC(opener);
 RAPPLIC_DEF(play_time, bool, true);
 RAPPLIC_DEF(putter, bool, true);
 RAPPLIC(restart);
-RAPPLIC_DEF(room_info, std::optional<int>, std::optional<int>());
+RAPPLIC_DEF(room_info, std::optional<int>, std::nullopt);
 RAPPLIC(room_name);
 RAPPLIC(room_obj);
 RAPPLIC(room_room);
