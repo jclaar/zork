@@ -23,9 +23,8 @@ namespace
 
 CEventContainer ev;
 
-CEventContainer::CEventContainer()
-{
-    auto evs = {
+CEventContainer::CEventContainer() :
+    Base({
         mke(0, obj_funcs::brochure(), true, "BROIN", false),
         mke(0, obj_funcs::cyclops(), true, "CYCIN", true),
         mke(0, obj_funcs::slide_cint(), false, "SLDIN", true),
@@ -56,8 +55,8 @@ CEventContainer::CEventContainer()
         mke(0, obj_funcs::mends(), false, "PININ", false),
         mke(0, inquisitor(), false, "INQIN", false),
         mke(0, start_end(), true, "STRTE", false),
-    };
-    std::copy(evs.begin(), evs.end(), this->begin());
+        })
+{
 }
 
 CEvent::CEvent(int tick, rapplic action, bool flag, std::string_view id, bool death) :
