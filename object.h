@@ -69,7 +69,7 @@ class OP
 {
 public:
     using melee_func = const tofmsgs*;
-    typedef std::variant<int, std::string, melee_func, olint_t, RoomBit> PropVal;
+    using PropVal = std::variant<int, std::string, melee_func, olint_t, RoomBit>;
     OP(ObjectSlots os, const PropVal &v) : sl(os), val(v) {}
     explicit OP(ObjectSlots os, int i) : sl(os), val(i) {}
     explicit OP(ObjectSlots os, RoomBit b) : sl(os), val(b) {}
