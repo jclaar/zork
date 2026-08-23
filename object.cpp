@@ -238,16 +238,6 @@ int Object::ocapac() const
     return _ocapac;
 }
 
-int Object::osize() const
-{
-    return _osize;
-}
-
-void Object::osize(int new_size)
-{
-    _osize = new_size;
-}
-
 int Object::omatch() const
 {
     return _omatch;
@@ -256,16 +246,6 @@ int Object::omatch() const
 void Object::omatch(int new_matches)
 {
     _omatch = new_matches;
-}
-
-void Object::otval(int new_value)
-{
-    _otval = new_value;
-}
-
-int Object::otval() const
-{
-    return _otval;
 }
 
 void Object::ofval(int new_val)

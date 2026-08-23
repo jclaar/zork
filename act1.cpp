@@ -417,7 +417,7 @@ bool sword_glow::operator()(const HackP &dem) const
             _ASSERT(ng >= 0 && ng <= 2);
             tell(tells[ng]);
         }
-        sw->otval(ng);
+        sw->otval() = ng;
     }
     else
     {
@@ -2544,7 +2544,7 @@ namespace obj_funcs
         if (verbq("MUNG"))
         {
             ObjectP prsoo = prso();
-            prsoo->otval(0);
+            prsoo->otval() = 0;
             prsoo->odesc2() = "Worthless piece of canvas";
             prsoo->odesc1() = "There is a worthless piece of canvas here.";
             return tell("Congratulations!  Unlike the other vandals, who merely stole the\n"

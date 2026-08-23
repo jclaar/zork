@@ -248,7 +248,7 @@ bool play::operator()() const
         if (prsi() && trnn(prsi(), Bits::weaponbit))
         {
             tell("Very good. The violin is now worthless.");
-            prso->otval(0);
+            prso->otval() = 0;
         }
         else
         {
@@ -659,14 +659,14 @@ bool bad_egg(const ObjectP &begg)
     if (sfind_obj("GCANA")->ocan() == egg)
     {
         tell(bcana->odesco());
-        bcana->otval(1);
+        bcana->otval() = 1;
     }
     else
     {
         remove_object(bcana);
     }
 
-    begg->otval(2);
+    begg->otval() = 2;
 
     if (egg->oroom())
         insert_object(begg, here);
@@ -879,7 +879,7 @@ namespace obj_funcs
             r->robjs() = here->robjs();
             for (auto &x : here->robjs())
             {
-                x->osize(x->osize() * 64);
+                x->osize() = x->osize() * 64;
                 x->oroom(r);
             }
             goto_(r);
@@ -938,7 +938,7 @@ namespace obj_funcs
                     for (auto &x : here->robjs())
                     {
                         x->oroom(r);
-                        x->osize(x->osize() / 64);
+                        x->osize() = x->osize() / 64;
                     }
                     goto_(r);
                 }
@@ -2169,8 +2169,8 @@ namespace room_funcs
                     remove_object(egg);
                     egg = sfind_obj("BEGG");
                     tell("The egg falls to the ground, and is seriously damaged.");
-                    sfind_obj("BCANA")->otval(1);
-                    egg->otval(2);
+                    sfind_obj("BCANA")->otval() = 1;
+                    egg->otval() = 2;
                     insert_object(egg, fore3);
                 }
                 else if (x == ttree || x == nest)

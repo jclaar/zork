@@ -120,13 +120,17 @@ public:
     {
         return std::forward<decltype(self)>(self).desc;
     }
-    int otval() const;
-    void otval(int new_value);
+	auto&& otval(this auto&& self) noexcept
+	{
+		return std::forward<decltype(self)>(self)._otval;
+	}
     int ofval() const;
     void ofval(int new_val);
     int ocapac() const;
-    int osize() const;
-    void osize(int new_size);
+    auto&& osize(this auto&& self) noexcept
+    {
+		return std::forward<decltype(self)>(self)._osize;
+    }
     int ostrength() const { return _ostrength; }
     void ostrength(int new_strength) { _ostrength = new_strength; }
     int omatch() const;
