@@ -214,7 +214,7 @@ void start(std::string_view rm, std::string_view st)
 
 void save_it(bool strt)
 {
-    sfind_obj("PAPER")->odesc1(unspeakable_code());
+    sfind_obj("PAPER")->odesc1() = unspeakable_code();
     dead_player = player()->aaction();
     player()->aaction(nullptr);
     raw_score = 0;

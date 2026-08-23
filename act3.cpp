@@ -1741,11 +1741,11 @@ namespace obj_funcs
                     timber_tie = prsi;
                     if (prsi == coffin)
                     {
-                        coffin->odesc1(coffin_tied);
+                        coffin->odesc1() = coffin_tied;
                     }
                     else
                     {
-                        timber->odesc1(timber_tied);
+                        timber->odesc1() = timber_tied;
                     }
 
                     if (here == sroom)
@@ -1777,11 +1777,11 @@ namespace obj_funcs
                     trz(ttie, Bits::ndescbit);
                     if (ttie == coffin)
                     {
-                        coffin->odesc1(coffin_untied);
+                        coffin->odesc1() = coffin_untied;
                     }
                     else
                     {
-                        timber->odesc1(timber_untied);
+                        timber->odesc1() = timber_untied;
                     }
                 }
                 flags[FlagId::dome_flag] = false;

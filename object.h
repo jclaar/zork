@@ -112,10 +112,14 @@ public:
     const tofmsgs *ofmsgs() const;
 	const std::string &oread() const;
     const std::string &odesco() const { return _odesco; }
-    const std::string &odesc1() const;
-    void odesc1(std::string_view s) { _odesc1 = s; }
-    std::string_view odesc2() const { return desc; }
-    void odesc2(const char *new_desc) { desc = new_desc; }
+	auto&& odesc1(this auto && self) noexcept
+    { 
+		return std::forward<decltype(self)>(self)._odesc1;
+    }
+    auto&& odesc2(this auto&& self) noexcept
+    {
+        return std::forward<decltype(self)>(self).desc;
+    }
     int otval() const;
     void otval(int new_value);
     int ofval() const;

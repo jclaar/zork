@@ -700,8 +700,8 @@ bool tie_up::operator()() const
 
 bool torch_off(const ObjectP &t)
 {
-    t->odesc2("burned out ivory torch");
-    t->odesc1("There is a burned out ivory torch here.");
+    t->odesc2() = "burned out ivory torch";
+    t->odesc1() = "There is a burned out ivory torch here.";
     trz(t, Bits::lightbit, Bits::onbit, Bits::flamebit );
     return true;
 }
@@ -1804,7 +1804,7 @@ namespace obj_funcs
         {
             dem->haction(nullptr);
             trz(sfind_obj("STILL"), Bits::ovison);
-            t->odesc1(robber_u_desc);
+            t->odesc1() = robber_u_desc;
         }
         else if (verbq("HELLO") && t->odesc1() == robber_u_desc)
         {
@@ -1819,7 +1819,7 @@ namespace obj_funcs
                     "when he sees his moment, scrambles away from you.");
             }
             dem->haction(robber());
-            t->odesc1(robber_c_desc);
+            t->odesc1() = robber_c_desc;
             tro(sfind_obj("STILL"), Bits::ovison);
         }
         else if (verbq("THROW") && prso() == sfind_obj("KNIFE") && !trnn(t, Bits::fightbit))
@@ -1852,7 +1852,7 @@ namespace obj_funcs
                 t->ostrength(-t->ostrength());
                 dem->haction(robber());
                 tro(sfind_obj("STILL"), Bits::ovison);
-                t->odesc1(robber_c_desc);
+                t->odesc1() = robber_c_desc;
                 tell("Your proposed victim suddenly recovers consciousness.");
             }
 
@@ -2472,7 +2472,7 @@ namespace obj_funcs
         else if (verbq("OUT!"))
         {
             trz(a, Bits::ovison);
-            t->odesc1(trollout);
+            t->odesc1() = trollout;
             flags[FlagId::troll_flag] = true;
         }
         else if (verbq("IN!"))
@@ -2482,7 +2482,7 @@ namespace obj_funcs
             {
                 tell("The troll stirs, quickly resuming a fighting stance.");
             }
-            t->odesc1(trolldesc);
+            t->odesc1() = trolldesc;
             flags[FlagId::troll_flag] = false;
         }
         else if (verbq("1ST?"))
@@ -2545,8 +2545,8 @@ namespace obj_funcs
         {
             ObjectP prsoo = prso();
             prsoo->otval(0);
-            prsoo->odesc2("Worthless piece of canvas");
-            prsoo->odesc1("There is a worthless piece of canvas here.");
+            prsoo->odesc2() = "Worthless piece of canvas";
+            prsoo->odesc1() = "There is a worthless piece of canvas here.";
             return tell("Congratulations!  Unlike the other vandals, who merely stole the\n"
                 "artist's masterpieces, you have destroyed one.");
         }

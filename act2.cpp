@@ -675,7 +675,7 @@ namespace obj_funcs
                 (prsi() == sfind_obj("HOOK1") || prsi() == sfind_obj("HOOK2")))
             {
                 btie = prsi();
-                prsi()->odesc1("The basket is anchored to a small hook by the braided wire.");
+                prsi()->odesc1() = "The basket is anchored to a small hook by the braided wire.";
                 clock_disable(bint);
                 tell("The balloon is fastened to the hook.");
             }
@@ -687,7 +687,7 @@ namespace obj_funcs
             if (btie)
             {
                 clock_enable(bint = clock_int(::bint, 3));
-                btie->odesc1(hook_desc);
+                btie->odesc1() = hook_desc;
                 btie.reset();
                 tell("The wire falls off of the hook.");
             }

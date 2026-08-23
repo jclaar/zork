@@ -299,11 +299,6 @@ const tofmsgs *Object::ofmsgs() const
     return _melee_func;
 }
 
-const std::string &Object::odesc1() const
-{
-    return _odesc1;
-}
-
 const std::string &Object::oread() const
 {
     return _oread;
