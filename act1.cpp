@@ -168,7 +168,7 @@ bool robber::operator()(const HackP &hack) const
                         {
                             hack->hobjs(splice_out(still, hack->hobjs_ob()));
                             hobj->ocontents().push_back(still);
-                            still->ocan(hobj);
+                            still->ocan() = hobj;
                         }
                         hack->hobjs(hh = rob_room(rm, hh, 100));
                         hack->hobjs(hh = rob_adv(win, hh));

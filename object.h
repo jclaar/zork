@@ -126,20 +126,19 @@ public:
     PROP(osize);
     PROP(ostrength);
     PROP(omatch);
+    PROP(oflags);
+    PROP(ocan);
+    PROP(obverb);
+
     const OlintP &olint() const {
         return _olint;
     }
     const AdvP *oactor() const;
     std::optional<Bits> oglobal() const { return _oglobal; }
-    PROP(oflags);
     const rapplic &oaction() const { return objfn; }
     const RoomP &oroom() const { return _oroom; }
     Object& oroom(const RoomP& r) { _oroom = r; return *this; }
-    const ObjectP &ocan() const { return _ocan; }
-    Object& ocan(const ObjectP& op) { _ocan = op; return *this; }
     RoomBit ovtype() const;
-
-    PROP(obverb);
 
     void restore(const Object &o);
 

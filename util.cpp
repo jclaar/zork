@@ -49,7 +49,7 @@ bool remove_object(const ObjectP &obj, const AdvP &winner)
         splice_out_in_place(obj, winner->aobjs());
     }
     obj->oroom(RoomP());
-    obj->ocan(ObjectP());
+    obj->ocan() = ObjectP();
     // Return value is never used, except to make a conditional statement continue.
     return true;
 }
@@ -64,14 +64,14 @@ bool insert_object(const ObjectP &obj, const RoomP &room)
 void insert_into(const ObjectP &cnt, const ObjectP &obj)
 {
     cnt->ocontents().push_front(obj);
-    obj->ocan(cnt);
+    obj->ocan() = cnt;
     obj->oroom(RoomP());
 }
 
 void remove_from(const ObjectP &cnt, const ObjectP &obj)
 {
     splice_out_in_place(obj, cnt->ocontents());
-    obj->ocan(ObjectP());
+    obj->ocan() = ObjectP();
 }
 
 void take_object(const ObjectP &obj, const AdvP &winner)

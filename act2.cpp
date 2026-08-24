@@ -133,7 +133,7 @@ bool shaker::operator()() const
     {
         for (const ObjectP &x : prso->ocontents())
         {
-            x->ocan(nullptr);
+            x->ocan() = nullptr;
             insert_object(x, here);
         }
         prso->ocontents().clear();
@@ -331,7 +331,7 @@ bool balloon_burn()
         {
             auto &blabe = sfind_obj("BLABE");
             ball->ocontents().push_front(blabe);
-            blabe->ocan(ball);
+            blabe->ocan() = ball;
         }
         flags[FlagId::blab] = true;
         binf = prso;
@@ -415,7 +415,7 @@ namespace obj_funcs
         if (m)
         {
             splice_out_in_place(g, m->ocontents());
-            g->ocan(nullptr);
+            g->ocan() = nullptr;
             return tell("The slag turns out to be rather insubstantial, and crumbles into dust\n"
                 "at your touch.  It must not have been very valuable.");
         }
@@ -483,7 +483,7 @@ namespace obj_funcs
                     {
                         for (const ObjectP &x : sfind_obj("TCASE")->ocontents())
                         {
-                            x->ocan(nullptr);
+                            x->ocan() = nullptr;
                         }
                         sfind_obj("TCASE")->ocontents().clear();
                     }
@@ -791,7 +791,7 @@ namespace obj_funcs
                         remove_object(c);
                         auto& d = sfind_obj("DIAMO");
                         mach->ocontents().push_front(d);
-                        d->ocan(mach);
+                        d->ocan() = mach;
                     }
                     else if (!empty(mach->ocontents()))
                     {
@@ -811,7 +811,7 @@ namespace obj_funcs
 
                         mach->ocontents().push_front(sfind_obj("GUNK"));
                         // Set the container of the gunk to the machine.
-                        sfind_obj("GUNK")->ocan(mach);
+                        sfind_obj("GUNK")->ocan() = mach;
                     }
                 }
             }

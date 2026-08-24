@@ -769,7 +769,7 @@ bool jigs_up(std::string_view desc, bool player)
         {
             splice_out_in_place(lamp, lc->ocontents());
             lamp->oroom(nullptr);
-            lamp->ocan(nullptr);
+            lamp->ocan() = nullptr;
         }
         else if (lamp_location == sfind_room("CP"))
         {

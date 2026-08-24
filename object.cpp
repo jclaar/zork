@@ -293,14 +293,14 @@ void init_objects()
             // was created, so restore it if necessary.
             ObjectP old_ocan = p->ocan();
             *(p.get()) = *cur->get();
-            p->ocan(old_ocan);
+            p->ocan() = old_ocan;
         }
         inc_score_max(p->ofval() + p->otval());
 
         // Ensure everything in this object has its ocan pointer set.
         for (const ObjectP &o : p->ocontents())
         {
-            o->ocan(p);
+            o->ocan() = p;
         }
 
 		++cur;
