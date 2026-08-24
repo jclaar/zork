@@ -89,6 +89,12 @@ private:
 
 typedef Flags<Bits, numbits> OFlags;
 
+// Handy macro to define a property using the deducing this support in C++23.
+#define PROP(p) auto && p(this auto && self) noexcept \
+ { \
+    return std::forward<decltype(self)>(self)._##p; \
+ }
+
 class Object
 {
 public:
@@ -112,29 +118,14 @@ public:
     const tofmsgs *ofmsgs() const;
 	const std::string &oread() const;
     const std::string &odesco() const { return _odesco; }
-	auto&& odesc1(this auto && self) noexcept
-    { 
-		return std::forward<decltype(self)>(self)._odesc1;
-    }
-    auto&& odesc2(this auto&& self) noexcept
-    {
-        return std::forward<decltype(self)>(self).desc;
-    }
-	auto&& otval(this auto&& self) noexcept
-	{
-		return std::forward<decltype(self)>(self)._otval;
-	}
-    int ofval() const;
-    void ofval(int new_val);
+    PROP(odesc1);
+    PROP(odesc2);
+    PROP(otval);
+    PROP(ofval);
     int ocapac() const;
-    auto&& osize(this auto&& self) noexcept
-    {
-		return std::forward<decltype(self)>(self)._osize;
-    }
-    int ostrength() const { return _ostrength; }
-    void ostrength(int new_strength) { _ostrength = new_strength; }
-    int omatch() const;
-    void omatch(int new_val);
+    PROP(osize);
+    PROP(ostrength);
+    PROP(omatch);
     const OlintP &olint() const {
         return _olint;
     }
@@ -168,7 +159,7 @@ protected:
     std::vector<std::string> synonyms;
     std::vector<std::string> adjec;
     ObjList contents;
-    std::string desc;
+    std::string _odesc2;
     std::string _odesco;
     std::string _odesc1;
     std::string _oread;

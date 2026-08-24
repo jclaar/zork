@@ -20,7 +20,7 @@ void Object::save(archive &ar, const unsigned int version) const
     std::transform(contents.begin(), contents.end(), std::back_inserter(conts), [](ObjectP o) { return o->oid(); });
     ar & conts;
     ar & _odesc1;
-    ar & desc;
+    ar & _odesc2;
 }
 
 template <class archive>
@@ -47,7 +47,7 @@ void Object::load(archive &ar, const unsigned int version)
     std::list<std::string> conts;
     ar & conts;
     ar & _odesc1;
-    ar & desc;
+    ar & _odesc2;
     contents.clear();
     std::transform(conts.begin(), conts.end(), std::back_inserter(contents), [](const std::string &s)
     {

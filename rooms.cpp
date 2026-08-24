@@ -1192,7 +1192,7 @@ void score_obj(const ObjectP &obj)
     if (temp > 0)
     {
         score_upd(temp);
-        obj->ofval(0);
+        obj->ofval() = 0;
     }
 }
 

@@ -1849,7 +1849,7 @@ namespace obj_funcs
         {
             if (t->ostrength() < 0)
             {
-                t->ostrength(-t->ostrength());
+                t->ostrength() = -t->ostrength();
                 dem->haction(robber());
                 tro(sfind_obj("STILL"), Bits::ovison);
                 t->odesc1() = robber_c_desc;
@@ -2405,7 +2405,7 @@ namespace obj_funcs
             }
             else
             {
-                match->omatch(mc - 1);
+                match->omatch() = mc - 1;
                 tro(match, Bits::flamebit, Bits::lightbit, Bits::onbit );
                 clock_int(matin, 2);
                 tell("One of the matches starts to burn.");
@@ -2495,7 +2495,7 @@ namespace obj_funcs
             rv = true;
             if (t->ostrength() < 0)
             {
-                t->ostrength(-t->ostrength());
+                t->ostrength() = -t->ostrength();
                 perform(troll(), find_verb("IN!"));
             }
 

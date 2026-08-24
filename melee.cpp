@@ -99,7 +99,7 @@ bool fighting::operator()(const HackP &dem) const
                 {
                     if (!(*vout == 0) && prob(*vout, (*vout + 100) / 2))
                     {
-                        o->ostrength(-s);
+                        o->ostrength() = -s;
                         *vout = 0;
                         random_action && perform(random_action, find_verb("IN!"));
                     }
@@ -145,7 +145,7 @@ bool fighting::operator()(const HackP &dem) const
 
                 if (s < 0)
                 {
-                    o->ostrength(-s);
+                    o->ostrength() = -s;
                     if (random_action)
                         perform(random_action, find_verb("IN!"));
                 }
@@ -475,7 +475,7 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
     }
     else
     {
-        villain->ostrength(def);
+        villain->ostrength() = def;
         if (def == 0)
         {
             trz(villain, Bits::fightbit);

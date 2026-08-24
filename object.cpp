@@ -119,7 +119,7 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
     const std::initializer_list<OP> &props) :
     synonyms(syns.begin(), syns.end()),
     adjec(adj.begin(), adj.end()),
-    desc(description),
+    _odesc2(description),
     objfn(objfun)
 {
     for (auto c : cntnts)
@@ -238,26 +238,6 @@ int Object::ocapac() const
     return _ocapac;
 }
 
-int Object::omatch() const
-{
-    return _omatch;
-}
-
-void Object::omatch(int new_matches)
-{
-    _omatch = new_matches;
-}
-
-void Object::ofval(int new_val)
-{
-    _ofval = new_val;
-}
-
-int Object::ofval() const
-{
-    return _ofval;
-}
-
 void Object::restore(const Object &o)
 {
     _ocan = o._ocan;
@@ -269,7 +249,7 @@ void Object::restore(const Object &o)
     _omatch = o._omatch;
     _ostrength = o._ostrength;
     contents = o.contents;
-    desc = o.desc;
+    _odesc2 = o._odesc2;
     _odesc1 = o._odesc1;
 }
 
