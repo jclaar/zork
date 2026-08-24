@@ -131,7 +131,7 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
     for (Bits b : bits)
     {
         // The Bits enum corresponds to a bit in flags.
-        flags[b] = true;
+        _oflags[b] = true;
     }
 
     // Add all adjectives to the main word list.
@@ -241,7 +241,7 @@ int Object::ocapac() const
 void Object::restore(const Object &o)
 {
     _ocan = o._ocan;
-    flags = o.flags;
+    _oflags = o._oflags;
     _oroom = o._oroom;
     _ofval = o._ofval;
     _osize = o._osize;
@@ -274,7 +274,7 @@ Object(syns, adj, desc, _bits, obj_fun, contents, props)
         _gbits = g_bits;
         _oglobal = g_bits;
     }
-    flags[Bits::oglobal] = true;
+    _oflags[Bits::oglobal] = true;
 }
 
 void init_objects()

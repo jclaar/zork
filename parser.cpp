@@ -278,7 +278,7 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
                     {
                         if (as_obj(obj) == bobj)
                         {
-                            as_obj(obj)->obverb(asverb);
+                            as_obj(obj)->obverb() = asverb;
                             put(std::get<ParseVec>(val), 0, buncher);
                         }
                         rv = true;

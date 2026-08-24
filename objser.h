@@ -9,7 +9,7 @@ void Object::save(archive &ar, const unsigned int version) const
 {
     ar & oid();
     ar & (_ocan ? _ocan->oid() : std::string());
-    ar & flags;
+    ar & _oflags;
     ar & (_oroom ? _oroom->rid() : std::string());
     ar & _ofval;
     ar & _osize;
@@ -35,7 +35,7 @@ void Object::load(archive &ar, const unsigned int version)
     {
         _ocan = sfind_obj(temp);
     }
-    ar & flags;
+    ar & _oflags;
     ar & temp;
     if (!temp.empty())
         _oroom = sfind_room(temp);

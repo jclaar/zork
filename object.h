@@ -131,8 +131,7 @@ public:
     }
     const AdvP *oactor() const;
     std::optional<Bits> oglobal() const { return _oglobal; }
-    const OFlags &oflags() const { return flags; }
-    OFlags &oflags() { return flags; }
+    PROP(oflags);
     const rapplic &oaction() const { return objfn; }
     const RoomP &oroom() const { return _oroom; }
     Object& oroom(const RoomP& r) { _oroom = r; return *this; }
@@ -140,8 +139,7 @@ public:
     Object& ocan(const ObjectP& op) { _ocan = op; return *this; }
     RoomBit ovtype() const;
 
-    const VerbP &obverb() const { return _obverb; }
-    void obverb(const VerbP &v) { _obverb = v; }
+    PROP(obverb);
 
     void restore(const Object &o);
 
@@ -169,7 +167,7 @@ protected:
     int _ostrength = 0;
     ObjectP _ocan; // What contains this object.
     RoomP _oroom;  // What room it's in.
-    OFlags flags;
+    OFlags _oflags;
     rapplic objfn;
     OlintP _olint;
     VerbP _obverb;
