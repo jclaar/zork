@@ -126,8 +126,7 @@ public:
     void rglobal(Bits new_global) { _rglobal.push_back(new_global); }
     RoomBits &rbits() { return _room_bits; }
     rapplic raction() const { return _room_fn; }
-    int rval() const;
-    void rval(int new_val);
+    PROP(rval);
 
     void restore(const Room &src)
     {

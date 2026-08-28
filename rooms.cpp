@@ -198,7 +198,7 @@ void score_room(const RoomP &rm)
     if (rm->rval() > 0)
     {
         score_upd(rm->rval());
-        rm->rval(0);
+        rm->rval() = 0;
     }
 }
 

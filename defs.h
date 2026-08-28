@@ -11,6 +11,12 @@
 template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
 template<class... Ts> overload(Ts...)->overload<Ts...>;
 
+// Handy macro to define a property using the deducing this support in C++23.
+#define PROP(p) auto && p(this auto && self) noexcept \
+ { \
+    return std::forward<decltype(self)>(self)._##p; \
+ }
+
 // Hacky method of allowing an additional argument to be passed to 
 // apply_random. This is only used in a couple of cases.
 enum class ApplyRandomArg

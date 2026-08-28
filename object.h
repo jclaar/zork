@@ -89,12 +89,6 @@ private:
 
 typedef Flags<Bits, numbits> OFlags;
 
-// Handy macro to define a property using the deducing this support in C++23.
-#define PROP(p) auto && p(this auto && self) noexcept \
- { \
-    return std::forward<decltype(self)>(self)._##p; \
- }
-
 class Object
 {
 public:
