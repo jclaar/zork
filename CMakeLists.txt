@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.15 )
+cmake_minimum_required( VERSION 3.30 )
 
 cmake_policy( VERSION 3.15 )
 cmake_policy(SET CMP0091 NEW)
@@ -29,7 +29,7 @@ endif()
 if (${Boost_VERSION} VERSION_GREATER_EQUAL "1.81.0")
 	list(APPEND Boost_REQUIRED_COMPONENTS process)
 endif()
-find_package(Boost 1.70.0 REQUIRED COMPONENTS ${Boost_REQUIRED_COMPONENTS})
+find_package(Boost 1.74.0 REQUIRED COMPONENTS ${Boost_REQUIRED_COMPONENTS})
 if(LINUX)
 find_package(Threads REQUIRED)
 endif()
@@ -79,7 +79,6 @@ add_executable(zork
 	roomfns.h roomfns.cpp
 	rooms.h rooms.cpp
 	sr.h sr.cpp
-	precomp.h
 	strings.h strings.cpp
 	util.h util.cpp
 	version.h
@@ -91,7 +90,6 @@ target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
 target_link_libraries(zork Threads::Threads)
 endif()
-target_precompile_headers(zork PRIVATE precomp.h)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 	if (APPLE)
@@ -108,6 +106,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 			COMMENT "Creating archive file for release."
 		)
 	else()
+	    target_compile_definitions(zork PRIVATE _WIN32_WINNT=0x0601)
 	    add_custom_command(TARGET zork
 		    POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E tar "cfv" "zork_win64_${CMAKE_PROJECT_VERSION}.zip" --format=zip "zork.exe"

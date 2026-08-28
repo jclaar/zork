@@ -1,4 +1,3 @@
-#include "precomp.h"
 #include <numeric>
 #include <algorithm>
 #include "act1.h"

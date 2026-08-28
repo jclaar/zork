@@ -1,4 +1,3 @@
-#include "precomp.h"
 #include <array>
 #include "act4.h"
 #include "rooms.h"

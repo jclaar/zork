@@ -4,6 +4,7 @@
 #include <functional>
 #include <variant>
 #include <list>
+#include <memory>
 #include <bitset>
 #include "FlagSupport.h"
 

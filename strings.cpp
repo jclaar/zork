@@ -1,4 +1,3 @@
-#include "precomp.h"
 #include "strings.h"
 
 #define D "%D%"

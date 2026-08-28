@@ -1,4 +1,3 @@
-#include "precomp.h"
 #include <numeric>
 #include "defs.h"
 #include "funcs.h"

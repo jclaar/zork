@@ -3,6 +3,7 @@
 #include <limits>
 #include <limits.h>
 #include <string>
+#include <array>
 #include <bitset>
 #include "defs.h"
 

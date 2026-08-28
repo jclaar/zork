@@ -1,4 +1,3 @@
-#include "precomp.h"
 #include "room.h"
 #include "globals.h"
 #include "object.h"
