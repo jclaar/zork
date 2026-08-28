@@ -7,7 +7,6 @@
 #include "makstr.h"
 #include "util.h"
 #include "globals.h"
-#include "objfns.h"
 #include "rooms.h"
 #include "adv.h"
 #include "memq.h"
@@ -49,7 +48,7 @@ ObjectP prsi()
 }
 
 
-std::array<ParseContP, lexsize> lex_prog()
+static std::array<ParseContP, lexsize> lex_prog()
 {
     std::array<ParseContP, lexsize> ls;
     std::generate(ls.begin(), ls.end(), []() { return std::make_shared<ParseCont>(); });
@@ -849,7 +848,7 @@ StuffVecP stuff_obj(const ObjectP &obj, const PrepP &prep, PrepVec prepvec, Pars
     }
 }
 
-ObjectP is_global(const ObjectP &obj, const std::vector<Bits> &gflags)
+static ObjectP is_global(const ObjectP &obj, const std::vector<Bits> &gflags)
 {
     // This is a global object if it can be cast into a GObject,
     // and it's in the global list.
