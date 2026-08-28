@@ -124,7 +124,7 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
 {
     for (auto c : cntnts)
     {
-        contents.push_back(get_obj(c));
+        _ocontents.push_back(get_obj(c));
     }
     // All objects must at least have an id in syns[0].
     _ASSERT(syns.size() > 0);
@@ -248,7 +248,7 @@ void Object::restore(const Object &o)
     _ocapac = o._ocapac;
     _omatch = o._omatch;
     _ostrength = o._ostrength;
-    contents = o.contents;
+    _ocontents = o._ocontents;
     _odesc2 = o._odesc2;
     _odesc1 = o._odesc1;
 }

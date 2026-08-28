@@ -113,16 +113,15 @@ public:
     const std::string &oid() const { return synonyms[0]; }
 	const std::vector<std::string> &onames() const { return synonyms; }
     const std::vector<std::string> &oadjs() const { return adjec; }
-    const ObjList &ocontents() const { return contents; }
-    ObjList &ocontents() { return contents; }
     const tofmsgs *ofmsgs() const;
 	const std::string &oread() const;
     const std::string &odesco() const { return _odesco; }
+    int ocapac() const;
+    PROP(ocontents);
     PROP(odesc1);
     PROP(odesc2);
     PROP(otval);
     PROP(ofval);
-    int ocapac() const;
     PROP(osize);
     PROP(ostrength);
     PROP(omatch);
@@ -155,7 +154,7 @@ private:
 protected:
     std::vector<std::string> synonyms;
     std::vector<std::string> adjec;
-    ObjList contents;
+    ObjList _ocontents;
     std::string _odesc2;
     std::string _odesco;
     std::string _odesc1;

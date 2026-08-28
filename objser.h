@@ -17,7 +17,7 @@ void Object::save(archive &ar, const unsigned int version) const
     ar & _omatch;
     ar & _ostrength;
     std::list<std::string> conts;
-    std::transform(contents.begin(), contents.end(), std::back_inserter(conts), [](ObjectP o) { return o->oid(); });
+    std::transform(_ocontents.begin(), _ocontents.end(), std::back_inserter(conts), [](ObjectP o) { return o->oid(); });
     ar & conts;
     ar & _odesc1;
     ar & _odesc2;
@@ -48,8 +48,8 @@ void Object::load(archive &ar, const unsigned int version)
     ar & conts;
     ar & _odesc1;
     ar & _odesc2;
-    contents.clear();
-    std::transform(conts.begin(), conts.end(), std::back_inserter(contents), [](const std::string &s)
+    _ocontents.clear();
+    std::transform(conts.begin(), conts.end(), std::back_inserter(_ocontents), [](const std::string &s)
     {
         return sfind_obj(s);
     });
