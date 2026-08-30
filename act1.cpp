@@ -1,3 +1,5 @@
+module;
+
 #include "act1.h"
 #include "act2.h"
 #include "act4.h"
@@ -13,7 +15,9 @@
 #include "cevent.h"
 #include "roomfns.h"
 
-import Zork;
+export module Zork:Act1;
+import :Memq;
+import :Zstring;
 
 namespace
 {
@@ -50,9 +54,31 @@ namespace
             ::tell(*(tell_start + size_t(cnt) - 1));
         }
     }
+
+    bool hack_hack(const ObjectP& obj, std::string_view str, std::string_view obj2 = std::string_view())
+    {
+        if (object_action())
+            return true;
+        if (!obj2.empty())
+        {
+            tell(str, 1, obj->odesc2(), " with a ");
+            tell(obj2, 1, pick_one(ho_hum));
+        }
+        else
+        {
+            tell(str, 1, obj->odesc2(), pick_one(ho_hum));
+        }
+        return true;
+    }
+
 }
 
-int water_level = 0;
+export bool with_tell(const ObjectP& obj)
+{
+    return tell("With a ", 1, obj->odesc2(), "?");
+}
+
+export int water_level = 0;
 
 bool robber::operator()(const HackP &hack) const
 {
@@ -704,7 +730,7 @@ bool torch_off(const ObjectP &t)
     return true;
 }
 
-bool bomb(ObjectP o)
+export bool bomb(ObjectP o)
 {
     ObjectP brick;
     ObjectP fuse;
@@ -923,7 +949,7 @@ bool oil::operator()() const
     return true;
 }
 
-bool open_close(const ObjectP &obj, std::string_view stropn, std::string_view strcls)
+export bool open_close(const ObjectP &obj, std::string_view stropn, std::string_view strcls)
 {
     bool rv = false;
     if (verbq("OPEN"))
@@ -2860,11 +2886,6 @@ bool zork::operator()() const
     return tell("At your service!");
 }
 
-bool with_tell(const ObjectP &obj)
-{
-    return tell("With a ", 1, obj->odesc2(), "?");
-}
-
 bool fill::operator()() const
 {
     ParseVec prsvec = ::prsvec;
@@ -2889,22 +2910,6 @@ bool fill::operator()() const
     else if (prsi() != sfind_obj("WATER"))
     {
         perform(putter(), find_verb("PUT"), prsi(), prso());
-    }
-    return true;
-}
-
-bool hack_hack(const ObjectP &obj, std::string_view str, std::string_view obj2)
-{
-    if (object_action())
-        return true;
-    if (!obj2.empty())
-    {
-        tell(str, 1, obj->odesc2(), " with a ");
-        tell(obj2, 1, pick_one(ho_hum));
-    }
-    else
-    {
-        tell(str, 1, obj->odesc2(), pick_one(ho_hum));
     }
     return true;
 }

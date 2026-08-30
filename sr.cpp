@@ -21,6 +21,8 @@
 #include "adv.h"
 #include "objser.h"
 
+import Zork;
+
 typedef std::vector<int> SV;
 typedef SV::iterator SVI;
 

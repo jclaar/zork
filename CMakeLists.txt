@@ -73,7 +73,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 add_executable(zork)
 
 target_sources(zork PRIVATE
-	act1.h act1.cpp
+	act1.h
 	act2.h act2.cpp
 	act3.h act3.cpp
 	act4.h act4.cpp
@@ -110,6 +110,7 @@ target_sources(zork PRIVATE
 		zork_main.cpp
 		memq.cpp
 		zstring.cpp
+		act1.cpp
 )
 
 set_target_properties(zork PROPERTIES
