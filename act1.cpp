@@ -18,7 +18,6 @@ module;
 export module Zork:Act1;
 import :Memq;
 import :Zstring;
-//import :Act2;
 
 namespace
 {
@@ -377,21 +376,6 @@ bool robber::operator()(const HackP &hack) const
     }
 
     return true;
-}
-
-bool infested(const RoomP& r)
-{
-    const ObjList& villains = ::villains;
-    const HackP& dem = get_demon("THIEF");
-    return flags[FlagId::end_game_flag] && eg_infested(r) ||
-        r == dem->hroom() && dem->haction() ||
-        [&villains, &r]() -> bool
-    {
-        return std::find_if(villains.begin(), villains.end(), [&r](const ObjectP& v)
-            {
-                return r == v->oroom();
-            }) != villains.end();
-    }();
 }
 
 static bool infested(const ExitType& ex)

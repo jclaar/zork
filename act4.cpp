@@ -1,3 +1,5 @@
+module;
+
 #include <numeric>
 #include "defs.h"
 #include "funcs.h"
@@ -10,16 +12,78 @@
 #include "objfns.h"
 #include "roomfns.h"
 
-import Zork;
+export module Zork:Act4;
+import :Memq;
+import :Act3;
 
-std::vector<QuestionP> qvec;
+export std::vector<QuestionP> qvec;
 int mdir = 270;
+using LookToVal = std::variant<std::monostate, bool, const char*>;
 
 namespace
 {
     std::array swu = { 0, 0, 0, 0, 0 };
     std::array kwu = { 0, 0, 0, 0, 0 };
     std::string str("     ");
+}
+
+export std::string pw(SIterator unm, SIterator key)
+{
+    auto su = Iterator(swu);
+    auto ku = Iterator(kwu);
+    SIterator str = ::str;
+    int usum;
+
+    auto fn = [&](SIterator s, Iterator<decltype(swu)> su, SIterator k, Iterator<decltype(kwu)> ku) -> bool
+        {
+            while (1)
+            {
+                if (empty(su))
+                    return true;
+                if (empty(k))
+                    k = key;
+                if (empty(s))
+                    s = unm;
+                su[0] = s[0] - 64;
+                ku[0] = k[0] - 64;
+                k = rest(k);
+                s = rest(s);
+                su = rest(su);
+                ku = rest(ku);
+            }
+            return true;
+        };
+    fn(unm, su, key, ku);
+
+    // usum is the sum of all items in su % 8 + 8 * (sum of all items in ku % 8)
+    usum = (std::accumulate(su.begin(), su.end(), 0) % 8) +
+        (std::accumulate(ku.begin(), ku.end(), 0) * 8) * 8;
+
+    std::fill(str.begin(), str.end(), 0);
+
+    auto fn2 = [&usum](Iterator<decltype(swu)> su, Iterator<decltype(kwu)> ku, SIterator str)
+        {
+            _ASSERT(su.size() == ku.size());
+            _ASSERT(su.size() == str.size());
+            for (; !empty(su); su = rest(su), ku = rest(ku), str = rest(str))
+            {
+                int s = su[0], k = ku[0];
+                s = ((s ^ k) ^ usum) & 31;
+                usum = (usum + 1) % 32;
+                if (s > 26)
+                    s = s % 26;
+                if (s == 0)
+                    s = 1;
+                str[0] = (char)(s + 64);
+            }
+        };
+    fn2(su, ku, str);
+
+    return str;
+}
+
+namespace
+{
 
     int pnumb = 1; // cell pointed at
     int lcell = 1; // cell in slot
@@ -34,6 +98,15 @@ namespace
     const std::string_view mrestr("   E");
     const std::string_view mrwstr("MBRW");
 
+    void dopen(const ObjectP& obj) 
+    { 
+        tro(obj, Bits::openbit); 
+    }
+
+    void dclose(const ObjectP& obj)
+    { 
+        trz(obj, Bits::openbit); 
+    }
     
     bool member(const std::string& s1, const std::vector<QuestionValue>& qv)
     {
@@ -43,6 +116,42 @@ namespace
                 return ((s = std::get_if<std::string_view>(&q)) && *s == s1);
             });
         return i != qv.end();
+    }
+
+    bool enter_end_game()
+    {
+        const ObjectP& lamp = sfind_obj("LAMP");
+        const ObjectP& sword = sfind_obj("SWORD");
+        const AdvP& w = *winner;
+
+        clock_disable(egher);
+        tro(lamp, Bits::lightbit);
+        trz(lamp, Bits::onbit);
+        const OlintP& c = lamp->olint();
+        c->val(0);
+        c->ev()->ctick(350);
+        c->ev()->cflag(false);
+        sword_demon->haction(sword_glow());
+        robber_demon->haction(nullptr);
+
+        // Disable all active events in the adventurer's possession.
+        for (const ObjectP& o : w->aobjs())
+        {
+            if (o->olint())
+                clock_disable(o->olint()->ev());
+        }
+
+        tro(lamp, Bits::touchbit);
+        tro(sword, Bits::touchbit);
+        lamp->oroom(nullptr).ocan() = nullptr;
+        sword->oroom(nullptr).ocan() = nullptr;
+        //w->aobjs().swap(ObjList{ lamp, sword });
+        w->aobjs() = { lamp, sword };
+        flags[FlagId::end_game_flag] = true;
+        score_room(sfind_room("CRYPT"));
+        goto_(sfind_room("TSTRS"));
+        room_desc()();
+        return true;
     }
 
     bool correct(Iterator<ParseContV> ans, const std::vector<QuestionValue>& correct)
@@ -243,6 +352,21 @@ bool eg_infested(const RoomP &r)
         r == sfind_room("MRGW"));
 }
 
+bool infested(const RoomP& r)
+{
+    const ObjList& villains = ::villains;
+    const HackP& dem = get_demon("THIEF");
+    return flags[FlagId::end_game_flag] && eg_infested(r) ||
+        r == dem->hroom() && dem->haction() ||
+        [&villains, &r]() -> bool
+        {
+            return std::find_if(villains.begin(), villains.end(), [&r](const ObjectP& v)
+                {
+                    return r == v->oroom();
+                }) != villains.end();
+        }();
+}
+
 bool follow::operator()() const
 {
     const AdvP &win = *winner;
@@ -336,42 +460,6 @@ bool answer::operator()() const
         tell("No one seems to be listening.");
     }
 
-    return true;
-}
-
-bool enter_end_game()
-{
-    const ObjectP &lamp = sfind_obj("LAMP");
-    const ObjectP &sword = sfind_obj("SWORD");
-    const AdvP &w = *winner;
-
-    clock_disable(egher);
-    tro(lamp, Bits::lightbit);
-    trz(lamp, Bits::onbit);
-    const OlintP &c = lamp->olint();
-    c->val(0);
-    c->ev()->ctick(350);
-    c->ev()->cflag(false);
-    sword_demon->haction(sword_glow());
-    robber_demon->haction(nullptr);
-
-    // Disable all active events in the adventurer's possession.
-    for (const ObjectP& o : w->aobjs())
-    {
-        if (o->olint())
-            clock_disable(o->olint()->ev());
-    }
-
-    tro(lamp, Bits::touchbit);
-    tro(sword, Bits::touchbit);
-    lamp->oroom(nullptr).ocan() = nullptr;
-    sword->oroom(nullptr).ocan() = nullptr;
-    //w->aobjs().swap(ObjList{ lamp, sword });
-    w->aobjs() = { lamp, sword };
-    flags[FlagId::end_game_flag] = true;
-    score_room(sfind_room("CRYPT"));
-    goto_(sfind_room("TSTRS"));
-    room_desc()();
     return true;
 }
 
@@ -512,10 +600,10 @@ bool inquisitor::operator()(Iterator<ParseContV> ans) const
 }
 
 bool look_to(std::string_view nstr,
-    std::string_view sstr,
-    LookToVal ntell,
-    LookToVal stell,
-    bool htell)
+    std::string_view sstr = "",
+    LookToVal ntell = LookToVal(),
+    LookToVal stell = LookToVal(),
+    bool htell = true)
 {
     bool mir;
     bool m1 = false;
@@ -635,7 +723,7 @@ bool mirmove(bool northq, const RoomP &rm)
     return true;
 }
 
-RoomP mirns(bool northq, bool exitq)
+RoomP mirns(bool northq = (mdir < 180), bool exitq = false)
 {
     RoomP rv;
     const RoomP &mloc = ::mloc;
@@ -1763,57 +1851,3 @@ namespace actor_funcs
     }
 }
 
-std::string pw(SIterator unm, SIterator key)
-{
-    auto su = Iterator(swu);
-    auto ku = Iterator(kwu);
-    SIterator str = ::str;
-    int usum;
-
-    auto fn = [&](SIterator s, Iterator<decltype(swu)> su, SIterator k, Iterator<decltype(kwu)> ku) -> bool
-        {
-            while (1)
-            {
-                if (empty(su))
-                    return true;
-                if (empty(k))
-                    k = key;
-                if (empty(s))
-                    s = unm;
-                su[0] = s[0] - 64;
-                ku[0] = k[0] - 64;
-                k = rest(k);
-                s = rest(s);
-                su = rest(su);
-                ku = rest(ku);
-            }
-            return true;
-        };
-    fn(unm, su, key, ku);
-
-    // usum is the sum of all items in su % 8 + 8 * (sum of all items in ku % 8)
-    usum = (std::accumulate(su.begin(), su.end(), 0) % 8) +
-        (std::accumulate(ku.begin(), ku.end(), 0) * 8) * 8;
-
-    std::fill(str.begin(), str.end(), 0);
-
-    auto fn2 = [&usum](Iterator<decltype(swu)> su, Iterator<decltype(kwu)> ku, SIterator str)
-        {
-            _ASSERT(su.size() == ku.size());
-            _ASSERT(su.size() == str.size());
-            for (; !empty(su); su = rest(su), ku = rest(ku), str = rest(str))
-            {
-                int s = su[0], k = ku[0];
-                s = ((s ^ k) ^ usum) & 31;
-                usum = (usum + 1) % 32;
-                if (s > 26)
-                    s = s % 26;
-                if (s == 0)
-                    s = 1;
-                str[0] = (char)(s + 64);
-            }
-        };
-    fn2(su, ku, str);
-
-    return str;
-}

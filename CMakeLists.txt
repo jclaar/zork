@@ -76,7 +76,7 @@ target_sources(zork PRIVATE
 	act1.h
 	act2.h
 	act3.h
-	act4.h act4.cpp
+	act4.h
 	adv.h adv.cpp
 	cevent.h cevent.cpp
 	
@@ -113,6 +113,7 @@ target_sources(zork PRIVATE
 		act1.cpp
         act2.cpp
 		act3.cpp
+        act4.cpp
 )
 
 set_target_properties(zork PROPERTIES

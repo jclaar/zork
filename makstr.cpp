@@ -6,6 +6,8 @@
 #include "parser.h"
 #include "ZorkException.h"
 
+import Zork;
+
 namespace
 {
     template <typename T>
