@@ -1,5 +1,4 @@
 #pragma once
-#include <utility>
 #include <boost/serialization/split_member.hpp>
 #include "room.h"
 
@@ -26,16 +25,7 @@ public:
     PROP(aobjs);
     PROP(flags);
 
-    void restore(const Adv &a)
-    {
-        _aroom = a.aroom();
-        _ascore = a.ascore();
-        _avehicle = a.avehicle();
-        _aobj = a.aobj();
-        _astrength = a.astrength();
-        _flags = a.flags();
-        _aobjs = a.aobjs();
-    }
+    void restore(const Adv& a);
 
 private:
     Adv() {}
@@ -92,26 +82,15 @@ private:
     AdvBitset _flags;
 };
 
-inline bool atrnn(const AdvP &adv, AdvBits b)
-{
-    return adv->flags()[b] != 0;
-}
-
-inline void atrz(const AdvP &adv, AdvBits b)
-{
-    adv->flags()[b] = 0;
-}
-
-inline void atro(const AdvP &adv, AdvBits b)
-{
-    adv->flags()[b] = 1;
-}
+bool atrnn(const AdvP& adv, AdvBits b);
+void atrz(const AdvP& adv, AdvBits b);
+void atro(const AdvP& adv, AdvBits b);
 
 void add_actor(e_oactor actor_name, const RoomP &room, 
     const ObjectP &obj, rapplic action, int strength);
 AdvArray &actors();
 
-inline const AdvP &player() { return actors()[std::to_underlying(e_oactor::player)]; }
+const AdvP& player();
 
 // Actor functions
 namespace actor_funcs
