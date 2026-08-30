@@ -113,7 +113,11 @@ namespace
 }
 
 // last_it must be defined after Objects.
-ObjectP last_it;
+ObjectP &last_it()
+{
+	static ObjectP last;
+	return last;
+}
 
 Object::Object(const std::initializer_list<const char *> &syns, const std::initializer_list<const char *> &adj, const char *description,
     const std::initializer_list<Bits> &bits, rapplic objfun, const StringList &cntnts, 

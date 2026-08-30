@@ -1,4 +1,5 @@
 export module Zork;
+export import :Globals;
 export import :Strings;
 export import :Info;
 export import :Memq;

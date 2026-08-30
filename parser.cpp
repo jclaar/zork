@@ -266,9 +266,9 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
                 if (ObjectP *op = std::get_if<ObjectP>(&(obj = std::get<ParseVec>(val)[1])))
                 {
                     if (*op == bobj)
-                        last_it = bunch[0];
+                        last_it() = bunch[0];
                     else
-                        last_it = as_obj(obj);
+                        last_it() = as_obj(obj);
                 }
                 if (!is_empty(obj) && trnn(as_obj(obj), Bits::bunchbit))
                 {
@@ -1067,7 +1067,7 @@ Nefals get_object(const std::string &objnam, AdjectiveP adj)
 
 ObjectP get_it_obj()
 {
-    ObjectP li = last_it;
+    ObjectP li = last_it();
     const AdvP &player = ::player();
     ObjectP obj;
     if (orphans.oslot1() && (obj = orphans.oslot1()) && obj && (in_room(obj, here) || memq(obj, player->aobjs())))
@@ -1087,7 +1087,7 @@ ObjectP get_it_obj()
         return obj;
     }
     else
-        return get_object(last_it->oid(), nullptr).first;
+        return get_object(last_it()->oid(), nullptr).first;
 }
 
 ObjectP get_last(const ObjList &l)

@@ -7,15 +7,6 @@
 #include <bitset>
 #include "defs.h"
 
-int score_max();
-void inc_score_max(int inc);
-extern int eg_score_max;
-const int bigfix = INT_MAX;
-extern std::string inbuf;
-extern std::string inbuf1;
-
-extern ObjectP last_it;
-
 enum class FlagId
 {
     null_flag,
@@ -89,16 +80,14 @@ enum class FlagId
 };
 constexpr size_t num_flag_bits = std::to_underlying(FlagId::num_flag_bits);
 
-typedef Flags<FlagId, num_flag_bits> FlagBits;
+using FlagBits = Flags<FlagId, num_flag_bits>;
 
 // Puzzle room
 extern int cphere;
-typedef std::array<ObjList, 64> PuzzleContents;
+using PuzzleContents = std::array<ObjList, 64>;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
-typedef std::tuple<std::string_view, int> cpwall_val;
-bool operator==(const ObjectP& o, const cpwall_val& cp);
-bool operator==(const cpwall_val& cp, const ObjectP& o);
+using cpwall_val = std::tuple<std::string_view, int>;
 
 constexpr std::array cpwalls = {
             cpwall_val("CPSWL", 8),
@@ -108,5 +97,3 @@ constexpr std::array cpwalls = {
 };
 extern FlagBits flags;
 
-int load_max();
-void load_max(int new_load);

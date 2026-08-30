@@ -963,7 +963,7 @@ void init_dung()
 
 	init_objects();
     // Some objects that were initialized globally, but need to be done after init_objects().
-    last_it = sfind_obj("#####");
+    last_it() = sfind_obj("#####");
     init_bunch();
     init_prepvec();
     init_synonyms();

@@ -18,6 +18,7 @@ module;
 export module Zork:Act1;
 import :Memq;
 import :Zstring;
+import :Globals;
 
 namespace
 {
@@ -3141,7 +3142,7 @@ namespace room_funcs
         {
             flags[FlagId::xb] = true;
             remove_object(bell);
-            insert_object(last_it = sfind_obj("HBELL"), here);
+            insert_object(last_it() = sfind_obj("HBELL"), here);
             tell(exor1);
             if (memq(cand, wobj))
             {
