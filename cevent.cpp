@@ -1,4 +1,5 @@
-#include <algorithm>
+module;
+
 #include "act1.h"
 #include "act2.h"
 #include "act3.h"
@@ -8,7 +9,9 @@
 #include "objfns.h"
 #include "roomfns.h"
 #include "ZorkException.h"
-#include <tuple>
+
+export module Zork:CEvent;
+import std;
 
 CEventP sphere_clock;
 
@@ -20,7 +23,7 @@ namespace
     }
 }
 
-CEventContainer ev;
+export CEventContainer ev;
 
 CEventContainer::CEventContainer() :
     Base({

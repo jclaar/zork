@@ -98,9 +98,6 @@ public:
     }
 };
 
-extern CEventContainer ev;
-
-extern CEventP sphere_clock;
 // Handy macros to just refer to events by their names.
 #define broin ev[Event::broin]
 #define cycin ev[Event::cycin]

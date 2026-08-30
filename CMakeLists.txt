@@ -78,8 +78,7 @@ target_sources(zork PRIVATE
 	act3.h
 	act4.h
 	adv.h adv.cpp
-	cevent.h cevent.cpp
-	
+	cevent.h
 	defs.h defs.cpp
 	dung.h dung.cpp
 	FlagSupport.h
@@ -115,6 +114,7 @@ target_sources(zork PRIVATE
 		act3.cpp
         act4.cpp
         globals.cpp
+		cevent.cpp
 )
 
 set_target_properties(zork PROPERTIES

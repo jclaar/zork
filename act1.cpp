@@ -19,6 +19,7 @@ export module Zork:Act1;
 import :Memq;
 import :Zstring;
 import :Globals;
+import :CEvent;
 
 namespace
 {
