@@ -18,6 +18,7 @@ module;
 export module Zork:Act1;
 import :Memq;
 import :Zstring;
+//import :Act2;
 
 namespace
 {
@@ -766,49 +767,6 @@ bool brush::operator()() const
     else
     {
         tell("If you wish, but I can't understand why?");
-    }
-    return true;
-}
-
-bool burner::operator()() const
-{
-    bool rv = true;
-    const AdvP &winner = *::winner;
-    if (flaming(prsi()))
-    {
-        ObjectP prso = ::prso();
-        if (rv = object_action())
-        {
-
-        }
-        else if (prso->ocan() == sfind_obj("RECEP"))
-        {
-            rv = balloon_burn();
-        }
-        else if (trnn(prso, Bits::burnbit))
-        {
-            if (memq(prso, winner->aobjs()))
-            {
-                tell("The ", 1, prso->odesc2(), " catches fire.");
-                remove_object(prso);
-                jigs_up("Unfortunately, you were holding it at the time.");
-            }
-            else if (hackable(prso, here))
-            {
-                tell("The ", 1, prso->odesc2(), " catches fire and is consumed.");
-                remove_object(prso);
-            }
-            else
-                tell("You don't have that.");
-        }
-        else
-        {
-            tell("I don't think you can burn a ", 1, prso->odesc2(), ".");
-        }
-    }
-    else
-    {
-        tell("With a ", 1, prsi()->odesc2(), "?\?!?");
     }
     return true;
 }

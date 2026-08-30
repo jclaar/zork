@@ -1,3 +1,5 @@
+module;
+
 #include "act1.h"
 #include "act2.h"
 #include "cevent.h"
@@ -12,19 +14,21 @@
 #include "makstr.h"
 #include "roomfns.h"
 
-import Zork;
+export module Zork:Act2;
+import :Zstring;
+import :Act1;
 
 using namespace std::string_view_literals;
 
-int beach_dig = 0;
+export int beach_dig = 0;
 namespace
 {
     RoomP munged_room;
 }
 
-int light_shaft = []() { inc_score_max(10); return 10; }();
-ObjectP btie;
-ObjectP binf;
+export int light_shaft = []() { inc_score_max(10); return 10; }();
+export ObjectP btie;
+export ObjectP binf;
 CEventP burnup_int;
 
 bool digger::operator()() const
@@ -312,7 +316,7 @@ bool decline_and_fall(const ObjectP &ball)
     return true;
 }
 
-bool balloon_burn()
+export bool balloon_burn()
 {
     ObjectP prso = ::prso();
     const ObjectP &ball = sfind_obj("BALLO");
@@ -364,7 +368,7 @@ bool burnup::operator()() const
     return true;
 }
 
-void fweep(int, int)
+void fweep(int, int = 0)
 {
     // This function uses the "IMAGE 7" command apparently to ring
     // the terminal bell. Since that will be annoying, to say the
@@ -1290,3 +1294,47 @@ namespace room_funcs
         return rv;
     }
 }
+
+bool burner::operator()() const
+{
+    bool rv = true;
+    const AdvP& winner = *::winner;
+    if (flaming(prsi()))
+    {
+        ObjectP prso = ::prso();
+        if (rv = object_action())
+        {
+
+        }
+        else if (prso->ocan() == sfind_obj("RECEP"))
+        {
+            rv = balloon_burn();
+        }
+        else if (trnn(prso, Bits::burnbit))
+        {
+            if (memq(prso, winner->aobjs()))
+            {
+                tell("The ", 1, prso->odesc2(), " catches fire.");
+                remove_object(prso);
+                jigs_up("Unfortunately, you were holding it at the time.");
+            }
+            else if (hackable(prso, here))
+            {
+                tell("The ", 1, prso->odesc2(), " catches fire and is consumed.");
+                remove_object(prso);
+            }
+            else
+                tell("You don't have that.");
+        }
+        else
+        {
+            tell("I don't think you can burn a ", 1, prso->odesc2(), ".");
+        }
+    }
+    else
+    {
+        tell("With a ", 1, prsi()->odesc2(), "?\?!?");
+    }
+    return true;
+}
+

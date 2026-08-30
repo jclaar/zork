@@ -4,3 +4,4 @@ export import :Info;
 export import :Memq;
 export import :Zstring;
 export import :Act1;
+export import :Act2;

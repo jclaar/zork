@@ -10,7 +10,6 @@ RAPPLIC(advent);
 RAPPLIC(alarm_);
 RAPPLIC(attacker);
 RAPPLIC(brush);
-RAPPLIC(burner);
 RAPPLIC(curses);
 RAPPLIC(deflater);
 RAPPLIC(eat);
