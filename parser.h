@@ -211,3 +211,6 @@ void swap_em();
 
 // Verb functions
 RAPPLIC(bunchem);
+
+bool memq(const ObjectP& op, Iterator<ObjVector> ol);
+Iterator<ParseVec> memq(const ObjectP& o, ParseVec pv);

@@ -11,6 +11,7 @@
 #include "makstr.h"
 #include "dung.h"
 #include "ZorkException.h"
+#include "parser.h"
 
 import Zork;
 
@@ -460,5 +461,4 @@ const ObjectP &sfind_obj(std::string_view name)
 {
     return find_obj(name);
 }
-
 

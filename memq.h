@@ -16,6 +16,4 @@ MemqRet<Container> memq(const T& i, const Container& c)
     return iter == std::end(c) ? std::nullopt : MemqRet<Container>(iter);
 }
 
-bool memq(const ObjectP& op, Iterator<ObjVector> ol);
-Iterator<ParseVec> memq(const ObjectP& o, ParseVec pv);
 
