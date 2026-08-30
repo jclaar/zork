@@ -109,6 +109,7 @@ target_sources(zork PRIVATE
 	FILE_SET CXX_MODULES FILES
 	    info.cpp
 		strings.cpp
+		zork_main.cpp
 )
 
 set_target_properties(zork PROPERTIES

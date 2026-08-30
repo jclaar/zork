@@ -59,7 +59,7 @@ export const tofmsgs cyclops_melee =
             "The Cyclops, no sportsman, dispatches his unconscious victim."
         }
     };
-const tofmsgs knife_melee =
+export const tofmsgs knife_melee =
     {
         {
             "Your stab misses the " D " by an inch.",
@@ -99,7 +99,7 @@ const tofmsgs knife_melee =
         }
     };
 
-const tofmsgs sword_melee =
+export const tofmsgs sword_melee =
     {
         {
             "Your swing misses the " D " by an inch.",
@@ -139,7 +139,7 @@ const tofmsgs sword_melee =
         }
     };
 
-const tofmsgs thief_melee =
+export const tofmsgs thief_melee =
     {
         {
             "The thief stabs nonchalantly with his stiletto and misses.",
@@ -197,7 +197,7 @@ const tofmsgs thief_melee =
         }
     };
 
-const tofmsgs troll_melee =
+export const tofmsgs troll_melee =
     {
         {
             "The troll swings his axe, but it misses.",
