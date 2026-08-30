@@ -102,7 +102,6 @@ target_sources(zork PRIVATE
 	util.h util.cpp
 	version.h
 	ZorkException.h
-	zstring.h zstring.cpp
 
 	PUBLIC
 	FILE_SET CXX_MODULES FILES
@@ -110,6 +109,7 @@ target_sources(zork PRIVATE
 		strings.cpp
 		zork_main.cpp
 		memq.cpp
+		zstring.cpp
 )
 
 set_target_properties(zork PROPERTIES

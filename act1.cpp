@@ -8,7 +8,6 @@
 #include "objfns.h"
 #include "util.h"
 #include "melee.h"
-#include "zstring.h"
 #include "object.h"
 #include "adv.h"
 #include "cevent.h"

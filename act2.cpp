@@ -5,7 +5,6 @@
 #include "defs.h"
 #include "funcs.h"
 #include "rooms.h"
-#include "zstring.h"
 #include "util.h"
 #include "dung.h"
 #include "parser.h"

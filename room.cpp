@@ -4,7 +4,7 @@
 #include "ZorkException.h"
 #include "act3.h"
 #include "roomfns.h"
-#include "zstring.h"
+import Zork;
 
 // These are all exit definitions in the original MDL code.
 #define notree_FORE1 NExit("There is no tree here suitable for climbing.")

@@ -11,7 +11,6 @@
 #include "rooms.h"
 #include <algorithm>
 #include "makstr.h"
-#include "zstring.h"
 #include "parser.h"
 #include "act1.h"
 #include "globals.h"
