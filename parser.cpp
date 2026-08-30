@@ -1,4 +1,3 @@
-#include "precomp.h"
 #include "defs.h"
 #include "parser.h"
 #include "dung.h"
@@ -7,7 +6,6 @@
 #include "makstr.h"
 #include "util.h"
 #include "globals.h"
-#include "objfns.h"
 #include "rooms.h"
 #include "adv.h"
 
@@ -50,7 +48,7 @@ ObjectP prsi()
 }
 
 
-std::array<ParseContP, lexsize> lex_prog()
+static std::array<ParseContP, lexsize> lex_prog()
 {
     std::array<ParseContP, lexsize> ls;
     std::generate(ls.begin(), ls.end(), []() { return std::make_shared<ParseCont>(); });
@@ -279,7 +277,7 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
                     {
                         if (as_obj(obj) == bobj)
                         {
-                            as_obj(obj)->obverb(asverb);
+                            as_obj(obj)->obverb() = asverb;
                             put(std::get<ParseVec>(val), 0, buncher);
                         }
                         rv = true;
@@ -850,7 +848,7 @@ StuffVecP stuff_obj(const ObjectP &obj, const PrepP &prep, PrepVec prepvec, Pars
     }
 }
 
-ObjectP is_global(const ObjectP &obj, const std::vector<Bits> &gflags)
+static ObjectP is_global(const ObjectP &obj, const std::vector<Bits> &gflags)
 {
     // This is a global object if it can be cast into a GObject,
     // and it's in the global list.

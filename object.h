@@ -107,50 +107,31 @@ public:
     const std::string &oid() const { return synonyms[0]; }
 	const std::vector<std::string> &onames() const { return synonyms; }
     const std::vector<std::string> &oadjs() const { return adjec; }
-    const ObjList &ocontents() const { return contents; }
-    ObjList &ocontents() { return contents; }
     const tofmsgs *ofmsgs() const;
 	const std::string &oread() const;
     const std::string &odesco() const { return _odesco; }
-	auto&& odesc1(this auto && self) noexcept
-    { 
-		return std::forward<decltype(self)>(self)._odesc1;
-    }
-    auto&& odesc2(this auto&& self) noexcept
-    {
-        return std::forward<decltype(self)>(self).desc;
-    }
-	auto&& otval(this auto&& self) noexcept
-	{
-		return std::forward<decltype(self)>(self)._otval;
-	}
-    int ofval() const;
-    void ofval(int new_val);
     int ocapac() const;
-    auto&& osize(this auto&& self) noexcept
-    {
-		return std::forward<decltype(self)>(self)._osize;
-    }
-    int ostrength() const { return _ostrength; }
-    void ostrength(int new_strength) { _ostrength = new_strength; }
-    int omatch() const;
-    void omatch(int new_val);
+    PROP(ocontents);
+    PROP(odesc1);
+    PROP(odesc2);
+    PROP(otval);
+    PROP(ofval);
+    PROP(osize);
+    PROP(ostrength);
+    PROP(omatch);
+    PROP(oflags);
+    PROP(ocan);
+    PROP(obverb);
+
     const OlintP &olint() const {
         return _olint;
     }
     const AdvP *oactor() const;
     std::optional<Bits> oglobal() const { return _oglobal; }
-    const OFlags &oflags() const { return flags; }
-    OFlags &oflags() { return flags; }
     const rapplic &oaction() const { return objfn; }
     const RoomP &oroom() const { return _oroom; }
     Object& oroom(const RoomP& r) { _oroom = r; return *this; }
-    const ObjectP &ocan() const { return _ocan; }
-    Object& ocan(const ObjectP& op) { _ocan = op; return *this; }
     RoomBit ovtype() const;
-
-    const VerbP &obverb() const { return _obverb; }
-    void obverb(const VerbP &v) { _obverb = v; }
 
     void restore(const Object &o);
 
@@ -167,8 +148,8 @@ private:
 protected:
     std::vector<std::string> synonyms;
     std::vector<std::string> adjec;
-    ObjList contents;
-    std::string desc;
+    ObjList _ocontents;
+    std::string _odesc2;
     std::string _odesco;
     std::string _odesc1;
     std::string _oread;
@@ -178,7 +159,7 @@ protected:
     int _ostrength = 0;
     ObjectP _ocan; // What contains this object.
     RoomP _oroom;  // What room it's in.
-    OFlags flags;
+    OFlags _oflags;
     rapplic objfn;
     OlintP _olint;
     VerbP _obverb;

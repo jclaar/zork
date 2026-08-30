@@ -1,4 +1,3 @@
-#include "precomp.h"
 #include <algorithm>
 #include "act1.h"
 #include "act2.h"

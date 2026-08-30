@@ -1,4 +1,3 @@
-#include "precomp.h"
 #include "roomfns.h"
 
 namespace room_funcs

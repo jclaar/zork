@@ -1,7 +1,5 @@
-#include "precomp.h"
 #include "globals.h"
 #include "object.h"
-#include <algorithm>
 
 std::string inbuf;
 std::string inbuf1;

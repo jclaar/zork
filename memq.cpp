@@ -1,4 +1,3 @@
-
 export module Zork:Memq;
 import std;
 

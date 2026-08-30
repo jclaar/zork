@@ -6,6 +6,16 @@
 #include "ZorkException.h"
 #include "globals.h"
 
+#ifdef _MSC_VER
+#include <crtdbg.h>
+#else
+#include <assert.h>
+#endif
+
+#if !defined(_ASSERT)
+#define _ASSERT assert
+#endif
+
 extern std::ostream tty;
 
 // Bits for tell

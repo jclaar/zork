@@ -48,7 +48,7 @@ endif()
 if (${Boost_VERSION} VERSION_GREATER_EQUAL "1.81.0")
 	list(APPEND Boost_REQUIRED_COMPONENTS process)
 endif()
-find_package(Boost 1.70.0 REQUIRED COMPONENTS ${Boost_REQUIRED_COMPONENTS})
+find_package(Boost 1.74.0 REQUIRED COMPONENTS ${Boost_REQUIRED_COMPONENTS})
 if(LINUX)
 find_package(Threads REQUIRED)
 endif()
@@ -98,7 +98,7 @@ target_sources(zork PRIVATE
 	roomfns.h roomfns.cpp
 	rooms.h rooms.cpp
 	sr.h sr.cpp
-	precomp.h
+	strings.h strings.cpp
 	util.h util.cpp
 	version.h
 	ZorkException.h
@@ -137,6 +137,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 			COMMENT "Creating archive file for release."
 		)
 	else()
+	    target_compile_definitions(zork PRIVATE _WIN32_WINNT=0x0601)
 	    add_custom_command(TARGET zork
 		    POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E tar "cfv" "zork_win64_${CMAKE_PROJECT_VERSION}.zip" --format=zip "zork.exe"

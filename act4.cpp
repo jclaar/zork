@@ -1,4 +1,3 @@
-#include "precomp.h"
 #include <numeric>
 #include "defs.h"
 #include "funcs.h"
@@ -366,8 +365,8 @@ bool enter_end_game()
 
     tro(lamp, Bits::touchbit);
     tro(sword, Bits::touchbit);
-    lamp->oroom(nullptr).ocan(nullptr);
-    sword->oroom(nullptr).ocan(nullptr);
+    lamp->oroom(nullptr).ocan() = nullptr;
+    sword->oroom(nullptr).ocan() = nullptr;
     //w->aobjs().swap(ObjList{ lamp, sword });
     w->aobjs() = { lamp, sword };
     flags[FlagId::end_game_flag] = true;

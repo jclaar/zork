@@ -1,5 +1,3 @@
-#include "precomp.h"
-#include <time.h>
 #include <iostream>
 #include <sstream>
 #include <chrono>
@@ -16,7 +14,6 @@
 #include "zstring.h"
 #include "parser.h"
 #include "act1.h"
-#include "act4.h"
 #include "globals.h"
 #include "funcs.h"
 #include "cevent.h"
@@ -55,7 +52,7 @@ namespace
         "SHOUS", "FORE2", "KITCH", "EHOUS" });
 }
 
-void excruciatingly_untasteful_code()
+static void excruciatingly_untasteful_code()
 {
     // ???
 }
@@ -198,7 +195,7 @@ void score_room(const RoomP &rm)
     if (rm->rval() > 0)
     {
         score_upd(rm->rval());
-        rm->rval(0);
+        rm->rval() = 0;
     }
 }
 
@@ -769,7 +766,7 @@ bool jigs_up(std::string_view desc, bool player)
         {
             splice_out_in_place(lamp, lc->ocontents());
             lamp->oroom(nullptr);
-            lamp->ocan(nullptr);
+            lamp->ocan() = nullptr;
         }
         else if (lamp_location == sfind_room("CP"))
         {
@@ -914,32 +911,35 @@ bool find::operator()() const
     return true;
 }
 
-bool or_(bool b)
+namespace
 {
-    return b;
-}
+    bool or_(bool b)
+    {
+        return b;
+    }
 
-// Returns true if any argument is true.
-template <typename... Args>
-bool or_(bool b, Args... args)
-{
-    if (b)
-        return true;
-    return or_(args...);
-}
+    // Returns true if any argument is true.
+    template <typename... Args>
+    bool or_(bool b, Args... args)
+    {
+        if (b)
+            return true;
+        return or_(args...);
+    }
 
-bool and_(bool b)
-{
-    return b;
-}
+    bool and_(bool b)
+    {
+        return b;
+    }
 
-// Returns true if all arguments are true.
-template <typename... Args>
-bool and_(bool b, Args... args)
-{
-    if (!b)
-        return false;
-    return and_(args...);
+    // Returns true if all arguments are true.
+    template <typename... Args>
+    bool and_(bool b, Args... args)
+    {
+        if (!b)
+            return false;
+        return and_(args...);
+    }
 }
 
 bool find_frob(const ObjList &objl, std::string_view str1, std::string_view str2, std::string_view str3)
@@ -1192,7 +1192,7 @@ void score_obj(const ObjectP &obj)
     if (temp > 0)
     {
         score_upd(temp);
-        obj->ofval(0);
+        obj->ofval() = 0;
     }
 }
 

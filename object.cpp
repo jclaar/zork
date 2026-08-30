@@ -1,4 +1,3 @@
-#include "precomp.h"
 #include <algorithm>
 #include "object.h"
 #include "globals.h"
@@ -122,19 +121,19 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
     const std::initializer_list<OP> &props) :
     synonyms(syns.begin(), syns.end()),
     adjec(adj.begin(), adj.end()),
-    desc(description),
+    _odesc2(description),
     objfn(objfun)
 {
     for (auto c : cntnts)
     {
-        contents.push_back(get_obj(c));
+        _ocontents.push_back(get_obj(c));
     }
     // All objects must at least have an id in syns[0].
     _ASSERT(syns.size() > 0);
     for (Bits b : bits)
     {
         // The Bits enum corresponds to a bit in flags.
-        flags[b] = true;
+        _oflags[b] = true;
     }
 
     // Add all adjectives to the main word list.
@@ -241,38 +240,18 @@ int Object::ocapac() const
     return _ocapac;
 }
 
-int Object::omatch() const
-{
-    return _omatch;
-}
-
-void Object::omatch(int new_matches)
-{
-    _omatch = new_matches;
-}
-
-void Object::ofval(int new_val)
-{
-    _ofval = new_val;
-}
-
-int Object::ofval() const
-{
-    return _ofval;
-}
-
 void Object::restore(const Object &o)
 {
     _ocan = o._ocan;
-    flags = o.flags;
+    _oflags = o._oflags;
     _oroom = o._oroom;
     _ofval = o._ofval;
     _osize = o._osize;
     _ocapac = o._ocapac;
     _omatch = o._omatch;
     _ostrength = o._ostrength;
-    contents = o.contents;
-    desc = o.desc;
+    _ocontents = o._ocontents;
+    _odesc2 = o._odesc2;
     _odesc1 = o._odesc1;
 }
 
@@ -297,7 +276,7 @@ Object(syns, adj, desc, _bits, obj_fun, contents, props)
         _gbits = g_bits;
         _oglobal = g_bits;
     }
-    flags[Bits::oglobal] = true;
+    _oflags[Bits::oglobal] = true;
 }
 
 void init_objects()
@@ -316,14 +295,14 @@ void init_objects()
             // was created, so restore it if necessary.
             ObjectP old_ocan = p->ocan();
             *(p.get()) = *cur->get();
-            p->ocan(old_ocan);
+            p->ocan() = old_ocan;
         }
         inc_score_max(p->ofval() + p->otval());
 
         // Ensure everything in this object has its ocan pointer set.
         for (const ObjectP &o : p->ocontents())
         {
-            o->ocan(p);
+            o->ocan() = p;
         }
 
 		++cur;

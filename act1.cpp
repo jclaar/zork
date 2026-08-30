@@ -1,9 +1,7 @@
-#include "precomp.h"
 #include "act1.h"
 #include "act2.h"
 #include "act4.h"
 #include "parser.h"
-#include <sstream>
 #include "funcs.h"
 #include "rooms.h"
 #include "makstr.h"
@@ -66,7 +64,7 @@ bool robber::operator()(const HackP &hack) const
     auto &hobj = hack->hobj();
     auto &still = sfind_obj("STILL");
     RoomP hereq;
-    auto hh = hack->hobjs_ob();
+    ObjList hh = hack->hobjs_ob();
     auto &treas = sfind_room("TREAS");
     bool litq;
     bool deadq = flags[FlagId::dead_flag];
@@ -169,7 +167,7 @@ bool robber::operator()(const HackP &hack) const
                         {
                             hack->hobjs(splice_out(still, hack->hobjs_ob()));
                             hobj->ocontents().push_back(still);
-                            still->ocan(hobj);
+                            still->ocan() = hobj;
                         }
                         hack->hobjs(hh = rob_room(rm, hh, 100));
                         hack->hobjs(hh = rob_adv(win, hh));
@@ -370,7 +368,7 @@ bool infested(const RoomP& r)
     }();
 }
 
-bool infested(const ExitType& ex)
+static bool infested(const ExitType& ex)
 {
     return std::visit(overload{
             [&](const CExitPtr& cep) { return infested(cep->cxroom()); },
@@ -944,13 +942,13 @@ bool open_close(const ObjectP &obj, std::string_view stropn, std::string_view st
 
 bool leave::operator()() const
 {
-    auto pv = prsvec;
+    ParseVec pv = prsvec;
     pv[1] = direction::Exit;
     pv[0] = find_verb("WALK");
     return walk()();
 }
 
-bool leaves_appear()
+static bool leaves_appear()
 {
     if (auto &grate = sfind_obj("GRATE"); !(trnn(grate, Bits::openbit)) && !(flags[FlagId::grate_revealed]))
     {
@@ -1608,7 +1606,7 @@ namespace room_funcs
     }
 }
 
-int aos_sos(int foo)
+static int aos_sos(int foo)
 {
     if (foo < 0)
     {
@@ -1850,7 +1848,7 @@ namespace obj_funcs
         {
             if (t->ostrength() < 0)
             {
-                t->ostrength(-t->ostrength());
+                t->ostrength() = -t->ostrength();
                 dem->haction(robber());
                 tro(sfind_obj("STILL"), Bits::ovison);
                 t->odesc1() = robber_c_desc;
@@ -2406,7 +2404,7 @@ namespace obj_funcs
             }
             else
             {
-                match->omatch(mc - 1);
+                match->omatch() = mc - 1;
                 tro(match, Bits::flamebit, Bits::lightbit, Bits::onbit );
                 clock_int(matin, 2);
                 tell("One of the matches starts to burn.");
@@ -2496,7 +2494,7 @@ namespace obj_funcs
             rv = true;
             if (t->ostrength() < 0)
             {
-                t->ostrength(-t->ostrength());
+                t->ostrength() = -t->ostrength();
                 perform(troll(), find_verb("IN!"));
             }
 
@@ -2870,7 +2868,7 @@ bool with_tell(const ObjectP &obj)
 
 bool fill::operator()() const
 {
-    auto prsvec = ::prsvec;
+    ParseVec prsvec = ::prsvec;
     if (empty(prsi()))
     {
         if (gtrnn(here, Bits::rgwater))

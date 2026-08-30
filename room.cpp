@@ -1,13 +1,10 @@
-#include "precomp.h"
 #include "room.h"
-#include "zstring.h"
 #include "globals.h"
 #include "object.h"
-#include "funcs.h"
-#include "objfns.h"
 #include "ZorkException.h"
 #include "act3.h"
 #include "roomfns.h"
+#include "zstring.h"
 
 // These are all exit definitions in the original MDL code.
 #define notree_FORE1 NExit("There is no tree here suitable for climbing.")
@@ -176,16 +173,6 @@ Room::Room(std::string_view rid, std::string_view d1, std::string_view d2, const
             error("Bad rglobal flags");
         }
     }
-}
-
-int Room::rval() const
-{
-    return _rval;
-}
-
-void Room::rval(int new_val)
-{
-    _rval = new_val;
 }
 
 const RoomP &get_room(std::string_view sid, RoomP init_val)
