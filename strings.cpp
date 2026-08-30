@@ -1,10 +1,14 @@
-#include "precomp.h"
+module;
+
 #include "strings.h"
+
+export module Zork:Strings;
+import std;
 
 #define D "%D%"
 #define W "%W%"
 
-const tofmsgs cyclops_melee =
+export const tofmsgs cyclops_melee =
     {
         {   "The Cyclops misses, but the backwash almost knocks you over.",
             "The Cyclops rushes you, but runs into the wall.",

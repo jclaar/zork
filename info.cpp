@@ -1,7 +1,7 @@
-#include "precomp.h"
-#include "info.h"
+export module Zork:Info;
+import std;
 
-const std::string_view info_str = R"(Welcome to Zork!
+export const std::string_view info_str = R"(Welcome to Zork!
 
 You are near a large dungeon, which is reputed to contain vast
 quantities of treasure.  Naturally, you wish to acquire some of it.
@@ -36,7 +36,7 @@ ionally stop in a room you are visiting, but more often he just wanders
 through and rips you off (he is a skilled pickpocket).
 )";
 
-const std::string_view help_str =
+export const std::string_view help_str =
     R"(Useful commands:
 
    The 'BRIEF' command suppresses printing of long room descriptions

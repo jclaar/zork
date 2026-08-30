@@ -20,8 +20,9 @@
 #include "globals.h"
 #include "funcs.h"
 #include "cevent.h"
-#include "info.h"
 #include "memq.h"
+
+import Zork;
 
 using namespace std::string_view_literals;
 

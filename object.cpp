@@ -6,12 +6,14 @@
 #include "cevent.h"
 #include "util.h"
 #include "objfns.h"
-#include "strings.h"
 #include "zstring.h"
 #include "adv.h"
 #include "makstr.h"
 #include "dung.h"
 #include "ZorkException.h"
+
+import Zork;
+
 struct ObjectDefinition {
     StringList syns;
     StringList adj;
