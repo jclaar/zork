@@ -75,7 +75,7 @@ add_executable(zork)
 target_sources(zork PRIVATE
 	act1.h
 	act2.h
-	act3.h act3.cpp
+	act3.h
 	act4.h act4.cpp
 	adv.h adv.cpp
 	cevent.h cevent.cpp
@@ -112,6 +112,7 @@ target_sources(zork PRIVATE
 		zstring.cpp
 		act1.cpp
         act2.cpp
+		act3.cpp
 )
 
 set_target_properties(zork PROPERTIES

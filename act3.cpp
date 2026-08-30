@@ -1,3 +1,5 @@
+module;
+
 #include <numeric>
 #include <algorithm>
 #include "act1.h"
@@ -12,7 +14,10 @@
 #include "adv.h"
 #include "roomfns.h"
 
-import Zork;
+export module Zork:Act3;
+import :Memq;
+import :Zstring;
+import :Act2;
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -22,8 +27,23 @@ namespace
     const char *through_desc = "You feel somewhat disoriented as you pass through...";
 }
 
-ObjectP matobj;
-ObjectP timber_tie;
+export ObjectP matobj;
+export ObjectP timber_tie;
+
+const ObjectP& plid(const ObjectP& obj1 = sfind_obj("PLID1"), const ObjectP& obj2 = sfind_obj("PLID2"))
+{
+    return memq(obj1, here->robjs()) ? obj1 : obj2;
+}
+
+ScolWalls get_wall(const RoomP& rm)
+{
+    for (auto& w : scol_walls)
+    {
+        if (find_room(w.rm1) == rm)
+            return w;
+    }
+    return ScolWalls();
+}
 
 bool go_and_look(RoomP rm)
 {
@@ -227,7 +247,7 @@ bool pdoor(std::string_view str, const ObjectP &lid, const ObjectP &keyhole)
     return true;
 }
 
-ObjectP pkh(ObjectP keyhole, bool this_)
+ObjectP pkh(ObjectP keyhole, bool this_ = false)
 {
     ObjectP obj;
     if ((keyhole == (obj = sfind_obj("PKH1")) && !this_) ||
@@ -262,11 +282,6 @@ bool play::operator()() const
     else
         rv = false;
     return rv;
-}
-
-const ObjectP &plid(const ObjectP &obj1, const ObjectP &obj2)
-{
-    return memq(obj1, here->robjs()) ? obj1 : obj2;
 }
 
 void plookat(const RoomP &rm)
@@ -595,16 +610,6 @@ bool enter::operator()() const
     return walk()();
 }
 
-ScolWalls get_wall(const RoomP &rm)
-{
-    for (auto &w : scol_walls)
-    {
-        if (find_room(w.rm1) == rm)
-            return w;
-    }
-    return ScolWalls();
-}
-
 bool pass_the_bucket(const RoomP &r, const ObjectP &b)
 {
     const AdvP &winner = *::winner;
@@ -725,7 +730,7 @@ bool cpgoto(int fx)
     return true;
 }
 
-std::string username()
+export std::string username()
 {
     const char* un;
     return (un = getenv("USERNAME")) ? un :
