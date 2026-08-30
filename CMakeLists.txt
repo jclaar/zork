@@ -97,7 +97,7 @@ target_sources(zork PRIVATE
 	roomfns.h roomfns.cpp
 	rooms.h rooms.cpp
 	sr.h sr.cpp
-	strings.h strings.cpp
+	strings.h
 	util.h util.cpp
 	version.h
 	ZorkException.h
