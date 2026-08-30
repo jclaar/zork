@@ -20,7 +20,6 @@
 #include "globals.h"
 #include "funcs.h"
 #include "cevent.h"
-#include "memq.h"
 
 import Zork;
 

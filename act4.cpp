@@ -4,7 +4,6 @@
 #include "funcs.h"
 #include "dung.h"
 #include "adv.h"
-#include "memq.h"
 #include "zstring.h"
 #include "util.h"
 #include "act1.h"
@@ -12,6 +11,8 @@
 #include "act4.h"
 #include "objfns.h"
 #include "roomfns.h"
+
+import Zork;
 
 std::vector<QuestionP> qvec;
 int mdir = 270;

@@ -14,8 +14,9 @@
 #include "object.h"
 #include "adv.h"
 #include "cevent.h"
-#include "memq.h"
 #include "roomfns.h"
+
+import Zork;
 
 namespace
 {

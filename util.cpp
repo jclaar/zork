@@ -4,7 +4,9 @@
 #include "funcs.h"
 #include "rooms.h"
 #include "dung.h"
-#include "memq.h"
+#include "parser.h"
+
+import Zork;
 
 bool always_lit = false;
 

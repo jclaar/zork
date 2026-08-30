@@ -89,7 +89,6 @@ target_sources(zork PRIVATE
 	makstr.h makstr.cpp
 	mdlfun.cpp
 	melee.h melee.cpp
-	memq.h memq.cpp
 	objdefs.h
 	object.h object.cpp
 	objfns.h objser.h
@@ -110,6 +109,7 @@ target_sources(zork PRIVATE
 	    info.cpp
 		strings.cpp
 		zork_main.cpp
+		memq.cpp
 )
 
 set_target_properties(zork PROPERTIES

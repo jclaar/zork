@@ -10,7 +10,8 @@
 #include "objfns.h"
 #include "rooms.h"
 #include "adv.h"
-#include "memq.h"
+
+import Zork;
 
 const char *brks = "\"' 	:.,?!\n";
 Orphans orphans;

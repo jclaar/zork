@@ -5,7 +5,6 @@
 #include <iostream>
 #endif
 #include "dung.h"
-#include "memq.h"
 #include "funcs.h"
 #include "object.h"
 #include "rooms.h"
@@ -19,6 +18,8 @@
 #include "parser.h"
 #include "ZorkException.h"
 #include "roomfns.h"
+
+import Zork;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {

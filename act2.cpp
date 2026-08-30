@@ -12,8 +12,9 @@
 #include "parser.h"
 #include "adv.h"
 #include "makstr.h"
-#include "memq.h"
 #include "roomfns.h"
+
+import Zork;
 
 using namespace std::string_view_literals;
 
