@@ -18,26 +18,13 @@ public:
 
     const ObjectP &aobj() const { return _aobj; }
 
-    int astrength() const { return _astrength; }
-    void astrength(int new_s) { _astrength = new_s; }
-
-    int ascore() const { return _ascore; }
-    void ascore(int new_score) { _ascore = new_score; }
-
-    const rapplic &aaction() const { return _aaction; }
-    void aaction(rapplic new_action) { _aaction = new_action; }
-
-    const RoomP &aroom() const { return _aroom; }
-    void aroom(const RoomP &rp) { _aroom = rp; }
-
-    const ObjectP &avehicle() const { return _avehicle; }
-    void avehicle(const ObjectP &op) { _avehicle = op; }
-
-    const ObjList &aobjs() const { return _aobjs; }
-    ObjList &aobjs() { return _aobjs; }
-
-    AdvBitset &flags() { return bits; }
-    const AdvBitset &flags() const { return bits; }
+    PROP(astrength);
+    PROP(ascore);
+    PROP(aaction);
+    PROP(aroom);
+    PROP(avehicle);
+    PROP(aobjs);
+    PROP(flags);
 
     void restore(const Adv &a)
     {
@@ -46,7 +33,7 @@ public:
         _avehicle = a.avehicle();
         _aobj = a.aobj();
         _astrength = a.astrength();
-        bits = a.flags();
+        _flags = a.flags();
         _aobjs = a.aobjs();
     }
 
@@ -61,7 +48,7 @@ private:
         ar & (_avehicle ? _avehicle->oid() : std::string());
         ar & _aobj->oid();
         ar & _astrength;
-        ar & bits;
+        ar & _flags;
         std::list<std::string> obj_list;
         for (auto o : _aobjs)
         {
@@ -84,7 +71,7 @@ private:
         ar & temp;
         _aobj = sfind_obj(temp);
         ar & _astrength;
-        ar & bits;
+        ar & _flags;
         std::list<std::string> obj_list;
         ar & obj_list;
         for (auto s : obj_list)
@@ -102,7 +89,7 @@ private:
     ObjectP _aobj;                   // What he is
     rapplic _aaction = nullptr;      // Special action for robot, etc.
     int _astrength = 0;              // Fighting strength
-    AdvBitset bits;
+    AdvBitset _flags;
 };
 
 inline bool atrnn(const AdvP &adv, AdvBits b)

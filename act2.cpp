@@ -283,7 +283,7 @@ bool decline_and_fall(const ObjectP &ball)
                 {
                     remove_object(ball);
                     insert_object(sfind_obj("DBALL"), bloc);
-                    winner->avehicle(ObjectP());
+                    winner->avehicle() = ObjectP();
                     clock_disable(clock_int(bint, 0));
                     tell("You have landed, but the balloon did not survive.");
                 }

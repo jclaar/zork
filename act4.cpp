@@ -264,7 +264,7 @@ bool follow::operator()() const
                 splice_out_in_place(mast->aobj(), mroom->robjs());
             }
 
-            mast->aroom(here);
+            mast->aroom() = here;
             flags[FlagId::folflag] = true;
             insert_object(mast->aobj(), here);
             tell(memq(here, mroom->rexits()) ? "The dungeon master follows you." : "The dungeon master catches up to you.");
