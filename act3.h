@@ -33,6 +33,5 @@ RAPPLIC(zgnome_init);
 
 namespace obj_funcs
 {
-    bool scol_object_(const ObjectP &obj);
     RAPPLIC(slide_cint);
 }

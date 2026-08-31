@@ -11,9 +11,6 @@
 #include "version.h"
 import Zork;
 
-std::string pw(SIterator unm, SIterator key);
-std::string username();
-
 using namespace std::string_view_literals;
 
 int run_zork()

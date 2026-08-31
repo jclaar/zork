@@ -40,13 +40,8 @@ public:
     const RoomP &cxroom() const;
     const std::string &cxstr() const { return _desc; }
 
-    bool cxflag() const {
-        if (auto fid = std::get_if<FlagId>(&_flid))
-        {
-            return flags[*fid];
-        }
-        return false;
-    }
+    bool cxflag() const;
+
 private:
     FlagVar _flid;
     std::string _rmid;

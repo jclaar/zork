@@ -95,5 +95,4 @@ constexpr std::array cpwalls = {
             cpwall_val("CPEWL", 1),
             cpwall_val("CPWWL", -1)
 };
-extern FlagBits flags;
 

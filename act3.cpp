@@ -1469,6 +1469,24 @@ namespace obj_funcs
         return rv;
     }
 
+    bool scol_object_(const ObjectP& obj)
+    {
+        bool rv = false;
+        if (verbq("PUSH", "MOVE", "TAKE", "RUB"))
+        {
+            rv = tell("As you try, your hand seems to go through it.");
+        }
+        else if (verbq("POKE", "ATTAC", "KILL"))
+        {
+            rv = tell("The ", 1, prsi()->odesc2(), " goes through it.");
+        }
+        else if (verbq("THROW") && (sfind_obj("SCOL") == prsi() || obj == prsi()))
+        {
+            rv = through()(prso());
+        }
+        return rv;
+    }
+
     bool scolwall::operator()() const
     {
         bool rv = false;
@@ -1816,24 +1834,6 @@ namespace obj_funcs
         }
         else
             rv = false;
-        return rv;
-    }
-
-    bool scol_object_(const ObjectP &obj)
-    {
-        bool rv = false;
-        if (verbq( "PUSH", "MOVE", "TAKE", "RUB" ))
-        {
-            rv = tell("As you try, your hand seems to go through it.");
-        }
-        else if (verbq( "POKE", "ATTAC", "KILL" ))
-        {
-            rv = tell("The ", 1, prsi()->odesc2(), " goes through it.");
-        }
-        else if (verbq("THROW") && (sfind_obj("SCOL") == prsi() || obj == prsi()))
-        {
-            rv = through()(prso());
-        }
         return rv;
     }
 

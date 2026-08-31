@@ -1,5 +1,6 @@
 module;
 #include "rapplic.h"
+#include "globals.h"
 export module Zork:Tell;
 import std;
 import :Globals;
@@ -10,7 +11,6 @@ export constexpr std::uint32_t post_crlf = 0x00000001;
 export constexpr std::uint32_t no_crlf = 0x00000000;
 export constexpr std::uint32_t long_tell1 = long_tell | post_crlf;
 
-extern std::ostream tty;
 export std::unique_ptr<std::ofstream> script_channel;
 
 
@@ -75,10 +75,7 @@ class ctellt : public tell_base
 {
 public:
     template <typename T>
-    void tellt2(const T& s)
-    {
-        tty << s;
-    }
+    void tellt2(const T& s);
 
     void tellt2(std::monostate ms)
     {
@@ -86,30 +83,17 @@ public:
     }
 
     template <typename T, typename... Args>
-    void tellt2(const T& s, Args... args)
-    {
-        tty << s;
-        tellt2(args...);
-    }
+    void tellt2(const T& s, Args... args);
 
     template <typename... Args>
-    ctellt(std::string_view s, uint32_t flags, Args...args)
-    {
-        tell_pre(flags);
-        tty << s;
-        tellt2(args...);
-        tell_post(flags);
-    }
-
-    ctellt(std::string_view s, uint32_t flags)
-    {
-        tell_pre(flags);
-        tty << s;
-        tell_post(flags);
-    }
+    ctellt(std::string_view s, uint32_t flags, Args...args);
+    ctellt(std::string_view s, uint32_t flags);
 };
 
-TtyBuff tty_buf;
+namespace
+{
+    TtyBuff tty_buf;
+}
 
 export std::ostream tty(&tty_buf);
 
@@ -181,3 +165,32 @@ export std::string readst(std::string_view prompt)
     return buffer;
 }
 
+template <typename... Args>
+ctellt::ctellt(std::string_view s, uint32_t flags, Args...args)
+{
+    tell_pre(flags);
+    tty << s;
+    tellt2(args...);
+    tell_post(flags);
+}
+
+template <typename T>
+void ctellt::tellt2(const T& s)
+{
+    tty << s;
+}
+
+template <typename T, typename... Args>
+void ctellt::tellt2(const T& s, Args... args)
+{
+    tty << s;
+    tellt2(args...);
+}
+
+
+ctellt::ctellt(std::string_view s, uint32_t flags)
+{
+    tell_pre(flags);
+    tty << s;
+    tell_post(flags);
+}
