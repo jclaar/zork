@@ -13,11 +13,6 @@ PhraseP make_phrase(const WordP &p, const ObjectP &op)
     return std::make_shared<phrase>(p, op);
 }
 
-void prin1(int val)
-{
-    tty << val;
-}
-
 bool apply_random(const rapplic& fcn)
 {
     return fcn(Rarg());

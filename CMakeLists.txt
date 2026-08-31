@@ -117,7 +117,7 @@ target_sources(zork PRIVATE
         globals.cpp
 		cevent.cpp
         roomfns.cpp
-)
+ "tell.cpp")
 
 set_target_properties(zork PROPERTIES
     CXX_MODULE_STD ON

@@ -32,7 +32,6 @@ Iterator<ParseContV> parse_cont;
 bool bugflag = false;
 std::list<HackP> demons;
 HackP clocker;
-std::unique_ptr<std::ofstream> script_channel;
 
 namespace
 {

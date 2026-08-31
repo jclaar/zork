@@ -31,7 +31,6 @@ extern const AdvP *winner;
 extern int raw_score;
 extern int moves;
 extern std::list<HackP> demons;
-extern std::unique_ptr<std::ofstream> script_channel;
 
 const CEventP &clock_int(const CEventP &cev, std::optional<int> num  = std::nullopt, bool flag = false);
 bool clock_disable(const CEventP &cev);

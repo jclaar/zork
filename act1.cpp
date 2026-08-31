@@ -17,6 +17,7 @@ import :Memq;
 import :Zstring;
 import :Globals;
 import :CEvent;
+import :Tell;
 
 namespace
 {
