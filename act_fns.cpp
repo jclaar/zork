@@ -67,3 +67,39 @@ ERAPPLIC(safe_mung);
 ERAPPLIC(shaker);
 ERAPPLIC(swimmer);
 ERAPPLIC(volgnome);
+
+// Act 3 functions
+ERAPPLIC(chomp);
+ERAPPLIC(climb_down);
+ERAPPLIC(climb_foo);
+ERAPPLIC(count);
+ERAPPLIC(enter);
+ERAPPLIC(frobozz);
+ERAPPLIC(knock);
+ERAPPLIC(maker);
+ERAPPLIC(oops);
+ERAPPLIC(play);
+ERAPPLIC(put_under);
+ERAPPLIC(scol_clock);
+ERAPPLIC(sender);
+ERAPPLIC(smeller);
+ERAPPLIC(untie_from);
+ERAPPLIC(win);
+ERAPPLIC(wind);
+ERAPPLIC(wisher);
+ERAPPLIC(yell);
+ERAPPLIC(zgnome_init);
+
+namespace obj_funcs
+{
+    ERAPPLIC(slide_cint);
+}
+
+// Act 4
+ERAPPLIC(answer);
+ERAPPLIC(follow);
+ERAPPLIC(incant);
+ERAPPLIC(start_end);
+ERAPPLIC(stats);
+ERAPPLIC(stay);
+ERAPPLIC(turnto);
