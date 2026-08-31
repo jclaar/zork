@@ -1,5 +1,5 @@
 #pragma once
-#include "defs.h"
+#include "rapplic.h"
 #include "parser.h"
 
 RAPPLIC_DEF(inquisitor, Iterator<ParseContV>, Iterator<ParseContV>());
