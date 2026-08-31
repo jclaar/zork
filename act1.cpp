@@ -74,6 +74,12 @@ namespace
 
 }
 
+#define EHACKFN(x) export HACKFN(x)
+EHACKFN(robber);
+EHACKFN(sword_glow);
+EHACKFN(fighting);
+
+
 export bool with_tell(const ObjectP& obj)
 {
     return tell("With a ", 1, obj->odesc2(), "?");

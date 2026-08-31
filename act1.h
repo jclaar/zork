@@ -1,11 +1,6 @@
 #pragma once
 #include "defs.h"
 
-// Demons
-HACKFN(robber);
-HACKFN(sword_glow);
-HACKFN(fighting);
-
 RAPPLIC(advent);
 RAPPLIC(alarm_);
 RAPPLIC(attacker);
