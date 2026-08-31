@@ -69,6 +69,19 @@ void swap_em()
     std::swap(lexv, lexv1);
 }
 
+void add_buncher(const char* b)
+{
+    bunchers.push_front(find_verb(b));
+}
+
+void add_buncher(const std::initializer_list<const char*>& verbs)
+{
+    for (auto vb : verbs)
+    {
+        bunchers.push_front(find_verb(vb));
+    }
+}
+
 Iterator<ParseContV> lex(SIterator s, SIterator sx)
 {
     if (!sx.is_init())

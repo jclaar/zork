@@ -18,6 +18,7 @@ import :Globals;
 import :CEvent;
 import :Tell;
 import :Util;
+import :Makstr;
 
 namespace
 {

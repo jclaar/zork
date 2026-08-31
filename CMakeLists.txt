@@ -84,7 +84,7 @@ target_sources(zork PRIVATE
 	funcs.h funcs.cpp
 	globals.h
 	gobject.h 
-	makstr.h makstr.cpp
+	makstr.h
 	mdlfun.cpp
 	melee.h melee.cpp
 	objdefs.h
@@ -116,6 +116,7 @@ target_sources(zork PRIVATE
         globals.cpp
 		cevent.cpp
         roomfns.cpp
+		makstr.cpp
         "tell.cpp"
         util.cpp)
 

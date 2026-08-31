@@ -126,10 +126,7 @@ bool verbq(T first, Args... args)
     return verbq(args...);
 }
 
-inline void add_buncher(const char *b)
-{
-    bunchers.push_front(find_verb(b));
-}
+void add_buncher(const char* b);
 
 template <typename T, typename ...Args>
 void add_buncher(T first, Args... args)
@@ -138,13 +135,7 @@ void add_buncher(T first, Args... args)
     add_buncher(args...);
 }
 
-inline void add_buncher(const std::initializer_list<const char*>& verbs)
-{
-    for (auto vb : verbs)
-    {
-        bunchers.push_front(find_verb(vb));
-    }
-}
+void add_buncher(const std::initializer_list<const char*>& verbs);
 
 ObjectP prso();
 ObjectP prsi();

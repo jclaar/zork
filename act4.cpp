@@ -12,7 +12,6 @@ export module Zork:Act4;
 import :Memq;
 import :Act3;
 
-export std::vector<QuestionP> qvec;
 int mdir = 270;
 using LookToVal = std::variant<std::monostate, bool, const char*>;
 

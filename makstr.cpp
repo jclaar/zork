@@ -1,3 +1,5 @@
+module;
+
 #include <array>
 #include "act4.h"
 #include "rooms.h"
@@ -6,7 +8,8 @@
 #include "parser.h"
 #include "ZorkException.h"
 
-import Zork;
+export module Zork:Makstr;
+import :Globals;
 
 namespace
 {
@@ -20,7 +23,7 @@ namespace
     };
 }
 
-WordP make_word(SpeechType st, std::string_view val)
+export WordP make_word(SpeechType st, std::string_view val)
 {
     static_assert((int) SpeechType::kVerb == 0 && (int) SpeechType::kPrep == 1);
     static_assert((int)SpeechType::kAdj == 2 && (int)SpeechType::kBuzz == 3);
@@ -35,12 +38,12 @@ WordP make_word(SpeechType st, std::string_view val)
     return fns[(int) st](val);
 }
 
-void add_demon(const HackP &x)
+export void add_demon(const HackP &x)
 {
     demons.push_front(x);
 }
 
-VerbP find_verb(std::string_view verbo)
+export VerbP find_verb(std::string_view verbo)
 {
     auto viter = words_pobl.find(verbo);
     if (viter == words_pobl.end())
@@ -57,7 +60,7 @@ VerbP find_verb(std::string_view verbo)
     return vp;
 }
 
-const ActionP &find_action(std::string_view act)
+export const ActionP &find_action(std::string_view act)
 {
     auto iter = actions_pobl.find(act);
     if (iter == actions_pobl.end())
@@ -65,7 +68,7 @@ const ActionP &find_action(std::string_view act)
     return iter->second;
 }
 
-PrepP find_prep(std::string_view prepo)
+export PrepP find_prep(std::string_view prepo)
 {
     // Is the preposition already in the list?
     // If so return that set. Otherwise insert an empty set
@@ -285,39 +288,39 @@ static vspec make_action(const ActionVec &decl)
     return vs;
 }
 
-void oneadd_action(const char *str1, const char *str2, rapplic atm)
-{
-    add_action(str1, str2, AnyV{obj(), AVSyntax(str1, atm)});
-}
-
-void onenradd_action(const char *str1, const char *str2, rapplic atm)
-{
-    add_action(str1, str2, AnyV{nrobj(), AVSyntax(str1, atm)});
-}
-
-void add_action(const char* nam, const char* str, const AnyV& av)
+export void add_action(const char* nam, const char* str, const AnyV& av)
 {
     vspec vs = make_action(av);
     actions_pobl[nam] = std::make_shared<Action>(nam, vs, str);
 }
 
-void add_action(const char *nam, const char *str, const ActionVec &decl)
+export void add_action(const char* nam, const char* str, const ActionVec& decl)
 {
     vspec vs = make_action(decl);
     actions_pobl[nam] = std::make_shared<Action>(nam, vs, str);
 }
 
-void sadd_action(const char *name, rapplic action)
+export void oneadd_action(const char *str1, const char *str2, rapplic atm)
+{
+    add_action(str1, str2, AnyV{obj(), AVSyntax(str1, atm)});
+}
+
+export void onenradd_action(const char *str1, const char *str2, rapplic atm)
+{
+    add_action(str1, str2, AnyV{nrobj(), AVSyntax(str1, atm)});
+}
+
+export void sadd_action(const char *name, rapplic action)
 {
     add_action(name, "", AnyV{ AVSyntax(name, action) });
 }
 
-void add_inqobj(const ObjectP &obj)
+export void add_inqobj(const ObjectP &obj)
 {
     inqobjs.push_front(obj);
 }
 
-void add_question(const char *str, const std::initializer_list<QuestionValue> &vector)
+export void add_question(const char *str, const std::initializer_list<QuestionValue> &vector)
 {
     auto qp = std::make_shared<question>(str, vector);
     qvec.push_back(qp);

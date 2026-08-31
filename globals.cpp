@@ -10,6 +10,7 @@ export std::string inbuf;
 export std::string inbuf1;
 export const int bigfix = INT_MAX;
 
+export std::vector<QuestionP> qvec;
 
 namespace
 {
