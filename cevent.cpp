@@ -7,11 +7,11 @@ module;
 #include "cevent.h"
 #include "melee.h"
 #include "objfns.h"
-#include "roomfns.h"
 #include "ZorkException.h"
 
 export module Zork:CEvent;
 import std;
+import :Roomfns;
 
 CEventP sphere_clock;
 

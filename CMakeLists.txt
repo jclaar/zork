@@ -95,7 +95,6 @@ target_sources(zork PRIVATE
     rapplic.h
 	room.h room.cpp
 	roomdefs.h
-	roomfns.h 
 	rooms.h rooms.cpp
 	sr.h sr.cpp
 	strings.h

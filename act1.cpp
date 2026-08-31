@@ -13,7 +13,6 @@ module;
 #include "object.h"
 #include "adv.h"
 #include "cevent.h"
-#include "roomfns.h"
 
 export module Zork:Act1;
 import :Memq;

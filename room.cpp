@@ -3,7 +3,6 @@
 #include "object.h"
 #include "ZorkException.h"
 #include "act3.h"
-#include "roomfns.h"
 import Zork;
 
 // These are all exit definitions in the original MDL code.

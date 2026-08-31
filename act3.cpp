@@ -12,7 +12,6 @@ module;
 #include "makstr.h"
 #include "cevent.h"
 #include "adv.h"
-#include "roomfns.h"
 
 export module Zork:Act3;
 import :Memq;

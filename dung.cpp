@@ -16,7 +16,6 @@
 #include "adv.h"
 #include "parser.h"
 #include "ZorkException.h"
-#include "roomfns.h"
 
 import Zork;
 

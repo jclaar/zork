@@ -1,13 +1,100 @@
 module;
 
-#include "roomfns.h"
+#include "rapplic.h"
 
 export module Zork:Roomfns;
 
+export namespace room_funcs
+{
+    RAPPLIC(bats_room);
+    RAPPLIC(bdoor_function);
+    RAPPLIC(bkbox_room);
+    RAPPLIC(boom_room);
+    RAPPLIC(caged_room);
+    RAPPLIC(carousel_room);
+    RAPPLIC(cave2_room);
+    RAPPLIC(cell_room);
+    RAPPLIC(cellar);
+    RAPPLIC(clearing);
+    RAPPLIC(cliff_function);
+    RAPPLIC(cmach_room);
+    RAPPLIC(cp_room);
+    RAPPLIC(cpout_room);
+    RAPPLIC(crypt_function);
+    RAPPLIC(cyclops_room);
+    RAPPLIC(dam_room);
+    RAPPLIC(dome_room);
+    RAPPLIC(east_house);
+    RAPPLIC(echo_room);
+    RAPPLIC(falls_room);
+    RAPPLIC(fdoor_function);
+    RAPPLIC(forest_room);
+    RAPPLIC(glacier_room);
+    RAPPLIC(guardians);
+    RAPPLIC(inslide);
+    RAPPLIC(kitchen);
+    RAPPLIC(ledge_function);
+    RAPPLIC(living_room);
+    RAPPLIC(lld_room);
+    RAPPLIC(lld2_room);
+    RAPPLIC(machine_room);
+    RAPPLIC(magic_mirror);
+    RAPPLIC(magnet_room);
+    RAPPLIC(maint_room);
+    RAPPLIC(maze_11);
+    RAPPLIC(mirror_room);
+    RAPPLIC(mraew);
+    RAPPLIC(mraf);
+    RAPPLIC(mrbew);
+    RAPPLIC(mrbf);
+    RAPPLIC(mrcew);
+    RAPPLIC(mrcf);
+    RAPPLIC(mrdf);
+    RAPPLIC(mreye_room);
+    RAPPLIC(ncell_room);
+    RAPPLIC(ncorr_room);
+    RAPPLIC(nirvana);
+    RAPPLIC(no_objs);
+    RAPPLIC(over_falls);
+    RAPPLIC(palantir_room);
+    RAPPLIC(parapet);
+    RAPPLIC(pcell_room);
+    RAPPLIC(prm_room);
+    RAPPLIC(reservoir);
+    RAPPLIC(reservoir_north);
+    RAPPLIC(reservoir_south);
+    RAPPLIC(rivr4_room);
+    RAPPLIC(safe_room);
+    RAPPLIC(scorr_room);
+    RAPPLIC(sledg_room);
+    RAPPLIC(slide_room);
+    RAPPLIC(teller_room);
+    RAPPLIC(time);
+    RAPPLIC(tomb_function);
+    RAPPLIC(torch_room);
+    RAPPLIC(treasure_room);
+    RAPPLIC(tree_room);
+}
+
+export namespace exit_funcs {
+    EX_RAPPLIC(bkleavew);
+    EX_RAPPLIC(carousel_exit);
+    EX_RAPPLIC(chimney_function);
+    EX_RAPPLIC(coffin_cure);
+    EX_RAPPLIC(cpenter);
+    EX_RAPPLIC(cpexit);
+    EX_RAPPLIC(slide_exit);
+    EX_RAPPLIC(bkleavee);
+    EX_RAPPLIC(carousel_out);
+    EX_RAPPLIC(magnet_room_exit);
+    EX_RAPPLIC(mrgo);
+    EX_RAPPLIC(mirin);
+    EX_RAPPLIC(mirout);
+    EX_RAPPLIC(maybe_door);
+}
+
 namespace room_funcs
 {
-    export RAPPLIC(time);
-
     bool time::operator()() const
     {
         return false;

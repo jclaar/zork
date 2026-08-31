@@ -10,7 +10,6 @@ module;
 #include "act3.h"
 #include "act4.h"
 #include "objfns.h"
-#include "roomfns.h"
 
 export module Zork:Act4;
 import :Memq;

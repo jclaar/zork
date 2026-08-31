@@ -12,7 +12,6 @@ module;
 #include "parser.h"
 #include "adv.h"
 #include "makstr.h"
-#include "roomfns.h"
 
 export module Zork:Act2;
 import :Zstring;
