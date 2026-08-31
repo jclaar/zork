@@ -140,13 +140,6 @@ enum class direction
     NumDirs
 };
 
-class GObject;
-typedef std::shared_ptr<GObject> GObjectPtr;
-class CEvent;
-typedef std::shared_ptr<CEvent> CEventP;
-typedef std::list<CEventP> EventList;
-class Adv;
-typedef std::unique_ptr<Adv> AdvP;
 typedef std::array <AdvP, std::to_underlying(e_oactor::none)> AdvArray;
 
 
