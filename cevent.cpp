@@ -1,7 +1,5 @@
 module;
 
-#include "act1.h"
-#include "act2.h"
 #include "act3.h"
 #include "act4.h"
 #include "cevent.h"
@@ -12,6 +10,7 @@ module;
 export module Zork:CEvent;
 import std;
 import :Roomfns;
+import :ActFns;
 
 CEventP sphere_clock;
 

@@ -140,10 +140,6 @@ enum class direction
     NumDirs
 };
 
-class Object;
-using ObjectP = std::shared_ptr<Object>;
-using ObjList = std::list<ObjectP>;
-using ObjVector = std::vector<ObjectP>;
 class GObject;
 typedef std::shared_ptr<GObject> GObjectPtr;
 class CEvent;

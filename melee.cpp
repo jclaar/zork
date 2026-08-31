@@ -7,7 +7,6 @@
 #include "makstr.h"
 #include "cevent.h"
 #include "ZorkException.h"
-#include "act1.h"
 
 import Zork;
 

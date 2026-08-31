@@ -2,8 +2,6 @@ module;
 
 #include <numeric>
 #include <algorithm>
-#include "act1.h"
-#include "act2.h"
 #include "act3.h"
 #include "util.h"
 #include "objfns.h"

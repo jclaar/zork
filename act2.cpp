@@ -1,7 +1,5 @@
 module;
 
-#include "act1.h"
-#include "act2.h"
 #include "cevent.h"
 #include "objfns.h"
 #include "defs.h"

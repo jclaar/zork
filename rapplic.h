@@ -24,6 +24,9 @@ typedef std::optional<ApplyRandomArg> Rarg;
     bool operator()(Rarg arg, type v = def) const { return (*this)(v); } \
     }
 
+#define ERAPPLIC(x) export RAPPLIC(x)
+#define ERAPPLIC_DEF(x,y,z) export RAPPLIC_DEF(x,y,z)
+
 #define HACKFN(x) struct x { \
     bool operator()(const HackP &dem) const; \
 }

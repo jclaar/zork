@@ -12,7 +12,6 @@
 #include <algorithm>
 #include "makstr.h"
 #include "parser.h"
-#include "act1.h"
 #include "globals.h"
 #include "funcs.h"
 #include "cevent.h"

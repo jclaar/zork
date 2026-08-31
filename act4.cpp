@@ -6,7 +6,6 @@ module;
 #include "dung.h"
 #include "adv.h"
 #include "util.h"
-#include "act1.h"
 #include "act3.h"
 #include "act4.h"
 #include "objfns.h"

@@ -73,8 +73,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 add_executable(zork)
 
 target_sources(zork PRIVATE
-	act1.h
-	act2.h
+	
 	act3.h
 	act4.h
 	adv.h adv.cpp
@@ -105,6 +104,7 @@ target_sources(zork PRIVATE
 
 	PUBLIC
 	FILE_SET CXX_MODULES FILES
+	    act_fns.cpp
 	    info.cpp
 		strings.cpp
 		zork_main.cpp

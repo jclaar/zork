@@ -8,8 +8,6 @@
 #include <boost/serialization/array.hpp>
 #include <algorithm>
 #include "sr.h"
-#include "act1.h"
-#include "act2.h"
 #include "act3.h"
 #include <fstream>
 #include <vector>
