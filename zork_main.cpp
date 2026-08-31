@@ -1,6 +1,7 @@
 export module Zork;
 export import :Globals;
 export import :Util;
+export import :Defs;
 export import :Strings;
 export import :Info;
 export import :Tell;

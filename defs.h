@@ -20,13 +20,6 @@ template<class... Ts> overload(Ts...)->overload<Ts...>;
  }
 
 
-inline std::string operator+(std::string_view s1, std::string_view s2)
-{
-    std::string ss1(s1);
-    ss1 += s2;
-    return ss1;
-}
-
 enum class e_oactor
 {
     player,
@@ -277,7 +270,7 @@ private:
 };
 typedef std::shared_ptr<phrase> PhraseP;
 typedef std::vector<PhraseP> PhraseVecV;
-PhraseP make_phrase(const WordP &p, const ObjectP &op);
+//PhraseP make_phrase(const WordP &p, const ObjectP &op);
 
 typedef std::variant<std::string_view, ObjectP, ActionP> QuestionValue;
 
@@ -347,30 +340,23 @@ private:
     std::string _oname;
 };
 
-bool apply_object(const ObjectP &op);
-bool describable(const ObjectP &op);
-bool see_inside(const ObjectP &op);
+//bool apply_object(const ObjectP &op);
+//bool describable(const ObjectP &op);
+//bool see_inside(const ObjectP &op);
 
-extern int no_tell;
-extern int eg_score;
-
-bool apply_random(const rapplic& fcn);
-inline bool apply_random(rapplic fcn, ApplyRandomArg arg)
-{
-    return fcn(arg);
-}
-ExitFuncVal apply_random(ex_rapplic fcn);
-bool apply_random(hackfn fcn, const HackP &demon);
+//bool apply_random(const rapplic& fcn);
+//ExitFuncVal apply_random(ex_rapplic fcn);
+//bool apply_random(hackfn fcn, const HackP &demon);
 
 // oflags, rflags testers and setter
 
 // Check status of specific bit in object or room.
-bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check);
-void trc(const ObjectP &op, Bits b);
-bool strnn(const SyntaxP &syn, SyntaxBits b);
-bool gtrnn(const RoomP &, Bits);
+//bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check);
+//void trc(const ObjectP &op, Bits b);
+//bool strnn(const SyntaxP &syn, SyntaxBits b);
+//bool gtrnn(const RoomP &, Bits);
 // Set or 0 object bit or bits.
-void rtrc(const RoomP &p, RoomBit b);
+//void rtrc(const RoomP &p, RoomBit b);
 
 template <typename T>
 int length(const T& c)
@@ -379,5 +365,5 @@ int length(const T& c)
 }
 
 
-bool flaming(const ObjectP &obj);
+//bool flaming(const ObjectP &obj);
 

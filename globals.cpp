@@ -5,6 +5,7 @@ module;
 
 export module Zork:Globals;
 import std;
+import :Defs;
 
 export std::string inbuf;
 export std::string inbuf1;

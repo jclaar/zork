@@ -78,7 +78,7 @@ target_sources(zork PRIVATE
 	act4.h
 	adv.h adv.cpp
 	cevent.h
-	defs.h defs.cpp
+	defs.h
 	dung.h dung.cpp
 	FlagSupport.h
 	funcs.h funcs.cpp
@@ -103,6 +103,7 @@ target_sources(zork PRIVATE
 	PUBLIC
 	FILE_SET CXX_MODULES FILES
 	    act_fns.cpp
+		defs.cpp
 	    info.cpp
 		strings.cpp
 		zork_main.cpp

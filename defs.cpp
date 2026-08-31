@@ -1,3 +1,4 @@
+module;
 #include <algorithm>
 #include <sstream>
 #include "defs.h"
@@ -5,40 +6,53 @@
 #include "object.h"
 #include "dung.h"
 
-int no_tell = 0;
-int eg_score = 0;
+export module Zork:Defs;
+export int no_tell = 0;
+export int eg_score = 0;
 
-PhraseP make_phrase(const WordP &p, const ObjectP &op)
+export std::string operator+(std::string_view s1, std::string_view s2)
+{
+    std::string ss1(s1);
+    ss1 += s2;
+    return ss1;
+}
+
+export PhraseP make_phrase(const WordP &p, const ObjectP &op)
 {
     return std::make_shared<phrase>(p, op);
 }
 
-bool apply_random(const rapplic& fcn)
+export bool apply_random(const rapplic& fcn)
 {
     return fcn(Rarg());
 }
 
-ExitFuncVal apply_random(ex_rapplic fcn)
+export bool apply_random(rapplic fcn, ApplyRandomArg arg)
+{
+    return fcn(arg);
+}
+
+export ExitFuncVal apply_random(ex_rapplic fcn)
 {
     return fcn();
 }
 
-bool apply_random(hackfn fcn, const HackP &demon)
+export bool apply_random(hackfn fcn, const HackP &demon)
 {
     return fcn(demon);
 }
 
-bool describable(const ObjectP &obj)
+export bool describable(const ObjectP &obj)
 {
     return !trnn(obj, Bits::ndescbit);
 }
 
-bool see_inside(const ObjectP &op)
+export bool see_inside(const ObjectP &op)
 {
     return trnn(op, Bits::ovison) && (trnn(op, Bits::transbit) || trnn(op, Bits::openbit));
 }
 
-bool apply_object(const ObjectP &op)
+export bool apply_object(const ObjectP &op)
 {
     bool rv;
     auto &fn = op->oaction();
@@ -47,17 +61,17 @@ bool apply_object(const ObjectP &op)
     return rv;
 }
 
-bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
+export bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
 {
     return (op->oflags() & bits_to_check).any();
 }
 
-bool strnn(const SyntaxP &syn, SyntaxBits b)
+export bool strnn(const SyntaxP &syn, SyntaxBits b)
 {
     return syn->sflags.test(b);
 }
 
-bool gtrnn(const RoomP &p, Bits b)
+export bool gtrnn(const RoomP &p, Bits b)
 {
     return std::find(p->rglobal().begin(), p->rglobal().end(), b) != p->rglobal().end();
 }
@@ -72,7 +86,7 @@ void rtrc(const RoomP &p, RoomBit b)
     p->rbits()[b].flip();
 }
 
-bool flaming(const ObjectP &obj)
+export bool flaming(const ObjectP &obj)
 {
     // True if all of the light-giving bits are set.
     auto& f = obj->oflags();
