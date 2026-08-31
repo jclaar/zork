@@ -3,7 +3,6 @@ module;
 #include <numeric>
 #include <algorithm>
 #include "act3.h"
-#include "util.h"
 #include "objfns.h"
 #include "funcs.h"
 #include "parser.h"

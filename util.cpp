@@ -1,13 +1,24 @@
-#include "util.h"
+module;
+
 #include "adv.h"
 #include "funcs.h"
 #include "rooms.h"
 #include "dung.h"
 #include "parser.h"
 
-import Zork;
+export module Zork:Util;
+import :Memq;
+import :Tell;
 
-bool always_lit = false;
+export bool always_lit = false;
+
+export template <typename T>
+const typename T::value_type& pick_one(const T& items)
+{
+    size_t idx = rand() % items.size();
+    return items[idx];
+}
+
 
 const HackP &get_demon(const char *id)
 {
@@ -18,7 +29,7 @@ const HackP &get_demon(const char *id)
     });
 }
 
-ObjList splice_out(const ObjectP &op, const ObjList &al)
+export ObjList splice_out(const ObjectP &op, const ObjList &al)
 {
     ObjList new_list;
     std::copy_if(al.begin(), al.end(), std::back_inserter(new_list), [&op](const ObjectP& o)
@@ -28,13 +39,13 @@ ObjList splice_out(const ObjectP &op, const ObjList &al)
     return new_list;
 }
 
-ObjList &splice_out_in_place(const ObjectP& op, ObjList& al)
+export ObjList &splice_out_in_place(const ObjectP& op, ObjList& al)
 {
     al.remove(op);
     return al;
 }
 
-bool remove_object(const ObjectP &obj, const AdvP &winner)
+export bool remove_object(const ObjectP &obj, const AdvP &winner = *::winner)
 {
     // Remove it from the object that it's contained in.
     if (auto &ocan = obj->ocan())
@@ -55,39 +66,39 @@ bool remove_object(const ObjectP &obj, const AdvP &winner)
     return true;
 }
 
-bool insert_object(const ObjectP &obj, const RoomP &room)
+export bool insert_object(const ObjectP &obj, const RoomP &room)
 {
     obj->oroom(room);
     room->robjs().push_front(obj);
     return true;
 }
 
-void insert_into(const ObjectP &cnt, const ObjectP &obj)
+export void insert_into(const ObjectP &cnt, const ObjectP &obj)
 {
     cnt->ocontents().push_front(obj);
     obj->ocan() = cnt;
     obj->oroom(RoomP());
 }
 
-void remove_from(const ObjectP &cnt, const ObjectP &obj)
+export void remove_from(const ObjectP &cnt, const ObjectP &obj)
 {
     splice_out_in_place(obj, cnt->ocontents());
     obj->ocan() = ObjectP();
 }
 
-void take_object(const ObjectP &obj, const AdvP &winner)
+export void take_object(const ObjectP &obj, const AdvP &winner = *::winner)
 {
     tro(obj, Bits::touchbit);
     obj->oroom(RoomP());
     winner->aobjs().push_front(obj);
 }
 
-void drop_object(const ObjectP &obj, const AdvP &winner)
+export void drop_object(const ObjectP &obj, const AdvP &winner = *::winner)
 {
     splice_out_in_place(obj, winner->aobjs());
 }
 
-bool drop_if(const ObjectP &obj, const AdvP &winner)
+export bool drop_if(const ObjectP &obj, const AdvP &winner = *::winner)
 {
     auto rv = memq(obj, winner->aobjs());
     if (rv)
@@ -108,7 +119,7 @@ const ObjectP &snarf_object(const ObjectP &who, const ObjectP &what)
     return who;
 }
 
-bool in_room(const ObjectP &obj, const RoomP &here)
+export bool in_room(const ObjectP &obj, const RoomP &here = ::here)
 {
     bool found = false;
     const ObjectP &tobj = obj->ocan();
@@ -165,7 +176,7 @@ bool lfcn(const ObjList &l)
     return false;
 }
 
-bool lit(const RoomP &rm)
+export bool lit(const RoomP &rm)
 {
     const AdvP &win = *winner;
     bool is_lit = false;
@@ -180,7 +191,7 @@ bool lit(const RoomP &rm)
     return is_lit;
 }
 
-bool prob(int goodluck, int badluck)
+export bool prob(int goodluck, int badluck = -1)
 {
     if (badluck == -1)
         badluck = goodluck;
@@ -188,7 +199,7 @@ bool prob(int goodluck, int badluck)
     return val < (flags[FlagId::lucky] ? goodluck : badluck);
 }
 
-bool perform(rapplic fcn, const VerbP &vb, const ObjectP &obj1, const ObjectP &obj2)
+export bool perform(rapplic fcn, const VerbP &vb, const ObjectP &obj1 = ObjectP(), const ObjectP& obj2 = ObjectP())
 {
     ParseVec& pv = prsvec;
     // Save old parse vector.
@@ -207,7 +218,7 @@ bool perform(rapplic fcn, const VerbP &vb, const ObjectP &obj1, const ObjectP &o
 }
 
 
-bool yes_no(bool no_is_bad)
+export bool yes_no(bool no_is_bad = false)
 {
     std::string inbuf = readst("");
     bool rv;
@@ -222,7 +233,7 @@ bool yes_no(bool no_is_bad)
     return rv;
 }
 
-ObjList rob_adv(const AdvP &win, ObjList newlist)
+export ObjList rob_adv(const AdvP &win, ObjList newlist)
 {
     // First move all non-sacred valuables to the front of
     // the list, then splice them into newlist.
@@ -253,3 +264,4 @@ ObjList rob_room(const RoomP &rm, ObjList newlist, int prob)
     }
     return newlist;
 }
+

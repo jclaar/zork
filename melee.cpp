@@ -1,6 +1,5 @@
 #include "melee.h"
 #include "adv.h"
-#include "util.h"
 #include "dung.h"
 #include "rooms.h"
 #include "parser.h"

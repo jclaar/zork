@@ -3,7 +3,6 @@
 #include "globals.h"
 #include "funcs.h"
 #include "cevent.h"
-#include "util.h"
 #include "objfns.h"
 #include "adv.h"
 #include "makstr.h"

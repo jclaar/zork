@@ -97,7 +97,6 @@ target_sources(zork PRIVATE
 	rooms.h rooms.cpp
 	sr.h sr.cpp
 	strings.h
-	util.h util.cpp
 	version.h
 	ZorkException.h
     zorkfwd.h
@@ -117,7 +116,8 @@ target_sources(zork PRIVATE
         globals.cpp
 		cevent.cpp
         roomfns.cpp
- "tell.cpp")
+        "tell.cpp"
+        util.cpp)
 
 set_target_properties(zork PROPERTIES
     CXX_MODULE_STD ON

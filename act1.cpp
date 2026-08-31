@@ -6,7 +6,6 @@ module;
 #include "rooms.h"
 #include "makstr.h"
 #include "objfns.h"
-#include "util.h"
 #include "melee.h"
 #include "object.h"
 #include "adv.h"
@@ -18,6 +17,7 @@ import :Zstring;
 import :Globals;
 import :CEvent;
 import :Tell;
+import :Util;
 
 namespace
 {

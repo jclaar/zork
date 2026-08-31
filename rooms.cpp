@@ -6,7 +6,6 @@
 #include "sr.h"
 #include "adv.h"
 #include "dung.h"
-#include "util.h"
 #include "objfns.h"
 #include "rooms.h"
 #include <algorithm>

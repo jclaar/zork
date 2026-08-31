@@ -4,7 +4,6 @@
 #include "object.h"
 #include "funcs.h"
 #include "makstr.h"
-#include "util.h"
 #include "globals.h"
 #include "rooms.h"
 #include "adv.h"
