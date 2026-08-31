@@ -30,6 +30,7 @@ typedef std::optional<ApplyRandomArg> Rarg;
 #define HACKFN(x) struct x { \
     bool operator()(const HackP &dem) const; \
 }
+#define EHACKFN(x) export HACKFN(x)
 
 // Values that can be returned from an exit function.
 using ExitFuncVal = std::variant<std::monostate, bool, RoomP>;

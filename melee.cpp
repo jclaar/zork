@@ -1,4 +1,4 @@
-#include "melee.h"
+module;
 #include "adv.h"
 #include "dung.h"
 #include "rooms.h"
@@ -6,8 +6,15 @@
 #include "makstr.h"
 #include "cevent.h"
 #include "ZorkException.h"
+#include "rapplic.h"
 
-import Zork;
+export module Zork:Melee;
+import :Globals;
+import :Tell;
+import :Memq;
+import :Util;
+import :Makstr;
+import :CEvent;
 
 namespace
 {
@@ -16,7 +23,87 @@ namespace
     const int cure_wait = 30;
 }
 
-int fight_strength(const AdvP &hero, bool adjust)
+EHACKFN(fighting);
+ERAPPLIC(diagnose);
+
+
+// 0 -- attacker misses
+// 1 --defender unconscious
+// 2 --defender dead
+// 3 --defender lightly wounded
+// 4 --defender seriously wounded
+// 5 --staggered
+// 6 --loses weapon
+// 7 --hesitate(miss on free swing)
+// 8 --sitting duck(crunch!)
+export enum class attack_state
+{
+    missed,
+    unconscious,
+    killed,
+    light_wound,
+    serious_wound,
+    stagger,
+    lose_weapon,
+    hesitate,
+    sitting_duck
+};
+
+std::optional<attack_state> blow(const AdvP& hero, ObjectP villain, const tofmsgs* remarks, bool heroq, std::optional<int> out);
+
+using ASSpan = std::span<const attack_state>;
+
+// Attacking things...
+namespace {
+    constexpr auto def1 = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::unconscious, attack_state::unconscious,
+        attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed });
+    constexpr auto def2a = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound,
+        attack_state::unconscious });
+    constexpr auto def2b = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::unconscious,
+        attack_state::killed, attack_state::killed, attack_state::killed });
+    constexpr auto def3a = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound });
+    constexpr auto def3b = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound });
+    constexpr auto def3c = std::to_array({ attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound });
+}
+
+const std::vector<ASSpan> def1_res = {
+    {std::begin(def1), std::end(def1)},
+    {std::begin(def1) + 1, std::end(def1)},
+    {std::begin(def1) + 2, std::end(def1)}
+};
+const std::vector<ASSpan> def2_res = {
+    {std::begin(def2a), std::end(def2a)},
+    {std::begin(def2b), std::end(def2b)},
+    {std::begin(def2b) + 1, std::end(def2b)},
+    {std::begin(def2b) + 2, std::end(def2b)}
+};
+const std::vector<ASSpan> def3_res = {
+    {std::begin(def3a), std::end(def3a)},
+    {std::begin(def3a) + 1, std::end(def3a)},
+    {std::begin(def3b), std::end(def3b)},
+    {std::begin(def3b) + 1, std::end(def3b)},
+    {std::begin(def3c), std::end(def3c)}
+};
+
+
+
+int fight_strength(const AdvP &hero, bool adjust = true)
 {
     int s, smax = strength_max, smin = strength_min;
     int pct = hero->ascore() * 100 / score_max();

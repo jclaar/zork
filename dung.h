@@ -8,7 +8,6 @@
 #include "makstr.h"
 #include "room.h"
 #include "funcs.h"
-#include "melee.h"
 
 using WordsPobl = std::map<std::string, WordP, std::less<>>;
 using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;
@@ -30,10 +29,6 @@ extern HackP sword_demon;
 extern HackP fight_demon;
 extern HackP clocker;
 extern VerbP buncher;
-using ASSpan = std::span<const attack_state>;
-extern const std::vector<ASSpan> def1_res;
-extern const std::vector<ASSpan> def2_res;
-extern const std::vector<ASSpan> def3_res;
 extern int cyclowrath;
 extern std::vector<VerbP> robot_actions;
 extern std::vector<VerbP> master_actions;

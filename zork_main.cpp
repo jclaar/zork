@@ -14,3 +14,4 @@ export import :Act4;
 export import :CEvent;
 export import :Roomfns;
 export import :Makstr;
+export import :Melee;

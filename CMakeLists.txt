@@ -86,7 +86,6 @@ target_sources(zork PRIVATE
 	gobject.h 
 	makstr.h
 	mdlfun.cpp
-	melee.h melee.cpp
 	objdefs.h
 	object.h object.cpp
 	objfns.h objser.h
@@ -118,7 +117,8 @@ target_sources(zork PRIVATE
         roomfns.cpp
 		makstr.cpp
         "tell.cpp"
-        util.cpp)
+        util.cpp
+        melee.cpp)
 
 set_target_properties(zork PROPERTIES
     CXX_MODULE_STD ON

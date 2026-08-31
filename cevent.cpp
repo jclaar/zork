@@ -3,7 +3,6 @@ module;
 #include "act3.h"
 #include "act4.h"
 #include "cevent.h"
-#include "melee.h"
 #include "objfns.h"
 #include "ZorkException.h"
 
@@ -14,6 +13,7 @@ import :ActFns;
 import :Globals;
 
 CEventP sphere_clock;
+
 
 namespace
 {

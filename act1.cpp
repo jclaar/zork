@@ -6,7 +6,6 @@ module;
 #include "rooms.h"
 #include "makstr.h"
 #include "objfns.h"
-#include "melee.h"
 #include "object.h"
 #include "adv.h"
 #include "cevent.h"
@@ -19,6 +18,7 @@ import :CEvent;
 import :Tell;
 import :Util;
 import :Makstr;
+import :Melee;
 
 namespace
 {
@@ -74,10 +74,8 @@ namespace
 
 }
 
-#define EHACKFN(x) export HACKFN(x)
 EHACKFN(robber);
 EHACKFN(sword_glow);
-EHACKFN(fighting);
 
 
 export bool with_tell(const ObjectP& obj)

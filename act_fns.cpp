@@ -103,3 +103,6 @@ ERAPPLIC(start_end);
 ERAPPLIC(stats);
 ERAPPLIC(stay);
 ERAPPLIC(turnto);
+
+// Others
+ERAPPLIC(cure_clock);
