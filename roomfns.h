@@ -1,6 +1,6 @@
 #pragma once
 // This file is auto-generated. Do not edit.
-#include "defs.h"
+#include "rapplic.h"
 namespace room_funcs {
     RAPPLIC(bats_room);
     RAPPLIC(bdoor_function);
@@ -65,7 +65,7 @@ namespace room_funcs {
     RAPPLIC(sledg_room);
     RAPPLIC(slide_room);
     RAPPLIC(teller_room);
-    RAPPLIC(time);
+    //RAPPLIC(time);
     RAPPLIC(tomb_function);
     RAPPLIC(torch_room);
     RAPPLIC(treasure_room);

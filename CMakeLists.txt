@@ -92,15 +92,17 @@ target_sources(zork PRIVATE
 	object.h object.cpp
 	objfns.h objser.h
 	parser.h parser.cpp
+    rapplic.h
 	room.h room.cpp
 	roomdefs.h
-	roomfns.h roomfns.cpp
+	roomfns.h 
 	rooms.h rooms.cpp
 	sr.h sr.cpp
 	strings.h
 	util.h util.cpp
 	version.h
 	ZorkException.h
+    zorkfwd.h
 
 	PUBLIC
 	FILE_SET CXX_MODULES FILES
@@ -115,6 +117,7 @@ target_sources(zork PRIVATE
         act4.cpp
         globals.cpp
 		cevent.cpp
+        roomfns.cpp
 )
 
 set_target_properties(zork PROPERTIES

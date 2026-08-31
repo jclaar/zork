@@ -7,6 +7,7 @@
 #include <memory>
 #include <bitset>
 #include "FlagSupport.h"
+#include "rapplic.h"
 
 // For variant stuff.
 template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
@@ -18,31 +19,6 @@ template<class... Ts> overload(Ts...)->overload<Ts...>;
     return std::forward<decltype(self)>(self)._##p; \
  }
 
-// Hacky method of allowing an additional argument to be passed to 
-// apply_random. This is only used in a couple of cases.
-enum class ApplyRandomArg
-{
-    read_out,
-    read_in
-};
-// Defines a functor for an rapplic. The ApplyRandomArg argument is optional.
-typedef std::optional<ApplyRandomArg> Rarg;
-#define RAPPLIC(x) struct x { \
-    bool operator()() const; \
-    bool operator()(Rarg ra) const { return (*this)(); } \
-    }
-#define RAPPLIC_RARG(x) struct x { \
-    bool operator()(Rarg rarg = Rarg()) const; \
-}
-#define RAPPLIC_DEF(x, type, def) struct x { \
-    bool operator()(type v = def) const;\
-    bool operator()(Rarg arg, type v = def) const { return (*this)(v); } \
-    }
-#define EX_RAPPLIC(x) struct x { ExitFuncVal operator()() const; }
-
-#define HACKFN(x) struct x { \
-    bool operator()(const HackP &dem) const; \
-}
 
 inline std::string operator+(std::string_view s1, std::string_view s2)
 {
@@ -170,9 +146,6 @@ using ObjList = std::list<ObjectP>;
 using ObjVector = std::vector<ObjectP>;
 class GObject;
 typedef std::shared_ptr<GObject> GObjectPtr;
-class Room;
-using RoomP = std::shared_ptr<Room>;
-using RoomList = std::list<RoomP>;
 class CEvent;
 typedef std::shared_ptr<CEvent> CEventP;
 typedef std::list<CEventP> EventList;
@@ -180,8 +153,6 @@ class Adv;
 typedef std::unique_ptr<Adv> AdvP;
 typedef std::array <AdvP, std::to_underlying(e_oactor::none)> AdvArray;
 
-class hack;
-typedef std::shared_ptr<hack> HackP;
 
 template <typename T0, typename... Ts>
 bool is_empty(const std::variant<T0, Ts...> &v)
@@ -189,12 +160,6 @@ bool is_empty(const std::variant<T0, Ts...> &v)
     return std::holds_alternative<std::monostate>(v);
 }
 
-// Values that can be returned from an exit function.
-using ExitFuncVal = std::variant<std::monostate, bool, RoomP>;
-
-using rapplic = std::function<bool(Rarg)>;
-using ex_rapplic = std::function<ExitFuncVal()>;
-using hackfn = std::function<bool(const HackP&)>;
 
 // Flags in vword of a varg
 enum class vword_flag
