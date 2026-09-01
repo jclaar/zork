@@ -180,18 +180,6 @@ std::vector<VerbP> master_actions;
 RoomP scol_room = get_room("BKVW");
 RoomP scol_active;
 
-int cphere;
-PuzzleContents cpobjs;
-std::array<int, 64> cpuvec = {
-    1,  1,  1,  1,  1,  1,  1,  1,
-    1,  0, -1,  0,  0, -1,  0,  1,
-    1, -1,  0,  1,  0, -2,  0,  1,
-    1,  0,  0,  0,  0,  1,  0,  1,
-    1, -3,  0,  0, -1, -1,  0,  1,
-    1,  0,  0, -1,  0,  0,  0,  1,
-    1,  1,  1,  0,  0,  0,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1 };
-
 namespace
 {
     // Bank

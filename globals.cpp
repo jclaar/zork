@@ -10,6 +10,19 @@ import :Defs;
 export std::string inbuf;
 export std::string inbuf1;
 export const int bigfix = INT_MAX;
+export int cphere;
+
+// Puzzle room
+export std::array<int, 64> cpuvec = {
+    1,  1,  1,  1,  1,  1,  1,  1,
+    1,  0, -1,  0,  0, -1,  0,  1,
+    1, -1,  0,  1,  0, -2,  0,  1,
+    1,  0,  0,  0,  0,  1,  0,  1,
+    1, -3,  0,  0, -1, -1,  0,  1,
+    1,  0,  0, -1,  0,  0,  0,  1,
+    1,  1,  1,  0,  0,  0,  1,  1,
+    1,  1,  1,  1,  1,  1,  1,  1 };
+export PuzzleContents cpobjs;
 
 export std::vector<QuestionP> qvec;
 
@@ -18,6 +31,8 @@ namespace
     int score_max_ = 0;
     int max_load = 100;
 }
+
+using FlagBits = Flags<FlagId, num_flag_bits>;
 
 export FlagBits flags = []()
     {

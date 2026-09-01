@@ -80,13 +80,9 @@ enum class FlagId
 };
 constexpr size_t num_flag_bits = std::to_underlying(FlagId::num_flag_bits);
 
-using FlagBits = Flags<FlagId, num_flag_bits>;
 
 // Puzzle room
-extern int cphere;
 using PuzzleContents = std::array<ObjList, 64>;
-extern PuzzleContents cpobjs;
-extern std::array<int, 64> cpuvec;
 using cpwall_val = std::tuple<std::string_view, int>;
 
 constexpr std::array cpwalls = {
