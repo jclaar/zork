@@ -6,7 +6,7 @@
 #include "funcs.h"
 
 // Possible levels of false returns from parser.
-typedef std::pair<ObjectP, int> Nefals;
+using Nefals = std::pair<ObjectP, int>;
 extern Nefals nefals;
 extern Nefals nefals2;
 inline bool operator==(const Nefals &ne, const ObjectP &obj)
@@ -17,12 +17,111 @@ inline bool operator==(const Nefals &ne, const ObjectP &obj)
 extern Iterator<ParseContV> lexv;
 extern bool gwim_disable;
 
-typedef Iterator<PhraseVecV> PrepVec;
-typedef Iterator<ParseVecA> ParseVec;
+// Parse vector is defined in parser.mud. It is a 3-element vector,
+// containing various items:
+// 0: ActionP or VerbP
+// 1: ObjectP or direction
+// 2: ObjectP or nothing
+using ParseVecVal = std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction>;
+using ParseVecA = std::array<ParseVecVal, 3>;
+using ParseAval = std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction, WordP, std::string, ObjList>;
+using PrepVec = Iterator<PhraseVecV>;
+using ParseVec = Iterator<ParseVecA>;
 extern Iterator<ObjVector> bunuvec;
 extern Iterator<ObjVector> bunch;
 extern std::list<VerbP> bunchers;
 extern SIterator scrstr;
+
+// ORPHANS -- mysterious vector of orphan data
+using OrphanSlotType = std::variant<std::monostate, ObjectP, PhraseP>;
+class Orphans
+{
+public:
+    Orphans() :
+        _oflag(false)
+    {}
+
+    PROP(oflag);
+    PROP(overb);
+    PROP(oprep);
+    PROP(oname);
+
+    const ObjectP& oslot1() const { return _oslot1; }
+    void oslot1(const OrphanSlotType& a) {
+        static_assert(std::variant_size<OrphanSlotType>() == 3);
+        std::visit(overload{
+            [&](const ObjectP& op) { _oslot1 = op; },
+            [&](const PhraseP& pp) { _oslot1 = pp->obj(); },
+            [&](auto p) { _oslot1.reset(); }
+            }, a);
+    }
+
+    PROP(oslot2);
+
+private:
+    bool _oflag;
+    ActionP _overb;
+    ObjectP _oslot1;
+    OrphanSlotType _oslot2;
+    PrepP _oprep;
+    std::string _oname;
+};
+
+
+inline ParseVecVal as_pvv(const ParseAval& pv)
+{
+    return std::visit(overload{
+            [](const ActionP& ap) { return ParseVecVal(ap); },
+            [](const VerbP& vp) { return ParseVecVal(vp); },
+            [](const ObjectP& op) { return ParseVecVal(op); },
+            [](const PhraseP& pp) { return ParseVecVal(pp); },
+            [](direction d) { return ParseVecVal(d); },
+            [](auto unused) { return ParseVecVal(); }
+        }, pv);
+}
+
+inline OrphanSlotType as_ost(ParseVecVal pv)
+{
+    return std::visit(overload{
+        [](const ObjectP& op) { return OrphanSlotType(op); },
+        [](const PhraseP& pp) { return OrphanSlotType(pp); },
+        [](auto unused) { return OrphanSlotType(); }
+        }, pv);
+}
+
+inline direction as_dir(const ParseVecVal& a)
+{
+    return std::get<direction>(a);
+}
+
+inline ObjectP as_obj(const ParseVecVal& pvv)
+{
+    try
+    {
+        return std::get<ObjectP>(pvv);
+    }
+    catch (std::bad_variant_access&)
+    {
+        return ObjectP();
+    }
+}
+
+inline WordP as_word(const ParseAval& a)
+{
+    return std::get<WordP>(a);
+}
+
+inline VerbP as_verb(const ParseVecVal& a)
+{
+    try
+    {
+        return std::get<VerbP>(a);
+    }
+    catch (std::bad_variant_access&)
+    {
+        return VerbP();
+    }
+}
 
 // Specialization for ParseVec
 inline ParseVec put(ParseVec a, int index, std::nullptr_t)
@@ -158,9 +257,9 @@ struct StuffVec
         return !empty(iprepvec) && !empty(iparsevec);
     }
 };
-typedef std::unique_ptr<StuffVec> StuffVecP;
+using StuffVecP = std::unique_ptr<StuffVec>;
 
-typedef std::optional<const std::vector<Bits>*> Globals;
+using Globals = std::optional<const std::vector<Bits>*>;
 
 Iterator<ParseContV> lex(SIterator s, SIterator sx = SIterator());
 bool eparse(Iterator<ParseContV> pv, bool vb);

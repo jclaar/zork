@@ -296,42 +296,6 @@ inline bool vtrnn(const VargP &va, vword_flag bit)
     return va->vword[bit];
 }
 
-// ORPHANS -- mysterious vector of orphan data
-typedef std::variant<std::monostate, ObjectP, PhraseP> OrphanSlotType;
-class Orphans
-{
-public:
-    Orphans() :
-        _oflag(false)
-    {
-    }
-
-    PROP(oflag);
-    PROP(overb);
-    PROP(oprep);
-    PROP(oname);
-
-    const ObjectP &oslot1() const { return _oslot1; }
-    void oslot1(const OrphanSlotType &a) {
-        static_assert(std::variant_size<OrphanSlotType>() == 3);
-        std::visit(overload{
-            [&](const ObjectP& op) { _oslot1 = op; },
-            [&](const PhraseP& pp) { _oslot1 = pp->obj(); },
-            [&](auto p) { _oslot1.reset(); }
-            }, a);
-    }
-
-    PROP(oslot2);
-
-private:
-    bool _oflag;
-    ActionP _overb;
-    ObjectP _oslot1;
-    OrphanSlotType _oslot2;
-    PrepP _oprep;
-    std::string _oname;
-};
-
 //bool apply_object(const ObjectP &op);
 //bool describable(const ObjectP &op);
 //bool see_inside(const ObjectP &op);
