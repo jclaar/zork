@@ -73,8 +73,6 @@ link_directories(${Boost_LIBRARY_DIRS})
 add_executable(zork)
 
 target_sources(zork PRIVATE
-	
-	act3.h
 	act4.h
 	adv.h adv.cpp
 	cevent.h
