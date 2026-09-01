@@ -16,3 +16,4 @@ export import :CEvent;
 export import :Roomfns;
 export import :Makstr;
 export import :Melee;
+export import :Funcs;

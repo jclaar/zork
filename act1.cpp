@@ -20,6 +20,7 @@ import :Tell;
 import :Util;
 import :Makstr;
 import :Melee;
+import :Funcs;
 
 namespace
 {

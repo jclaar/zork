@@ -79,7 +79,7 @@ target_sources(zork PRIVATE
 	defs.h
 	dung.h dung.cpp
 	FlagSupport.h
-	funcs.h funcs.cpp
+	funcs.h
 	globals.h
 	gobject.h 
 	makstr.h
@@ -103,6 +103,7 @@ target_sources(zork PRIVATE
 	    act_fns.cpp
 		defs.cpp
 	    info.cpp
+		funcs.cpp
 		strings.cpp
 		zork_main.cpp
 		memq.cpp
