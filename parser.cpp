@@ -389,7 +389,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
         direction *dp;
         if (!action && (ap = std::get_if<ActionP>(&(aval = plookup(x, actions)))) && *ap) // 156
         {
-            orph.overb(nullptr);
+            orph.overb() = nullptr;
             action = *ap;
             cont_proc = false;
         }
@@ -758,17 +758,17 @@ const Orphans &orphan(bool flag, const ActionP &action, const OrphanSlotType &sl
 {
     if (flag)
     {
-        orphans.oslot2(slot2);
-        orphans.oname(name);
-        orphans.oprep(prep);
+        orphans.oslot2() = slot2;
+        orphans.oname() = name;
+        orphans.oprep() = prep;
         orphans.oslot1(slot1);
-        orphans.overb(action);
-        orphans.oflag(flag);
+        orphans.overb() = action;
+        orphans.oflag() = flag;
     }
     else
     {
         prepvec = top(prepvec);
-        orphans.oflag(false);
+        orphans.oflag() = false;
     }
     return orphans;
 }

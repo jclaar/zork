@@ -306,17 +306,10 @@ public:
     {
     }
 
-    bool oflag() const { return _oflag; }
-    void oflag(bool f) { _oflag = f; }
-
-    const ActionP &overb() const { return _overb; }
-    void overb(const ActionP &p) { _overb = p; }
-
-    const PrepP &oprep() const { return _oprep; }
-    void oprep(const PrepP &prep) { _oprep = prep; }
-
-    const std::string &oname() const { return _oname; }
-    void oname(std::string_view name) { _oname = name; }
+    PROP(oflag);
+    PROP(overb);
+    PROP(oprep);
+    PROP(oname);
 
     const ObjectP &oslot1() const { return _oslot1; }
     void oslot1(const OrphanSlotType &a) {
@@ -328,8 +321,7 @@ public:
             }, a);
     }
 
-    const OrphanSlotType &oslot2() const { return _oslot2; }
-    void oslot2(const OrphanSlotType &a) { _oslot2 = a; }
+    PROP(oslot2);
 
 private:
     bool _oflag;
