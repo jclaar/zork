@@ -8,7 +8,6 @@
 #include "object.h"
 #include "rooms.h"
 #include "room.h"
-#include "act3.h"
 #include "act4.h"
 #include "adv.h"
 #include "parser.h"

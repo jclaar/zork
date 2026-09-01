@@ -2,7 +2,6 @@ module;
 
 #include <numeric>
 #include <algorithm>
-#include "act3.h"
 #include "objfns.h"
 #include "funcs.h"
 #include "parser.h"
@@ -25,6 +24,13 @@ namespace
 
 export ObjectP matobj;
 export ObjectP timber_tie;
+
+export struct climb_up
+{
+    bool operator()(Rarg arg = Rarg(), direction dir = direction::Up, bool noobj = false) { return (*this)(dir, noobj); }
+    bool operator()(direction dir = direction::Up, bool noobj = false) const;
+};
+ERAPPLIC_DEF(through, ObjectP, ObjectP());
 
 const ObjectP& plid(const ObjectP& obj1 = sfind_obj("PLID1"), const ObjectP& obj2 = sfind_obj("PLID2"))
 {
