@@ -12,7 +12,7 @@ export module Zork:Melee;
 import ZGlobals;
 import ZTell;
 import ZMemq;
-import :Util;
+import ZUtil;
 import ZMakstr;
 import :CEvent;
 

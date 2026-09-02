@@ -1,5 +1,4 @@
 export module Zork;
-export import :Util;
 export import :Defs;
 export import :Strings;
 export import :Info;

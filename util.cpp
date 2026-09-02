@@ -6,7 +6,7 @@ module;
 #include "dung.h"
 #include "parser.h"
 
-export module Zork:Util;
+export module ZUtil;
 import ZMemq;
 import ZTell;
 import ZGlobals;
@@ -21,7 +21,7 @@ const typename T::value_type& pick_one(const T& items)
 }
 
 
-const HackP &get_demon(const char *id)
+export const HackP &get_demon(const char *id)
 {
     const ObjectP &obj = find_obj(id);
     return *std::find_if(demons.cbegin(), demons.cend(), [&obj](const HackP &h)
@@ -109,7 +109,7 @@ export bool drop_if(const ObjectP &obj, const AdvP &winner = *::winner)
     return (bool) rv;
 }
 
-const ObjectP &snarf_object(const ObjectP &who, const ObjectP &what)
+export const ObjectP &snarf_object(const ObjectP &who, const ObjectP &what)
 {
     if (what->ocan() != who &&
         (what->oroom() || what->ocan()))
@@ -142,7 +142,7 @@ export bool in_room(const ObjectP &obj, const RoomP &here = ::here)
     return found;
 }
 
-bool hackable(const ObjectP &obj, const RoomP &rm)
+export bool hackable(const ObjectP &obj, const RoomP &rm)
 {
     bool h = false;
     const AdvP &winner = *::winner;
@@ -247,7 +247,7 @@ export ObjList rob_adv(const AdvP &win, ObjList newlist)
     return newlist;
 }
 
-ObjList rob_room(const RoomP &rm, ObjList newlist, int prob)
+export ObjList rob_room(const RoomP &rm, ObjList newlist, int prob)
 {
     ObjList robjs = rm->robjs();
     for (const ObjectP &x : robjs)

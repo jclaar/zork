@@ -14,6 +14,7 @@ import ZGlobals;
 import ZMakstr;
 import ZMemq;
 import ZTell;
+import ZUtil;
 import Zork;
 
 const char *brks = "\"' 	:.,?!\n";

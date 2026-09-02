@@ -17,7 +17,7 @@ import :Zstring;
 import ZGlobals;
 import :CEvent;
 import ZTell;
-import :Util;
+import ZUtil;
 import ZMakstr;
 import :Melee;
 import ZFuncs;
