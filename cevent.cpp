@@ -7,7 +7,7 @@ module;
 
 export module Zork:CEvent;
 import std;
-import :Roomfns;
+import ZRoomfns;
 import ZActions;
 import ZGlobals;
 

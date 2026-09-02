@@ -2,7 +2,7 @@ module;
 
 #include "rapplic.h"
 
-export module Zork:Roomfns;
+export module ZRoomfns;
 
 export namespace room_funcs
 {

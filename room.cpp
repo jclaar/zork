@@ -5,6 +5,7 @@
 import ZActions;
 import ZGlobals;
 import ZZstring;
+import ZRoomfns;
 import Zork;
 
 // These are all exit definitions in the original MDL code.
