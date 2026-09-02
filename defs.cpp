@@ -4,7 +4,7 @@ module;
 #include "object.h"
 #include "dung.h"
 
-export module Zork:Defs;
+export module ZDefs;
 export int no_tell = 0;
 export int eg_score = 0;
 
@@ -74,12 +74,12 @@ export bool gtrnn(const RoomP &p, Bits b)
     return std::find(p->rglobal().begin(), p->rglobal().end(), b) != p->rglobal().end();
 }
 
-void trc(const ObjectP &op, Bits b)
+export void trc(const ObjectP &op, Bits b)
 {
     op->oflags()[b].flip();
 }
 
-void rtrc(const RoomP &p, RoomBit b)
+export void rtrc(const RoomP &p, RoomBit b)
 {
     p->rbits()[b].flip();
 }

@@ -16,6 +16,7 @@ import ZMemq;
 import ZTell;
 import ZUtil;
 import Zork;
+import ZDefs;
 
 const char *brks = "\"' 	:.,?!\n";
 Orphans orphans;

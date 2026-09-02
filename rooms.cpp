@@ -22,6 +22,7 @@ import ZTell;
 import ZMakstr;
 import ZMemq;
 import ZUtil;
+import ZDefs;
 
 using namespace std::string_view_literals;
 

@@ -12,7 +12,7 @@ module;
 
 export module Zork:Act1;
 import ZMemq;
-import :Defs;
+import ZDefs;
 import :Zstring;
 import ZGlobals;
 import :CEvent;

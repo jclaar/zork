@@ -19,6 +19,7 @@ import ZGlobals;
 import ZMakstr;
 import ZTell;
 import ZMemq;
+import ZDefs;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {

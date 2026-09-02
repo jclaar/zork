@@ -11,6 +11,7 @@
 #include "version.h"
 import Zork;
 import ZTell;
+import ZDefs;
 
 using namespace std::string_view_literals;
 
