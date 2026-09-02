@@ -4,6 +4,7 @@
 #include "ZorkException.h"
 import ZActions;
 import ZGlobals;
+import ZZstring;
 import Zork;
 
 // These are all exit definitions in the original MDL code.

@@ -13,7 +13,7 @@ module;
 export module Zork:Act1;
 import ZMemq;
 import ZDefs;
-import :Zstring;
+import ZZstring;
 import ZGlobals;
 import :CEvent;
 import ZTell;

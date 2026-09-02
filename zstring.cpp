@@ -1,4 +1,4 @@
-export module Zork:Zstring;
+export module ZZstring;
 import std;
 
 using namespace std::string_view_literals;

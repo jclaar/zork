@@ -11,7 +11,7 @@ module;
 #include "makstr.h"
 
 export module Zork:Act2;
-import :Zstring;
+import ZZstring;
 import :Act1;
 import ZFuncs;
 

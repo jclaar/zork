@@ -12,7 +12,7 @@ module;
 export module Zork:Act3;
 import ZMemq;
 import ZMakstr;
-import :Zstring;
+import ZZstring;
 import :Act2;
 
 using namespace std::string_literals;

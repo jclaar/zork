@@ -14,6 +14,7 @@ import Zork;
 import ZGlobals;
 import ZMakstr;
 import ZStrings;
+import ZZstring;
 
 struct ObjectDefinition {
     StringList syns;
