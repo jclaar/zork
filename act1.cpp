@@ -12,15 +12,18 @@ module;
 
 export module Zork:Act1;
 import ZMemq;
-import ZDefs;
 import ZZstring;
 import ZGlobals;
-import :CEvent;
-import ZTell;
+import ZEvent;
 import ZUtil;
 import ZMakstr;
-import :Melee;
+import ZMelee;
 import ZFuncs;
+import ZTell;
+import ZActions;
+import ZDefs;
+import ZMelee;
+import ZRoomfns;
 
 namespace
 {

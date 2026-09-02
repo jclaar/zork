@@ -23,6 +23,7 @@ import ZGlobals;
 import ZTell;
 import ZDefs;
 import ZActions;
+import ZEvent;
 
 typedef std::vector<int> SV;
 typedef SV::iterator SVI;

@@ -8,13 +8,14 @@ module;
 #include "ZorkException.h"
 #include "rapplic.h"
 
-export module Zork:Melee;
+export module ZMelee;
 import ZGlobals;
 import ZTell;
 import ZMemq;
 import ZUtil;
 import ZMakstr;
-import :CEvent;
+import ZActions;
+import ZEvent;
 
 namespace
 {
@@ -135,7 +136,7 @@ int villain_strength(const ObjectP &villain)
     return od;
 }
 
-bool winning(const ObjectP &v, const AdvP &h)
+export bool winning(const ObjectP &v, const AdvP &h)
 {
     int vs = v->ostrength();
     int ps = vs - fight_strength(h);
@@ -392,7 +393,7 @@ bool pres(const tofmsg &tab, std::string_view a, std::string_view d, std::string
     return true;
 }
 
-std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::optional<int> out)
+export std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsgs *remarks, bool heroq, std::optional<int> out)
 {
     ObjectP dweapon;
     std::string_view vdesc = villain->odesc2();

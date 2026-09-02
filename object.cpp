@@ -10,11 +10,11 @@
 #include "ZorkException.h"
 #include "parser.h"
 
-import Zork;
 import ZGlobals;
 import ZMakstr;
 import ZStrings;
 import ZZstring;
+import ZEvent;
 
 struct ObjectDefinition {
     StringList syns;

@@ -5,13 +5,13 @@ module;
 #include "objfns.h"
 #include "ZorkException.h"
 
-export module Zork:CEvent;
+export module ZEvent;
 import std;
 import ZRoomfns;
 import ZActions;
 import ZGlobals;
 
-CEventP sphere_clock;
+export CEventP sphere_clock;
 
 class CEventContainer : private std::array<CEventP, std::to_underlying(Event::numevs)>
 {
