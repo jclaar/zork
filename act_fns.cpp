@@ -106,3 +106,8 @@ ERAPPLIC(turnto);
 
 // Others
 ERAPPLIC(cure_clock);
+EHACKFN(robber);
+EHACKFN(sword_glow);
+EHACKFN(fighting);
+ERAPPLIC(diagnose);
+

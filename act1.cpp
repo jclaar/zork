@@ -76,9 +76,6 @@ namespace
 
 }
 
-EHACKFN(robber);
-EHACKFN(sword_glow);
-
 
 export bool with_tell(const ObjectP& obj)
 {

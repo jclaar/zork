@@ -22,6 +22,7 @@ import Zork;
 import ZGlobals;
 import ZTell;
 import ZDefs;
+import ZActions;
 
 typedef std::vector<int> SV;
 typedef SV::iterator SVI;

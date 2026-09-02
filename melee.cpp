@@ -23,9 +23,6 @@ namespace
     const int cure_wait = 30;
 }
 
-EHACKFN(fighting);
-ERAPPLIC(diagnose);
-
 
 // 0 -- attacker misses
 // 1 --defender unconscious
