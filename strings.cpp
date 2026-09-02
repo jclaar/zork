@@ -2,7 +2,7 @@ module;
 
 #include "strings.h"
 
-export module Zork:Strings;
+export module ZStrings;
 import std;
 
 #define D "%D%"

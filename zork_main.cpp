@@ -1,5 +1,4 @@
 export module Zork;
-export import :Strings;
 export import :Info;
 export import :Zstring;
 export import :Act1;

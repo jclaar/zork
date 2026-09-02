@@ -13,6 +13,7 @@
 import Zork;
 import ZGlobals;
 import ZMakstr;
+import ZStrings;
 
 struct ObjectDefinition {
     StringList syns;
