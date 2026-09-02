@@ -12,6 +12,7 @@
 
 import Zork;
 import ZGlobals;
+import ZMakstr;
 
 struct ObjectDefinition {
     StringList syns;

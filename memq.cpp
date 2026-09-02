@@ -1,4 +1,4 @@
-export module Zork:Memq;
+export module ZMemq;
 import std;
 
 // Simulates MEMQ returns. If a value is returned, it is an

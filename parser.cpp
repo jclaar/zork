@@ -8,9 +8,13 @@
 #include "rooms.h"
 #include "adv.h"
 
-import Zork;
+//import Zork;
 import ZFuncs;
 import ZGlobals;
+import ZMakstr;
+import ZMemq;
+import ZTell;
+import Zork;
 
 const char *brks = "\"' 	:.,?!\n";
 Orphans orphans;

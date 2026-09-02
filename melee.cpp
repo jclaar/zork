@@ -10,10 +10,10 @@ module;
 
 export module Zork:Melee;
 import ZGlobals;
-import :Tell;
-import :Memq;
+import ZTell;
+import ZMemq;
 import :Util;
-import :Makstr;
+import ZMakstr;
 import :CEvent;
 
 namespace

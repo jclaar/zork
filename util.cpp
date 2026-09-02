@@ -7,8 +7,9 @@ module;
 #include "parser.h"
 
 export module Zork:Util;
-import :Memq;
-import :Tell;
+import ZMemq;
+import ZTell;
+import ZGlobals;
 
 export bool always_lit = false;
 

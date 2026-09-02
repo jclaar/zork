@@ -18,6 +18,9 @@
 import Zork;
 import ZFuncs;
 import ZGlobals;
+import ZTell;
+import ZMakstr;
+import ZMemq;
 
 using namespace std::string_view_literals;
 

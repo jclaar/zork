@@ -8,7 +8,7 @@ module;
 #include "parser.h"
 #include "ZorkException.h"
 
-export module Zork:Makstr;
+export module ZMakstr;
 import ZGlobals;
 
 namespace
@@ -85,7 +85,7 @@ export PrepP find_prep(std::string_view prepo)
     return pp;
 }
 
-direction find_dir(const std::string &dir)
+export direction find_dir(const std::string &dir)
 {
     auto iter = directions_pobl.find(dir);
     if (iter == directions_pobl.end())

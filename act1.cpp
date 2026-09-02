@@ -11,14 +11,14 @@ module;
 #include "cevent.h"
 
 export module Zork:Act1;
-import :Memq;
+import ZMemq;
 import :Defs;
 import :Zstring;
 import ZGlobals;
 import :CEvent;
-import :Tell;
+import ZTell;
 import :Util;
-import :Makstr;
+import ZMakstr;
 import :Melee;
 import ZFuncs;
 

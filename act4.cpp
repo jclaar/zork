@@ -9,7 +9,7 @@ module;
 #include "objfns.h"
 
 export module Zork:Act4;
-import :Memq;
+import ZMemq;
 import :Act3;
 
 int mdir = 270;

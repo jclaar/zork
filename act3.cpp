@@ -10,7 +10,8 @@ module;
 #include "adv.h"
 
 export module Zork:Act3;
-import :Memq;
+import ZMemq;
+import ZMakstr;
 import :Zstring;
 import :Act2;
 

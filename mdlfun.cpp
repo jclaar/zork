@@ -10,6 +10,7 @@
 #include "rooms.h"
 #include "version.h"
 import Zork;
+import ZTell;
 
 using namespace std::string_view_literals;
 

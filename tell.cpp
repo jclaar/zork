@@ -1,7 +1,7 @@
 module;
 #include "rapplic.h"
 #include "globals.h"
-export module Zork:Tell;
+export module ZTell;
 import std;
 import ZGlobals;
 
