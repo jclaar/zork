@@ -14,6 +14,7 @@
 #include "ZorkException.h"
 
 import Zork;
+import ZActions;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {

@@ -7,7 +7,6 @@ export import :Info;
 export import :Tell;
 export import :Memq;
 export import :Zstring;
-export import :ActFns;
 export import :Act1;
 export import :Act2;
 export import :Act3;

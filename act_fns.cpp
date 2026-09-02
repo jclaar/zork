@@ -2,7 +2,7 @@ module;
 
 #include "rapplic.h"
 
-export module Zork:ActFns;
+export module ZActions;
 import std;
 
 // Act 1 functions

@@ -8,7 +8,7 @@ module;
 export module Zork:CEvent;
 import std;
 import :Roomfns;
-import :ActFns;
+import ZActions;
 import :Globals;
 
 CEventP sphere_clock;

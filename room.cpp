@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "object.h"
 #include "ZorkException.h"
+import ZActions;
 import Zork;
 
 // These are all exit definitions in the original MDL code.
