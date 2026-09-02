@@ -1,4 +1,4 @@
-export module Zork:Info;
+export module ZInfo;
 import std;
 
 export const std::string_view info_str = R"(Welcome to Zork!
