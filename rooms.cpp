@@ -16,6 +16,8 @@
 #include "cevent.h"
 
 import Zork;
+import ZFuncs;
+import ZGlobals;
 
 using namespace std::string_view_literals;
 

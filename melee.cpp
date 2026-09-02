@@ -9,7 +9,7 @@ module;
 #include "rapplic.h"
 
 export module Zork:Melee;
-import :Globals;
+import ZGlobals;
 import :Tell;
 import :Memq;
 import :Util;

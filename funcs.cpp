@@ -4,16 +4,16 @@ module;
 #include "globals.h"
 #include "rooms.h"
 
-export module Zork:Funcs;
+export module ZFuncs;
 
-std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest)
+export std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest)
 {
     _ASSERT(dest.size() >= end);
     std::copy(src.begin() + start, src.begin() + end, dest.begin() + start);
     return dest;
 }
 
-char *substruc(const char *src, size_t start, size_t end, char *dest)
+export char *substruc(const char *src, size_t start, size_t end, char *dest)
 {
     _ASSERT(start == 0); // Verify functionality if not true.
     while (start != end)
@@ -30,7 +30,7 @@ export SIterator uppercase(SIterator src)
     return src;
 }
 
-const char* member(std::string_view subst, const std::string& str)
+export const char* member(std::string_view subst, const std::string& str)
 {
     std::string::size_type pos = str.find(subst, 0);
     return (pos == std::string::npos) ? nullptr : &str[pos];

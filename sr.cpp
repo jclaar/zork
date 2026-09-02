@@ -19,6 +19,7 @@
 #include "objser.h"
 
 import Zork;
+import ZGlobals;
 
 typedef std::vector<int> SV;
 typedef SV::iterator SVI;

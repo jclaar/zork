@@ -1,5 +1,4 @@
 export module Zork;
-export import :Globals;
 export import :Util;
 export import :Defs;
 export import :Strings;
@@ -15,4 +14,3 @@ export import :CEvent;
 export import :Roomfns;
 export import :Makstr;
 export import :Melee;
-export import :Funcs;

@@ -9,6 +9,8 @@
 #include "adv.h"
 
 import Zork;
+import ZFuncs;
+import ZGlobals;
 
 const char *brks = "\"' 	:.,?!\n";
 Orphans orphans;

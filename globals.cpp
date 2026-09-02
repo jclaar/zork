@@ -3,9 +3,9 @@ module;
 #include "globals.h"
 #include "object.h"
 
-export module Zork:Globals;
-import std;
-import :Defs;
+export module ZGlobals;
+//import std;
+//import :Defs;
 
 export std::string inbuf;
 export std::string inbuf1;

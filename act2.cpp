@@ -13,7 +13,7 @@ module;
 export module Zork:Act2;
 import :Zstring;
 import :Act1;
-import :Funcs;
+import ZFuncs;
 
 using namespace std::string_view_literals;
 

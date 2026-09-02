@@ -3,7 +3,7 @@ module;
 #include "globals.h"
 export module Zork:Tell;
 import std;
-import :Globals;
+import ZGlobals;
 
 export constexpr std::uint32_t long_tell = 0x40000000;
 export constexpr std::uint32_t pre_crlf = 0x00000002;

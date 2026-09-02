@@ -9,7 +9,7 @@ module;
 #include "ZorkException.h"
 
 export module Zork:Makstr;
-import :Globals;
+import ZGlobals;
 
 namespace
 {

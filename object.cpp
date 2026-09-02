@@ -11,6 +11,7 @@
 #include "parser.h"
 
 import Zork;
+import ZGlobals;
 
 struct ObjectDefinition {
     StringList syns;

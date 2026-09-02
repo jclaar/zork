@@ -15,6 +15,7 @@
 
 import Zork;
 import ZActions;
+import ZGlobals;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {

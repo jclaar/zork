@@ -14,13 +14,13 @@ export module Zork:Act1;
 import :Memq;
 import :Defs;
 import :Zstring;
-import :Globals;
+import ZGlobals;
 import :CEvent;
 import :Tell;
 import :Util;
 import :Makstr;
 import :Melee;
-import :Funcs;
+import ZFuncs;
 
 namespace
 {
