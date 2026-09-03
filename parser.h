@@ -47,14 +47,7 @@ public:
     PROP(oname);
 
     const ObjectP& oslot1() const { return _oslot1; }
-    void oslot1(const OrphanSlotType& a) {
-        static_assert(std::variant_size<OrphanSlotType>() == 3);
-        std::visit(overload{
-            [&](const ObjectP& op) { _oslot1 = op; },
-            [&](const PhraseP& pp) { _oslot1 = pp->obj(); },
-            [&](auto p) { _oslot1.reset(); }
-            }, a);
-    }
+    void oslot1(const OrphanSlotType& a);
 
     PROP(oslot2);
 
@@ -68,26 +61,8 @@ private:
 };
 
 
-inline ParseVecVal as_pvv(const ParseAval& pv)
-{
-    return std::visit(overload{
-            [](const ActionP& ap) { return ParseVecVal(ap); },
-            [](const VerbP& vp) { return ParseVecVal(vp); },
-            [](const ObjectP& op) { return ParseVecVal(op); },
-            [](const PhraseP& pp) { return ParseVecVal(pp); },
-            [](direction d) { return ParseVecVal(d); },
-            [](auto unused) { return ParseVecVal(); }
-        }, pv);
-}
-
-inline OrphanSlotType as_ost(ParseVecVal pv)
-{
-    return std::visit(overload{
-        [](const ObjectP& op) { return OrphanSlotType(op); },
-        [](const PhraseP& pp) { return OrphanSlotType(pp); },
-        [](auto unused) { return OrphanSlotType(); }
-        }, pv);
-}
+ParseVecVal as_pvv(const ParseAval& pv);
+OrphanSlotType as_ost(ParseVecVal pv);
 
 inline direction as_dir(const ParseVecVal& a)
 {

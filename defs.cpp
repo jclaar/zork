@@ -7,6 +7,16 @@ export module ZDefs;
 export int no_tell = 0;
 export int eg_score = 0;
 
+export template <typename T0, typename... Ts>
+bool is_empty(const std::variant<T0, Ts...>& v)
+{
+    return std::holds_alternative<std::monostate>(v);
+}
+
+// For variant stuff.
+export template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
+export template<class... Ts> overload(Ts...)->overload<Ts...>;
+
 export std::string operator+(std::string_view s1, std::string_view s2)
 {
     std::string ss1(s1);

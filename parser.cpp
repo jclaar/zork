@@ -1571,3 +1571,32 @@ Iterator<ParseVec> memq(const ObjectP& o, ParseVec pv)
     return i;
 }
 
+void Orphans::oslot1(const OrphanSlotType& a) {
+    static_assert(std::variant_size<OrphanSlotType>() == 3);
+    std::visit(overload{
+        [&](const ObjectP& op) { _oslot1 = op; },
+        [&](const PhraseP& pp) { _oslot1 = pp->obj(); },
+        [&](auto p) { _oslot1.reset(); }
+        }, a);
+}
+
+ParseVecVal as_pvv(const ParseAval& pv)
+{
+    return std::visit(overload{
+            [](const ActionP& ap) { return ParseVecVal(ap); },
+            [](const VerbP& vp) { return ParseVecVal(vp); },
+            [](const ObjectP& op) { return ParseVecVal(op); },
+            [](const PhraseP& pp) { return ParseVecVal(pp); },
+            [](direction d) { return ParseVecVal(d); },
+            [](auto unused) { return ParseVecVal(); }
+        }, pv);
+}
+
+OrphanSlotType as_ost(ParseVecVal pv)
+{
+    return std::visit(overload{
+        [](const ObjectP& op) { return OrphanSlotType(op); },
+        [](const PhraseP& pp) { return OrphanSlotType(pp); },
+        [](auto unused) { return OrphanSlotType(); }
+        }, pv);
+}

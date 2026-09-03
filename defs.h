@@ -9,10 +9,6 @@
 #include "FlagSupport.h"
 #include "rapplic.h"
 
-// For variant stuff.
-template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
-template<class... Ts> overload(Ts...)->overload<Ts...>;
-
 // Handy macro to define a property using the deducing this support in C++23.
 #define PROP(p) auto && p(this auto && self) noexcept \
  { \
@@ -135,12 +131,6 @@ enum class direction
 
 typedef std::array <AdvP, std::to_underlying(e_oactor::none)> AdvArray;
 
-
-template <typename T0, typename... Ts>
-bool is_empty(const std::variant<T0, Ts...> &v)
-{
-    return std::holds_alternative<std::monostate>(v);
-}
 
 
 // Flags in vword of a varg
