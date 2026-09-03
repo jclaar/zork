@@ -74,7 +74,7 @@ add_executable(zork)
 
 target_sources(zork PRIVATE
 	act4.h
-	adv.h adv.cpp
+	adv.h
 	cevent.h
 	defs.h
 	dung.h dung.cpp
@@ -118,7 +118,8 @@ target_sources(zork PRIVATE
 		makstr.cpp
         "tell.cpp"
         util.cpp
-        melee.cpp)
+        melee.cpp
+        adv.cpp)
 
 set_target_properties(zork PROPERTIES
     CXX_MODULE_STD ON

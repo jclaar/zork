@@ -16,6 +16,7 @@ import ZUtil;
 import ZMakstr;
 import ZActions;
 import ZEvent;
+import ZAdv;
 
 namespace
 {

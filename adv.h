@@ -7,7 +7,7 @@ enum class AdvBits
     astaggered,
     anumbits
 };
-typedef Flags<AdvBits, std::to_underlying(AdvBits::anumbits)> AdvBitset;
+using AdvBitset = Flags<AdvBits, std::to_underlying(AdvBits::anumbits)>;
 
 class Adv
 {
@@ -82,9 +82,9 @@ private:
     AdvBitset _flags;
 };
 
-bool atrnn(const AdvP& adv, AdvBits b);
-void atrz(const AdvP& adv, AdvBits b);
-void atro(const AdvP& adv, AdvBits b);
+//bool atrnn(const AdvP& adv, AdvBits b);
+//void atrz(const AdvP& adv, AdvBits b);
+//void atro(const AdvP& adv, AdvBits b);
 
 void add_actor(e_oactor actor_name, const RoomP &room, 
     const ObjectP &obj, rapplic action, int strength);
@@ -93,9 +93,3 @@ AdvArray &actors();
 const AdvP& player();
 
 // Actor functions
-namespace actor_funcs
-{
-    RAPPLIC(master_actor);
-    RAPPLIC(dead_function);
-    RAPPLIC(robot_actor);
-}

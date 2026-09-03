@@ -111,3 +111,11 @@ EHACKFN(sword_glow);
 EHACKFN(fighting);
 ERAPPLIC(diagnose);
 
+
+// Actors
+namespace actor_funcs
+{
+    ERAPPLIC(master_actor);
+    ERAPPLIC(dead_function);
+    ERAPPLIC(robot_actor);
+}
