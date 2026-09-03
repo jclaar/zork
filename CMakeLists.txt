@@ -95,7 +95,7 @@ target_sources(zork PRIVATE
 	sr.h sr.cpp
 	strings.h
 	version.h
-	ZorkException.h
+	
     zorkfwd.h
 
 	PUBLIC
@@ -119,7 +119,7 @@ target_sources(zork PRIVATE
         "tell.cpp"
         util.cpp
         melee.cpp
-        adv.cpp)
+        adv.cpp "ZorkException.cpp")
 
 set_target_properties(zork PROPERTIES
     CXX_MODULE_STD ON

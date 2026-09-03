@@ -11,9 +11,9 @@
 #include "act4.h"
 #include "adv.h"
 #include "parser.h"
-#include "ZorkException.h"
 
 import Zork;
+import ZException;
 import ZActions;
 import ZGlobals;
 import ZMakstr;

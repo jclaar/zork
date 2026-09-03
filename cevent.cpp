@@ -3,7 +3,6 @@ module;
 #include "act4.h"
 #include "cevent.h"
 #include "objfns.h"
-#include "ZorkException.h"
 
 export module ZEvent;
 import std;

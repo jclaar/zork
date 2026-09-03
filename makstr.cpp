@@ -6,10 +6,10 @@ module;
 #include "dung.h"
 #include "makstr.h"
 #include "parser.h"
-#include "ZorkException.h"
 
 export module ZMakstr;
 import ZGlobals;
+import ZException;
 
 namespace
 {

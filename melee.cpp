@@ -5,7 +5,6 @@ module;
 #include "parser.h"
 #include "makstr.h"
 #include "cevent.h"
-#include "ZorkException.h"
 #include "rapplic.h"
 
 export module ZMelee;

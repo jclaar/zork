@@ -3,7 +3,6 @@
 
 #include <ostream>
 #include <string_view>
-#include "ZorkException.h"
 #include "globals.h"
 
 #ifdef _MSC_VER
@@ -125,7 +124,7 @@ public:
         if (total_dist < 0 || total_dist >(int) c->size())
         {
             // Note that c->end() is a valid pointer.
-            error("Advanced outside of container boundaries");
+            throw std::runtime_error("Advanced outside of container boundaries");
         }
         std::advance(p, offset);
     }

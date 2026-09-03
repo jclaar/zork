@@ -7,7 +7,6 @@
 #include "adv.h"
 #include "makstr.h"
 #include "dung.h"
-#include "ZorkException.h"
 #include "parser.h"
 
 import ZGlobals;
@@ -16,6 +15,7 @@ import ZStrings;
 import ZZstring;
 import ZEvent;
 import ZAdv;
+import ZException;
 
 struct ObjectDefinition {
     StringList syns;
