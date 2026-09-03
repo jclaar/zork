@@ -260,3 +260,5 @@ inline bool openable(const ObjectP& op)
 }
 
 ObjectP& last_it();
+inline bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }
+inline bool operator==(const cpwall_val& cp, const ObjectP& o) { return o == cp; }
