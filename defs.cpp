@@ -1,8 +1,7 @@
 module;
 #include "defs.h"
-#include "ZorkException.h"
 #include "object.h"
-#include "dung.h"
+#include "room.h"
 
 export module ZDefs;
 export int no_tell = 0;

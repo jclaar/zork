@@ -234,14 +234,6 @@ void synonym(const char *n1, T first, Args... args)
     synonym(n1, args...);
 }
 
-inline void dsynonym(const char *dir, const char *syn)
-{
-    auto iter = directions_pobl.find(dir);
-    if (iter == directions_pobl.end())
-        error("Invalid direction synonym added");
-    directions_pobl[syn] = iter->second;
-}
-
 template <typename T>
 void vsynonym(const char *verb, T syn)
 {
