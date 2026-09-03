@@ -99,3 +99,6 @@ export bool flaming(const ObjectP &obj)
     auto& f = obj->oflags();
     return f[Bits::flamebit] && f[Bits::onbit] && f[Bits::lightbit];
 }
+
+export bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
+export bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
