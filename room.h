@@ -25,7 +25,7 @@ private:
 class CExit
 {
 public:
-    typedef std::variant<FlagId, rapplic> FlagVar;
+    using FlagVar = std::variant<FlagId, rapplic>;
 
     CExit(FlagVar flag_name, std::string_view rmid, std::string_view desc = "", bool flag = false, ex_rapplic fn = nullptr) :
         _flid(flag_name),
