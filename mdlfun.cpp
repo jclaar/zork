@@ -9,9 +9,11 @@
 #include "dung.h"
 #include "rooms.h"
 #include "version.h"
-import Zork;
+//import Zork;
 import ZTell;
 import ZDefs;
+import ZUtil;
+import Zork;
 
 using namespace std::string_view_literals;
 

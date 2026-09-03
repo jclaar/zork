@@ -7,6 +7,7 @@ module;
 #include "parser.h"
 
 export module ZUtil;
+import std;
 import ZMemq;
 import ZTell;
 import ZGlobals;
@@ -19,6 +20,78 @@ const typename T::value_type& pick_one(const T& items)
     size_t idx = rand() % items.size();
     return items[idx];
 }
+
+export std::string username()
+{
+    const char* un;
+    return (un = getenv("USERNAME")) ? un :
+        (un = getenv("USER")) ? un :
+        "Occupant";
+}
+
+namespace
+{
+    std::array swu = { 0, 0, 0, 0, 0 };
+    std::array kwu = { 0, 0, 0, 0, 0 };
+    std::string str("     ");
+}
+
+export std::string pw(const std::string& uname, const std::string& key_value)
+{
+    std::string unm = uname;
+    std::string key = key_value;
+    using SIterator = std::string::iterator;
+    auto su = unm.begin();
+    auto sue = unm.end();
+    auto ku = key.begin();
+    auto kue = key.end();
+
+    auto fn = [&](SIterator s, SIterator su, SIterator k, SIterator ku) -> bool
+        {
+            while (1)
+            {
+                if (su == unm.end())
+                    return true;
+                if (k == key.end())
+                    k = key.begin();
+                if (s == unm.end())
+                    s = unm.begin();
+                *su = *s - 64;
+                *ku = *k - 64;
+                ++k;
+                ++s;
+                ++su;
+                ++ku;
+            }
+            return true;
+        };
+    fn(unm.begin(), su, key.begin(), ku);
+
+    // usum is the sum of all items in su % 8 + 8 * (sum of all items in ku % 8)
+    int usum = (std::accumulate(su, sue, 0) % 8) +
+        (std::accumulate(ku, kue, 0) * 8) * 8;
+
+    std::fill(str.begin(), str.end(), 0);
+
+    auto fn2 = [&](SIterator su, SIterator ku, SIterator str)
+        {
+            for (; su != unm.end(); ++su, ++ku, ++str)
+            {
+                int s = su[0], k = ku[0];
+                s = ((s ^ k) ^ usum) & 31;
+                usum = (usum + 1) % 32;
+                if (s > 26)
+                    s = s % 26;
+                if (s == 0)
+                    s = 1;
+                str[0] = (char)(s + 64);
+            }
+        };
+    fn2(su, ku, str.begin());
+
+    return str;
+}
+
 
 
 export const HackP &get_demon(const char *id)

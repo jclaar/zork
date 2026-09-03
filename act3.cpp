@@ -733,14 +733,6 @@ bool cpgoto(int fx)
     return true;
 }
 
-export std::string username()
-{
-    const char* un;
-    return (un = getenv("USERNAME")) ? un :
-        (un = getenv("USER")) ? un :
-        "Occupant";
-}
-
 namespace obj_funcs
 {
     bool canary_object::operator()() const

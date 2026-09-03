@@ -9,73 +9,20 @@ module;
 #include "objfns.h"
 
 export module Zork:Act4;
+import ZTell;
+import ZEvent;
+import ZActions;
+import ZGlobals;
+import ZFuncs;
 import ZMemq;
-import :Act3;
+import ZUtil;
+import ZRoomfns;
+import ZZstring;
+import ZMakstr;
+import :Act1;
 
 int mdir = 270;
 using LookToVal = std::variant<std::monostate, bool, const char*>;
-
-namespace
-{
-    std::array swu = { 0, 0, 0, 0, 0 };
-    std::array kwu = { 0, 0, 0, 0, 0 };
-    std::string str("     ");
-}
-
-export std::string pw(SIterator unm, SIterator key)
-{
-    auto su = Iterator(swu);
-    auto ku = Iterator(kwu);
-    SIterator str = ::str;
-    int usum;
-
-    auto fn = [&](SIterator s, Iterator<decltype(swu)> su, SIterator k, Iterator<decltype(kwu)> ku) -> bool
-        {
-            while (1)
-            {
-                if (empty(su))
-                    return true;
-                if (empty(k))
-                    k = key;
-                if (empty(s))
-                    s = unm;
-                su[0] = s[0] - 64;
-                ku[0] = k[0] - 64;
-                k = rest(k);
-                s = rest(s);
-                su = rest(su);
-                ku = rest(ku);
-            }
-            return true;
-        };
-    fn(unm, su, key, ku);
-
-    // usum is the sum of all items in su % 8 + 8 * (sum of all items in ku % 8)
-    usum = (std::accumulate(su.begin(), su.end(), 0) % 8) +
-        (std::accumulate(ku.begin(), ku.end(), 0) * 8) * 8;
-
-    std::fill(str.begin(), str.end(), 0);
-
-    auto fn2 = [&usum](Iterator<decltype(swu)> su, Iterator<decltype(kwu)> ku, SIterator str)
-        {
-            _ASSERT(su.size() == ku.size());
-            _ASSERT(su.size() == str.size());
-            for (; !empty(su); su = rest(su), ku = rest(ku), str = rest(str))
-            {
-                int s = su[0], k = ku[0];
-                s = ((s ^ k) ^ usum) & 31;
-                usum = (usum + 1) % 32;
-                if (s > 26)
-                    s = s % 26;
-                if (s == 0)
-                    s = 1;
-                str[0] = (char)(s + 64);
-            }
-        };
-    fn2(su, ku, str);
-
-    return str;
-}
 
 namespace
 {
@@ -258,7 +205,7 @@ namespace
             }
             else if (incant_ok && flags[FlagId::end_game_flag])
             {
-                w2 = pw(SIterator(unm), SIterator(w1));
+                w2 = pw(unm, w1);
                 tell("A hollow voice replies: \"", 0, w1, " ");
                 tell(w2, 1, "\".");
                 spell_flag.swap(w1);
@@ -268,8 +215,8 @@ namespace
                 tell("That spell has no obvious effect.");
             }
         }
-        else if (w1 == pw(SIterator(unm), SIterator(w2)) ||
-            w2 == pw(SIterator(unm), SIterator(w1)))
+        else if (w1 == pw(unm, w2) ||
+            w2 == pw(unm, w1))
         {
             tell("As the last syllable of your spell fades into silence, darkness\n"
                 "envelops you, and the earth shakes briefly.  Then all is quiet.");
