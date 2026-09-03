@@ -24,6 +24,7 @@ import ZActions;
 import ZDefs;
 import ZMelee;
 import ZRoomfns;
+import ZAdv;
 
 namespace
 {

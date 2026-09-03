@@ -15,6 +15,7 @@ import ZMakstr;
 import ZStrings;
 import ZZstring;
 import ZEvent;
+import ZAdv;
 
 struct ObjectDefinition {
     StringList syns;

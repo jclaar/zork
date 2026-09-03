@@ -82,14 +82,3 @@ private:
     AdvBitset _flags;
 };
 
-//bool atrnn(const AdvP& adv, AdvBits b);
-//void atrz(const AdvP& adv, AdvBits b);
-//void atro(const AdvP& adv, AdvBits b);
-
-void add_actor(e_oactor actor_name, const RoomP &room, 
-    const ObjectP &obj, rapplic action, int strength);
-AdvArray &actors();
-
-const AdvP& player();
-
-// Actor functions

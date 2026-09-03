@@ -27,6 +27,7 @@ import ZInfo;
 import ZZstring;
 import ZActions;
 import ZEvent;
+import ZAdv;
 
 using namespace std::string_view_literals;
 

@@ -11,6 +11,7 @@ import std;
 import ZMemq;
 import ZTell;
 import ZGlobals;
+import ZAdv;
 
 export bool always_lit = false;
 

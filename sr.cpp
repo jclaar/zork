@@ -24,6 +24,7 @@ import ZTell;
 import ZDefs;
 import ZActions;
 import ZEvent;
+import ZAdv;
 
 typedef std::vector<int> SV;
 typedef SV::iterator SVI;
