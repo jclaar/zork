@@ -15,18 +15,6 @@
 #define _ASSERT assert
 #endif
 
-// Bits for tell
-
-// Various MDL functions mapped to C++ equivalents
-//inline char *back(char *s, size_t count) { return s - count; }
-//std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest);
-//char *substruc(const char *src, size_t start, size_t end, char *dest);
-//inline const char *member(std::string_view subst, const std::string &str)
-//{
-//    std::string::size_type pos = str.find(subst, 0);
-//    return (pos == std::string::npos) ? nullptr : &str[pos];
-//}
-
 // Class to support iterating through a container. 
 // Mainly useful for supporting REST and BACK.
 template <typename T>
