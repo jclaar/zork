@@ -48,69 +48,34 @@ private:
     bool _cdeath = false;
 };
 
-enum class Event
-{
-    broin,
-    cycin,
-    sldin,
-    xbin,
-    xcin,
-    xbhin,
-    forin,
-    curin,
-    mntin,
-    lntin,
-    matin,
-    cndin,
-    bint,
-    brnin,
-    fusin,
-    ledin,
-    safin,
-    vlgin,
-    gnoin,
-    bckin,
-    sphin,
-    sclin,
-    egher,
-    zgnin,
-    zglin,
-    folin,
-    mrint,
-    pinin,
-    inqin,
-    strte,
-    numevs
-};
-
 // Handy macros to just refer to events by their names.
-#define broin ev[Event::broin]
-#define cycin ev[Event::cycin]
-#define sldin ev[Event::sldin]
-#define xbin ev[Event::xbin]
-#define xcin ev[Event::xcin]
-#define xbhin ev[Event::xbhin]
-#define forin ev[Event::forin]
-#define curin ev[Event::curin]
-#define mntin ev[Event::mntin]
-#define lntin ev[Event::lntin]
-#define matin ev[Event::matin]
-#define cndin ev[Event::cndin]
-#define bint ev[Event::bint]
-#define brnin ev[Event::brnin]
-#define fusin ev[Event::fusin]
-#define ledin ev[Event::ledin]
-#define safin ev[Event::safin]
-#define vlgin ev[Event::vlgin]
-#define gnoin ev[Event::gnoin]
-#define bckin ev[Event::bckin]
-#define sphin ev[Event::sphin]
-#define sclin ev[Event::sclin]
-#define egher ev[Event::egher]
-#define zgnin ev[Event::zgnin]
-#define zglin ev[Event::zglin]
-#define folin ev[Event::folin]
-#define mrint ev[Event::mrint]
-#define pinin ev[Event::pinin]
-#define inqin ev[Event::inqin]
-#define strte ev[Event::strte]
+#define broin ev[Event::ebroin]
+#define cycin ev[Event::ecycin]
+#define sldin ev[Event::esldin]
+#define xbin ev[Event::exbin]
+#define xcin ev[Event::excin]
+#define xbhin ev[Event::exbhin]
+#define forin ev[Event::eforin]
+#define curin ev[Event::ecurin]
+#define mntin ev[Event::emntin]
+#define lntin ev[Event::elntin]
+#define matin ev[Event::ematin]
+#define cndin ev[Event::ecndin]
+#define bint ev[Event::ebint]
+#define brnin ev[Event::ebrnin]
+#define fusin ev[Event::efusin]
+#define ledin ev[Event::eledin]
+#define safin ev[Event::esafin]
+#define vlgin ev[Event::evlgin]
+#define gnoin ev[Event::egnoin]
+#define bckin ev[Event::ebckin]
+#define sphin ev[Event::esphin]
+#define sclin ev[Event::esclin]
+#define egher ev[Event::eegher]
+#define zgnin ev[Event::ezgnin]
+#define zglin ev[Event::ezglin]
+#define folin ev[Event::efolin]
+#define mrint ev[Event::emrint]
+#define pinin ev[Event::epinin]
+#define inqin ev[Event::einqin]
+#define strte ev[Event::estrte]

@@ -10,11 +10,47 @@ import ZRoomfns;
 import ZActions;
 import ZGlobals;
 
+export enum class Event
+{
+    ebroin,
+    ecycin,
+    esldin,
+    exbin,
+    excin,
+    exbhin,
+    eforin,
+    ecurin,
+    emntin,
+    elntin,
+    ematin,
+    ecndin,
+    ebint,
+    ebrnin,
+    efusin,
+    eledin,
+    esafin,
+    evlgin,
+    egnoin,
+    ebckin,
+    esphin,
+    esclin,
+    eegher,
+    ezgnin,
+    ezglin,
+    efolin,
+    emrint,
+    epinin,
+    einqin,
+    estrte,
+    enumevs
+};
+
+
 export CEventP sphere_clock;
 
-class CEventContainer : private std::array<CEventP, std::to_underlying(Event::numevs)>
+class CEventContainer : private std::array<CEventP, std::to_underlying(Event::enumevs)>
 {
-    using Base = std::array<CEventP, std::to_underlying(Event::numevs)>;
+    using Base = std::array<CEventP, std::to_underlying(Event::enumevs)>;
 public:
     using Base::begin;
     using Base::end;
