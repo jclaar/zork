@@ -109,7 +109,7 @@ target_sources(zork PRIVATE
 
 	PUBLIC
 	FILE_SET modules TYPE CXX_MODULES FILES
-	    ZorkException.decl.cpp
+	    "ZorkException.ixx"
 )
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
