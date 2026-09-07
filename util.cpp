@@ -1,3 +1,4 @@
+import ZException;
 #include "util.h"
 #include "adv.h"
 #include "funcs.h"

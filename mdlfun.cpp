@@ -1,6 +1,7 @@
 // mdlfun.cpp : Defines the entry point for the console application.
 //
 
+import ZException;
 #include <boost/process.hpp>
 #include <boost/dll.hpp>
 #include <string>

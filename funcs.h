@@ -3,7 +3,6 @@
 
 #include <ostream>
 #include <string_view>
-#include "ZorkException.h"
 #include "globals.h"
 
 #ifdef _MSC_VER

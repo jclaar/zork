@@ -1,3 +1,4 @@
+import ZException;
 #include <map>
 #include <set>
 #ifdef _DEBUG
@@ -16,7 +17,6 @@
 #include "melee.h"
 #include "adv.h"
 #include "parser.h"
-#include "ZorkException.h"
 #include "roomfns.h"
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)

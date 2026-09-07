@@ -1,3 +1,4 @@
+import ZException;
 #include <iostream>
 #include "funcs.h"
 #include "globals.h"

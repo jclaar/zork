@@ -1,3 +1,4 @@
+import ZException;
 #include "memq.h"
 
 bool memq(const ObjectP &op, Iterator<ObjVector> ol)

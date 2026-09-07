@@ -1,3 +1,4 @@
+import ZException;
 #include <algorithm>
 #include "act1.h"
 #include "act2.h"
@@ -7,7 +8,6 @@
 #include "melee.h"
 #include "objfns.h"
 #include "roomfns.h"
-#include "ZorkException.h"
 #include <tuple>
 
 CEventP sphere_clock;

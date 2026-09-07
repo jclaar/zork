@@ -1,3 +1,4 @@
+import ZException;
 #include <algorithm>
 #include "object.h"
 #include "globals.h"
@@ -10,7 +11,6 @@
 #include "adv.h"
 #include "makstr.h"
 #include "dung.h"
-#include "ZorkException.h"
 struct ObjectDefinition {
     StringList syns;
     StringList adj;

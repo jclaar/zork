@@ -1,10 +1,10 @@
+import ZException;
 #include <array>
 #include "act4.h"
 #include "rooms.h"
 #include "dung.h"
 #include "makstr.h"
 #include "parser.h"
-#include "ZorkException.h"
 
 namespace
 {

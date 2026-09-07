@@ -1,7 +1,7 @@
+import ZException;
 #include <algorithm>
 #include <sstream>
 #include "defs.h"
-#include "ZorkException.h"
 #include "object.h"
 #include "dung.h"
 

@@ -1,3 +1,4 @@
+import ZException;
 #include "defs.h"
 #include "parser.h"
 #include "dung.h"

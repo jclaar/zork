@@ -1,3 +1,5 @@
+import ZException;
+
 #include "adv.h"
 
 namespace

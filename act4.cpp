@@ -1,3 +1,4 @@
+import ZException;
 #include <numeric>
 #include "defs.h"
 #include "funcs.h"

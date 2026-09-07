@@ -1,3 +1,5 @@
+import ZException;
+
 #include "globals.h"
 #include "object.h"
 
