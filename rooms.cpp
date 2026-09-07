@@ -1,4 +1,5 @@
 import ZException;
+import ZInfo;
 #include <iostream>
 #include <sstream>
 #include <chrono>
@@ -18,7 +19,6 @@ import ZException;
 #include "globals.h"
 #include "funcs.h"
 #include "cevent.h"
-#include "info.h"
 #include "memq.h"
 
 using namespace std::string_view_literals;

@@ -87,7 +87,7 @@ target_sources(zork PRIVATE
 	funcs.h funcs.cpp
 	globals.h globals.cpp
 	gobject.h 
-	info.h info.cpp
+	 
 	makstr.h makstr.cpp
 	mdlfun.cpp
 	melee.h melee.cpp
@@ -110,7 +110,7 @@ target_sources(zork PRIVATE
 	PUBLIC
 	FILE_SET modules TYPE CXX_MODULES FILES
 	    "ZorkException.ixx"
-)
+ "info.ixx")
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
