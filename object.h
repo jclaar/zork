@@ -10,7 +10,6 @@
 #include <bitset>
 #include "funcs.h"
 #include "defs.h"
-#include "strings.h"
 #include "cevent.h"
 
 typedef std::initializer_list<const char*> StringList;

@@ -6,7 +6,6 @@ import ZException;
 #include "cevent.h"
 #include "util.h"
 #include "objfns.h"
-#include "strings.h"
 #include "zstring.h"
 #include "adv.h"
 #include "makstr.h"

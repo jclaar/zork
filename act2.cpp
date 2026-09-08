@@ -1,4 +1,5 @@
 import ZException;
+import ZStrings;
 #include "act1.h"
 #include "act2.h"
 #include "cevent.h"

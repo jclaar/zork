@@ -1,4 +1,5 @@
 import ZException;
+import ZStrings;
 #include "memq.h"
 
 bool memq(const ObjectP &op, Iterator<ObjVector> ol)

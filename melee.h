@@ -2,7 +2,6 @@
 
 #include <optional>
 #include "defs.h"
-#include "strings.h"
 
 // 0 -- attacker misses
 // 1 --defender unconscious

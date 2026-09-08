@@ -101,7 +101,7 @@ target_sources(zork PRIVATE
 	roomfns.h roomfns.cpp
 	rooms.h rooms.cpp
 	sr.h sr.cpp
-	strings.h strings.cpp
+	 
 	util.h util.cpp
 	version.h
 	zstring.h zstring.cpp
@@ -110,7 +110,7 @@ target_sources(zork PRIVATE
 	PUBLIC
 	FILE_SET modules TYPE CXX_MODULES FILES
 	    "ZorkException.ixx"
- "info.ixx")
+ "info.ixx" "strings.ixx" "memq.ixx")
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)

@@ -1,4 +1,5 @@
 import ZException;
+import ZStrings;
 #include <algorithm>
 #include <sstream>
 #include "defs.h"

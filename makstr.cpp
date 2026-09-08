@@ -1,4 +1,5 @@
 import ZException;
+import ZStrings;
 #include <array>
 #include "act4.h"
 #include "rooms.h"
