@@ -16,7 +16,6 @@ import ZException;
 #include <vector>
 #include "object.h"
 #include "cevent.h"
-#include "rooms.h"
 #include "objser.h"
 
 typedef std::vector<int> SV;

@@ -1,11 +1,13 @@
-#pragma once
-
-#include <string>
-#include <optional>
-#include <random>
-#include <any>
-#include <fstream>
+module;
 #include "defs.h"
+
+export module Zork:Rooms;
+import std;
+import ZDefs;
+import ZFuncs;
+import ZCevent;
+import :fwd;
+import :Room;
 
 // This exception is thrown when the user has quit or restart. 
 // This attempts to mimic the behavior of the QUIT MDL function,
@@ -25,14 +27,14 @@ private:
 extern RoomP here;
 extern rapplic dead_player;
 extern direction fromdir;
-extern const AdvP *winner;
+extern const AdvP* winner;
 extern int raw_score;
 extern int moves;
 extern std::list<HackP> demons;
 
-const CEventP &clock_int(const CEventP &cev, std::optional<int> num  = std::nullopt, bool flag = false);
-bool clock_disable(const CEventP &cev);
-bool clock_enable(const CEventP &cev);
+const CEventP& clock_int(const CEventP& cev, std::optional<int> num = std::nullopt, bool flag = false);
+bool clock_disable(const CEventP& cev);
+bool clock_enable(const CEventP& cev);
 
 struct ParseCont
 {
@@ -52,43 +54,43 @@ private:
 };
 typedef std::shared_ptr<ParseCont> ParseContP;
 const int lexsize = 30;
-typedef std::array<ParseContP, lexsize> ParseContV;
+using ParseContV = std::array<ParseContP, lexsize>;
 
 extern Iterator<ParseContV> parse_cont;
 
 std::string unspeakable_code();
 std::string_view remarkably_disgusting_code();
 void start(std::string_view rm, std::string_view st);
-void save_it(bool start = true);
+export void save_it(bool start = true);
 void contin(bool foo = false);
-bool goto_(const RoomP &rm, const AdvP &win = *winner);
+bool goto_(const RoomP& rm, const AdvP& win = *winner);
 bool object_action();
-bool long_desc_obj(const ObjectP &obj, int full = 1, bool fullq = false, bool first = false);
-bool find_frob(const ObjList &objl, std::string_view str1, std::string_view str2, std::string_view str3);
+bool long_desc_obj(const ObjectP& obj, int full = 1, bool fullq = false, bool first = false);
+bool find_frob(const ObjList& objl, std::string_view str1, std::string_view str2, std::string_view str3);
 bool kill_cints();
-void print_contents(const ObjList &olst);
-void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &win, SIterator indent, bool cse = true);
+void print_contents(const ObjList& olst);
+void print_cont(const ObjectP& obj, const ObjectP& av, const ObjectP& win, SIterator indent, bool cse = true);
 bool quit();
-void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
+export void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
 // recout's quit parameter can be a boolean or a string. If it's a string,
 // print that instead of Quit or Died.
 typedef std::variant<bool, std::string_view> RecOutQuit;
-void record(int score, int moves, int deaths, RecOutQuit quit, const RoomP &loc);
-inline void record(int score, int movs, int deaths, const char *quit, RoomP loc)
+void record(int score, int moves, int deaths, RecOutQuit quit, const RoomP& loc);
+inline void record(int score, int movs, int deaths, const char* quit, RoomP loc)
 {
     record(score, movs, deaths, std::string(quit), loc);
 }
-void recout(int score, int moves, int deaths, const RecOutQuit &quit, const RoomP &loc);
-void score_room(const RoomP &rm);
-void mung_room(const RoomP &rm, std::string_view str);
+void recout(int score, int moves, int deaths, const RecOutQuit& quit, const RoomP& loc);
+void score_room(const RoomP& rm);
+void mung_room(const RoomP& rm, std::string_view str);
 RAPPLIC(room_desc);
 bool jigs_up(std::string_view desc, bool player = false);
 void score_upd(int num);
 void score_bless();
 bool nogo(std::string_view str, direction dir);
-int weight(const ObjList &objl);
-void score_obj(const ObjectP &obj);
-const RoomP &get_door_room(const RoomP &rm, const DoorExitPtr &leavings);
+int weight(const ObjList& objl);
+void score_obj(const ObjectP& obj);
+const RoomP& get_door_room(const RoomP& rm, const DoorExitPtr& leavings);
 bool valchk(const std::any& flg, const ObjectP& obj, Iterator<ObjVector> allbut);
 
 RAPPLIC_DEF(takefn, bool, true);
@@ -151,17 +153,17 @@ RAPPLIC(walk);
 
 namespace obj_funcs
 {
-    bool valuables_c_(std::any everything, const Iterator<ObjVector> &allbut);
+    bool valuables_c_(std::any everything, const Iterator<ObjVector>& allbut);
 }
 
-inline bool rtrnn(const RoomP &p, RoomBit bits)
+inline bool rtrnn(const RoomP& p, RoomBit bits)
 {
     return p->rbits().test(bits);
 }
 
 // Returns true if any bit in the room bits is set.
 template <typename... Args>
-bool rtrnn(const RoomP &p, RoomBit first, Args... bits)
+bool rtrnn(const RoomP& p, RoomBit first, Args... bits)
 {
     if (rtrnn(p, first))
         return true;
@@ -169,7 +171,7 @@ bool rtrnn(const RoomP &p, RoomBit first, Args... bits)
 }
 
 template <typename T, typename... Args>
-bool rtrz(const RoomP &p, T first, Args... bits)
+bool rtrz(const RoomP& p, T first, Args... bits)
 {
     rtrz(p, first);
     rtrz(p, bits...);

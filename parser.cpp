@@ -3,7 +3,6 @@ import ZException;
 #include "parser.h"
 #include "object.h"
 #include "util.h"
-#include "rooms.h"
 #include "memq.h"
 
 const char *brks = "\"' 	:.,?!\n";

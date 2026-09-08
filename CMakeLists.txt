@@ -74,11 +74,10 @@ link_directories(${Boost_LIBRARY_DIRS})
 add_executable(zork)
 
 target_sources(zork PRIVATE
-	act1.h act1.cpp
-	act2.h act2.cpp
-	act3.h act3.cpp
-	act4.h act4.cpp
-	adv.h 
+	act1.h
+	act2.h
+	act3.h 
+	act4.h
 	cevent.h
 	
 	defs.h 
@@ -86,29 +85,23 @@ target_sources(zork PRIVATE
 	
 	gobject.h 
 	 
-	 makstr.cpp
 	mdlfun.cpp
-	memq.h memq.cpp
+	memq.h
 	objdefs.h
-	object.h
 	 objser.h
-	parser.h parser.cpp
-	room.h 
 	roomdefs.h
-	rooms.h rooms.cpp
 	speech.h
-	sr.h sr.cpp
+	sr.h
 	 
-	util.h util.cpp
+	util.h
 	version.h
-	zstring.h zstring.cpp
 	ZorkException.cpp
 
 	PUBLIC
 	FILE_SET modules TYPE CXX_MODULES FILES
 	    "ZorkException.ixx" "FlagSupport.ixx"
  "info.ixx" "strings.ixx" "memq.ixx" "defs.ixx" "roomfns.ixx" "globals.ixx" "speech.ixx" "funcs.ixx" "cevent.ixx" "objfns.ixx" "makstr.ixx" "object.ixx" "room.ixx" "zork_fwd.ixx" "melee.ixx" "zork.ixx" "dung.ixx"
-"adv.ixx")
+"adv.ixx" "act1.ixx" "act2.ixx" "act3.ixx" "act4.ixx" "rooms.ixx" "parser.ixx" "util.ixx" "sr.ixx" "zstring.ixx")
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)

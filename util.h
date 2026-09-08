@@ -10,7 +10,6 @@
 #endif
 
 #include "defs.h"
-#include "rooms.h"
 
 extern bool always_lit;
 

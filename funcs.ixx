@@ -97,7 +97,7 @@ export const char* member(std::string_view subst, const std::string& str)
 
 // Class to support iterating through a container. 
 // Mainly useful for supporting REST and BACK.
-template <typename T>
+export template <typename T>
 class Iterator
 {
 public:

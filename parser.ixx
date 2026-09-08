@@ -1,13 +1,17 @@
-#pragma once
+module;
+#include "defs.h"
 
-#include "object.h"
-#include "rooms.h"
+export module Zork:Parser;
+import std;
+import :fwd;
+import :Rooms;
+import :Dungeon;
 
 // Possible levels of false returns from parser.
 typedef std::pair<ObjectP, int> Nefals;
 extern Nefals nefals;
 extern Nefals nefals2;
-inline bool operator==(const Nefals &ne, const ObjectP &obj)
+inline bool operator==(const Nefals& ne, const ObjectP& obj)
 {
     return ne.first == obj;
 }
@@ -29,7 +33,7 @@ inline ParseVec put(ParseVec a, int index, std::nullptr_t)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, const ObjectP &o)
+inline ParseVec put(ParseVec a, int index, const ObjectP& o)
 {
     if (o)
         a[index] = o;
@@ -44,7 +48,7 @@ inline ParseVec put(ParseVec a, int index, direction d)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, const VerbP &v)
+inline ParseVec put(ParseVec a, int index, const VerbP& v)
 {
     if (v)
         a[index] = v;
@@ -59,7 +63,7 @@ inline ParseVec put(ParseVec a, int index, ParseVecVal an)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, const ActionP &v)
+inline ParseVec put(ParseVec a, int index, const ActionP& v)
 {
     if (v)
         a[index] = v;
@@ -68,7 +72,7 @@ inline ParseVec put(ParseVec a, int index, const ActionP &v)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, const PhraseP &p)
+inline ParseVec put(ParseVec a, int index, const PhraseP& p)
 {
     if (p)
         a[index] = p;
@@ -82,11 +86,11 @@ inline void put(Iterator<ObjVector> a, int index, ObjectP o)
     a[index] = o;
 }
 
-inline Iterator<ParseContV> member(const std::string &s, Iterator<ParseContV> pv)
+inline Iterator<ParseContV> member(const std::string& s, Iterator<ParseContV> pv)
 {
     while (pv.cur() != pv.end())
     {
-        const std::string &s1 = (*pv.cur())->s1;
+        const std::string& s1 = (*pv.cur())->s1;
         if (s1 == s)
             break;
         ++pv;
@@ -96,12 +100,12 @@ inline Iterator<ParseContV> member(const std::string &s, Iterator<ParseContV> pv
 
 extern ParseVec prsvec;
 extern PrepVec prepvec;
-inline const VerbP &prsa()
+inline const VerbP& prsa()
 {
     return std::get<VerbP>(prsvec[0]);
 }
 
-inline bool verbq(const char *al)
+inline bool verbq(const char* al)
 {
     bool rv = false;
     try
@@ -124,7 +128,7 @@ bool verbq(T first, Args... args)
     return verbq(args...);
 }
 
-inline void add_buncher(const char *b)
+inline void add_buncher(const char* b)
 {
     bunchers.push_front(find_verb(b));
 }
@@ -154,7 +158,7 @@ struct StuffVec
     ParseVec iparsevec;
 
     StuffVec() {}
-    StuffVec(const StuffVec &o)
+    StuffVec(const StuffVec& o)
     {
         iprepvec = o.iprepvec;
         iparsevec = o.iparsevec;
@@ -174,36 +178,35 @@ bool eparse(Iterator<ParseContV> pv, bool vb);
 
 // Generic class to return WIN from parse.
 class cwin
-{
-};
+{};
 
 typedef std::variant<std::monostate, cwin, ParseVec, bool> SParseVal;
 SParseVal sparse(Iterator<ParseContV> sv, bool vb);
-Nefals search_list(const std::string &objname, const ObjList &slist, const AdjectiveP &adj, bool first = true, const Globals &global = Globals());
-bool this_it(const std::string &objname, const ObjectP &obj, const AdjectiveP &adj, Globals global);
-Nefals get_object(const std::string &objnam, AdjectiveP adj);
-StuffVecP stuff_obj(const ObjectP &obj, const PrepP &prep, PrepVec prepvec, ParseVec pvr, bool vb);
-ObjectP get_last(const ObjList &l);
+Nefals search_list(const std::string& objname, const ObjList& slist, const AdjectiveP& adj, bool first = true, const Globals& global = Globals());
+bool this_it(const std::string& objname, const ObjectP& obj, const AdjectiveP& adj, Globals global);
+Nefals get_object(const std::string& objnam, AdjectiveP adj);
+StuffVecP stuff_obj(const ObjectP& obj, const PrepP& prep, PrepVec prepvec, ParseVec pvr, bool vb);
+ObjectP get_last(const ObjList& l);
 ObjectP get_it_obj();
 
-const Orphans &orphan(bool flag = false, const ActionP &action = nullptr, const OrphanSlotType &slot1 = std::monostate(), const PrepP &prep = PrepP(),
-    std::string_view name = "", const OrphanSlotType &slot2 = std::monostate());
-bool ortell(const VargP &varg, const ActionP &action, const ObjectP &gwim, OrphanSlotType slot2 = std::monostate());
-std::string lcify(const std::string &str, size_t len = std::string::npos);
+const Orphans& orphan(bool flag = false, const ActionP& action = nullptr, const OrphanSlotType& slot1 = std::monostate(), const PrepP& prep = PrepP(),
+    std::string_view name = "", const OrphanSlotType& slot2 = std::monostate());
+bool ortell(const VargP& varg, const ActionP& action, const ObjectP& gwim, OrphanSlotType slot2 = std::monostate());
+std::string lcify(const std::string& str, size_t len = std::string::npos);
 bool syn_match(ParseVec pv);
-bool syn_equal(const VargP &varg, const OrphanSlotType &pobj);
-bool take_it_or_leave_it(const SyntaxP &syn, ParseVec pv);
-bool take_it(const ObjectP &obj, VargP varg);
-bool orfeo(int slot, const VargP &syn, ParseVec objs);
-ObjectP gwim_slot(int fx, const VargP &varg, ParseVec &objs);
-Nefals gwim(const Flags<Bits, numbits> &bits, VargP fword);
-Nefals fwim(Bits b, const ObjList &objs, bool no_care);
-Nefals fwim(const Flags<Bits, numbits> &bits, const ObjList &objs, bool no_care);
+bool syn_equal(const VargP& varg, const OrphanSlotType& pobj);
+bool take_it_or_leave_it(const SyntaxP& syn, ParseVec pv);
+bool take_it(const ObjectP& obj, VargP varg);
+bool orfeo(int slot, const VargP& syn, ParseVec objs);
+ObjectP gwim_slot(int fx, const VargP& varg, ParseVec& objs);
+Nefals gwim(const Flags<Bits, numbits>& bits, VargP fword);
+Nefals fwim(Bits b, const ObjList& objs, bool no_care);
+Nefals fwim(const Flags<Bits, numbits>& bits, const ObjList& objs, bool no_care);
 bool do_take(ObjectP obj);
 std::string foostr(std::string nam, bool first = true, bool lc = false);
-std::string prstr(const std::string &sp);
-std::string prlcstr(const std::string &str);
-std::string prfunny(const WordP &prep);
+std::string prstr(const std::string& sp);
+std::string prlcstr(const std::string& str);
+std::string prfunny(const WordP& prep);
 
 void swap_em();
 

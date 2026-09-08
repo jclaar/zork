@@ -2,9 +2,9 @@ module;
 //#include "object.h"
 //#include "speech.h"
 
-export module ZMakstr;
+export module Zork:Makstr;
 import ZDefs;
-import Zork;
+import :Speech;
 import std;
 
 export enum class SpeechType
@@ -22,7 +22,7 @@ void add_question(const char* str, const std::initializer_list<QuestionValue>& v
 void add_demon(const HackP& x);
 
 PrepP find_prep(std::string_view prep);
-VerbP find_verb(std::string_view verb);
+export VerbP find_verb(std::string_view verb);
 const ActionP& find_action(std::string_view action);
 direction find_dir(const std::string& dir);
 

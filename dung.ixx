@@ -9,7 +9,7 @@ import :Object;
 import :fwd;
 import ZFuncs;
 import ZCevent;
-import ZMakstr;
+import :Makstr;
 import std;
 
 using WordsPobl = std::map<std::string, WordP, std::less<>>;
@@ -290,7 +290,7 @@ inline VerbP as_verb(const ParseVecVal& a)
 
 void dir_syns();
 
-void init_dung();
+export void init_dung();
 
 template <typename T>
 void synonym(const char* n1, T n2)

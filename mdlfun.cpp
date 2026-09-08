@@ -1,11 +1,12 @@
 // mdlfun.cpp : Defines the entry point for the console application.
 //
 
-import ZException;
 #include <boost/process.hpp>
 #include <boost/dll.hpp>
-#include <string>
-#include "rooms.h"
+
+import ZException;
+import ZFuncs;
+import Zork;
 #include "version.h"
 
 std::string pw(SIterator unm, SIterator key);
