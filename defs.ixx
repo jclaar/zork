@@ -5,6 +5,29 @@ import std;
 import ZFlagSupport;
 #include "defs.h"
 
+export enum class direction
+{
+    NullExit,
+    North,
+    South,
+    East,
+    West,
+    Launc,
+    Land,
+    Se,
+    Sw,
+    Ne,
+    Nw,
+    Up,
+    Down,
+    Enter,
+    Exit,
+    Leave,
+    Out,
+    Cross,
+    NumDirs
+};
+
 std::unique_ptr<std::ofstream> script_channel;
 
 // Output stream, supporting scripting.

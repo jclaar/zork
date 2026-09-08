@@ -33,28 +33,6 @@
 #define ERAPPLIC_DEF(x, type, def) export RAPPLIC_DEF(x, type, def)
 
 
-enum class direction
-{
-    NullExit,
-    North,
-    South,
-    East,
-    West,
-    Launc,
-    Land,
-    Se,
-    Sw,
-    Ne,
-    Nw,
-    Up,
-    Down,
-    Enter,
-    Exit,
-    Leave,
-    Out,
-    Cross,
-    NumDirs
-};
 
 #if 0
 class Object;

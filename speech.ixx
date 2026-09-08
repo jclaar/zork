@@ -25,7 +25,7 @@ enum class vword_flag
 };
 constexpr size_t numvbits = std::to_underlying(vword_flag::numvbits);
 
-class word
+export class word
 {
 public:
     word(std::string_view s) : _w(s) {}
@@ -43,7 +43,7 @@ public:
     prep_t(std::string_view s) : word(s) {}
 };
 
-typedef std::shared_ptr<prep_t> PrepP;
+export using PrepP = std::shared_ptr<prep_t>;
 
 class buzz : public word
 {
@@ -60,7 +60,7 @@ using AdjectiveP = std::shared_ptr<adjective>;
 inline bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
 inline bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
 
-typedef std::shared_ptr<word> WordP;
+export using WordP = std::shared_ptr<word>;
 
 
 struct _varg
@@ -122,7 +122,7 @@ public:
     const vspec& vdecl() const { return vdecl_; }
     const std::string& vstr() const { return vstr_; }
 };
-typedef std::shared_ptr<Action> ActionP;
+export using ActionP = std::shared_ptr<Action>;
 
 class phrase
 {
@@ -142,7 +142,7 @@ typedef std::shared_ptr<phrase> PhraseP;
 typedef std::vector<PhraseP> PhraseVecV;
 PhraseP make_phrase(const WordP& p, const ObjectP& op);
 
-using QuestionValue = std::variant<std::string_view, ObjectP, ActionP>;
+export using QuestionValue = std::variant<std::string_view, ObjectP, ActionP>;
 
 struct question
 {

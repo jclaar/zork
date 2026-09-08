@@ -4,7 +4,7 @@ module;
 
 export module makstr;
 import ZDefs;
-import ZSpeech;
+import Zork;
 import std;
 
 enum class SpeechType

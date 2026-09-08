@@ -8,7 +8,6 @@ import ZException;
 #include "act2.h"
 #include "act3.h"
 #include "act4.h"
-#include "melee.h"
 #include "adv.h"
 #include "parser.h"
 

@@ -2,7 +2,6 @@
 #include "defs.h"
 #include "makstr.h"
 #include "room.h"
-#include "melee.h"
 
 using WordsPobl = std::map<std::string, WordP, std::less<>>;
 using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;

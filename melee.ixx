@@ -1,3 +1,8 @@
+export module Zork:Melee;
+import std;
+import :fwd;
+import ZStrings;
+
 #pragma once
 
 #include "defs.h"
@@ -25,8 +30,8 @@ enum class attack_state
 };
 
 
-std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsgs *remarks, bool bhero, std::optional<int> out);
-int fight_strength(const AdvP &hero, bool adjust = true);
-bool pres(const tofmsg &tbl, std::string_view a, std::string_view d, std::string_view w);
-int villain_strength(const ObjectP &villain);
-bool winning(const ObjectP &v, const AdvP &h);
+std::optional<attack_state> blow(const AdvP& hero, ObjectP villain, const tofmsgs* remarks, bool bhero, std::optional<int> out);
+int fight_strength(const AdvP& hero, bool adjust = true);
+bool pres(const tofmsg& tbl, std::string_view a, std::string_view d, std::string_view w);
+int villain_strength(const ObjectP& villain);
+bool winning(const ObjectP& v, const AdvP& h);

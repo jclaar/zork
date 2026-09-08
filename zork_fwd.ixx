@@ -28,5 +28,6 @@ class Object;
 using ObjectP = std::shared_ptr<Object>;
 class Room;
 using RoomP = std::shared_ptr<Room>;
-
+class hack;
+export using HackP = std::shared_ptr<hack>;
 
