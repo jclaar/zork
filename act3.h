@@ -1,7 +1,6 @@
 #pragma once
 
 #include "defs.h"
-#include "dung.h"
 
 extern ObjectP timber_tie;
 extern ObjectP matobj;

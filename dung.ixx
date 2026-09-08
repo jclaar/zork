@@ -1,7 +1,16 @@
-#pragma once
+module;
+#include <cassert>
 #include "defs.h"
-#include "makstr.h"
-#include "room.h"
+
+export module Zork:Dungeon;
+import :Speech;
+import :Melee;
+import :Object;
+import :fwd;
+import ZFuncs;
+import ZCevent;
+import ZMakstr;
+import std;
 
 using WordsPobl = std::map<std::string, WordP, std::less<>>;
 using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;
@@ -32,8 +41,8 @@ extern std::vector<VerbP> robot_actions;
 extern std::vector<VerbP> master_actions;
 extern RoomP bloc;
 extern const RoomP startroom;
-extern const RoomP &northend;
-extern const RoomP &southend;
+extern const RoomP& northend;
+extern const RoomP& southend;
 extern const ObjList cobjs;
 extern const ObjList nobjs;
 extern const ObjList pobjs;
@@ -70,17 +79,16 @@ constexpr std::array dirvec = {
 class hack
 {
 public:
-    hack(hackfn ha, const ObjList &ho, const RoomList &hr, const RoomP &rm, const ObjectP &obj) :
+    hack(hackfn ha, const ObjList& ho, const RoomList& hr, const RoomP& rm, const ObjectP& obj) :
         _haction(ha), _room(rm), _hobj(obj), _hobjs_ob(ho), _hrooms(hr), _hflag(false)
-    {
-    }
+    {}
 
-    hack(const hack &h)
+    hack(const hack& h)
     {
         copy(h);
     }
 
-    hack &operator=(const hack &h)
+    hack& operator=(const hack& h)
     {
         copy(h);
         return *this;
@@ -91,36 +99,36 @@ public:
 
     bool hflag() const { return _hflag; }
     void hflag(bool flg) { _hflag = flg; }
-    const ObjectP &hobj() const { return _hobj; }
-    const RoomP &hroom() { return _room; }
-    void hroom(const RoomP &rm) { _room = rm; }
-    const RoomList &hrooms() const { return _hrooms; }
-    RoomList &hrooms() { return _hrooms; }
+    const ObjectP& hobj() const { return _hobj; }
+    const RoomP& hroom() { return _room; }
+    void hroom(const RoomP& rm) { _room = rm; }
+    const RoomList& hrooms() const { return _hrooms; }
+    RoomList& hrooms() { return _hrooms; }
 
-    const ObjList &hobjs_ob() const
+    const ObjList& hobjs_ob() const
     {
         return _hobjs_ob;
     }
-    void hobjs(const ObjList &ol)
+    void hobjs(const ObjList& ol)
     {
         _hobjs_ob = ol;
     }
 
-    const EventList &hobjs_ev() const
+    const EventList& hobjs_ev() const
     {
         return _hobjs_ev;
     }
-    void hobjs(const EventList &el)
+    void hobjs(const EventList& el)
     {
         _hobjs_ev = el;
     }
 
-    void hobjs_add(const CEventP &ev)
+    void hobjs_add(const CEventP& ev)
     {
         _hobjs_ev.push_front(ev);
     }
 
-    void hobjs_add(const ObjectP &ob)
+    void hobjs_add(const ObjectP& ob)
     {
         _hobjs_ob.push_front(ob);
     }
@@ -134,7 +142,7 @@ private:
     ObjectP _hobj;
     bool _hflag = false;
 
-    void copy(const hack &s)
+    void copy(const hack& s)
     {
         _haction = s._haction;
         _hobjs_ob = s._hobjs_ob;
@@ -176,7 +184,7 @@ extern RoomP scol_active;
 struct ScolRooms
 {
     direction dir;
-    const char *rm;
+    const char* rm;
 };
 inline bool operator==(direction d, const ScolRooms& sr) { return sr.dir == d; }
 inline bool operator==(const ScolRooms& sr, direction d) { return d == sr; }
@@ -225,7 +233,7 @@ typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction
 typedef std::array<ParseVecVal, 3> ParseVecA;
 typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction, WordP, std::string, ObjList> ParseAval;
 
-inline ParseVecVal as_pvv(const ParseAval &pv)
+ParseVecVal as_pvv(const ParseAval& pv)
 {
     return std::visit(overload{
             [](const ActionP& ap) { return ParseVecVal(ap); },
@@ -237,7 +245,7 @@ inline ParseVecVal as_pvv(const ParseAval &pv)
         }, pv);
 }
 
-inline OrphanSlotType as_ost(ParseVecVal pv)
+OrphanSlotType as_ost(ParseVecVal pv)
 {
     return std::visit(overload{
         [](const ObjectP& op) { return OrphanSlotType(op); },
@@ -246,12 +254,12 @@ inline OrphanSlotType as_ost(ParseVecVal pv)
         }, pv);
 }
 
-inline direction as_dir(const ParseVecVal &a)
+inline direction as_dir(const ParseVecVal& a)
 {
     return std::get<direction>(a);
 }
 
-inline ObjectP as_obj(const ParseVecVal &pvv)
+inline ObjectP as_obj(const ParseVecVal& pvv)
 {
     try
     {
@@ -263,12 +271,12 @@ inline ObjectP as_obj(const ParseVecVal &pvv)
     }
 }
 
-inline WordP as_word(const ParseAval &a)
+inline WordP as_word(const ParseAval& a)
 {
     return std::get<WordP>(a);
 }
 
-inline VerbP as_verb(const ParseVecVal &a)
+inline VerbP as_verb(const ParseVecVal& a)
 {
     try
     {
@@ -285,20 +293,20 @@ void dir_syns();
 void init_dung();
 
 template <typename T>
-void synonym(const char *n1, T n2)
+void synonym(const char* n1, T n2)
 {
-    const WordP &wp = words_pobl[n1];
+    const WordP& wp = words_pobl[n1];
     _ASSERT(wp);
     words_pobl[n2] = wp;
 }
 template <typename T, typename ...Args>
-void synonym(const char *n1, T first, Args... args)
+void synonym(const char* n1, T first, Args... args)
 {
     synonym(n1, first);
     synonym(n1, args...);
 }
 
-inline void dsynonym(const char *dir, const char *syn)
+inline void dsynonym(const char* dir, const char* syn)
 {
     auto iter = directions_pobl.find(dir);
     if (iter == directions_pobl.end())
@@ -307,13 +315,13 @@ inline void dsynonym(const char *dir, const char *syn)
 }
 
 template <typename T>
-void vsynonym(const char *verb, T syn)
+void vsynonym(const char* verb, T syn)
 {
     actions_pobl[syn] = actions_pobl[verb];
 }
 
 template <typename T, typename ...Args>
-void vsynonym(const char *verb, T first, Args... args)
+void vsynonym(const char* verb, T first, Args... args)
 {
     vsynonym(verb, first);
     vsynonym(verb, args...);

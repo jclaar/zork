@@ -7,10 +7,8 @@ import ZStrings;
 #include "rooms.h"
 #include "zstring.h"
 #include "util.h"
-#include "dung.h"
 #include "parser.h"
 #include "adv.h"
-#include "makstr.h"
 #include "memq.h"
 
 using namespace std::string_view_literals;

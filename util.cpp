@@ -2,7 +2,6 @@ import ZException;
 #include "util.h"
 #include "adv.h"
 #include "rooms.h"
-#include "dung.h"
 #include "memq.h"
 
 bool always_lit = false;

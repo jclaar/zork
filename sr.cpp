@@ -16,7 +16,6 @@ import ZException;
 #include <vector>
 #include "object.h"
 #include "cevent.h"
-#include "dung.h"
 #include "room.h"
 #include "rooms.h"
 #include "adv.h"

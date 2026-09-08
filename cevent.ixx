@@ -102,6 +102,8 @@ public:
 };
 
 export CEventP sphere_clock;
+export using EventList = std::list<CEventP>;
+
 
 namespace
 {

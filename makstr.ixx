@@ -2,12 +2,12 @@ module;
 //#include "object.h"
 //#include "speech.h"
 
-export module makstr;
+export module ZMakstr;
 import ZDefs;
 import Zork;
 import std;
 
-enum class SpeechType
+export enum class SpeechType
 {
     kVerb,
     kPrep,

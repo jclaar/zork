@@ -7,11 +7,9 @@ import ZInfo;
 
 #include "sr.h"
 #include "adv.h"
-#include "dung.h"
 #include "util.h"
 #include "rooms.h"
 #include <algorithm>
-#include "makstr.h"
 #include "zstring.h"
 #include "parser.h"
 #include "act1.h"

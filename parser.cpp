@@ -1,9 +1,7 @@
 import ZException;
 #include "defs.h"
 #include "parser.h"
-#include "dung.h"
 #include "object.h"
-#include "makstr.h"
 #include "util.h"
 #include "rooms.h"
 #include "adv.h"

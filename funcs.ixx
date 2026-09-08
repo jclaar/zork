@@ -219,7 +219,7 @@ private:
     //friend bool operator!=(const Iterator<T> &a, const Iterator<T> &b);
 };
 
-class SIterator : public Iterator<std::string>
+export class SIterator : public Iterator<std::string>
 {
     typedef Iterator<std::string> Base;
 public:

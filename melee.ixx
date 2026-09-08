@@ -16,7 +16,7 @@ import ZStrings;
 // 6 --loses weapon
 // 7 --hesitate(miss on free swing)
 // 8 --sitting duck(crunch!)
-enum class attack_state
+export enum class attack_state
 {
     missed,
     unconscious,

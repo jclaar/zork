@@ -82,11 +82,11 @@ target_sources(zork PRIVATE
 	cevent.h
 	
 	defs.h 
-	dung.h dung.cpp
+	
 	
 	gobject.h 
 	 
-	makstr.h makstr.cpp
+	 makstr.cpp
 	mdlfun.cpp
 	memq.h memq.cpp
 	objdefs.h
@@ -107,7 +107,7 @@ target_sources(zork PRIVATE
 	PUBLIC
 	FILE_SET modules TYPE CXX_MODULES FILES
 	    "ZorkException.ixx" "FlagSupport.ixx"
- "info.ixx" "strings.ixx" "memq.ixx" "defs.ixx" "roomfns.ixx" "globals.ixx" "speech.ixx" "funcs.ixx" "cevent.ixx" "objfns.ixx" "makstr.ixx" "object.ixx" "room.ixx" "zork_fwd.ixx" "melee.ixx" "zork.ixx")
+ "info.ixx" "strings.ixx" "memq.ixx" "defs.ixx" "roomfns.ixx" "globals.ixx" "speech.ixx" "funcs.ixx" "cevent.ixx" "objfns.ixx" "makstr.ixx" "object.ixx" "room.ixx" "zork_fwd.ixx" "melee.ixx" "zork.ixx" "dung.ixx")
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)

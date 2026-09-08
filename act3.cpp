@@ -6,7 +6,6 @@ import ZException;
 #include "act3.h"
 #include "util.h"
 #include "parser.h"
-#include "makstr.h"
 #include "zstring.h"
 #include "cevent.h"
 #include "adv.h"
