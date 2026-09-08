@@ -1,34 +1,23 @@
-#ifndef FUNCS_H
-#define FUNCS_H
-
-#include <ostream>
-#include <string_view>
-#include "globals.h"
-
-#ifdef _MSC_VER
-#include <crtdbg.h>
-#else
+module;
+#include "defs.h"
 #include <assert.h>
-#endif
-
-#if !defined(_ASSERT)
-#define _ASSERT assert
-#endif
-
-extern std::ostream tty;
+export module ZFuncs;
+import ZDefs;
+import ZException;
+import std;
 
 // Bits for tell
-constexpr uint32_t long_tell = 0x40000000;
-constexpr uint32_t pre_crlf = 0x00000002;
-constexpr uint32_t post_crlf = 0x00000001;
-constexpr uint32_t no_crlf = 0x00000000;
-constexpr uint32_t long_tell1 = long_tell | post_crlf;
+constexpr std::uint32_t long_tell = 0x40000000;
+constexpr std::uint32_t pre_crlf = 0x00000002;
+constexpr std::uint32_t post_crlf = 0x00000001;
+constexpr std::uint32_t no_crlf = 0x00000000;
+constexpr std::uint32_t long_tell1 = long_tell | post_crlf;
 
 class tell_base
 {
 protected:
-    void tell_pre(uint32_t flags);
-    void tell_post(uint32_t flags);
+    void tell_pre(std::uint32_t flags);
+    void tell_post(std::uint32_t flags);
 public:
     operator bool() const { return true; }
 };
@@ -43,7 +32,7 @@ class ctellt : public tell_base
 
     void tellt2(std::monostate ms)
     {
-        
+
     }
 
     template <typename T, typename... Args>
@@ -73,7 +62,7 @@ class ctellt : public tell_base
     friend bool tell(std::string_view s, uint32_t flags);
 };
 
-template <typename... Args>
+export template <typename... Args>
 bool tell(std::string_view s, uint32_t flags, Args...args)
 {
     return ctellt(s, flags, args...);
@@ -83,14 +72,14 @@ bool tell(std::string_view s, uint32_t flags, Args...args)
 // doesn't like templates with default arguments.
 bool tell(std::string_view s, uint32_t flags = post_crlf);
 
-inline void crlf() { tty << std::endl; }
+void crlf() { tty << std::endl; }
 template <typename T>
-void princ(const T &v)
+void princ(const T& v)
 {
     tty << v;
 }
 void prin1(int val);
-inline void printstring(std::string_view str) { tty << str; }
+void printstring(std::string_view str) { tty << str; }
 
 RAPPLIC(terminal);
 
@@ -98,9 +87,9 @@ std::string readst(std::string_view prompt);
 
 // Various MDL functions mapped to C++ equivalents
 //inline char *back(char *s, size_t count) { return s - count; }
-std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest);
-char *substruc(const char *src, size_t start, size_t end, char *dest);
-inline const char *member(std::string_view subst, const std::string &str)
+export std::string& substruc(const std::string& src, size_t start, size_t end, std::string& dest);
+export char* substruc(const char* src, size_t start, size_t end, char* dest);
+export const char* member(std::string_view subst, const std::string& str)
 {
     std::string::size_type pos = str.find(subst, 0);
     return (pos == std::string::npos) ? nullptr : &str[pos];
@@ -116,10 +105,10 @@ public:
     using value_type = typename T::value_type;
 
     Iterator() : c(nullptr) {}
-    Iterator(T &container) : c(&container) { p = c->begin(); }
-    Iterator(T &container, iterator i) : c(&container), p(i) {}
-    Iterator(T *container, iterator i) : c(container), p(i) {}
-    Iterator(const Iterator<T> &o) : c(o.c), p(o.p) {}
+    Iterator(T& container) : c(&container) { p = c->begin(); }
+    Iterator(T& container, iterator i) : c(&container), p(i) {}
+    Iterator(T* container, iterator i) : c(container), p(i) {}
+    Iterator(const Iterator<T>& o) : c(o.c), p(o.p) {}
 
     explicit operator bool() const { return is_init() && cur() != end(); }
     bool is_init() const { return c != nullptr; }
@@ -130,19 +119,19 @@ public:
         // p is undefined since there is no container.
     }
 
-    bool operator==(const Iterator<T> &o) const
+    bool operator==(const Iterator<T>& o) const
     {
         return cont() == o.cont() && cur() == o.cur();
     }
 
-    Iterator<T> &operator=(const Iterator<T> &o)
+    Iterator<T>& operator=(const Iterator<T>& o)
     {
         c = o.c;
         p = o.p;
         return *this;
     }
 
-    Iterator<T> &operator++()
+    Iterator<T>& operator++()
     {
         ++p;
         return *this;
@@ -161,12 +150,12 @@ public:
         return std::distance(p, c->end());
     }
 
-    const T *cont() const
+    const T* cont() const
     {
         return c;
     }
 
-    T *cont() 
+    T* cont()
     {
         return c;
     }
@@ -208,7 +197,7 @@ public:
         std::advance(p, offset);
     }
 
-    value_type &operator[](size_t index)
+    value_type& operator[](size_t index)
     {
         _ASSERT(is_init());
         _ASSERT(std::distance(c->begin(), p) + index <= c->size());
@@ -217,13 +206,13 @@ public:
         return *iter;
     }
 
-    value_type &operator*()
+    value_type& operator*()
     {
         return *p;
     }
 
 private:
-    T *c;
+    T* c;
     iterator p;
 
     //friend bool operator==(const Iterator<T> &a, const Iterator<T> &b);
@@ -235,9 +224,9 @@ class SIterator : public Iterator<std::string>
     typedef Iterator<std::string> Base;
 public:
     typedef std::string value_type;
-    typedef int32_t difference_type;
-    typedef std::string *pointer;
-    typedef std::string &reference;
+    typedef std::int32_t difference_type;
+    typedef std::string* pointer;
+    typedef std::string& reference;
     typedef std::random_access_iterator_tag iterator_category;
 
     using Iterator<std::string>::Iterator;
@@ -249,29 +238,29 @@ public:
 };
 
 template <typename T>
-inline bool operator!=(const Iterator<T> &a, const Iterator<T> &b)
+inline bool operator!=(const Iterator<T>& a, const Iterator<T>& b)
 {
     // Equal if the two containers point to the same thing.
     return a.cont() != b.cont() || a.cur() != b.cur();
 }
 
-inline bool operator==(const SIterator &a, const char *b)
+inline bool operator==(const SIterator& a, const char* b)
 {
     return std::string(a.cur(), a.end()) == b;
 }
 
-inline bool operator!= (const SIterator &a, const SIterator &b)
+inline bool operator!= (const SIterator& a, const SIterator& b)
 {
     return !(a == b);
 }
 
-inline bool operator!=(const SIterator &a, const char *b)
+inline bool operator!=(const SIterator& a, const char* b)
 {
     return std::string(a.cur(), a.end()) != b;
 }
 
 template <typename T>
-bool empty(const Iterator<T> &it)
+bool empty(const Iterator<T>& it)
 {
     return !it.is_init() || it.cur() == it.end();
 }
@@ -290,9 +279,9 @@ T rest(T it, int offset = 1)
 }
 
 template <>
-inline char *rest(char *s, int len) { return s + len; }
+inline char* rest(char* s, int len) { return s + len; }
 template <>
-inline const char *rest(const char *s, int len) { return s + len; }
+inline const char* rest(const char* s, int len) { return s + len; }
 inline std::string_view rest(const std::string& s, int len = 1)
 {
     return std::string_view(&s[len], s.size() - len);
@@ -308,7 +297,7 @@ T back(T it, int offset = 1)
 
 SIterator uppercase(SIterator src);
 
-inline SIterator substruc(SIterator src, int start, int end, SIterator dest)
+SIterator substruc(SIterator src, int start, int end, SIterator dest)
 {
     _ASSERT(start == 0);
     for (int i = start; i < end; ++i)
@@ -318,7 +307,7 @@ inline SIterator substruc(SIterator src, int start, int end, SIterator dest)
     return dest;
 }
 
-inline SIterator substruc(const char *msg, int start, int end, SIterator dest)
+SIterator substruc(const char* msg, int start, int end, SIterator dest)
 {
     _ASSERT(start == 0);
     std::copy(msg + start, msg + end, dest);
@@ -326,10 +315,8 @@ inline SIterator substruc(const char *msg, int start, int end, SIterator dest)
 }
 
 template <typename T>
-typename T::mapped_type plookup(std::string_view a, const T &l)
+typename T::mapped_type plookup(std::string_view a, const T& l)
 {
     auto iter = l.find(a);
     return iter == l.end() ? typename T::mapped_type() : iter->second;
 }
-
-#endif

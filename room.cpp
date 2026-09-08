@@ -1,9 +1,7 @@
 import ZException;
 #include "room.h"
-#include "globals.h"
 #include "object.h"
 #include "act3.h"
-#include "roomfns.h"
 #include "zstring.h"
 
 // These are all exit definitions in the original MDL code.
@@ -213,5 +211,10 @@ const RoomP &find_room(std::string_view rid)
     auto iter = room_map().find(rid);
     _ASSERT(iter != room_map().end());
     return iter->second;
+}
+
+ExitFuncVal apply_random(ex_rapplic fcn)
+{
+    return fcn();
 }
 

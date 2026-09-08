@@ -81,11 +81,9 @@ target_sources(zork PRIVATE
 	adv.h adv.cpp
 	cevent.h cevent.cpp
 	
-	defs.h defs.cpp
+	defs.h 
 	dung.h dung.cpp
-	FlagSupport.h
-	funcs.h funcs.cpp
-	globals.h globals.cpp
+	
 	gobject.h 
 	 
 	makstr.h makstr.cpp
@@ -93,13 +91,13 @@ target_sources(zork PRIVATE
 	melee.h melee.cpp
 	memq.h memq.cpp
 	objdefs.h
-	object.h object.cpp
-	objfns.h objser.h
+	object.h
+	 objser.h
 	parser.h parser.cpp
 	room.h room.cpp
 	roomdefs.h
-	roomfns.h roomfns.cpp
 	rooms.h rooms.cpp
+	speech.h
 	sr.h sr.cpp
 	 
 	util.h util.cpp
@@ -109,8 +107,8 @@ target_sources(zork PRIVATE
 
 	PUBLIC
 	FILE_SET modules TYPE CXX_MODULES FILES
-	    "ZorkException.ixx"
- "info.ixx" "strings.ixx" "memq.ixx")
+	    "ZorkException.ixx" "FlagSupport.ixx"
+ "info.ixx" "strings.ixx" "memq.ixx" "defs.ixx" "roomfns.ixx" "globals.ixx" "speech.ixx" "funcs.ixx" "cevent.ixx" "objfns.ixx" "makstr.ixx" "object.ixx" "room.ixx" "zork_fwd.ixx")
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)

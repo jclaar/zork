@@ -3,7 +3,6 @@
 #include "object.h"
 #include "rooms.h"
 #include "dung.h"
-#include "funcs.h"
 
 // Possible levels of false returns from parser.
 typedef std::pair<ObjectP, int> Nefals;

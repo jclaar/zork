@@ -6,7 +6,6 @@
 #include <any>
 #include <fstream>
 #include "defs.h"
-#include "funcs.h"
 #include "room.h"
 
 // This exception is thrown when the user has quit or restart. 
@@ -31,7 +30,6 @@ extern const AdvP *winner;
 extern int raw_score;
 extern int moves;
 extern std::list<HackP> demons;
-extern std::unique_ptr<std::ofstream> script_channel;
 
 const CEventP &clock_int(const CEventP &cev, std::optional<int> num  = std::nullopt, bool flag = false);
 bool clock_disable(const CEventP &cev);
@@ -110,7 +108,6 @@ RAPPLIC(do_script);
 RAPPLIC_DEF(do_unscript, bool, true);
 RAPPLIC(doc);
 RAPPLIC(dropper);
-RAPPLIC(end_game_herald);
 RAPPLIC(feech);
 RAPPLIC(find);
 

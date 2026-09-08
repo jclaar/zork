@@ -1,11 +1,14 @@
 import ZException;
 import ZStrings;
-#include <array>
-#include "act4.h"
-#include "rooms.h"
-#include "dung.h"
-#include "makstr.h"
-#include "parser.h"
+import ZDefs;
+import ZFlagSupport;
+import std;
+//#include "act4.h"
+//#include "rooms.h"
+//#include "dung.h"
+//#include "makstr.h"
+//#include "parser.h"
+#include "speech.h"
 
 namespace
 {
@@ -309,11 +312,6 @@ void add_action(const char *nam, const char *str, const ActionVec &decl)
 void sadd_action(const char *name, rapplic action)
 {
     add_action(name, "", AnyV{ AVSyntax(name, action) });
-}
-
-void add_inqobj(const ObjectP &obj)
-{
-    inqobjs.push_front(obj);
 }
 
 void add_question(const char *str, const std::initializer_list<QuestionValue> &vector)

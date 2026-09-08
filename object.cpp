@@ -1,11 +1,8 @@
 import ZException;
 #include <algorithm>
 #include "object.h"
-#include "globals.h"
-#include "funcs.h"
 #include "cevent.h"
 #include "util.h"
-#include "objfns.h"
 #include "zstring.h"
 #include "adv.h"
 #include "makstr.h"
@@ -437,4 +434,60 @@ const ObjectP &sfind_obj(std::string_view name)
     return find_obj(name);
 }
 
+
+bool describable(const ObjectP& obj)
+{
+    return !trnn(obj, Bits::ndescbit);
+}
+
+bool see_inside(const ObjectP& op)
+{
+    return trnn(op, Bits::ovison) && (trnn(op, Bits::transbit) || trnn(op, Bits::openbit));
+}
+
+bool apply_object(const ObjectP& op)
+{
+    bool rv;
+    auto& fn = op->oaction();
+    if (rv = (fn != nullptr))
+        rv = fn(Rarg());
+    return rv;
+}
+
+bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
+{
+    return (op->oflags() & bits_to_check).any();
+}
+
+bool strnn(const SyntaxP& syn, SyntaxBits b)
+{
+    return syn->sflags.test(b);
+}
+
+bool gtrnn(const RoomP& p, Bits b)
+{
+    return std::find(p->rglobal().begin(), p->rglobal().end(), b) != p->rglobal().end();
+}
+
+void trc(const ObjectP& op, Bits b)
+{
+    op->oflags()[b].flip();
+}
+
+void rtrc(const RoomP& p, RoomBit b)
+{
+    p->rbits()[b].flip();
+}
+
+bool flaming(const ObjectP& obj)
+{
+    // True if all of the light-giving bits are set.
+    auto& f = obj->oflags();
+    return f[Bits::flamebit] && f[Bits::onbit] && f[Bits::lightbit];
+}
+
+void add_inqobj(const ObjectP& obj)
+{
+    inqobjs.push_front(obj);
+}
 

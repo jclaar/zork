@@ -1,7 +1,10 @@
-#pragma once
-// This file is auto-generated. Do not edit.
+module;
 #include "defs.h"
-namespace room_funcs {
+
+export module ZRoomfns;
+import ZDefs;
+
+export namespace room_funcs {
     RAPPLIC(bats_room);
     RAPPLIC(bdoor_function);
     RAPPLIC(bkbox_room);
@@ -70,20 +73,9 @@ namespace room_funcs {
     RAPPLIC(torch_room);
     RAPPLIC(treasure_room);
     RAPPLIC(tree_room);
-}
-namespace exit_funcs {
-    EX_RAPPLIC(bkleavew);
-    EX_RAPPLIC(carousel_exit);
-    EX_RAPPLIC(chimney_function);
-    EX_RAPPLIC(coffin_cure);
-    EX_RAPPLIC(cpenter);
-    EX_RAPPLIC(cpexit);
-    EX_RAPPLIC(slide_exit);
-    EX_RAPPLIC(bkleavee); 
-    EX_RAPPLIC(carousel_out); 
-    EX_RAPPLIC(magnet_room_exit); 
-    EX_RAPPLIC(mrgo); 
-    EX_RAPPLIC(mirin); 
-    EX_RAPPLIC(mirout); 
-    EX_RAPPLIC(maybe_door); 
+
+    bool time::operator()() const
+    {
+        return false;
+    }
 }

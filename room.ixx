@@ -1,10 +1,13 @@
-#pragma once
+module;
+#include "defs.h"
 
-#include "object.h"
+export module ZRoom;
+import ZDefs;
+import std;
 
-typedef std::variant<int, std::vector<Bits>> RPValue;
-typedef std::tuple<ObjectSlots, RPValue> RP;
-inline RP rg(const std::initializer_list<Bits> &rb)
+using RPValue = std::variant<int, std::vector<Bits>>;
+using RP = std::tuple<ObjectSlots, RPValue>;
+RP rg(const std::initializer_list<Bits>& rb)
 {
     std::vector<Bits> bits(rb);
     return RP(ObjectSlots::ksl_rglobal, bits);
@@ -14,7 +17,7 @@ inline RP rg(const std::initializer_list<Bits> &rb)
 class NExit
 {
 public:
-	explicit NExit(const char *desc) : nexit_desc(desc) {}
+    explicit NExit(const char* desc) : nexit_desc(desc) {}
 
     std::string_view desc() const { return nexit_desc; }
 private:
@@ -37,8 +40,8 @@ public:
     }
 
     ex_rapplic cxaction() const { return _fn; }
-    const RoomP &cxroom() const;
-    const std::string &cxstr() const { return _desc; }
+    const RoomP& cxroom() const;
+    const std::string& cxstr() const { return _desc; }
 
     bool cxflag() const {
         if (auto fid = std::get_if<FlagId>(&_flid))
@@ -72,10 +75,10 @@ public:
     ex_rapplic daction() const {
         return _fn;
     }
-    const ObjectP &dobj() const;
-    const RoomP &droom1() const;
-    const RoomP &droom2() const;
-    const std::string &dstr() const { return _str; }
+    const ObjectP& dobj() const;
+    const RoomP& droom1() const;
+    const RoomP& droom2() const;
+    const std::string& dstr() const { return _str; }
     void dstr(std::string_view s) { _str = s; }
 
 private:
@@ -90,10 +93,10 @@ typedef std::shared_ptr<DoorExit> DoorExitPtr;
 class SetgExit
 {
 public:
-    SetgExit(std::string_view name, const CExitPtr &cep) : sname(name), ce(cep) {}
+    SetgExit(std::string_view name, const CExitPtr& cep) : sname(name), ce(cep) {}
 
-    const std::string &name() const { return sname; }
-    const CExitPtr &cexit() const { return ce; }
+    const std::string& name() const { return sname; }
+    const CExitPtr& cexit() const { return ce; }
 private:
     std::string sname;
     CExitPtr ce;
@@ -108,27 +111,27 @@ inline bool operator==(direction d, const Ex& e) { return e == d; }
 class Room
 {
 public:
-	Room(std::string_view rid, std::string_view d1, std::string_view d2,
-        const std::initializer_list<Ex> &exits,
-        const std::initializer_list<const char*> &contents,
+    Room(std::string_view rid, std::string_view d1, std::string_view d2,
+        const std::initializer_list<Ex>& exits,
+        const std::initializer_list<const char*>& contents,
         rapplic roomf,
-        const std::initializer_list<RoomBit> &rb,
-        const std::initializer_list<RP> &room_slots);
+        const std::initializer_list<RoomBit>& rb,
+        const std::initializer_list<RP>& room_slots);
 
-    const std::string &rid() const { return _id; }
-    const std::string &rdesc1() const { return _desc1; }
-    std::string &rdesc1() { return _desc1; }
-    const std::string &rdesc2() const { return _desc2; }
-    ObjList &robjs() { return _contents; }
-    const ObjList &robjs() const { return _contents; }
-    const std::vector<Ex> &rexits() const { return _exits; }
-    const std::vector<Bits> &rglobal() const { return _rglobal; }
+    const std::string& rid() const { return _id; }
+    const std::string& rdesc1() const { return _desc1; }
+    std::string& rdesc1() { return _desc1; }
+    const std::string& rdesc2() const { return _desc2; }
+    ObjList& robjs() { return _contents; }
+    const ObjList& robjs() const { return _contents; }
+    const std::vector<Ex>& rexits() const { return _exits; }
+    const std::vector<Bits>& rglobal() const { return _rglobal; }
     void rglobal(Bits new_global) { _rglobal.push_back(new_global); }
-    RoomBits &rbits() { return _room_bits; }
+    RoomBits& rbits() { return _room_bits; }
     rapplic raction() const { return _room_fn; }
     PROP(rval);
 
-    void restore(const Room &src)
+    void restore(const Room& src)
     {
         _room_bits = src._room_bits;
         _rval = src._rval;
@@ -142,32 +145,32 @@ private:
     friend class boost::serialization::access;
     Room() {}
     template <class archive>
-    void save(archive &ar, const unsigned int version) const
+    void save(archive& ar, const unsigned int version) const
     {
-        ar & _room_bits;
-        ar & _rval;
+        ar& _room_bits;
+        ar& _rval;
         std::list<std::string> rob;
         std::transform(robjs().begin(), robjs().end(), std::back_inserter(rob), [](ObjectP o)
-        {
-            return o->oid();
-        });
-        ar & rob;
-        ar & _desc1;
+            {
+                return o->oid();
+            });
+        ar& rob;
+        ar& _desc1;
     }
 
     template <class archive>
-    void load(archive &ar, const unsigned int version)
+    void load(archive& ar, const unsigned int version)
     {
-        ar & _room_bits;
-        ar & _rval;
+        ar& _room_bits;
+        ar& _rval;
         std::list<std::string> rob;
-        ar & rob;
-        ar & _desc1;
+        ar& rob;
+        ar& _desc1;
         robjs().clear();
-        std::transform(rob.begin(), rob.end(), std::back_inserter(robjs()), [](const std::string &oid)
-        {
-            return sfind_obj(oid);
-        });
+        std::transform(rob.begin(), rob.end(), std::back_inserter(robjs()), [](const std::string& oid)
+            {
+                return sfind_obj(oid);
+            });
     }
 
     BOOST_SERIALIZATION_SPLIT_MEMBER();
@@ -184,12 +187,12 @@ private:
 };
 
 void init_rooms();
-const RoomP &get_room(std::string_view rid, RoomP init_val = RoomP());
-const RoomP &find_room(std::string_view rid);
-inline const RoomP &sfind_room(std::string_view s) { return find_room(s); }
-RoomList &rooms();
+const RoomP& get_room(std::string_view rid, RoomP init_val = RoomP());
+const RoomP& find_room(std::string_view rid);
+inline const RoomP& sfind_room(std::string_view s) { return find_room(s); }
+RoomList& rooms();
 typedef std::map<std::string, RoomP, std::less<>> RoomMap;
-RoomMap &room_map();
+RoomMap& room_map();
 
 inline RoomList::iterator rest(RoomList::iterator i, int count = 1)
 {
@@ -197,10 +200,10 @@ inline RoomList::iterator rest(RoomList::iterator i, int count = 1)
 }
 
 // Set or 0 room bit
-inline bool rtro(const RoomP &p, RoomBit b)
+inline bool rtro(const RoomP& p, RoomBit b)
 {
-	p->rbits()[b] = true;
-	return true;
+    p->rbits()[b] = true;
+    return true;
 }
 
 inline bool rtrz(const RoomP& p, RoomBit b)
@@ -229,3 +232,20 @@ bool gtrnn(const RoomP&, Bits);
 using ExitFuncVal = std::variant<std::monostate, bool, RoomP>;
 using ex_rapplic = std::function<ExitFuncVal()>;
 ExitFuncVal apply_random(ex_rapplic fcn);
+
+export namespace exit_funcs {
+    EX_RAPPLIC(bkleavew);
+    EX_RAPPLIC(carousel_exit);
+    EX_RAPPLIC(chimney_function);
+    EX_RAPPLIC(coffin_cure);
+    EX_RAPPLIC(cpenter);
+    EX_RAPPLIC(cpexit);
+    EX_RAPPLIC(slide_exit);
+    EX_RAPPLIC(bkleavee);
+    EX_RAPPLIC(carousel_out);
+    EX_RAPPLIC(magnet_room_exit);
+    EX_RAPPLIC(mrgo);
+    EX_RAPPLIC(mirin);
+    EX_RAPPLIC(mirout);
+    EX_RAPPLIC(maybe_door);
+}

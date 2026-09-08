@@ -1,7 +1,9 @@
-#pragma once
-// This file is auto-generated. Do not edit.
+module;
 #include "defs.h"
-namespace obj_funcs {
+export module ZObjfns;
+import ZDefs;
+
+export namespace obj_funcs {
     RAPPLIC(axe_function);
     RAPPLIC(bcontents);
     RAPPLIC(beam_function);
@@ -113,4 +115,95 @@ namespace obj_funcs {
     RAPPLIC_RARG(barrel);
     RAPPLIC_RARG(bucket);
     RAPPLIC_RARG(rboat_function);
+    RAPPLIC(slide_cint);
 }
+
+ERAPPLIC(advent);
+ERAPPLIC(alarm_);
+ERAPPLIC(attacker);
+ERAPPLIC(brush);
+ERAPPLIC(burner);
+ERAPPLIC(curses);
+ERAPPLIC(deflater);
+ERAPPLIC(eat);
+ERAPPLIC(exorcise);
+ERAPPLIC(fill);
+ERAPPLIC(hello);
+ERAPPLIC(inflater);
+ERAPPLIC(jargon);
+ERAPPLIC(kicker);
+ERAPPLIC_DEF(killer, std::string_view, "kill");
+ERAPPLIC(leaper);
+ERAPPLIC(leave);
+ERAPPLIC(locker);
+ERAPPLIC(look_inside);
+ERAPPLIC(look_under);
+ERAPPLIC(melter);
+ERAPPLIC(munger);
+ERAPPLIC(oil);
+ERAPPLIC(plugger);
+ERAPPLIC(pour_on);
+ERAPPLIC(prayer);
+ERAPPLIC(pumper);
+ERAPPLIC(pusher);
+ERAPPLIC(r_l);
+ERAPPLIC(reader);
+ERAPPLIC(repent);
+ERAPPLIC(ring);
+ERAPPLIC(rubber);
+ERAPPLIC(sinbad);
+ERAPPLIC(skipper);
+ERAPPLIC(squeezer);
+ERAPPLIC(swinger);
+ERAPPLIC(tie);
+ERAPPLIC(tie_up);
+ERAPPLIC(treas);
+ERAPPLIC(turner);
+ERAPPLIC(unlocker);
+ERAPPLIC(untie);
+ERAPPLIC(waver);
+ERAPPLIC(mumbler);
+ERAPPLIC(xb_cint);
+ERAPPLIC(xbh_cint);
+ERAPPLIC(xc_cint);
+ERAPPLIC(zork);
+ERAPPLIC(cure_clock);
+ERAPPLIC(diagnose);
+
+
+ERAPPLIC(blast);
+ERAPPLIC(breathe);
+ERAPPLIC(burnup);
+ERAPPLIC(digger);
+ERAPPLIC(geronimo);
+ERAPPLIC(ledge_mung);
+ERAPPLIC(safe_mung);
+ERAPPLIC(shaker);
+ERAPPLIC(swimmer);
+ERAPPLIC(volgnome);
+
+ERAPPLIC(climb_down);
+ERAPPLIC(climb_foo);
+ERAPPLIC(count);
+ERAPPLIC(enter);
+ERAPPLIC(frobozz);
+ERAPPLIC(knock);
+ERAPPLIC(maker);
+ERAPPLIC(oops);
+ERAPPLIC(play);
+ERAPPLIC(put_under);
+ERAPPLIC(scol_clock);
+ERAPPLIC(sender);
+ERAPPLIC(smeller);
+ERAPPLIC(untie_from);
+ERAPPLIC(win);
+ERAPPLIC(wind);
+ERAPPLIC(wisher);
+ERAPPLIC(yell);
+ERAPPLIC(zgnome_init);
+
+ERAPPLIC(end_game_herald);
+
+ERAPPLIC(follow);
+ERAPPLIC(start_end);
+ERAPPLIC(inquisitor);

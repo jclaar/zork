@@ -1,4 +1,9 @@
-import ZException;
+//import ZException;
+//import ZFlagSupport;
+//import ZDefs;
+#include <string_view>
+#include <array>
+#if 0
 #include "act1.h"
 #include "act2.h"
 #include "act4.h"
@@ -10,11 +15,11 @@ import ZException;
 #include "util.h"
 #include "melee.h"
 #include "zstring.h"
-#include "object.h"
 #include "adv.h"
 #include "cevent.h"
 #include "memq.h"
-#include "roomfns.h"
+#endif
+#include "object.h"
 
 namespace
 {

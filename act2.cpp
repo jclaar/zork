@@ -3,9 +3,7 @@ import ZStrings;
 #include "act1.h"
 #include "act2.h"
 #include "cevent.h"
-#include "objfns.h"
 #include "defs.h"
-#include "funcs.h"
 #include "rooms.h"
 #include "zstring.h"
 #include "util.h"
@@ -14,7 +12,6 @@ import ZStrings;
 #include "adv.h"
 #include "makstr.h"
 #include "memq.h"
-#include "roomfns.h"
 
 using namespace std::string_view_literals;
 

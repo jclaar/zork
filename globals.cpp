@@ -1,7 +1,6 @@
 import ZException;
 import ZStrings;
 
-#include "globals.h"
 #include "object.h"
 
 std::string inbuf;

@@ -1,13 +1,7 @@
 #pragma once
-#include <map>
-#include <vector>
-#include <array>
-#include <span>
-#include <string>
 #include "defs.h"
 #include "makstr.h"
 #include "room.h"
-#include "funcs.h"
 #include "melee.h"
 
 using WordsPobl = std::map<std::string, WordP, std::less<>>;
@@ -153,7 +147,9 @@ private:
     }
 };
 
-typedef std::shared_ptr<hack> HackP;
+using HackP = std::shared_ptr<hack>;
+using hackfn = std::function<bool(const HackP&)>;
+
 
 // Puzzle room
 struct CpExit
@@ -357,3 +353,9 @@ void add_buzz(T first, Args... args)
     add_buzz(first);
     add_buzz(args...);
 }
+
+inline bool apply_random(hackfn fcn, const HackP& demon)
+{
+    return fcn(demon);
+}
+

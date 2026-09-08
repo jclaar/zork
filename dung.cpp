@@ -1,12 +1,6 @@
 import ZException;
-#include <map>
-#include <set>
-#ifdef _DEBUG
-#include <iostream>
-#endif
 #include "dung.h"
 #include "memq.h"
-#include "funcs.h"
 #include "object.h"
 #include "rooms.h"
 #include "room.h"
@@ -17,7 +11,6 @@ import ZException;
 #include "melee.h"
 #include "adv.h"
 #include "parser.h"
-#include "roomfns.h"
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {

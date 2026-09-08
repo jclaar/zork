@@ -9,15 +9,12 @@ import ZInfo;
 #include "adv.h"
 #include "dung.h"
 #include "util.h"
-#include "objfns.h"
 #include "rooms.h"
 #include <algorithm>
 #include "makstr.h"
 #include "zstring.h"
 #include "parser.h"
 #include "act1.h"
-#include "globals.h"
-#include "funcs.h"
 #include "cevent.h"
 #include "memq.h"
 
@@ -35,7 +32,7 @@ Iterator<ParseContV> parse_cont;
 bool bugflag = false;
 std::list<HackP> demons;
 HackP clocker;
-std::unique_ptr<std::ofstream> script_channel;
+
 
 namespace
 {

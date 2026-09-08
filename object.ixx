@@ -1,40 +1,18 @@
-#pragma once
-#if 0
+module;
+
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/bitset.hpp>
-#include <vector>
-#include <map>
-#include <string>
-#include <list>
-#include <memory>
-#include <bitset>
 #include "defs.h"
-#include "cevent.h"
-#include "speech.h"
+
+export module Zork:Object;
+import :fwd;
+import :Speech;
+import ZStrings;
+import ZFlagSupport;
+import ZCevent;
 
 typedef std::initializer_list<const char*> StringList;
-
-enum class ObjectSlots
-{
-	ksl_odesco,
-	ksl_odesc1,
-	ksl_osize,
-	ksl_ofval,
-	ksl_otval,
-	ksl_ocapac,
-	ksl_oread,
-    ksl_oglobal,
-    ksl_oactor,
-    ksl_ovtype,
-    ksl_ostrength,
-    ksl_ofmsgs,
-    ksl_olint,
-    ksl_omatch,
-    ksl_obverb,
-    ksl_rglobal,
-    ksl_rval
-};
 
 // Structure for cevents
 class olint_t
@@ -45,7 +23,7 @@ public:
         _ev->ctick(init_val);
     }
 
-    const CEventP &ev() const { return _ev; }
+    const CEventP& ev() const { return _ev; }
     int val() const { return _val; }
     void val(int new_val) { _val = new_val; }
 
@@ -54,10 +32,10 @@ private:
 
     friend class boost::serialization::access;
     template <class archive>
-    void serialize(archive &ar, const unsigned int version)
+    void serialize(archive& ar, const unsigned int version)
     {
-        ar & _val;
-        ar & _ev;
+        ar& _val;
+        ar& _ev;
     }
 
     int _val = 0;
@@ -70,7 +48,7 @@ class OP
 public:
     using melee_func = const tofmsgs*;
     using PropVal = std::variant<int, std::string, melee_func, olint_t, RoomBit>;
-    OP(ObjectSlots os, const PropVal &v) : sl(os), val(v) {}
+    OP(ObjectSlots os, const PropVal& v) : sl(os), val(v) {}
     explicit OP(ObjectSlots os, int i) : sl(os), val(i) {}
     explicit OP(ObjectSlots os, RoomBit b) : sl(os), val(b) {}
     explicit OP(ObjectSlots os, e_oactor actor) : sl(os), val(std::to_underlying(actor)) {}
@@ -81,7 +59,7 @@ public:
             val = p;
     }
     ObjectSlots slot() const { return sl; }
-    const PropVal &value() const { return val; }
+    const PropVal& value() const { return val; }
 private:
     ObjectSlots sl;
     PropVal val;
@@ -100,21 +78,21 @@ public:
 
     Object() : _melee_func(nullptr) {}
 
-    Object(const StringList &syns, const StringList &adj = {}, const char *desc = "",
-        const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr, const StringList &contents = {},
-        const std::initializer_list<OP> &props = {});
+    Object(const StringList& syns, const StringList& adj = {}, const char* desc = "",
+        const std::initializer_list<Bits>& bits = {}, rapplic obj_fun = nullptr, const StringList& contents = {},
+        const std::initializer_list<OP>& props = {});
 
-	virtual ~Object()
-	{
+    virtual ~Object()
+    {
 
-	}
+    }
 
-    const std::string &oid() const { return synonyms[0]; }
-	const std::vector<std::string> &onames() const { return synonyms; }
-    const std::vector<std::string> &oadjs() const { return adjec; }
-    const tofmsgs *ofmsgs() const;
-	const std::string &oread() const;
-    const std::string &odesco() const { return _odesco; }
+    const std::string& oid() const { return synonyms[0]; }
+    const std::vector<std::string>& onames() const { return synonyms; }
+    const std::vector<std::string>& oadjs() const { return adjec; }
+    const tofmsgs* ofmsgs() const;
+    const std::string& oread() const;
+    const std::string& odesco() const { return _odesco; }
     int ocapac() const;
     PROP(ocontents);
     PROP(odesc1);
@@ -128,25 +106,25 @@ public:
     PROP(ocan);
     PROP(obverb);
 
-    const OlintP &olint() const {
+    const OlintP& olint() const {
         return _olint;
     }
-    const AdvP *oactor() const;
+    const AdvP* oactor() const;
     std::optional<Bits> oglobal() const { return _oglobal; }
-    const rapplic &oaction() const { return objfn; }
-    const RoomP &oroom() const { return _oroom; }
+    const rapplic& oaction() const { return objfn; }
+    const RoomP& oroom() const { return _oroom; }
     Object& oroom(const RoomP& r) { _oroom = r; return *this; }
     RoomBit ovtype() const;
 
-    void restore(const Object &o);
+    void restore(const Object& o);
 
 private:
     friend class boost::serialization::access;
     // For serialization
     template <class archive>
-    void save(archive &ar, const unsigned int version) const;
+    void save(archive& ar, const unsigned int version) const;
     template <class archive>
-    void load(archive &ar, const unsigned int version);
+    void load(archive& ar, const unsigned int version);
 
     BOOST_SERIALIZATION_SPLIT_MEMBER();
 
@@ -179,20 +157,20 @@ protected:
 class GObject : public Object
 {
 public:
-    GObject(Bits gbits, const StringList &syns, const StringList &adj = {},
-        const char * = "", const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr,
-        const std::initializer_list<const char*> &contents = {},
-        const std::initializer_list<OP> &props = { OP(ObjectSlots::ksl_oglobal, OP::PropVal(0)) });
+    GObject(Bits gbits, const StringList& syns, const StringList& adj = {},
+        const char* = "", const std::initializer_list<Bits>& bits = {}, rapplic obj_fun = nullptr,
+        const std::initializer_list<const char*>& contents = {},
+        const std::initializer_list<OP>& props = { OP(ObjectSlots::ksl_oglobal, OP::PropVal(0)) });
 
-    const std::optional<Bits> &gbits() const { return _gbits; }
+    const std::optional<Bits>& gbits() const { return _gbits; }
 
 private:
     GObject() {}
     friend class boost::serialization::access;
     template <class archive>
-    void serialize(archive &ar, const unsigned int version)
+    void serialize(archive& ar, const unsigned int version)
     {
-        ar & boost::serialization::base_object<Object>(*this);
+        ar& boost::serialization::base_object<Object>(*this);
     }
 
     std::optional<Bits> _gbits;
@@ -203,21 +181,21 @@ void init_objects();
 void init_gobjects();
 void init_synonyms();
 
-inline bool empty(const ObjectP &op)
+inline bool empty(const ObjectP& op)
 {
     return !op;
 }
 
 ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
-ObjList &global_objects();
+ObjList& global_objects();
 
 typedef std::map<std::string, ObjList, std::less<>> ObjectPobl;
-const ObjectPobl &object_pobl();
-bool is_obj(const std::string &obj);
-const ObjectP &find_obj(std::string_view name);
-const ObjectP &sfind_obj(std::string_view name);
+const ObjectPobl& object_pobl();
+bool is_obj(const std::string& obj);
+const ObjectP& find_obj(std::string_view name);
+const ObjectP& sfind_obj(std::string_view name);
 
-inline bool trnn(const ObjectP &op, Bits b)
+inline bool trnn(const ObjectP& op, Bits b)
 {
     return op->oflags().test(b);
 }
@@ -231,13 +209,13 @@ bool trnn(const ObjectP& op, Bits first, Args... args)
 }
 
 template <typename T>
-int trz(const ObjectP &op, T b)
+int trz(const ObjectP& op, T b)
 {
     return op->oflags()[b] = 0;
 }
 
 template <typename T, typename... Args>
-int trz(const ObjectP &op, T first, Args... args)
+int trz(const ObjectP& op, T first, Args... args)
 {
     trz(op, first);
     trz(op, args...);
@@ -245,14 +223,14 @@ int trz(const ObjectP &op, T first, Args... args)
 }
 
 template <typename T>
-const ObjectP &tro(const ObjectP &op, T b)
+const ObjectP& tro(const ObjectP& op, T b)
 {
     op->oflags()[b] = 1;
     return op;
 }
 
 template <typename T, typename... Args>
-const ObjectP &tro(const ObjectP &op, T first, Args... args)
+const ObjectP& tro(const ObjectP& op, T first, Args... args)
 {
     tro(op, first);
     tro(op, args...);
@@ -331,4 +309,3 @@ constexpr std::array cpwalls = {
 };
 
 void add_inqobj(const ObjectP& obj);
-#endif

@@ -7,8 +7,6 @@ import ZStrings;
 #include "act4.h"
 #include "cevent.h"
 #include "melee.h"
-#include "objfns.h"
-#include "roomfns.h"
 
 CEventP sphere_clock;
 

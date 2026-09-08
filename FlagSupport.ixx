@@ -1,14 +1,15 @@
-#pragma once
-#include <utility>
+module;
 #include <boost/serialization/serialization.hpp>
 
-template <typename FlagType, size_t sz>
+export module ZFlagSupport;
+import std;
+
+export template <typename FlagType, size_t sz>
 class Flags : private std::bitset<sz>
 {
     typedef std::bitset<sz> Base;
     Flags(const Base& b) : Base(b)
-    {
-    }
+    {}
 public:
     using Base::none;
     using Base::any;
@@ -31,7 +32,7 @@ public:
     template <class archive>
     void serialize(archive& ar, const unsigned int version)
     {
-        ar & static_cast<Base&>(*this);
+        ar& static_cast<Base&>(*this);
     }
 
 private:
@@ -40,12 +41,12 @@ private:
     friend Flags<FT, Sz> operator&(const Flags<FT, Sz>& lhs, const Flags<FT, Sz>& rhs);
 };
 
-template <typename FlagType, size_t sz>
+export template <typename FlagType, size_t sz>
 Flags<FlagType, sz> operator&(const Flags<FlagType, sz>& lhs, const Flags<FlagType, sz>& rhs)
 {
     auto& fl = static_cast<const Flags<FlagType, sz>::Base&>(lhs);
     auto& fr = static_cast<const Flags<FlagType, sz>::Base&>(rhs);
     Flags<FlagType, sz> rv(fl & fr);
-    
+
     return rv;
 }

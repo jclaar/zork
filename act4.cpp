@@ -1,7 +1,6 @@
 import ZException;
 #include <numeric>
 #include "defs.h"
-#include "funcs.h"
 #include "dung.h"
 #include "adv.h"
 #include "memq.h"
@@ -10,8 +9,6 @@ import ZException;
 #include "act1.h"
 #include "act3.h"
 #include "act4.h"
-#include "objfns.h"
-#include "roomfns.h"
 
 std::vector<QuestionP> qvec;
 int mdir = 270;

@@ -1,5 +1,4 @@
 #pragma once
-#include <optional>
 #include "defs.h"
 #include "parser.h"
 

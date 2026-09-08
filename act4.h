@@ -28,11 +28,9 @@ std::optional<int> mirror_here(RoomP rm);
 std::string pw(SIterator unm, SIterator key);
 
 RAPPLIC(answer);
-RAPPLIC(follow);
 RAPPLIC(incant);
 RAPPLIC_DEF(inquisitor, Iterator<ParseContV>, Iterator<ParseContV>());
 
-RAPPLIC(start_end);
 RAPPLIC(stats);
 RAPPLIC(stay);
 RAPPLIC(turnto);
