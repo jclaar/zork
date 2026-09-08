@@ -8,7 +8,6 @@ import ZStrings;
 #include "zstring.h"
 #include "util.h"
 #include "parser.h"
-#include "adv.h"
 #include "memq.h"
 
 using namespace std::string_view_literals;

@@ -1,7 +1,6 @@
 import ZException;
 #include <numeric>
 #include "defs.h"
-#include "adv.h"
 #include "memq.h"
 #include "zstring.h"
 #include "util.h"

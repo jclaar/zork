@@ -1,8 +1,11 @@
 module;
 #include "defs.h"
+#include <boost/serialization/split_member.hpp>
 
-export module ZRoom;
+export module Zork:Room;
 import ZDefs;
+import ZGlobals;
+import :Object;
 import std;
 
 using RPValue = std::variant<int, std::vector<Bits>>;
@@ -23,6 +26,12 @@ public:
 private:
     std::string_view nexit_desc;
 };
+
+// Values that can be returned from an exit function.
+using ExitFuncVal = std::variant<std::monostate, bool, RoomP>;
+using ex_rapplic = std::function<ExitFuncVal()>;
+ExitFuncVal apply_random(ex_rapplic fcn);
+
 
 // Special exit conditions
 class CExit
@@ -227,11 +236,6 @@ inline bool operator==(const Ex& exit, const RoomP& p)
 // Set or 0 object bit or bits.
 void rtrc(const RoomP& p, RoomBit b);
 bool gtrnn(const RoomP&, Bits);
-
-// Values that can be returned from an exit function.
-using ExitFuncVal = std::variant<std::monostate, bool, RoomP>;
-using ex_rapplic = std::function<ExitFuncVal()>;
-ExitFuncVal apply_random(ex_rapplic fcn);
 
 export namespace exit_funcs {
     EX_RAPPLIC(bkleavew);

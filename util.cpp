@@ -1,6 +1,5 @@
 import ZException;
 #include "util.h"
-#include "adv.h"
 #include "rooms.h"
 #include "memq.h"
 

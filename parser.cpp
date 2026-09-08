@@ -4,7 +4,6 @@ import ZException;
 #include "object.h"
 #include "util.h"
 #include "rooms.h"
-#include "adv.h"
 #include "memq.h"
 
 const char *brks = "\"' 	:.,?!\n";

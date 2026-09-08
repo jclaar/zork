@@ -6,7 +6,6 @@ import ZInfo;
 #include <boost/serialization/serialization.hpp>
 
 #include "sr.h"
-#include "adv.h"
 #include "util.h"
 #include "rooms.h"
 #include <algorithm>

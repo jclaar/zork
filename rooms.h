@@ -6,7 +6,6 @@
 #include <any>
 #include <fstream>
 #include "defs.h"
-#include "room.h"
 
 // This exception is thrown when the user has quit or restart. 
 // This attempts to mimic the behavior of the QUIT MDL function,
