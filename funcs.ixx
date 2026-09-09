@@ -1,6 +1,5 @@
 module;
 #include "defs.h"
-#include <assert.h>
 export module ZFuncs;
 import ZDefs;
 import ZException;
@@ -43,8 +42,9 @@ class ctellt : public tell_base
         tellt2(args...);
     }
 
+public:
     template <typename... Args>
-    ctellt(std::string_view s, uint32_t flags, Args...args)
+    ctellt(std::string_view s, std::uint32_t flags, Args...args)
     {
         tell_pre(flags);
         tty << s;
@@ -52,26 +52,23 @@ class ctellt : public tell_base
         tell_post(flags);
     }
 
-    ctellt(std::string_view s, uint32_t flags)
+    ctellt(std::string_view s, std::uint32_t flags)
     {
         tell_pre(flags);
         tty << s;
         tell_post(flags);
     }
-    template <typename... Args>
-    friend bool tell(std::string_view s, uint32_t flags, Args...args);
-    friend bool tell(std::string_view s, uint32_t flags);
 };
 
 export template <typename... Args>
-bool tell(std::string_view s, uint32_t flags, Args...args)
+bool tell(std::string_view s, std::uint32_t flags, Args...args)
 {
     return ctellt(s, flags, args...);
 }
 
 // Add a separate template function with flags, since GCC
 // doesn't like templates with default arguments.
-export bool tell(std::string_view s, uint32_t flags = post_crlf)
+export bool tell(std::string_view s, std::uint32_t flags = post_crlf)
 {
     return tell(s, flags, std::monostate());
 }
@@ -82,7 +79,6 @@ void princ(const T& v)
 {
     tty << v;
 }
-void prin1(int val);
 export void printstring(std::string_view str) { tty << str; }
 
 ERAPPLIC(terminal);
@@ -101,17 +97,15 @@ export std::string readst(std::string_view prompt)
 }
 
 // Various MDL functions mapped to C++ equivalents
-export char *back(char *s, size_t count) { return s - count; }
-export std::string& substruc(const std::string& src, size_t start, size_t end, std::string& dest)
+export char *back(char *s, std::size_t count) { return s - count; }
+export std::string& substruc(const std::string& src, std::size_t start, std::size_t end, std::string& dest)
 {
-    _ASSERT(dest.size() >= end);
     std::copy(src.begin() + start, src.begin() + end, dest.begin() + start);
     return dest;
 }
 
-export char* substruc(const char* src, size_t start, size_t end, char* dest)
+export char* substruc(const char* src, std::size_t start, std::size_t end, char* dest)
 {
-    _ASSERT(start == 0); // Verify functionality if not true.
     while (start != end)
     {
         dest[start] = src[start];
@@ -175,7 +169,7 @@ public:
         return temp;
     }
 
-    size_t size() const
+    std::size_t size() const
     {
         return std::distance(p, c->end());
     }
@@ -227,10 +221,8 @@ public:
         std::advance(p, offset);
     }
 
-    value_type& operator[](size_t index)
+    value_type& operator[](std::size_t index)
     {
-        _ASSERT(is_init());
-        _ASSERT(std::distance(c->begin(), p) + index <= c->size());
         auto iter = p;
         std::advance(iter, index);
         return *iter;
@@ -244,9 +236,6 @@ public:
 private:
     T* c;
     iterator p;
-
-    //friend bool operator==(const Iterator<T> &a, const Iterator<T> &b);
-    //friend bool operator!=(const Iterator<T> &a, const Iterator<T> &b);
 };
 
 export class SIterator : public Iterator<std::string>
@@ -333,7 +322,6 @@ export SIterator uppercase(SIterator src)
 
 export SIterator substruc(SIterator src, int start, int end, SIterator dest)
 {
-    _ASSERT(start == 0);
     for (int i = start; i < end; ++i)
     {
         dest[i] = src[i];
@@ -343,7 +331,6 @@ export SIterator substruc(SIterator src, int start, int end, SIterator dest)
 
 export SIterator substruc(const char* msg, int start, int end, SIterator dest)
 {
-    _ASSERT(start == 0);
     std::copy(msg + start, msg + end, dest);
     return dest;
 }
@@ -363,13 +350,13 @@ export std::string username()
         "Occupant";
 }
 
-void tell_base::tell_pre(uint32_t flags)
+void tell_base::tell_pre(std::uint32_t flags)
 {
     ::flags[FlagId::tell_flag] = true;
     if (flags & pre_crlf)
         tty << std::endl;
 }
-void tell_base::tell_post(uint32_t flags)
+void tell_base::tell_post(std::uint32_t flags)
 {
     if (flags & post_crlf)
         tty << std::endl;

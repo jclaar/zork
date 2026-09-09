@@ -5,10 +5,6 @@ import :Object;
 import ZStrings;
 import :Util;
 
-#pragma once
-
-#include "defs.h"
-
 // 0 -- attacker misses
 // 1 --defender unconscious
 // 2 --defender dead

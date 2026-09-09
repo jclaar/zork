@@ -1,5 +1,5 @@
 module;
-#include <limits>
+#include <climits>
 
 export module ZGlobals;
 import std;
@@ -87,7 +87,7 @@ export enum class FlagId
     safe_flag,
     num_flag_bits
 };
-export constexpr size_t num_flag_bits = std::to_underlying(FlagId::num_flag_bits);
+export constexpr std::size_t num_flag_bits = std::to_underlying(FlagId::num_flag_bits);
 
 export using FlagBits = Flags<FlagId, num_flag_bits>;
 

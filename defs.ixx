@@ -169,7 +169,7 @@ export enum class Bits
     masterbit,
     numbits
 };
-export constexpr size_t numbits = std::to_underlying(Bits::numbits);
+export constexpr std::size_t numbits = std::to_underlying(Bits::numbits);
 
 export enum class RoomBit
 {
@@ -187,7 +187,7 @@ export enum class RoomBit
     rnwallbit,   // "This room doesn't have walls"
     rnumbits
 };
-export constexpr size_t rnumbits = std::to_underlying(RoomBit::rnumbits);
+export constexpr std::size_t rnumbits = std::to_underlying(RoomBit::rnumbits);
 export using RoomBits = Flags<RoomBit, rnumbits>;
 
 export using BitsList = std::list<Bits>;

@@ -1,6 +1,7 @@
 module;
 #include "defs.h"
 export module ZObjfns;
+import std;
 import ZDefs;
 
 export namespace obj_funcs {
