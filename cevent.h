@@ -1,8 +1,5 @@
 #pragma once
 
-#include "defs.h"
-#include <boost/serialization/access.hpp>
-
 // Handy macros to just refer to events by their names.
 #define broin ev[Event::broin]
 #define cycin ev[Event::cycin]

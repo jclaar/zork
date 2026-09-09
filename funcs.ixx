@@ -380,3 +380,9 @@ bool terminal::operator()() const
     tty_buf.SetTerminal(!tty_buf.IsTerminal());
     return tell(tty_buf.IsTerminal() ? "Terminal mode enabled." : "Terminal mode disabled.");
 }
+
+export template <typename T>
+int length(const T& c)
+{
+    return (int)c.size();
+}
