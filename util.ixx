@@ -3,7 +3,7 @@ import std;
 import :fwd;
 import :Rooms;
 
-extern bool always_lit;
+export bool always_lit = false;
 
 template <typename T>
 const typename T::value_type& pick_one(const T& items)

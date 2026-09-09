@@ -17,7 +17,7 @@ inline bool operator==(const Nefals& ne, const ObjectP& obj)
 }
 
 extern Iterator<ParseContV> lexv;
-extern bool gwim_disable;
+export bool gwim_disable = false;
 
 export using PrepVec = Iterator<PhraseVecV>;
 export using ParseVec = Iterator<ParseVecA>;

@@ -111,8 +111,8 @@ target_sources(zork PRIVATE
 		"cevent.ixx" 
 		"objfns.ixx" 
 		"makstr.ixx" 
-		"object.ixx" 
-		"room.ixx" 
+		"object.ixx" "objecti.ixx"
+		"room.ixx" "roomi.ixx"
 		"zork_fwd.ixx" 
 		"melee.ixx" 
 		"zork.ixx" 
@@ -123,8 +123,8 @@ target_sources(zork PRIVATE
 		"act3.ixx" 
 		"act4.ixx"
 		"rooms.ixx" "roomsi.ixx"
-		"parser.ixx" 
-		"util.ixx"
+		"parser.ixx" "parseri.ixx"
+		"util.ixx" "utili.ixx"
 		"sr.ixx" "sri.ixx"
 		"zstring.ixx")
 

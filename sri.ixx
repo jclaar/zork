@@ -16,6 +16,7 @@ import :Room;
 import :Rooms;
 import :Dungeon;
 import :AdvI;
+import :ObjectI;
 import ZException;
 
 typedef std::vector<int> SV;

@@ -89,7 +89,7 @@ ERAPPLIC(terminal);
 export std::string readst(std::string_view prompt);
 
 // Various MDL functions mapped to C++ equivalents
-//inline char *back(char *s, size_t count) { return s - count; }
+export char *back(char *s, size_t count) { return s - count; }
 export std::string& substruc(const std::string& src, size_t start, size_t end, std::string& dest);
 export char* substruc(const char* src, size_t start, size_t end, char* dest);
 export const char* member(std::string_view subst, const std::string& str)
@@ -239,24 +239,24 @@ public:
     }
 };
 
-template <typename T>
-inline bool operator!=(const Iterator<T>& a, const Iterator<T>& b)
+export template <typename T>
+bool operator!=(const Iterator<T>& a, const Iterator<T>& b)
 {
     // Equal if the two containers point to the same thing.
     return a.cont() != b.cont() || a.cur() != b.cur();
 }
 
-inline bool operator==(const SIterator& a, const char* b)
+export bool operator==(const SIterator& a, const char* b)
 {
     return std::string(a.cur(), a.end()) == b;
 }
 
-inline bool operator!= (const SIterator& a, const SIterator& b)
+export bool operator!= (const SIterator& a, const SIterator& b)
 {
     return !(a == b);
 }
 
-inline bool operator!=(const SIterator& a, const char* b)
+export bool operator!=(const SIterator& a, const char* b)
 {
     return std::string(a.cur(), a.end()) != b;
 }
@@ -297,9 +297,9 @@ T back(T it, int offset = 1)
     return it;
 }
 
-SIterator uppercase(SIterator src);
+export SIterator uppercase(SIterator src);
 
-SIterator substruc(SIterator src, int start, int end, SIterator dest)
+export SIterator substruc(SIterator src, int start, int end, SIterator dest)
 {
     _ASSERT(start == 0);
     for (int i = start; i < end; ++i)
@@ -309,14 +309,14 @@ SIterator substruc(SIterator src, int start, int end, SIterator dest)
     return dest;
 }
 
-SIterator substruc(const char* msg, int start, int end, SIterator dest)
+export SIterator substruc(const char* msg, int start, int end, SIterator dest)
 {
     _ASSERT(start == 0);
     std::copy(msg + start, msg + end, dest);
     return dest;
 }
 
-template <typename T>
+export template <typename T>
 typename T::mapped_type plookup(std::string_view a, const T& l)
 {
     auto iter = l.find(a);
