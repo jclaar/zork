@@ -3,7 +3,9 @@ module;
 
 export module Zork:Act1;
 import :fwd;
+import :CEvent;
 
+extern CEventP burnup_int;
 int otval_frob(const ObjList& l);
 export bool with_tell(const ObjectP& obj);
 bool bomb(ObjectP obj);
@@ -13,5 +15,6 @@ bool infested(const RoomP& r);
 export bool open_close(const ObjectP& obj, std::string_view stropn, std::string_view strcls);
 bool thief_in_treasure(const ObjectP& hobj);
 bool torch_off(const ObjectP& t);
+bool balloon_burn();
 
 

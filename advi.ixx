@@ -3,6 +3,25 @@ import std;
 export import :Adv;
 import :Room;
 
+namespace
+{
+    AdvArray actor_list;
+}
+
+AdvArray& actors()
+{
+    return actor_list;
+}
+
+Adv::Adv(RoomP r, const ObjectP& actor_obj, rapplic action, int strength) :
+    _aroom(r),
+    _aobj(actor_obj),
+    _aaction(action),
+    _astrength(strength)
+{
+
+}
+
 template <class archive>
 void Adv::save(archive& ar, const unsigned int version) const
 {
@@ -41,4 +60,10 @@ void Adv::load(archive& ar, const unsigned int version)
     {
         _aobjs.push_back(sfind_obj(s));
     }
+}
+
+void add_actor(e_oactor actor_name, const RoomP& room,
+    const ObjectP& obj, rapplic action, int strength)
+{
+    actor_list[std::to_underlying(actor_name)] = std::make_unique<Adv>(room, obj, action, strength);
 }

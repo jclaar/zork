@@ -217,3 +217,25 @@ ExitFuncVal apply_random(ex_rapplic fcn)
     return fcn();
 }
 
+
+RoomP mloc = get_room("MRB");
+
+bool eg_infested(const RoomP& r)
+{
+    auto& m = sfind_room("MRG");
+    return (r == m ||
+        (mloc == m && r == sfind_room("INMIR")) ||
+        r == sfind_room("MRGE") ||
+        r == sfind_room("MRGW"));
+}
+
+void rtrc(const RoomP& p, RoomBit b)
+{
+    p->rbits()[b].flip();
+}
+
+bool gtrnn(const RoomP& p, Bits b)
+{
+    return std::find(p->rglobal().begin(), p->rglobal().end(), b) != p->rglobal().end();
+}
+

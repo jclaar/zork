@@ -1,7 +1,9 @@
 export module Zork:Melee;
 import std;
 import :fwd;
+import :Object;
 import ZStrings;
+import :Util;
 
 #pragma once
 
@@ -34,4 +36,5 @@ std::optional<attack_state> blow(const AdvP& hero, ObjectP villain, const tofmsg
 int fight_strength(const AdvP& hero, bool adjust = true);
 bool pres(const tofmsg& tbl, std::string_view a, std::string_view d, std::string_view w);
 int villain_strength(const ObjectP& villain);
+
 bool winning(const ObjectP& v, const AdvP& h);

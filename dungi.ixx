@@ -204,7 +204,6 @@ const ObjList small_papers = build_olist("BLABE", "LABEL", "CARD", "WARNI", "PAP
 const ObjList palobjs = build_olist("SCREW", "KEYS", "STICK", "PKEY");
 ObjList inqobjs;
 const RoomP& northend = get_room("MRD");
-RoomP mloc = get_room("MRB");
 const RoomP startroom = mloc;
 RoomP bloc = get_room("VLBOT");
 const RoomP& southend = get_room("MRA");
@@ -942,6 +941,7 @@ void dir_syns()
         dsynonym(d.first, d.second);
     }
 }
+
 
 void init_dung()
 {

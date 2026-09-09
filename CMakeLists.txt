@@ -126,7 +126,7 @@ target_sources(zork PRIVATE
 		"parser.ixx" "parseri.ixx"
 		"util.ixx" "utili.ixx"
 		"sr.ixx" "sri.ixx"
-		"zstring.ixx" "act2i.ixx" "act4i.ixx" "act3i.ixx")
+		"zstring.ixx" "act2i.ixx" "act4i.ixx" "act3i.ixx" "act1i.ixx" "meleei.ixx" "makstri.ixx")
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)

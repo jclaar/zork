@@ -49,6 +49,638 @@ namespace
             "FOLLO", "STAY", "OPEN", "CLOSE", "KILL");
     }
 
+#if _MSC_FULL_VER==192227812
+#pragma optimize("", off)
+#endif
+    void init_actions()
+    {
+        sadd_action("1ST?", room_funcs::time());
+        sadd_action("C-INT", room_funcs::time());
+
+        sadd_action("ANSWE", answer());
+        vsynonym("ANSWE", "RESPO");
+
+        add_action("ATTAC", "Attack", ActionVec{
+            AnyV{
+            AL{
+            Bits::villain,
+            robjs(),
+            reach()
+        },
+            "WITH",
+            AL{
+            Bits::weaponbit,
+            aobjs(),
+            have()
+        },
+            AVSyntax("ATTAC", attacker())
+        }
+            });
+        vsynonym("ATTAC", "FIGHT", "HURT", "INJUR", "HIT");
+
+        sadd_action("BACK", backer());
+        sadd_action("BLAST", blast());
+
+        add_action("BLOW", "Blow", ActionVec{
+            AnyV{ "UP", obj(), "WITH", AL{ Bits::toolbit, reach(), robjs(), aobjs() }, AVSyntax("INFLA", inflater()), driver() },
+            AnyV{ "UP", obj(), AVSyntax("BLAST", blast()) },
+            AnyV{ "INTO", obj(), AVSyntax("BLOIN", breathe()) }
+            });
+
+        add_action("BOARD", "Board", ActionVec{ AnyV{ AL{ Bits::vehbit, robjs(), reach() }, AVSyntax("BOARD", board()) } });
+
+        sadd_action("BRIEF", brief());
+
+        add_action("BRUSH", "Brush", ActionVec{
+            AnyV{ AL{ -1, aobjs(), robjs(), reach() }, AVSyntax("BRUSH", brush()), driver() },
+            AnyV{ AL{ -1, aobjs(), robjs(), reach() }, "WITH", obj(), AVSyntax("BRUSH", brush()) }
+            });
+
+        sadd_action("BUG", bugger());
+        vsynonym("BUG", "GRITC", "COMPL");
+
+        add_action("BURN", "Burn", ActionVec{ AnyV{ AL{ Bits::burnbit, aobjs(), robjs(), reach() }, "WITH", AL{ Bits::flamebit, aobjs(), robjs(), have() }, AVSyntax{ "BURN", burner()}} });
+        vsynonym("BURN", "INCIN", "IGNIT");
+
+        sadd_action("CHOMP", chomp());
+        vsynonym("CHOMP", "LOSE", "BARF");
+
+        add_action("CLIMB", "Climb", ActionVec{
+            AnyV({ "UP", AL{ Bits::climbbit, robjs() }, AVSyntax("CLUP", climb_up()) }),
+            AnyV({ "DOWN", AL{ Bits::climbbit, robjs() }, AVSyntax("CLDN", climb_down()) }),
+            AnyV({ AL{ Bits::climbbit, robjs() }, AVSyntax("CLUDG", climb_foo()) })
+            });
+
+        add_action("CLOSE", "Close", ActionVec{
+            AnyV{
+            AL{ std::list<Bits>{Bits::doorbit, Bits::contbit}, reach(), aobjs(), robjs() } , AVSyntax("CLOSE", closer())
+        }
+            });
+
+        oneadd_action("COUNT", "Count", count());
+        vsynonym("COUNT", "MANY");
+
+        sadd_action("CURSE", curses());
+        vsynonym("CURSE", "SHIT", "FUCK", "DAMN");
+
+        oneadd_action("DEFLA", "Deflate", deflater());
+
+        sadd_action("DEAD!", room_funcs::time());
+
+        add_action("DESTR", "Destroy", ActionVec{
+            AnyV{ AL{ -1, reach(), robjs(), aobjs() }, AVSyntax("MUNG", munger()), driver() },
+            AnyV{ AL{ -1, reach(), robjs(), aobjs() }, "WITH", AL{ -1, aobjs(), take() }, AVSyntax("MUNG", munger()) },
+            });
+        vsynonym("DESTR", "MUNG", "DAMAG");
+
+        sadd_action("DIAGN", diagnose());
+
+        add_action("DIG", "dig", ActionVec{
+            AnyV{
+            AL{ Bits::digbit, robjs() },
+            "WITH",
+            AL{ Bits::toolbit, aobjs(), have() },
+            AVSyntax("DIG", digger()),
+            driver()
+        },
+            AnyV({
+            "INTO",
+            AL{ Bits::digbit, robjs() },
+            "WITH",
+            AL{ Bits::toolbit, aobjs(), have() },
+            AVSyntax("DIG", digger())
+        })
+            });
+
+        add_action("DISEM", "Disembark from", ActionVec{
+            AnyV{ AL{ Bits::vehbit, robjs() }, AVSyntax("DISEM", unboard()) }
+            });
+
+        sadd_action("DOC", doc());
+
+        add_action("DRINK", "Drink", ActionVec{
+            AnyV{ AL{ Bits::drinkbit, aobjs(), robjs(), reach() }, AVSyntax("DRINK", eat()) }
+            });
+        vsynonym("DRINK", "IMBIB", "SWALL");
+
+        add_action("DROP", "Drop", ActionVec{
+            AnyV{
+            AL{ -1, aobjs(), reach() },
+            AVSyntax("DROP", dropper()),
+            driver()
+        },
+            AnyV{
+            AL{ -1, aobjs(), reach() },
+            "DOWN",
+            obj(),
+            AVSyntax("PUT", putter())
+        },
+            AnyV{
+            AL{ -1, aobjs(), reach() },
+            "IN",
+            obj(),
+            AVSyntax("PUT", putter())
+        }
+            });
+        vsynonym("DROP", "RELEA");
+
+        add_action("EAT", "Eat", ActionVec{
+            AnyV{ AL{ Bits::foodbit, aobjs(), robjs(), reach(), take() },AVSyntax("EAT", eat()) }
+            });
+        vsynonym("EAT", "CONSU", "GOBBL", "MUNCH", "TASTE");
+
+        onenradd_action("EXAMI", "Examine", room_info());
+        vsynonym("EXAMI", "DESCR", "WHAT", "WHATS", "WHAT'");
+
+        sadd_action("EXORC", exorcise());
+        vsynonym("EXORC", "XORCI");
+
+        add_action("EXTIN", "Turn off", ActionVec{
+            AnyV{ AL{ Bits::lightbit, reach(), aobjs(), robjs(), take() }, AVSyntax("TRNOF", lamp_off()) }
+            });
+        vsynonym("EXTIN", "DOUSE");
+
+        add_action("ENTER", "Enter", ActionVec{
+            AnyV{ AVSyntax("ENTER", enter()) },
+            AnyV{ obj(), AVSyntax("GTHRO", through()) }
+            });
+
+        sadd_action("FEATU", feech());
+        vsynonym("FEATU", "COMME", "SUGGE", "IDEA");
+
+        sadd_action("FGHT?", room_funcs::time());
+
+        add_action("FILL", "Fill", ActionVec{
+            AnyV{ AL{ Bits::contbit, reach(), aobjs(), robjs() }, "WITH", obj(), AVSyntax("FILL", fill()) },
+            AnyV{ AL{ Bits::contbit, reach(), aobjs(), robjs() }, AVSyntax("FILL", fill()) }
+            });
+
+        onenradd_action("FIND", "Find", find());
+        vsynonym("FIND", "WHERE", "SEEK", "SEE");
+
+        add_action("FOLLO", "Follow", ActionVec{
+            AnyV{ AVSyntax("FOLLO", follow()) },
+            AnyV{ obj(), AVSyntax("FOLLO", follow()) }
+            });
+
+        sadd_action("FOO", jargon());
+        vsynonym("FOO", "BAR", "BLETC");
+
+        sadd_action("FROBO", frobozz());
+        sadd_action("GERON", geronimo());
+
+        add_action("GIVE", "Give", ActionVec{
+            AnyV{ obj(), "TO", AL{ Bits::vicbit, reach(), robjs() }, AVSyntax("GIVE", dropper()), driver() },
+            AnyV{ AL{ Bits::vicbit, reach(), robjs() }, obj(), AVSyntax("GIVE", dropper()), flip() }
+            });
+
+        sadd_action("GO-IN", room_funcs::time());
+
+        oneadd_action("GTHRO", "Go through", through());
+        vsynonym("GTHRO", "THROU", "INTO");
+
+        sadd_action("HACK?", room_funcs::time());
+        add_action("HELLO", "Hello", ActionVec{
+            AnyV{ AVSyntax("HELLO", hello()), driver() },
+            AnyV{ obj(), AVSyntax("HELLO", hello()) }
+            });
+        sadd_action("HELP", help());
+
+        sadd_action("IN!", room_funcs::time());
+        sadd_action("INCAN", incant());
+
+        add_action("INFLA", "Inflate", ActionVec{
+            AnyV{ obj(), "WITH", AL{ Bits::toolbit, reach(), robjs(), aobjs() }, AVSyntax("INFLA", inflater()) }
+            });
+
+        sadd_action("INFO", info());
+
+        sadd_action("INVEN", invent());
+        vsynonym("INVEN", "LIST", "I");
+
+        add_action("JUMP", "jump", ActionVec{
+            AnyV{
+            AVSyntax("JUMP", leaper())
+        },
+            AnyV{
+            "OVER", obj(), AVSyntax("JUMP", leaper())
+        }
+            });
+        vsynonym("JUMP", "LEAP");
+
+        oneadd_action("KICK", "Taunt", kicker());
+        vsynonym("KICK", "BITE", "TAUNT");
+
+        add_action("KILL", "Kill", ActionVec{
+            AnyV{ AL{ Bits::villain, robjs(), reach() }, "WITH", AL{ Bits::weaponbit, aobjs(), have() }, AVSyntax("KILL", killer()) }
+            });
+
+        add_action("KNOCK", "Knock", ActionVec{
+            AnyV{ "AT", obj(), AVSyntax("KNOCK", knock()), driver() },
+            AnyV{ "ON", obj(), AVSyntax("KNOCK", knock()) },
+            AnyV{ "DOWN", AL{ Bits::vicbit, reach(), robjs() }, AVSyntax("ATTAC", attacker()) }
+            });
+        vsynonym("KNOCK", "RAP");
+
+        add_action("LEAVE", "Enter", ActionVec{
+            AnyV{ AVSyntax("LEAVE", leave()) },
+            AnyV{ obj(), AVSyntax("DROP", dropper()) }
+            });
+
+        add_action("LIGHT", "Light", ActionVec{
+            AnyV{ AL{ Bits::lightbit, reach(), aobjs(), robjs(), take() }, AVSyntax("LIGHT", lamp_on()), driver() },
+            AnyV{ AL{ Bits::lightbit, reach(), aobjs(), robjs() }, "WITH", AL{ Bits::flamebit, aobjs(), take() }, AVSyntax("BURN", burner()) }
+            });
+
+        add_action("LOCK", "Lock", ActionVec{
+            AnyV{ AL{ -1, robjs() }, "WITH", AL{ Bits::toolbit, aobjs(), robjs(), take() }, AVSyntax("LOCK", locker()) }
+            });
+
+        add_action("LOOK", "Look", ActionVec{
+            AnyV{
+            AVSyntax("LOOK", room_desc())
+        },
+            AnyV{
+            "AT", nrobj(), AVSyntax("LKAT", room_desc())
+        },
+            AnyV{
+            "THROU", nrobj(), AVSyntax("LKIN", look_inside())
+        },
+            AnyV{
+            "UNDER", nrobj(), AVSyntax("LKUND", look_under())
+        },
+            AnyV{
+            "IN", nrobj(), AVSyntax("LKIN", look_inside())
+        },
+            AnyV{
+            "AT", nrobj(), "WITH", obj(), AVSyntax("READ", reader())
+        },
+            AnyV{
+            "AT", nrobj(), "THROU", obj(), AVSyntax("READ", reader())
+        },
+            });
+        vsynonym("LOOK", "L", "STARE", "GAZE");
+
+        oneadd_action("LOWER", "Lower", r_l());
+
+        oneadd_action("MAKE", "Make", maker());
+        vsynonym("MAKE", "BUILD");
+
+        add_action("LUBRI", "Lubricate", ActionVec{
+            AnyV{ obj(), "WITH", AL{ -1, aobjs(), reach() }, AVSyntax("OIL", oil()) }
+            });
+        vsynonym("LUBRI", "OIL", "GREAS");
+
+        add_action("MELT", "Melt", ActionVec{
+            AnyV{ obj(), "WITH", AL{ Bits::flamebit, reach(), aobjs(), robjs() }, AVSyntax("MELT", melter()) }
+            });
+        vsynonym("MELT", "LIQUI");
+
+        add_action("MOVE", "Move", ActionVec{
+            AnyV{ AL{ -1, robjs() }, AVSyntax("MOVE", move()) }
+            });
+
+        sadd_action("MUMBL", mumbler());
+        vsynonym("MUMBL", "SIGH");
+
+        sadd_action("NOOBJ", no_obj_hack());
+
+        // Probably not necessary here...
+        //sadd_action("NAME", srname);
+
+        sadd_action("OBJEC", room_obj());
+
+        sadd_action("ODYSS", sinbad());
+        vsynonym("ODYSS", "ULYSS");
+
+        oneadd_action("OOPS", "Oops", oops());
+
+        add_action("OPEN", "Open", ActionVec{
+            AnyV{AL{ std::list<Bits>{Bits::doorbit, Bits::contbit}, reach(), aobjs(), robjs() }, AVSyntax("OPEN", opener()), driver() },
+            AnyV{AL{ std::list<Bits>{Bits::doorbit, Bits::contbit}, reach(), aobjs(), robjs()}, "WITH", AL{Bits::weaponbit, Bits::toolbit, robjs(), aobjs(), have()}, AVSyntax("OPEN", opener())}
+            });
+
+        sadd_action("OUT!", room_funcs::time());
+
+        add_action("PICK", "Pick", ActionVec{
+            AnyV{ "UP", AL{ std::list<Bits>{Bits::takebit, Bits::trytakebit}, reach(), robjs(), aobjs() }, AVSyntax("TAKE", takefn()) }
+            });
+
+        add_action("PLAY", "Play", ActionVec{
+            AnyV{ obj(), AVSyntax("PLAY", play()), driver() },
+            AnyV{ obj(), "WITH", AL{ Bits::toolbit, aobjs(), robjs(), reach(), take() }, AVSyntax("PLAY", play()) }
+            });
+
+        add_action("PLUG", "Plug", ActionVec{
+            AnyV{ obj(), "WITH", obj(), AVSyntax("PLUG", plugger()) }
+            });
+        vsynonym("PLUG", "GLUE", "PATCH");
+
+        sadd_action("PLUGH", advent());
+        vsynonym("PLUGH", "XYZZY");
+
+        add_action("POKE", "Poke", ActionVec{
+            AnyV{ AL{ Bits::villain, reach(), robjs() }, "WITH", AL{ Bits::weaponbit, aobjs(), have() }, AVSyntax("POKE", munger()) }
+            });
+        vsynonym("POKE", "JAB", "BREAK", "BLIND");
+
+        add_action("POUR", "Pour", ActionVec{
+            AnyV{ AL{ -1, aobjs(), reach() }, AVSyntax("POUR", dropper()), driver() },
+            AnyV{ AL{ -1, aobjs(), reach() }, "IN", obj(), AVSyntax("POUR", dropper()) },
+            AnyV{ AL{ -1, aobjs(), reach() }, "ON", obj(), AVSyntax("PORON", pour_on()) }
+            });
+        vsynonym("POUR", "SPILL");
+
+        sadd_action("PRAY", prayer());
+
+        add_action("PULL", "Pull", ActionVec{
+            AnyV{ AL{ -1, reach(), robjs() }, AVSyntax("MOVE", move()), driver() },
+            AnyV{ "ON", AL{ -1, reach(), robjs() }, AVSyntax("MOVE", move()) }
+            });
+        vsynonym("PULL", "TUG");
+
+        add_action("PUMP", "Pump", ActionVec{
+            AnyV{ "UP", obj(), AVSyntax("PMPUP", pumper()) }
+            });
+
+        add_action("PUSH", "Push", ActionVec{
+            AnyV{
+            obj(), AVSyntax("PUSH", pusher())
+        },
+            AnyV{
+            "ON", obj(), AVSyntax("PUSH", pusher())
+        },
+            AnyV{
+            obj(), "UNDER", obj(), AVSyntax("PTUND", put_under())
+        }
+            });
+        vsynonym("PUSH", "PRESS");
+
+        add_action("PUT", "Put", ActionVec{
+            AnyV{
+            obj(), "IN", obj(), AVSyntax("PUT", putter()), driver()
+        },
+            AnyV{
+            "DOWN", obj(), AVSyntax("DROP", dropper())
+        },
+            AnyV{
+            obj(), "UNDER", obj(), AVSyntax("PTUND", put_under())
+        }
+            });
+        vsynonym("PUT", "STUFF", "PLACE", "INSER");
+
+        sadd_action("QUIT", finish());
+        vsynonym("QUIT", "Q", "GOODB");
+
+        add_action("RAISE", "Raise", ActionVec{
+            AnyV{ obj(), AVSyntax("RAISE", r_l()), driver() },
+            AnyV{ "UP", obj(), AVSyntax("RAISE", r_l()) }
+            });
+        vsynonym("RAISE", "LIFT");
+
+        add_action("READ", "Read", ActionVec{
+            AnyV{ AL{ Bits::readbit, reach(), aobjs(), robjs(), try_() }, AVSyntax("READ", reader()), driver() },
+            AnyV{ AL{ Bits::readbit, reach(), aobjs(), robjs(), try_() }, "WITH", obj(), AVSyntax("READ", reader()) },
+            AnyV{ AL{ Bits::readbit, reach(), aobjs(), robjs(), try_() }, "THROU", obj(), AVSyntax("READ", reader()) }
+            });
+
+        sadd_action("REPEN", repent());
+        sadd_action("RESTA", restart());
+        sadd_action("RESTO", do_restore());
+
+        add_action("RING", "Ring", ActionVec{
+            AnyV{ obj(), AVSyntax("RING", ring()), driver() },
+            AnyV{ obj(), "WITH", obj(), AVSyntax("RING", ring()) }
+            });
+
+        sadd_action("RNAME", room_name());
+        sadd_action("ROOM", room_room());
+        oneadd_action("RUB", "Rub", rubber());
+        vsynonym("RUB", "CARES", "TOUCH", "FEEL", "FONDL");
+        sadd_action("SAVE", do_save());
+        sadd_action("SCORE", score());
+        sadd_action("SCRIP", do_script());
+
+        add_action("SEND", "Send", ActionVec{
+            AnyV{ "FOR", obj(), AVSyntax("SEND", sender()) }
+            });
+
+        oneadd_action("SHAKE", "Shake", shaker());
+
+        sadd_action("SKIP", skipper());
+        vsynonym("SKIP", "HOP");
+
+        add_action("SLIDE", "Slide", ActionVec{
+            AnyV{ obj(), "UNDER", obj(), AVSyntax("PTUND", put_under()) }
+            });
+
+        oneadd_action("SMELL", "Smell", smeller());
+        vsynonym("SMELL", "SNIFF");
+
+        oneadd_action("SPIN", "Spin", turnto());
+
+        oneadd_action("SQUEE", "Squeeze", squeezer());
+
+        sadd_action("STATS", stats());
+
+        sadd_action("STAY", stay());
+
+        add_action("STRIK", "Strike", ActionVec{
+            AnyV{ AL{ Bits::vicbit, reach(), robjs() }, "WITH", AL{ Bits::weaponbit, aobjs(), robjs(), have() }, AVSyntax("ATTAC", attacker()) },
+            AnyV{ AL{ Bits::vicbit, reach(), robjs() }, AVSyntax("ATTAC", attacker()), driver() },
+            AnyV{ AL{ -1, reach(), robjs(), aobjs(), try_() }, AVSyntax("LIGHT", lamp_on()) }
+            });
+
+
+        sadd_action("SUPER", superbrief());
+
+        sadd_action("SWIM", swimmer());
+        vsynonym("SWIM", "BATHE", "WADE");
+
+        add_action("SWING", "Swing", ActionVec{
+            AnyV{ AL{ Bits::weaponbit, aobjs(), have() }, "AT", AL{ Bits::villain, reach(), robjs() }, AVSyntax("SWING", swinger()) }
+            });
+
+        add_action("TAKE", "Take", ActionVec{
+            AnyV{ AL{ std::list<Bits>{Bits::trytakebit, Bits::takebit}, reach(), robjs(), aobjs() }, AVSyntax("TAKE", takefn()), driver() },
+            AnyV{ "IN", AL{ Bits::vehbit, robjs(), reach() }, AVSyntax("BOARD", board()) },
+            AnyV{ "OUT", AL{ Bits::vehbit, robjs(), reach() }, AVSyntax("DISEM", unboard()) },
+            AnyV{ AL{ std::list<Bits>{Bits::takebit, Bits::trytakebit}, reach(), robjs(), aobjs() }, "OUT", obj(), AVSyntax("TAKE", takefn()) },
+            AnyV{ AL{ std::list<Bits>{Bits::takebit, Bits::trytakebit}, reach(), robjs(), aobjs() }, "FROM", obj(), AVSyntax("TAKE", takefn()) },
+            });
+        vsynonym("TAKE", "REMOV", "GET", "HOLD", "CARRY");
+
+        add_action("TELL", "Tell", ActionVec{
+            AnyV{ AL{ Bits::actorbit, robjs() }, AVSyntax("TELL", command()) }
+            });
+        vsynonym("TELL", "COMMA", "REQUE");
+
+        sadd_action("TEMPL", treas());
+
+        add_action("THROW", "Throw", ActionVec{
+            AnyV{ AL{ -1, aobjs(), have() }, "AT", AL{ Bits::vicbit, reach(), robjs() }, AVSyntax("THROW", dropper()), driver() },
+            AnyV{ AL{ -1, aobjs(), have() }, "THROU", AL{ Bits::vicbit, reach(), robjs() }, AVSyntax("THROW", dropper()) },
+            AnyV{ AL{ -1, aobjs(), have() }, "IN", obj(), AVSyntax("PUT", putter()) },
+            });
+        vsynonym("THROW", "HURL", "CHUCK");
+
+        add_action("TIE", "Tie", ActionVec{
+            AnyV{ obj(), "TO", obj(), AVSyntax("TIE", tie()) },
+            AnyV{ "UP", AL{ Bits::vicbit, reach(), robjs() }, "WITH", AL{ Bits::toolbit, reach(), robjs(), aobjs(), have() }, AVSyntax("TIEUP", tie_up()) }
+            });
+        vsynonym("TIE", "FASTE");
+
+        sadd_action("TREAS", treas());
+
+        add_action("TURN", "Turn", ActionVec{
+            AnyV{ AL{ Bits::turnbit, reach(), aobjs(), robjs() }, "WITH", AL{ Bits::toolbit, robjs(), aobjs(), have() }, AVSyntax("TURN", turner()), driver() },
+            AnyV{ "ON", AL{ Bits::lightbit, reach(), aobjs(), robjs(), take() }, AVSyntax("TRNON", lamp_on()) },
+            AnyV{ "OFF", AL{ Bits::lightbit, reach(), aobjs(), robjs(), take() }, AVSyntax("TRNOF", lamp_off()) },
+            AnyV{ AL{ Bits::turnbit, reach(), aobjs(), robjs() }, "TO", AL{ -1, robjs() }, AVSyntax("TRNTO", turnto()) }
+            });
+        vsynonym("TURN", "SET");
+
+        add_action("UNLOC", "Unlock", ActionVec{
+            AnyV{ AL{ -1, reach(), robjs() }, "WITH", AL{ Bits::toolbit, aobjs(), robjs(), take() }, AVSyntax("UNLOC", unlocker()) }
+            });
+
+        add_action("UNTIE", "Untie", ActionVec{
+            AnyV{ AL{ Bits::tiebit, reach(), robjs(), aobjs() }, AVSyntax("UNTIE", untie()), driver() },
+            AnyV{ AL{ Bits::tiebit, reach(), robjs(), aobjs() }, "FROM", obj(), AVSyntax("UTFRM", untie_from()) }
+            });
+        vsynonym("UNTIE", "RELEA", "FREE");
+
+        add_action("WAKE", "Wake", ActionVec{
+            AnyV{ AL{ Bits::vicbit, robjs() }, AVSyntax("WAKE", alarm_()), driver() },
+            AnyV{ "UP", AL{ Bits::vicbit, robjs() }, AVSyntax("WAKE", alarm_()) }
+            });
+        vsynonym("WAKE", "AWAKE", "SURPR", "START");
+
+        add_action("WALK", "Walk", ActionVec{
+            AnyV{ obj(), AVSyntax("WALK", walk()) },
+            AnyV{ "IN", obj(), AVSyntax("GTHRO", through()) },
+            AnyV{ "THROU", obj(), AVSyntax("GTHRO", through()) }
+            });
+        vsynonym("WALK", "GO", "RUN", "PROCE");
+
+        add_action("WAVE", "Wave", ActionVec{
+            AnyV{ AL{ -1, aobjs() }, AVSyntax("WAVE", waver()) }
+            });
+        vsynonym("WAVE", "BRAND");
+
+        sadd_action("TIME", play_time());
+        sadd_action("UNSCR", do_unscript());
+        sadd_action("VERBO", verbose());
+        sadd_action("VERSI", version());
+        sadd_action("WAIT", wait_());
+        sadd_action("WIN", win());
+        vsynonym("WIN", "WINNA");
+
+        add_action("WIND", "Wind", ActionVec{
+            AnyV{ obj(), AVSyntax("WIND", wind()) },
+            AnyV{ "UP", obj(), AVSyntax("WIND", wind()) }
+            });
+
+        sadd_action("WISH", wisher());
+        sadd_action("YELL", yell());
+        sadd_action("ZORK", zork());
+
+        sadd_action("TERMI", terminal());
+
+#ifdef _DEBUG
+        // Handy function to locate any object.
+        sadd_action("LOCAT", [](Rarg arg = Rarg()) {
+            std::string obj;
+            std::cout << "Locate what? ";
+            std::cin >> obj;
+            std::transform(obj.begin(), obj.end(), obj.begin(), toupper);
+            obj = obj.substr(0, 5);
+            if (is_obj(obj))
+            {
+                ObjectP objp = find_obj(obj);
+                if (objp->oroom())
+                {
+                    tell("The " + objp->odesc2() + " is in " + objp->oroom()->rid());
+                }
+                else if (memq(objp, player()->aobjs()))
+                {
+                    tell("You're holding it, dummy.");
+                }
+                else
+                {
+                    tell("The " + objp->odesc2() + " is nowhere.");
+                }
+            }
+            else
+            {
+                tell("Unknown object");
+            }
+
+            return true;
+            });
+
+        // Function to list all treasures and their locations.
+        sadd_action("LISTT", [](Rarg arg = Rarg()) {
+            auto& op = object_pobl();
+            std::set<ObjectP> dups;
+            for (auto o : op)
+            {
+                ObjectP obj = *o.second.begin();
+                if (obj->otval() > 0)
+                {
+                    if (dups.find(obj) == dups.end())
+                    {
+                        std::string loc;
+                        if (obj->oroom())
+                            loc = obj->oroom()->rid();
+                        else if (obj->ocan())
+                            loc = obj->ocan()->oid();
+                        else
+                            loc = "unknown";
+                        tell("Obj " + obj->odesc2() + " is in " + loc);
+                        dups.insert(obj);
+                    }
+                }
+            }
+            return true;
+            });
+
+        sadd_action("RMID", [](Rarg arg = Rarg()) { return tell("Room: " + here->rid()); });
+
+        // Function to display where the thief is, and is going to be, for debugging.
+        sadd_action("WT", [](Rarg arg = Rarg())
+            {
+                // Print the room the thief is in, and the next two rooms he will be in.
+                RoomList& rl = robber_demon->hrooms();
+                auto iter = rl.begin();
+
+                tell("Cur: " + (*iter)->rid());
+                for (int i = 0; i < 2; ++i)
+                {
+                    while (iter != rl.end())
+                    {
+                        if (rtrnn(*iter, RoomBit::rsacredbit) || rtrnn(*iter, RoomBit::rendgame) || !rtrnn(*iter, RoomBit::rlandbit))
+                        {
+                            ++iter;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    if (iter != rl.end())
+                    {
+                        tell("Next: " + (*iter)->rid());
+                        ++iter;
+                    }
+                }
+                return true;
+            });
+#endif
+    }
+#if _MSC_FULL_VER==192227812
+#pragma optimize("", on)
+#endif
 }
 
 // Bunch vector.

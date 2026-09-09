@@ -6,6 +6,7 @@ export import :Act2;
 import std;
 import ZException;
 import ZStrings;
+import ZFuncs;
 import :fwd;
 import :CEvent;
 import :Parser;
@@ -21,8 +22,6 @@ namespace
 {
     RoomP munged_room;
 }
-
-CEventP burnup_int;
 
 bool digger::operator()() const
 {
@@ -309,32 +308,6 @@ bool decline_and_fall(const ObjectP& ball)
     return true;
 }
 
-bool balloon_burn()
-{
-    ObjectP prso = ::prso();
-    const ObjectP& ball = sfind_obj("BALLO");
-    tell("The ", 1, prso->odesc2(), " burns inside the receptacle.");
-    burnup_int = clock_int(brnin, prso->osize() * 20);
-    tro(prso, Bits::flamebit, Bits::lightbit, Bits::onbit);
-    trz(prso, Bits::takebit, Bits::readbit);
-    if (binf)
-    {
-    }
-    else
-    {
-        tell("The cloth bag inflates as it fills with hot air.");
-        if (!flags[FlagId::blab])
-        {
-            auto& blabe = sfind_obj("BLABE");
-            ball->ocontents().push_front(blabe);
-            blabe->ocan() = ball;
-        }
-        flags[FlagId::blab] = true;
-        binf = prso;
-        clock_int(bint, 3);
-    }
-    return true;
-}
 
 bool blast::operator()() const
 {

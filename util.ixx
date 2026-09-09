@@ -32,7 +32,7 @@ bool in_room(const ObjectP& obj, const RoomP& here = ::here);
 bool hackable(const ObjectP& obj, const RoomP& rm);
 bool lfcn(const ObjList& l);
 bool lit(const RoomP& rm);
-bool prob(int goodluck, int badluck = -1);
+export bool prob(int goodluck, int badluck = -1);
 bool perform(rapplic fcn, const VerbP& vb, const ObjectP& obj1 = ObjectP(), const ObjectP& obj2 = ObjectP());
 ObjList rob_adv(const AdvP& win, ObjList newlist);
 ObjList rob_room(const RoomP& rm, ObjList newlist, int prob);

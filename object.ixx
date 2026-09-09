@@ -242,10 +242,30 @@ inline bool openable(const ObjectP& op)
     return trnn(op, Bits::doorbit, Bits::contbit);
 }
 
-bool apply_object(const ObjectP& op);
-bool describable(const ObjectP& op);
-bool see_inside(const ObjectP& op);
-bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check);
+bool apply_object(const ObjectP& op)
+{
+    bool rv;
+    auto& fn = op->oaction();
+    if (rv = (fn != nullptr))
+        rv = fn(Rarg());
+    return rv;
+}
+
+bool describable(const ObjectP& obj)
+{
+    return !trnn(obj, Bits::ndescbit);
+}
+
+bool see_inside(const ObjectP& op)
+{
+    return trnn(op, Bits::ovison) && (trnn(op, Bits::transbit) || trnn(op, Bits::openbit));
+}
+
+bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
+{
+    return (op->oflags() & bits_to_check).any();
+}
+
 void trc(const ObjectP& op, Bits b);
 bool flaming(const ObjectP& obj);
 
@@ -292,14 +312,14 @@ private:
     std::string _oname;
 };
 
-extern ObjectP last_it;
+ObjectP last_it;
 
 typedef std::array<ObjList, 64> PuzzleContents;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
 typedef std::tuple<std::string_view, int> cpwall_val;
-bool operator==(const ObjectP& o, const cpwall_val& cp);
-bool operator==(const cpwall_val& cp, const ObjectP& o);
+bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }
+bool operator==(const cpwall_val& cp, const ObjectP& o) { return o == cp; }
 
 constexpr std::array cpwalls = {
             cpwall_val("CPSWL", 8),

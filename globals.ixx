@@ -12,7 +12,7 @@ namespace
 }
 
 
-const int bigfix = INT_MAX;
+export const int bigfix = INT_MAX;
 export  std::string inbuf;
 export std::string inbuf1;
 

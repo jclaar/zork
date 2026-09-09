@@ -167,11 +167,15 @@ inline bool vtrnn(const VargP& va, vword_flag bit)
 }
 
 // Check status of specific bit in object or room.
-bool strnn(const SyntaxP& syn, SyntaxBits b);
+bool strnn(const SyntaxP& syn, SyntaxBits b)
+{
+    return syn->sflags.test(b);
+}
 
 inline PhraseP make_phrase(const WordP& p, const ObjectP& op)
 {
     return std::make_shared<phrase>(p, op);
 }
 
+std::vector<QuestionP> qvec;
 

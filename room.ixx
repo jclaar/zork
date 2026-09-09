@@ -236,6 +236,7 @@ inline bool operator==(const Ex& exit, const RoomP& p)
 // Set or 0 object bit or bits.
 void rtrc(const RoomP& p, RoomBit b);
 bool gtrnn(const RoomP&, Bits);
+bool eg_infested(const RoomP& r);
 
 export namespace exit_funcs {
     EX_RAPPLIC(bkleavew);
@@ -253,3 +254,5 @@ export namespace exit_funcs {
     EX_RAPPLIC(mirout);
     EX_RAPPLIC(maybe_door);
 }
+
+extern RoomP mloc;

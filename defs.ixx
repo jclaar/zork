@@ -76,10 +76,7 @@ private:
     bool term_sim = false;
 };
 
-namespace
-{
-    TtyBuff tty_buf;
-}
+export TtyBuff tty_buf;
 export std::ostream tty(&tty_buf);
 
 // Hacky method of allowing an additional argument to be passed to 

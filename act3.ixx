@@ -16,7 +16,6 @@ bool rope_away(const ObjectP& rope, const RoomP& rm);
 bool scol_obj(const ObjectP& obj, int cint, const RoomP& rm);
 bool scol_through(int cint, const RoomP& rm);
 bool slider(const ObjectP& obj);
-std::string username();
 bool pass_the_bucket(const RoomP& r, const ObjectP& b);
 
 RAPPLIC(chomp);

@@ -4,6 +4,7 @@ module;
 export module ZFuncs;
 import ZDefs;
 import ZException;
+import ZGlobals;
 import std;
 
 // Bits for tell
@@ -82,16 +83,43 @@ void princ(const T& v)
     tty << v;
 }
 void prin1(int val);
-void printstring(std::string_view str) { tty << str; }
+export void printstring(std::string_view str) { tty << str; }
 
 ERAPPLIC(terminal);
 
-export std::string readst(std::string_view prompt);
+export std::string readst(std::string_view prompt)
+{
+    tty << prompt;
+    tty.flush();
+    std::string buffer;
+    std::getline(std::cin, buffer);
+    if (script_channel)
+    {
+        (*script_channel) << buffer << std::endl;
+    }
+    return buffer;
+}
 
 // Various MDL functions mapped to C++ equivalents
 export char *back(char *s, size_t count) { return s - count; }
-export std::string& substruc(const std::string& src, size_t start, size_t end, std::string& dest);
-export char* substruc(const char* src, size_t start, size_t end, char* dest);
+export std::string& substruc(const std::string& src, size_t start, size_t end, std::string& dest)
+{
+    _ASSERT(dest.size() >= end);
+    std::copy(src.begin() + start, src.begin() + end, dest.begin() + start);
+    return dest;
+}
+
+export char* substruc(const char* src, size_t start, size_t end, char* dest)
+{
+    _ASSERT(start == 0); // Verify functionality if not true.
+    while (start != end)
+    {
+        dest[start] = src[start];
+        ++start;
+    }
+    return dest;
+}
+
 export const char* member(std::string_view subst, const std::string& str)
 {
     std::string::size_type pos = str.find(subst, 0);
@@ -297,7 +325,11 @@ T back(T it, int offset = 1)
     return it;
 }
 
-export SIterator uppercase(SIterator src);
+export SIterator uppercase(SIterator src)
+{
+    std::transform(src.begin(), src.end(), src.begin(), [](char c) { return std::toupper(c); });
+    return src;
+}
 
 export SIterator substruc(SIterator src, int start, int end, SIterator dest)
 {
@@ -331,3 +363,20 @@ export std::string username()
         "Occupant";
 }
 
+void tell_base::tell_pre(uint32_t flags)
+{
+    ::flags[FlagId::tell_flag] = true;
+    if (flags & pre_crlf)
+        tty << std::endl;
+}
+void tell_base::tell_post(uint32_t flags)
+{
+    if (flags & post_crlf)
+        tty << std::endl;
+}
+
+bool terminal::operator()() const
+{
+    tty_buf.SetTerminal(!tty_buf.IsTerminal());
+    return tell(tty_buf.IsTerminal() ? "Terminal mode enabled." : "Terminal mode disabled.");
+}

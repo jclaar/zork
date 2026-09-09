@@ -9,12 +9,13 @@ import :Parser;
 import :Memq;
 import :Adv;
 import :Util;
+import :Room;
 
 import ZException;
 import ZString;
+import ZFuncs;
 import std;
 
-std::vector<QuestionP> qvec;
 int mdir = 270;
 
 namespace
@@ -233,15 +234,6 @@ namespace
         return true;
     }
 
-}
-
-bool eg_infested(const RoomP& r)
-{
-    auto& m = sfind_room("MRG");
-    return (r == m ||
-        (mloc == m && r == sfind_room("INMIR")) ||
-        r == sfind_room("MRGE") ||
-        r == sfind_room("MRGW"));
 }
 
 bool follow::operator()() const

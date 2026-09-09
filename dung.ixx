@@ -25,7 +25,6 @@ extern const ObjList palobjs;
 extern ObjList inqobjs;
 extern ObjectP bunch_obj;
 extern SIterator indentstr;
-extern RoomP mloc;
 extern GObjectPtr it_object;
 export int deaths = 0;
 extern HackP robber_demon;
