@@ -75,22 +75,12 @@ add_executable(zork)
 
 target_sources(zork PRIVATE
 	cevent.h
-	
 	defs.h 
-	
-	
 	gobject.h 
-	 
 	mdlfun.cpp
 	objdefs.h
-	 objser.h
 	roomdefs.h
-	speech.h
-	sr.h
-	 
-	util.h
 	version.h
-	ZorkException.cpp
 
 	PUBLIC
 	FILE_SET modules TYPE CXX_MODULES FILES
@@ -106,23 +96,23 @@ target_sources(zork PRIVATE
 		"funcs.ixx" 
 		"cevent.ixx" 
 		"objfns.ixx" 
-		"makstr.ixx" 
+		"makstr.ixx" "makstri.ixx"
 		"object.ixx" "objecti.ixx"
 		"room.ixx" "roomi.ixx"
 		"zork_fwd.ixx" 
-		"melee.ixx" 
+		"melee.ixx" "meleei.ixx"
 		"zork.ixx" 
 		"dung.ixx" "dungi.ixx"
         "adv.ixx" "advi.ixx"
-		"act1.ixx"
+		"act1.ixx" "act1i.ixx"
 		"act2.ixx" "act2i.ixx"
-		"act3.ixx" 
-		"act4.ixx"
+		"act3.ixx" "act3i.ixx"
+		"act4.ixx" "act4i.ixx"
 		"rooms.ixx" "roomsi.ixx"
 		"parser.ixx" "parseri.ixx"
 		"util.ixx" "utili.ixx"
 		"sr.ixx" "sri.ixx"
-		"zstring.ixx" "act2i.ixx" "act4i.ixx" "act3i.ixx" "act1i.ixx" "meleei.ixx" "makstri.ixx")
+		"zstring.ixx")
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
