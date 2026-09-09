@@ -70,8 +70,6 @@ void init_bunch()
     bunch = bunuvec;
 }
 
-WordsPobl words_pobl;
-
 // Globals from dung.mud appear here.
 PhraseVecV prepvecb;
 PrepVec prepvec;
@@ -133,32 +131,6 @@ const std::vector<ASSpan> def3_res = {
     {std::begin(def3c), std::end(def3c)}
 };
 
-ActionsPobl actions_pobl;
-namespace
-{
-    auto mp = [](const char* sd, direction d)
-        {
-            return std::make_pair<DirectionsPobl::key_type>(sd, d);
-        };
-}
-DirectionsPobl directions_pobl = {
-        mp("#!#!#", direction::NullExit),
-        mp("NORTH", direction::North),
-        mp("SOUTH", direction::South),
-        mp("EAST", direction::East),
-        mp("WEST", direction::West),
-        mp("LAUNC", direction::Launc),
-        mp("LAND", direction::Land),
-        mp("SE", direction::Se),
-        mp("SW", direction::Sw),
-        mp("NE", direction::Ne),
-        mp("NW", direction::Nw),
-        mp("UP", direction::Up),
-        mp("DOWN", direction::Down),
-        mp("ENTER", direction::Enter),
-        mp("EXIT", direction::Exit),
-        mp("CROSS", direction::Cross)
-};
 std::string indentstrb = "        ";
 SIterator indentstr(indentstrb, indentstrb.end());
 ParseVecA prsveca;

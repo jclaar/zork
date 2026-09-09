@@ -1,5 +1,4 @@
 module;
-#include <cassert>
 #include "defs.h"
 
 export module Zork:Dungeon;
@@ -8,6 +7,7 @@ import :Melee;
 import :Object;
 import :fwd;
 import ZFuncs;
+import ZDefs;
 import :CEvent;
 import :Makstr;
 import std;
@@ -16,10 +16,34 @@ using WordsPobl = std::map<std::string, WordP, std::less<>>;
 using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;
 using ActionsPobl = std::map<std::string, ActionP, std::less<>>;
 
+WordsPobl words_pobl;
 export int cphere;
-extern WordsPobl words_pobl;
-extern DirectionsPobl directions_pobl;
-extern ActionsPobl actions_pobl;
+namespace
+{
+    auto mp = [](const char* sd, direction d)
+        {
+            return std::make_pair<DirectionsPobl::key_type>(sd, d);
+        };
+}
+DirectionsPobl directions_pobl = {
+        mp("#!#!#", direction::NullExit),
+        mp("NORTH", direction::North),
+        mp("SOUTH", direction::South),
+        mp("EAST", direction::East),
+        mp("WEST", direction::West),
+        mp("LAUNC", direction::Launc),
+        mp("LAND", direction::Land),
+        mp("SE", direction::Se),
+        mp("SW", direction::Sw),
+        mp("NE", direction::Ne),
+        mp("NW", direction::Nw),
+        mp("UP", direction::Up),
+        mp("DOWN", direction::Down),
+        mp("ENTER", direction::Enter),
+        mp("EXIT", direction::Exit),
+        mp("CROSS", direction::Cross)
+};
+ActionsPobl actions_pobl;
 extern const ObjList small_papers;
 extern const ObjList palobjs;
 extern ObjList inqobjs;
@@ -296,7 +320,6 @@ template <typename T>
 void synonym(const char* n1, T n2)
 {
     const WordP& wp = words_pobl[n1];
-    _ASSERT(wp);
     words_pobl[n2] = wp;
 }
 template <typename T, typename ...Args>
