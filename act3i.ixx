@@ -1,25 +1,25 @@
-import ZException;
-#include <numeric>
-#include <algorithm>
-#include "act1.h"
-#include "act2.h"
-#include "act3.h"
-#include "util.h"
-#include "parser.h"
-#include "zstring.h"
+module;
 #include "cevent.h"
-#include "memq.h"
+
+export module Zork:Act3I;
+export import :Act3;
+import :Act1;
+import :Rooms;
+import :Memq;
+import :Util;
+import :Adv;
+
+import std;
+import ZException;
+import ZString;
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 namespace
 {
-    const char *through_desc = "You feel somewhat disoriented as you pass through...";
+    const char* through_desc = "You feel somewhat disoriented as you pass through...";
 }
-
-ObjectP matobj;
-ObjectP timber_tie;
 
 bool go_and_look(RoomP rm)
 {
@@ -55,7 +55,7 @@ void cp_ortho(int contents)
 bool cpwhere()
 {
     int here = cphere;
-    auto &uvec = cpuvec;
+    auto& uvec = cpuvec;
     int n = uvec[size_t(here) - 8 - 1];
     int s = uvec[size_t(here) + 8 - 1];
     int e = uvec[size_t(here) + 1 - 1];
@@ -148,9 +148,9 @@ bool oops::operator()() const
 
 void pcheck()
 {
-    auto &lid = plid();
-    auto &mat = sfind_obj("MAT");
-    const ObjList &objs = palobjs;
+    auto& lid = plid();
+    auto& mat = sfind_obj("MAT");
+    const ObjList& objs = palobjs;
     if (is_empty(prsvec[1]))
         return;
     flags[FlagId::plook] = false;
@@ -168,7 +168,7 @@ void pcheck()
         }
     }
 
-    for (const ObjectP &obj : objs)
+    for (const ObjectP& obj : objs)
     {
         if (memq(obj, sfind_obj("PKH1")->ocontents()) || memq(obj, sfind_obj("PKH2")->ocontents()))
         {
@@ -197,7 +197,7 @@ void pcheck()
     }
 }
 
-bool pdoor(std::string_view str, const ObjectP &lid, const ObjectP &keyhole)
+bool pdoor(std::string_view str, const ObjectP& lid, const ObjectP& keyhole)
 {
     if (flags[FlagId::plook])
         return flags[FlagId::plook] = false;
@@ -260,12 +260,12 @@ bool play::operator()() const
     return rv;
 }
 
-const ObjectP &plid(const ObjectP &obj1, const ObjectP &obj2)
+const ObjectP& plid(const ObjectP& obj1, const ObjectP& obj2)
 {
     return memq(obj1, here->robjs()) ? obj1 : obj2;
 }
 
-void plookat(const RoomP &rm)
+void plookat(const RoomP& rm)
 {
     RoomP here = ::here;
     // go_and_look changes ::here
@@ -287,9 +287,9 @@ bool put_under::operator()() const
     return true;
 }
 
-bool rope_away(const ObjectP &rope, const RoomP &rm)
+bool rope_away(const ObjectP& rope, const RoomP& rm)
 {
-    tro(rope, Bits::climbbit, Bits::ndescbit );
+    tro(rope, Bits::climbbit, Bits::ndescbit);
     if (!rope->oroom())
     {
         drop_object(rope);
@@ -298,7 +298,7 @@ bool rope_away(const ObjectP &rope, const RoomP &rm)
     return true;
 }
 
-bool scol_obj(const ObjectP &obj, int cint, const RoomP &rm)
+bool scol_obj(const ObjectP& obj, int cint, const RoomP& rm)
 {
     clock_int(sclin, cint);
     remove_object(obj);
@@ -315,7 +315,7 @@ bool scol_obj(const ObjectP &obj, int cint, const RoomP &rm)
     return true;
 }
 
-bool scol_through(int cint, const RoomP &rm)
+bool scol_through(int cint, const RoomP& rm)
 {
     clock_int(sclin, cint);
     goto_(rm);
@@ -338,7 +338,7 @@ bool sender::operator()() const
     return true;
 }
 
-bool slider(const ObjectP &obj)
+bool slider(const ObjectP& obj)
 {
     if (trnn(obj, Bits::takebit))
     {
@@ -368,7 +368,7 @@ bool smeller::operator()() const
 bool through::operator()(ObjectP obj) const
 {
     RoomP here = ::here;
-    const RoomP &box = sfind_room("BKBOX");
+    const RoomP& box = sfind_room("BKBOX");
     RoomP scrm = scol_room;
     ParseVec prsvec = ::prsvec;
     ObjectP prsoo = prso();
@@ -519,8 +519,8 @@ bool climb_foo::operator()() const
 
 bool count::operator()() const
 {
-    const AdvP &winner = *::winner;
-    const ObjList &objs = winner->aobjs();
+    const AdvP& winner = *::winner;
+    const ObjList& objs = winner->aobjs();
     int cnt;
     ObjectP prso = ::prso();
     struct ObjTell
@@ -560,10 +560,10 @@ bool count::operator()() const
         else if (prso == sfind_obj("VALUA"))
         {
             // Count valuables.
-            numtell(cnt = std::accumulate(objs.begin(), objs.end(), 0, [](int val, const ObjectP &obj)
-            {
-                return val + (obj->otval() != 0 ? 1 : 0);
-            }), "valuable");
+            numtell(cnt = std::accumulate(objs.begin(), objs.end(), 0, [](int val, const ObjectP& obj)
+                {
+                    return val + (obj->otval() != 0 ? 1 : 0);
+                }), "valuable");
 
             if (here == sfind_room("LROOM"))
             {
@@ -591,9 +591,9 @@ bool enter::operator()() const
     return walk()();
 }
 
-ScolWalls get_wall(const RoomP &rm)
+ScolWalls get_wall(const RoomP& rm)
 {
-    for (auto &w : scol_walls)
+    for (auto& w : scol_walls)
     {
         if (find_room(w.rm1) == rm)
             return w;
@@ -601,9 +601,9 @@ ScolWalls get_wall(const RoomP &rm)
     return ScolWalls();
 }
 
-bool pass_the_bucket(const RoomP &r, const ObjectP &b)
+bool pass_the_bucket(const RoomP& r, const ObjectP& b)
 {
-    const AdvP &winner = *::winner;
+    const AdvP& winner = *::winner;
     ParseVecVal oldprsvec1 = prsvec[1];
     prsvec[1] = std::monostate();
     remove_object(b);
@@ -624,10 +624,10 @@ bool iceboom()
     return true;
 }
 
-bool held(const ObjectP &obj)
+bool held(const ObjectP& obj)
 {
-    const ObjectP &can = obj->ocan();
-    const AdvP &winner = *::winner;
+    const ObjectP& can = obj->ocan();
+    const AdvP& winner = *::winner;
     return memq(obj, winner->aobjs()) || can && held(can);
 }
 
@@ -647,9 +647,9 @@ bool knock::operator()() const
     return true;
 }
 
-bool bad_egg(const ObjectP &begg)
+bool bad_egg(const ObjectP& begg)
 {
-    const ObjectP &egg = sfind_obj("EGG");
+    const ObjectP& egg = sfind_obj("EGG");
     auto& bcana = sfind_obj("BCANA");
     if (sfind_obj("GCANA")->ocan() == egg)
     {
@@ -665,7 +665,7 @@ bool bad_egg(const ObjectP &begg)
 
     if (egg->oroom())
         insert_object(begg, here);
-    else if (const ObjectP &can = egg->ocan())
+    else if (const ObjectP& can = egg->ocan())
         insert_into(can, begg);
     else
         take_object(begg);
@@ -705,7 +705,7 @@ bool zgnome_init::operator()() const
     return rv;
 }
 
-int cpnext(int rm, const ObjectP &obj)
+int cpnext(int rm, const ObjectP& obj)
 {
     auto m = memq(obj, cpwalls);
     return rm + std::get<1>(**m);
@@ -732,7 +732,7 @@ namespace obj_funcs
             ObjectP prso = ::prso();
             if (prso == sfind_obj("GCANA"))
             {
-                const RoomP &tree = sfind_room("TREE");
+                const RoomP& tree = sfind_room("TREE");
                 if (!flags[FlagId::sing_song] && (member("FORE", here->rid()) || here == tree))
                 {
                     tell(opera);
@@ -756,7 +756,7 @@ namespace obj_funcs
     {
         ObjectP gnome = sfind_obj("ZGNOM");
         ObjectP brick;
-        if (verbq( "GIVE", "THROW" ))
+        if (verbq("GIVE", "THROW"))
         {
             ObjectP prso = ::prso();
             if (prso->otval() != 0)
@@ -792,7 +792,7 @@ namespace obj_funcs
             }
             remove_object(gnome);
         }
-        else if (verbq( "KILL", "ATTAC", "POKE" ))
+        else if (verbq("KILL", "ATTAC", "POKE"))
         {
             tell("The gnome says 'Well, I never...' and disappears with a snap of his\n"
                 "fingers, leaving you alone.");
@@ -808,7 +808,7 @@ namespace obj_funcs
 
     bool wclif_object::operator()() const
     {
-        if (verbq( "CLUP", "CLDN", "CLUDG" ))
+        if (verbq("CLUP", "CLDN", "CLUDG"))
         {
             return tell("The cliff is too steep for climbing.");
         }
@@ -819,7 +819,7 @@ namespace obj_funcs
     {
         bool rv = true;
         ObjectP prso = ::prso();
-        if (trnn(prso, Bits::takebit) && verbq( "THROW", "DROP", "PUT" ))
+        if (trnn(prso, Bits::takebit) && verbq("THROW", "DROP", "PUT"))
         {
             tell("The ", 1, prso->odesc2(), " is now sitting at the bottom of the well.");
             remove_object(prso);
@@ -832,7 +832,7 @@ namespace obj_funcs
 
     bool cretin::operator()() const
     {
-        const AdvP &me = player();
+        const AdvP& me = player();
         ObjectP prsoo;
         if (verbq("GIVE") && !trnn(prsoo = prso(), Bits::no_check_bit))
         {
@@ -840,7 +840,7 @@ namespace obj_funcs
             me->aobjs().push_back(prsoo);
             return tell("Done.");
         }
-        else if (verbq( "KILL", "MUNG" ))
+        else if (verbq("KILL", "MUNG"))
         {
             return jigs_up("If you insist.... Poof, you're dead!");
         }
@@ -861,10 +861,10 @@ namespace obj_funcs
         {
             tell("Suddenly, the room appears to have become very large.");
             remove_object(c);
-            auto &r = sfind_room("ALISM");
+            auto& r = sfind_room("ALISM");
             trz(sfind_obj("ROBOT"), Bits::ovison);
             r->robjs() = here->robjs();
-            for (auto &x : here->robjs())
+            for (auto& x : here->robjs())
             {
                 x->osize() = x->osize() * 64;
                 x->oroom(r);
@@ -878,9 +878,9 @@ namespace obj_funcs
 
     bool cake_function::operator()() const
     {
-        auto &rice = sfind_obj("RDICE");
-        auto &oice = sfind_obj("ORICE");
-        auto &bice = sfind_obj("BLICE");
+        auto& rice = sfind_obj("RDICE");
+        auto& oice = sfind_obj("ORICE");
+        auto& bice = sfind_obj("BLICE");
         ObjectP prso = ::prso();
 
         bool rv = true;
@@ -918,11 +918,11 @@ namespace obj_funcs
                 tell("The room around you seems to be getting smaller.");
                 if (here == sfind_room("ALISM"))
                 {
-                    auto &r = sfind_room("ALICE");
+                    auto& r = sfind_room("ALICE");
                     tro(sfind_obj("ROBOT"), Bits::ovison);
                     r->robjs() = here->robjs();
                     trz(sfind_obj("POSTS"), Bits::ovison);
-                    for (auto &x : here->robjs())
+                    for (auto& x : here->robjs())
                     {
                         x->oroom(r);
                         x->osize() = x->osize() / 64;
@@ -963,7 +963,7 @@ namespace obj_funcs
             tell("You tumble down the chute to the cellar.");
             go_and_look(sfind_room("CELLA"));
         }
-        else if (verbq( "CLDN", "CLUP", "CLUDG" ))
+        else if (verbq("CLDN", "CLUP", "CLUDG"))
         {
             rv = false;
         }
@@ -975,7 +975,7 @@ namespace obj_funcs
     bool brochure::operator()() const
     {
         bool rv = true;
-        auto &stamp = sfind_obj("DSTMP");
+        auto& stamp = sfind_obj("DSTMP");
         ObjectP prso = ::prso();
         if (prso == stamp)
         {
@@ -985,7 +985,7 @@ namespace obj_funcs
             }
             rv = false;
         }
-        else if (verbq( "EXAMI", "LKAT", "READ" ) && prso == sfind_obj("BROCH"))
+        else if (verbq("EXAMI", "LKAT", "READ") && prso == sfind_obj("BROCH"))
         {
             //tell(bro1 + username() + bro2);
             tell(bro1, 1, username(), bro2);
@@ -1060,7 +1060,7 @@ namespace obj_funcs
         if ((cpuvec[size_t(here) + 1 - 1] == -2) && (flg = true) ||
             cpuvec[size_t(here) - 1 - 1] == -3)
         {
-            if (verbq( "CLUP", "CLUDG" ))
+            if (verbq("CLUP", "CLUDG"))
             {
                 if (flg && here == 10)
                 {
@@ -1087,7 +1087,7 @@ namespace obj_funcs
     bool cpwall_object::operator()() const
     {
         int here = cphere;
-        auto &uvec = cpuvec;
+        auto& uvec = cpuvec;
         int nxt, wl, nnxt, nwl;
         bool rv = true;
 
@@ -1123,7 +1123,7 @@ namespace obj_funcs
     bool sphere_function::operator()() const
     {
         bool rv = true;
-        auto &r = sfind_obj("ROBOT");
+        auto& r = sfind_obj("ROBOT");
         bool fl;
         fl = !flags[FlagId::cage_solve] && verbq("TAKE");
         if (fl && player() == *winner)
@@ -1203,15 +1203,15 @@ namespace obj_funcs
             else if (prso == sfind_obj("TRBUT"))
             {
                 flags[FlagId::carousel_flip] = !flags[FlagId::carousel_flip];
-                if (auto &i = sfind_obj("IRBOX"); i->oroom() == sfind_room("CAROU"))
+                if (auto& i = sfind_obj("IRBOX"); i->oroom() == sfind_room("CAROU"))
                 {
                     tell("A dull thump is heard in the distance.");
                     trc(i, Bits::ovison);
-					if (trnn(i, Bits::ovison))
-					{
-						auto &carou = sfind_room("CAROU");
-						rtrz(carou, RoomBit::rseenbit);
-					}
+                    if (trnn(i, Bits::ovison))
+                    {
+                        auto& carou = sfind_room("CAROU");
+                        rtrz(carou, RoomBit::rseenbit);
+                    }
                 }
                 else
                 {
@@ -1233,12 +1233,12 @@ namespace obj_funcs
         if (verbq("GIVE"))
         {
             ObjectP prso = ::prso();
-            const AdvP &aa = *prsi()->oactor();
+            const AdvP& aa = *prsi()->oactor();
             remove_object(prso);
             aa->aobjs().push_front(prso);
             tell("The robot gladly takes the ", 1, prso->odesc2(), "\nand nods his head-like appendage in thanks.");
         }
-        else if (verbq( "THROW", "MUNG" ) &&
+        else if (verbq("THROW", "MUNG") &&
             (prsi() == (rr = find_obj("ROBOT")) || prso() == rr))
         {
             tell(robotdie, long_tell1);
@@ -1251,8 +1251,8 @@ namespace obj_funcs
 
     bool bucket::operator()(Rarg arg) const
     {
-        const ObjectP &w = sfind_obj("WATER");
-        const ObjectP &buck = sfind_obj("BUCKE");
+        const ObjectP& w = sfind_obj("WATER");
+        const ObjectP& buck = sfind_obj("BUCKE");
         bool rv = true;
 
         if (arg == ApplyRandomArg::read_in)
@@ -1320,7 +1320,7 @@ namespace obj_funcs
     bool stove_function::operator()() const
     {
         bool rv = true;
-        if (verbq( "TAKE", "FEEL", "DESTR", "ATTAC" ))
+        if (verbq("TAKE", "FEEL", "DESTR", "ATTAC"))
         {
             tell("The intense heat of the stove keeps you away.");
         }
@@ -1364,7 +1364,7 @@ namespace obj_funcs
         RoomP here = ::here;
         RoomP rm;
         ObjectP prso = ::prso();
-        const AdvP &winner = *::winner;
+        const AdvP& winner = *::winner;
         bool rv = false;
 
         if (verbq("LKIN"))
@@ -1473,7 +1473,7 @@ namespace obj_funcs
         {
             tell("The implementers are dead; therefore they do not respond.");
         }
-        else if (verbq( "DESTR", "KICK", "POKE", "ATTAC", "KILL", "RUB", "OPEN", "TAKE", "BURN" ))
+        else if (verbq("DESTR", "KICK", "POKE", "ATTAC", "KILL", "RUB", "OPEN", "TAKE", "BURN"))
         {
             const AdvP& winner = *::winner;
             const ObjectP& lcase = sfind_obj("LCASE");
@@ -1568,12 +1568,12 @@ namespace obj_funcs
     bool plid_function::operator()() const
     {
         bool rv = true;
-        if (verbq( "OPEN", "RAISE" ))
+        if (verbq("OPEN", "RAISE"))
         {
             tell("The lid is open.");
             tro(prso(), Bits::openbit);
         }
-        else if (verbq( "CLOSE", "LOWER" ))
+        else if (verbq("CLOSE", "LOWER"))
         {
             if (!empty(((here == sfind_room("PALAN")) ? sfind_obj("PKH2") : sfind_obj("PKH1"))->ocontents()))
             {
@@ -1642,7 +1642,7 @@ namespace obj_funcs
             insert_object(prso(),
                 here == (rm = sfind_room("PRM")) ? sfind_room("PALAN") : rm);
         }
-        else if (verbq( "OPEN", "CLOSE" ))
+        else if (verbq("OPEN", "CLOSE"))
         {
             if (flags[FlagId::punlock])
             {
@@ -1659,12 +1659,12 @@ namespace obj_funcs
     bool rope_function::operator()() const
     {
         bool rv = true;
-        const RoomP &droom = sfind_room("DOME");
-        const RoomP &sroom = sfind_room("SLIDE");
-        auto &rope = sfind_obj("ROPE");
-        auto &ttie = timber_tie;
-        auto &coffin = sfind_obj("COFFI");
-        auto &timber = sfind_obj("TIMBE");
+        const RoomP& droom = sfind_room("DOME");
+        const RoomP& sroom = sfind_room("SLIDE");
+        auto& rope = sfind_obj("ROPE");
+        auto& ttie = timber_tie;
+        auto& coffin = sfind_obj("COFFI");
+        auto& timber = sfind_obj("TIMBE");
         ObjectP prsi = ::prsi();
 
         if (here != droom &&
@@ -1773,7 +1773,7 @@ namespace obj_funcs
                 }
                 flags[FlagId::dome_flag] = false;
                 timber_tie.reset();
-                trz(rope, Bits::climbbit, Bits::ndescbit );
+                trz(rope, Bits::climbbit, Bits::ndescbit);
                 tell("The rope is now untied.");
             }
             else
@@ -1805,14 +1805,14 @@ namespace obj_funcs
         return rv;
     }
 
-    bool scol_object_(const ObjectP &obj)
+    bool scol_object_(const ObjectP& obj)
     {
         bool rv = false;
-        if (verbq( "PUSH", "MOVE", "TAKE", "RUB" ))
+        if (verbq("PUSH", "MOVE", "TAKE", "RUB"))
         {
             rv = tell("As you try, your hand seems to go through it.");
         }
-        else if (verbq( "POKE", "ATTAC", "KILL" ))
+        else if (verbq("POKE", "ATTAC", "KILL"))
         {
             rv = tell("The ", 1, prsi()->odesc2(), " goes through it.");
         }
@@ -1862,7 +1862,7 @@ namespace obj_funcs
             insert_object(prsoo, here);
             flags[FlagId::mud] = true;
         }
-        else if (verbq( "TAKE", "MOVE", "PULL" ) && obj)
+        else if (verbq("TAKE", "MOVE", "PULL") && obj)
         {
             matobj.reset();
             remove_object(obj);
@@ -1877,7 +1877,7 @@ namespace obj_funcs
     bool coke_bottles::operator()() const
     {
         bool rv = false;
-        if (verbq( "THROW", "MUNG" ))
+        if (verbq("THROW", "MUNG"))
         {
             tell("Congratulations!  You've managed to break all those bottles.\n"
                 "Fortunately for your feet, they were made of magic glass and disappear\n"
@@ -1904,7 +1904,7 @@ namespace obj_funcs
             mung_room(here, "Noxious vapors prevent your entry.");
             jigs_up(vapors);
         }
-        else if (verbq( "MUNG", "THROW" ))
+        else if (verbq("MUNG", "THROW"))
         {
             tell("The flask breaks into pieces.");
             ObjectP prsoo = prso();
@@ -1933,8 +1933,8 @@ namespace obj_funcs
     bool egg_object::operator()() const
     {
         bool rv = true;
-        const ObjectP &begg = sfind_obj("BEGG");
-        const ObjectP &egg = sfind_obj("EGG");
+        const ObjectP& begg = sfind_obj("BEGG");
+        const ObjectP& egg = sfind_obj("EGG");
         ObjectP prsoo = prso();
         if (verbq("OPEN") && prsoo == egg)
         {
@@ -1998,7 +1998,7 @@ namespace room_funcs
 
     bool inslide::operator()() const
     {
-        for (const ObjectP &o : here->robjs())
+        for (const ObjectP& o : here->robjs())
         {
             slider(o);
         }
@@ -2100,7 +2100,7 @@ namespace room_funcs
 
     bool tree_room::operator()() const
     {
-        auto &fore3 = sfind_room("FORE3");
+        auto& fore3 = sfind_room("FORE3");
 
         bool rv = false;
         if (verbq("LOOK"))
@@ -2112,7 +2112,7 @@ namespace room_funcs
                 auto& ftree = sfind_obj("FTREE");
                 remove_object(ftree);
                 size_t remain = fore3->robjs().size();
-                for (auto &y : fore3->robjs())
+                for (auto& y : fore3->robjs())
                 {
                     princ("a ");
                     princ(y->odesc2());
@@ -2141,15 +2141,15 @@ namespace room_funcs
             // Anything that is dropped in the tree falls down,
             // except for the tree itself, and the nest.
             rv = true;
-            auto &ttree = sfind_obj("TTREE");
-            auto &nest = sfind_obj("NEST");
+            auto& ttree = sfind_obj("TTREE");
+            auto& nest = sfind_obj("NEST");
             ObjectP egg = sfind_obj("EGG");
 
             // Need to act on a copy of robjs here, since the loop body
             // may remove items from here->robjs(), which will then screw
             // up the iterators.
             ObjList robjs = here->robjs();
-            for (const ObjectP &x : robjs)
+            for (const ObjectP& x : robjs)
             {
                 if (x == egg)
                 {
@@ -2260,7 +2260,7 @@ namespace exit_funcs
     ExitFuncVal slide_exit::operator()() const
     {
         auto& rm = sfind_room(timber_tie ? "SLID1"sv : "CELLA"sv);
-        const AdvP &winner = *::winner;
+        const AdvP& winner = *::winner;
         int w = weight(winner->aobjs());
         if (timber_tie)
         {
@@ -2270,7 +2270,7 @@ namespace exit_funcs
         return rm;
     }
 
-    RoomP bkleavee_(const RoomP &rm)
+    RoomP bkleavee_(const RoomP& rm)
     {
         return (held(sfind_obj("BILLS")) || held(sfind_obj("PORTR"))) ? RoomP() : rm;
     }
@@ -2305,7 +2305,7 @@ namespace exit_funcs
         ExitFuncVal rv = true;
         direction dir = as_dir(prsvec[1]);
         int rm = cphere;
-        const auto &uvec = cpuvec;
+        const auto& uvec = cpuvec;
         int fx;
         if (dir == direction::Up)
         {
@@ -2321,16 +2321,16 @@ namespace exit_funcs
                     tell("The exit is too far above your head.");
                 }
             }
-			else
-			{
-				tell("There is no way up.");
-			}
+            else
+            {
+                tell("There is no way up.");
+            }
             return rv;
         }
         else if (rm == 52 && dir == direction::West && flags[FlagId::cpout])
         {
             goto_(find_room("CPOUT"));
-			const RoomP &cp = find_room("CP");
+            const RoomP& cp = find_room("CP");
             rtrz(cp, RoomBit::rseenbit);
             room_info()();
             return rv;
@@ -2342,10 +2342,9 @@ namespace exit_funcs
         }
 
         auto m = memq(dir, cpexits);
-        _ASSERT(m);
         fx = (*m)->offset;
 
-        if ((abs(fx) >= 1 && abs(fx) <= 8) ||
+        if ((std::abs(fx) >= 1 && std::abs(fx) <= 8) ||
             (fx > 0 && (uvec[rm + 8 - 1] == 0 || uvec[rm + (fx - 8) - 1] == 0)) ||
             (fx < 0 && (uvec[rm - 8 - 1] == 0 || uvec[rm + 8 + fx - 1] == 0)))
         {
@@ -2357,7 +2356,8 @@ namespace exit_funcs
             {
                 tell("There is a wall there.");
             }
-        } else
+        }
+        else
             tell("There is a wall there.");
 
         return rv;
@@ -2386,11 +2386,11 @@ namespace actor_funcs
 {
     bool robot_actor::operator()() const
     {
-        const ObjectP &r = sfind_obj("ROBOT");
-        const AdvP *ract;
+        const ObjectP& r = sfind_obj("ROBOT");
+        const AdvP* ract;
         bool rv = true;
 
-        if (auto &cage = sfind_obj("CAGE"); verbq("RAISE") && prso() == cage)
+        if (auto& cage = sfind_obj("CAGE"); verbq("RAISE") && prso() == cage)
         {
             tell("The cage shakes and is hurled across the room.");
             clock_disable(sphere_clock);
@@ -2438,7 +2438,7 @@ namespace actor_funcs
             // Special case for dark_room. Kind of kludgy...
             if (auto m = memq(as_dir(prsvec[1]), here->rexits()))
             {
-                if (auto *sgp = std::get_if<SetgExitP>(&std::get<1>(**m)))
+                if (auto* sgp = std::get_if<SetgExitP>(&std::get<1>(**m)))
                 {
                     if ((*sgp)->name() == "dark_room")
                     {
@@ -2456,7 +2456,7 @@ namespace actor_funcs
         {
             tell("All such attacks are vain in your condition."sv);
         }
-        else if (verbq( "OPEN", "CLOSE", "EAT", "DRINK", "INFLA", "DEFLA", "TURN", "BURN", "TIE", "UNTIE", "RUB" ))
+        else if (verbq("OPEN", "CLOSE", "EAT", "DRINK", "INFLA", "DEFLA", "TURN", "BURN", "TIE", "UNTIE", "RUB"))
         {
             tell("Even such a simple action is beyond your capabilities."sv);
         }
@@ -2476,7 +2476,7 @@ namespace actor_funcs
         {
             tell("Your hand passes through its object."sv);
         }
-        else if (verbq( "DROP", "THROW", "INVEN" ))
+        else if (verbq("DROP", "THROW", "INVEN"))
         {
             tell("You have no possessions."sv);
         }

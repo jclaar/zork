@@ -148,8 +148,8 @@ inline void add_buncher(const std::initializer_list<const char*>& verbs)
     }
 }
 
-ObjectP prso();
-ObjectP prsi();
+export ObjectP prso();
+export ObjectP prsi();
 
 
 struct StuffVec
@@ -182,7 +182,7 @@ class cwin
 
 typedef std::variant<std::monostate, cwin, ParseVec, bool> SParseVal;
 SParseVal sparse(Iterator<ParseContV> sv, bool vb);
-Nefals search_list(const std::string& objname, const ObjList& slist, const AdjectiveP& adj, bool first = true, const Globals& global = Globals());
+export Nefals search_list(const std::string& objname, const ObjList& slist, const AdjectiveP& adj, bool first = true, const Globals& global = Globals());
 bool this_it(const std::string& objname, const ObjectP& obj, const AdjectiveP& adj, Globals global);
 Nefals get_object(const std::string& objnam, AdjectiveP adj);
 StuffVecP stuff_obj(const ObjectP& obj, const PrepP& prep, PrepVec prepvec, ParseVec pvr, bool vb);

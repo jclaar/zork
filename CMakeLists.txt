@@ -119,14 +119,14 @@ target_sources(zork PRIVATE
 		"dung.ixx" "dungi.ixx"
         "adv.ixx" "advi.ixx"
 		"act1.ixx"
-		"act2.ixx"
+		"act2.ixx" "act2i.ixx"
 		"act3.ixx" 
 		"act4.ixx"
 		"rooms.ixx" "roomsi.ixx"
 		"parser.ixx" "parseri.ixx"
 		"util.ixx" "utili.ixx"
 		"sr.ixx" "sri.ixx"
-		"zstring.ixx")
+		"zstring.ixx" "act2i.ixx" "act4i.ixx" "act3i.ixx")
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)

@@ -36,7 +36,7 @@ std::string pw(SIterator unm, SIterator key);
 
 ERAPPLIC(answer);
 RAPPLIC(incant);
-RAPPLIC_DEF(inquisitor, Iterator<ParseContV>, Iterator<ParseContV>());
+//RAPPLIC_DEF(inquisitor, Iterator<ParseContV>, Iterator<ParseContV>());
 
 RAPPLIC(stats);
 RAPPLIC(stay);

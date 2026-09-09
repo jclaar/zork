@@ -17,8 +17,8 @@ const typename T::value_type& pick_one(const T& items)
 
 // Returns a new list with the specified object removed.
 ObjList splice_out(const ObjectP& op, const ObjList& al);
-ObjList& splice_out_in_place(const ObjectP& op, ObjList& al);
-bool remove_object(const ObjectP& obj, const AdvP& winner = *::winner);
+export ObjList& splice_out_in_place(const ObjectP& op, ObjList& al);
+export bool remove_object(const ObjectP& obj, const AdvP& winner = *::winner);
 bool insert_object(const ObjectP& obj, const RoomP& room);
 void insert_into(const ObjectP& cnt, const ObjectP& obj);
 void remove_from(const ObjectP& cnt, const ObjectP& obj);

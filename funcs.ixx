@@ -322,3 +322,12 @@ typename T::mapped_type plookup(std::string_view a, const T& l)
     auto iter = l.find(a);
     return iter == l.end() ? typename T::mapped_type() : iter->second;
 }
+
+export std::string username()
+{
+    const char* un;
+    return (un = std::getenv("USERNAME")) ? un :
+        (un = std::getenv("USER")) ? un :
+        "Occupant";
+}
+
