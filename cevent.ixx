@@ -3,7 +3,7 @@ module;
 
 export module Zork:CEvent;
 import ZDefs;
-import ZObjfns;
+import :Objfns;
 import :Roomfns;
 import std;
 

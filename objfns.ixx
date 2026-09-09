@@ -1,6 +1,6 @@
 module;
 #include "defs.h"
-export module ZObjfns;
+export module Zork:Objfns;
 import std;
 import ZDefs;
 

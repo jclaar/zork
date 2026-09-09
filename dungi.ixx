@@ -10,7 +10,7 @@ import :Act3;
 import :Act4;
 import :Memq;
 import ZFuncs;
-import ZObjfns;
+import :Objfns;
 import :Roomfns;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)

@@ -23,8 +23,7 @@ public:
 
     const ObjectP& aobj() const { return _aobj; }
 
-    int astrength() const { return _astrength; }
-    void astrength(int new_s) { _astrength = new_s; }
+    PROP(astrength);
 
     int ascore() const { return _ascore; }
     void ascore(int new_score) { _ascore = new_score; }

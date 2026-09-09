@@ -12,7 +12,7 @@ import :Dungeon;
 import :Adv;
 import :Util;
 import :Memq;
-import ZObjfns;
+import :Objfns;
 import ZString;
 import std;
 

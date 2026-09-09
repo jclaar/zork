@@ -15,7 +15,7 @@ import ZFuncs;
 import ZString;
 import ZStrings;
 import :CEvent;
-import ZObjfns;
+import :Objfns;
 import ZInfo;
 
 using namespace std::string_view_literals;
