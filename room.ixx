@@ -198,7 +198,7 @@ private:
 void init_rooms();
 const RoomP& get_room(std::string_view rid, RoomP init_val = RoomP());
 const RoomP& find_room(std::string_view rid);
-inline const RoomP& sfind_room(std::string_view s) { return find_room(s); }
+const RoomP& sfind_room(std::string_view s) { return find_room(s); }
 RoomList& rooms();
 typedef std::map<std::string, RoomP, std::less<>> RoomMap;
 RoomMap& room_map();

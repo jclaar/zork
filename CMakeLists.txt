@@ -86,7 +86,6 @@ target_sources(zork PRIVATE
 	gobject.h 
 	 
 	mdlfun.cpp
-	memq.h
 	objdefs.h
 	 objser.h
 	roomdefs.h
@@ -99,9 +98,35 @@ target_sources(zork PRIVATE
 
 	PUBLIC
 	FILE_SET modules TYPE CXX_MODULES FILES
-	    "ZorkException.ixx" "FlagSupport.ixx"
- "info.ixx" "strings.ixx" "memq.ixx" "defs.ixx" "roomfns.ixx" "globals.ixx" "speech.ixx" "funcs.ixx" "cevent.ixx" "objfns.ixx" "makstr.ixx" "object.ixx" "room.ixx" "zork_fwd.ixx" "melee.ixx" "zork.ixx" "dung.ixx"
-"adv.ixx" "act1.ixx" "act2.ixx" "act3.ixx" "act4.ixx" "rooms.ixx" "parser.ixx" "util.ixx" "sr.ixx" "zstring.ixx")
+	    "ZorkException.ixx"
+		"FlagSupport.ixx"
+		"info.ixx" 
+		"strings.ixx" 
+		"memq.ixx" 
+		"defs.ixx" 
+		"roomfns.ixx" 
+		"globals.ixx" 
+		"speech.ixx" 
+		"funcs.ixx" 
+		"cevent.ixx" 
+		"objfns.ixx" 
+		"makstr.ixx" 
+		"object.ixx" 
+		"room.ixx" 
+		"zork_fwd.ixx" 
+		"melee.ixx" 
+		"zork.ixx" 
+		"dung.ixx" "dungi.ixx"
+        "adv.ixx" "advi.ixx"
+		"act1.ixx"
+		"act2.ixx"
+		"act3.ixx" 
+		"act4.ixx"
+		"rooms.ixx" "roomsi.ixx"
+		"parser.ixx" 
+		"util.ixx"
+		"sr.ixx" "sri.ixx"
+		"zstring.ixx")
 
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)

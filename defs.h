@@ -49,7 +49,6 @@ typedef std::shared_ptr<CEvent> CEventP;
 typedef std::list<CEventP> EventList;
 class Adv;
 typedef std::unique_ptr<Adv> AdvP;
-typedef std::array <AdvP, std::to_underlying(e_oactor::none)> AdvArray;
 
 class hack;
 typedef std::shared_ptr<hack> HackP;

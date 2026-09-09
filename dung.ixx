@@ -8,7 +8,7 @@ import :Melee;
 import :Object;
 import :fwd;
 import ZFuncs;
-import ZCevent;
+import :CEvent;
 import :Makstr;
 import std;
 
@@ -16,6 +16,7 @@ using WordsPobl = std::map<std::string, WordP, std::less<>>;
 using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;
 using ActionsPobl = std::map<std::string, ActionP, std::less<>>;
 
+export int cphere;
 extern WordsPobl words_pobl;
 extern DirectionsPobl directions_pobl;
 extern ActionsPobl actions_pobl;
@@ -26,7 +27,7 @@ extern ObjectP bunch_obj;
 extern SIterator indentstr;
 extern RoomP mloc;
 extern GObjectPtr it_object;
-extern int deaths;
+export int deaths = 0;
 extern HackP robber_demon;
 extern HackP sword_demon;
 extern HackP fight_demon;
@@ -366,3 +367,7 @@ inline bool apply_random(hackfn fcn, const HackP& demon)
     return fcn(demon);
 }
 
+// Demons
+HACKFN(robber);
+HACKFN(sword_glow);
+HACKFN(fighting);

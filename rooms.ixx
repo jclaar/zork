@@ -5,7 +5,7 @@ export module Zork:Rooms;
 import std;
 import ZDefs;
 import ZFuncs;
-import ZCevent;
+import :CEvent;
 import :fwd;
 import :Room;
 
@@ -13,7 +13,7 @@ import :Room;
 // This attempts to mimic the behavior of the QUIT MDL function,
 // which is just an immediate exit of the running application.
 // (Probably exit() would do the same thing, but I hate exit(). :-) )
-class ExitException : public std::exception {
+export class ExitException : public std::exception {
 public:
     ExitException(bool restart_flag) : restart(restart_flag) {}
 
@@ -29,7 +29,7 @@ extern rapplic dead_player;
 extern direction fromdir;
 extern const AdvP* winner;
 extern int raw_score;
-extern int moves;
+export int moves = 0;
 extern std::list<HackP> demons;
 
 const CEventP& clock_int(const CEventP& cev, std::optional<int> num = std::nullopt, bool flag = false);

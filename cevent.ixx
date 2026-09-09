@@ -1,14 +1,14 @@
 module;
 #include <boost/serialization/access.hpp>
 
-export module ZCevent;
+export module Zork:CEvent;
 import ZDefs;
 import ZObjfns;
-import ZRoomfns;
+import :Roomfns;
 import std;
 
 // CEVENT structure
-class CEvent
+export class CEvent
 {
 public:
     CEvent(int tick, rapplic action, bool flag, std::string_view id, bool death);
@@ -51,7 +51,7 @@ private:
 
 export using CEventP = std::shared_ptr<CEvent>;
 
-enum class Event
+export enum class Event
 {
     broin,
     cycin,
@@ -113,7 +113,7 @@ namespace
     }
 }
 
-CEventContainer ev;
+export CEventContainer ev;
 
 CEventContainer::CEventContainer() :
     Base({

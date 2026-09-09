@@ -7,11 +7,11 @@ import ZException;
 import std;
 
 // Bits for tell
-constexpr std::uint32_t long_tell = 0x40000000;
-constexpr std::uint32_t pre_crlf = 0x00000002;
-constexpr std::uint32_t post_crlf = 0x00000001;
-constexpr std::uint32_t no_crlf = 0x00000000;
-constexpr std::uint32_t long_tell1 = long_tell | post_crlf;
+export constexpr std::uint32_t long_tell = 0x40000000;
+export constexpr std::uint32_t pre_crlf = 0x00000002;
+export constexpr std::uint32_t post_crlf = 0x00000001;
+export constexpr std::uint32_t no_crlf = 0x00000000;
+export constexpr std::uint32_t long_tell1 = long_tell | post_crlf;
 
 class tell_base
 {
@@ -70,10 +70,13 @@ bool tell(std::string_view s, uint32_t flags, Args...args)
 
 // Add a separate template function with flags, since GCC
 // doesn't like templates with default arguments.
-bool tell(std::string_view s, uint32_t flags = post_crlf);
+export bool tell(std::string_view s, uint32_t flags = post_crlf)
+{
+    return tell(s, flags, std::monostate());
+}
 
-void crlf() { tty << std::endl; }
-template <typename T>
+export void crlf() { tty << std::endl; }
+export template <typename T>
 void princ(const T& v)
 {
     tty << v;
@@ -81,9 +84,9 @@ void princ(const T& v)
 void prin1(int val);
 void printstring(std::string_view str) { tty << str; }
 
-RAPPLIC(terminal);
+ERAPPLIC(terminal);
 
-std::string readst(std::string_view prompt);
+export std::string readst(std::string_view prompt);
 
 // Various MDL functions mapped to C++ equivalents
 //inline char *back(char *s, size_t count) { return s - count; }
@@ -146,7 +149,6 @@ public:
 
     size_t size() const
     {
-        _ASSERT(is_init());
         return std::distance(p, c->end());
     }
 
@@ -259,19 +261,19 @@ inline bool operator!=(const SIterator& a, const char* b)
     return std::string(a.cur(), a.end()) != b;
 }
 
-template <typename T>
+export template <typename T>
 bool empty(const Iterator<T>& it)
 {
     return !it.is_init() || it.cur() == it.end();
 }
 
-template <typename T>
+export template <typename T>
 Iterator<T> top(Iterator<T> it)
 {
     return Iterator<T>(it.cont(), it.begin());
 }
 
-template <typename T>
+export template <typename T>
 T rest(T it, int offset = 1)
 {
     it.advance(offset);
@@ -279,16 +281,16 @@ T rest(T it, int offset = 1)
 }
 
 template <>
-inline char* rest(char* s, int len) { return s + len; }
+char* rest(char* s, int len) { return s + len; }
 template <>
-inline const char* rest(const char* s, int len) { return s + len; }
-inline std::string_view rest(const std::string& s, int len = 1)
+const char* rest(const char* s, int len) { return s + len; }
+export std::string_view rest(const std::string& s, int len = 1)
 {
     return std::string_view(&s[len], s.size() - len);
 }
 
 
-template <typename T>
+export template <typename T>
 T back(T it, int offset = 1)
 {
     it.advance(-offset);

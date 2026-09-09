@@ -8,9 +8,9 @@ module;
 export module Zork:Object;
 import :fwd;
 import :Speech;
+import :CEvent;
 import ZStrings;
 import ZFlagSupport;
-import ZCevent;
 
 typedef std::initializer_list<const char*> StringList;
 
@@ -309,3 +309,9 @@ constexpr std::array cpwalls = {
 };
 
 void add_inqobj(const ObjectP& obj);
+
+export ObjectP btie;
+export ObjectP binf;
+export ObjectP timber_tie;
+export ObjectP matobj;
+

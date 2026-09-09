@@ -139,7 +139,7 @@ private:
     ObjectP _pobj;
 };
 typedef std::shared_ptr<phrase> PhraseP;
-typedef std::vector<PhraseP> PhraseVecV;
+using PhraseVecV = std::vector<PhraseP>;
 PhraseP make_phrase(const WordP& p, const ObjectP& op);
 
 export using QuestionValue = std::variant<std::string_view, ObjectP, ActionP>;

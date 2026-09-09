@@ -130,3 +130,6 @@ export void load_max(int new_load)
     max_load = new_load;
 }
 
+export int light_shaft = []() { inc_score_max(10); return 10; }();
+export int water_level = 0;
+export int beach_dig = 0;

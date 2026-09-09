@@ -1,7 +1,7 @@
 module;
 #include "defs.h"
 
-export module ZRoomfns;
+export module Zork:Roomfns;
 import ZDefs;
 
 export namespace room_funcs {

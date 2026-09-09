@@ -28,7 +28,7 @@ export enum class direction
     NumDirs
 };
 
-std::unique_ptr<std::ofstream> script_channel;
+export std::unique_ptr<std::ofstream> script_channel;
 
 // Output stream, supporting scripting.
 class TtyBuff : public std::basic_stringbuf<char, std::char_traits<char>>

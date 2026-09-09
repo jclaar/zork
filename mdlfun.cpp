@@ -6,6 +6,7 @@
 
 import ZException;
 import ZFuncs;
+import ZDefs;
 import Zork;
 #include "version.h"
 

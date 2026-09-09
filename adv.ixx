@@ -1,5 +1,6 @@
 module;
 #include <boost/serialization/split_member.hpp>
+#include "defs.h"
 
 export module Zork:Adv;
 import :fwd;
@@ -58,44 +59,11 @@ private:
     Adv() {}
     friend class boost::serialization::access;
     template <class archive>
-    void save(archive& ar, const unsigned int version) const
-    {
-        ar& (_aroom ? _aroom->rid() : std::string());
-        ar& _ascore;
-        ar& (_avehicle ? _avehicle->oid() : std::string());
-        ar& _aobj->oid();
-        ar& _astrength;
-        ar& bits;
-        std::list<std::string> obj_list;
-        for (auto o : _aobjs)
-        {
-            obj_list.push_back(o->oid());
-        }
-        ar& obj_list;
-    }
+    void save(archive& ar, const unsigned int version) const;
 
     template <class archive>
-    void load(archive& ar, const unsigned int version)
-    {
-        std::string temp;
-        ar& temp;
-        if (!temp.empty())
-            _aroom = sfind_room(temp);
-        ar& _ascore;
-        ar& temp;
-        if (!temp.empty())
-            _avehicle = sfind_obj(temp);
-        ar& temp;
-        _aobj = sfind_obj(temp);
-        ar& _astrength;
-        ar& bits;
-        std::list<std::string> obj_list;
-        ar& obj_list;
-        for (auto s : obj_list)
-        {
-            _aobjs.push_back(sfind_obj(s));
-        }
-    }
+    void load(archive& ar, const unsigned int version);
+
 
     BOOST_SERIALIZATION_SPLIT_MEMBER();
 
@@ -108,6 +76,7 @@ private:
     int _astrength = 0;              // Fighting strength
     AdvBitset bits;
 };
+using AdvArray = std::array <AdvP, std::to_underlying(e_oactor::none)>;
 
 inline bool atrnn(const AdvP& adv, AdvBits b)
 {
@@ -128,7 +97,7 @@ void add_actor(e_oactor actor_name, const RoomP& room,
     const ObjectP& obj, rapplic action, int strength);
 AdvArray& actors();
 
-inline const AdvP& player() { return actors()[std::to_underlying(e_oactor::player)]; }
+export const AdvP& player() { return actors()[std::to_underlying(e_oactor::player)]; }
 
 // Actor functions
 namespace actor_funcs

@@ -5,9 +5,6 @@ export module Zork:Act3;
 import :fwd;
 import :Dungeon;
 
-extern ObjectP timber_tie;
-extern ObjectP matobj;
-
 bool bad_egg(const ObjectP& begg);
 bool cpgoto(int fx);
 ScolWalls get_wall(const RoomP& rm);

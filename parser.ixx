@@ -19,8 +19,8 @@ inline bool operator==(const Nefals& ne, const ObjectP& obj)
 extern Iterator<ParseContV> lexv;
 extern bool gwim_disable;
 
-typedef Iterator<PhraseVecV> PrepVec;
-typedef Iterator<ParseVecA> ParseVec;
+export using PrepVec = Iterator<PhraseVecV>;
+export using ParseVec = Iterator<ParseVecA>;
 extern Iterator<ObjVector> bunuvec;
 extern Iterator<ObjVector> bunch;
 extern std::list<VerbP> bunchers;

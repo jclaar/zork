@@ -18,7 +18,6 @@ namespace
     RoomP munged_room;
 }
 
-int light_shaft = []() { inc_score_max(10); return 10; }();
 ObjectP btie;
 ObjectP binf;
 CEventP burnup_int;

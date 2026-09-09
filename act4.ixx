@@ -8,6 +8,7 @@ import :Object;
 import :Rooms;
 import ZFuncs;
 
+
 extern std::vector<QuestionP> qvec;
 extern int mdir;
 
@@ -33,7 +34,7 @@ RoomP mirns(bool northq = (mdir < 180), bool exitq = false);
 std::optional<int> mirror_here(RoomP rm);
 std::string pw(SIterator unm, SIterator key);
 
-RAPPLIC(answer);
+ERAPPLIC(answer);
 RAPPLIC(incant);
 RAPPLIC_DEF(inquisitor, Iterator<ParseContV>, Iterator<ParseContV>());
 
