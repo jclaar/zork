@@ -5,6 +5,7 @@ export module Zork:MeleeI;
 export import :Melee;
 
 import ZException;
+import :Util;
 import :Adv;
 import :Parser;
 import :Memq;

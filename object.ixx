@@ -24,8 +24,7 @@ public:
     }
 
     const CEventP& ev() const { return _ev; }
-    int val() const { return _val; }
-    void val(int new_val) { _val = new_val; }
+    PROP(val);
 
 private:
     olint_t() {}

@@ -7,6 +7,7 @@ import ZFlagSupport;
 import ZString;
 import ZGlobals;
 import :Room;
+import :Rooms;
 import :Makstr;
 import :Dungeon;
 import :Adv;

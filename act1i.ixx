@@ -38,7 +38,7 @@ namespace
     {
         const OlintP& foo = obj->olint();
         int cnt, tim;
-        foo->val(cnt = (foo->val() + 1));
+        foo->val() = cnt = (foo->val() + 1);
         clock_int(cev, tim = *(tick + size_t(cnt) - 1));
         if (tim == 0)
         {

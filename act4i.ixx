@@ -390,7 +390,7 @@ bool enter_end_game()
     tro(lamp, Bits::lightbit);
     trz(lamp, Bits::onbit);
     const OlintP& c = lamp->olint();
-    c->val(0);
+    c->val() = 0;
     c->ev()->ctick(350);
     c->ev()->cflag(false);
     sword_demon->haction(sword_glow());
