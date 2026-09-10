@@ -4,6 +4,7 @@ module;
 export module Zork:Act3;
 import :fwd;
 import :Dungeon;
+import ZDefs;
 
 bool bad_egg(const ObjectP& begg);
 bool cpgoto(int fx);
