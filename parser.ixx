@@ -192,7 +192,7 @@ ObjectP get_it_obj();
 const Orphans& orphan(bool flag = false, const ActionP& action = nullptr, const OrphanSlotType& slot1 = std::monostate(), const PrepP& prep = PrepP(),
     std::string_view name = "", const OrphanSlotType& slot2 = std::monostate());
 bool ortell(const VargP& varg, const ActionP& action, const ObjectP& gwim, OrphanSlotType slot2 = std::monostate());
-std::string lcify(const std::string& str, size_t len = std::string::npos);
+std::string lcify(const std::string& str, std::size_t len = std::string::npos);
 bool syn_match(ParseVec pv);
 bool syn_equal(const VargP& varg, const OrphanSlotType& pobj);
 bool take_it_or_leave_it(const SyntaxP& syn, ParseVec pv);

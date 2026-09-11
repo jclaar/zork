@@ -113,7 +113,7 @@ namespace
         return iter != std::end(al);
     }
 
-    const ALType& idx(const AL& al, size_t index)
+    const ALType& idx(const AL& al, std::size_t index)
     {
         AL::const_iterator i = al.begin();
         std::advance(i, index);
