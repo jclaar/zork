@@ -53,6 +53,49 @@ namespace
             ::tell(*(tell_start + size_t(cnt) - 1));
         }
     }
+
+    bool hack_hack(const ObjectP& obj, std::string_view str, std::string_view obj2 = std::string_view())
+    {
+        if (object_action())
+            return true;
+        if (!obj2.empty())
+        {
+            tell(str, 1, obj->odesc2(), " with a ");
+            tell(obj2, 1, pick_one(ho_hum));
+        }
+        else
+        {
+            tell(str, 1, obj->odesc2(), pick_one(ho_hum));
+        }
+        return true;
+    }
+
+    bool balloon_burn()
+    {
+        ObjectP prso = ::prso();
+        const ObjectP& ball = sfind_obj("BALLO");
+        tell("The ", 1, prso->odesc2(), " burns inside the receptacle.");
+        burnup_int = clock_int(brnin, prso->osize() * 20);
+        tro(prso, Bits::flamebit, Bits::lightbit, Bits::onbit);
+        trz(prso, Bits::takebit, Bits::readbit);
+        if (binf)
+        {
+        }
+        else
+        {
+            tell("The cloth bag inflates as it fills with hot air.");
+            if (!flags[FlagId::blab])
+            {
+                auto& blabe = sfind_obj("BLABE");
+                ball->ocontents().push_front(blabe);
+                blabe->ocan() = ball;
+            }
+            flags[FlagId::blab] = true;
+            binf = prso;
+            clock_int(bint, 3);
+        }
+        return true;
+    }
 }
 
 bool robber::operator()(const HackP& hack) const
@@ -2891,22 +2934,6 @@ bool fill::operator()() const
     return true;
 }
 
-bool hack_hack(const ObjectP& obj, std::string_view str, std::string_view obj2)
-{
-    if (object_action())
-        return true;
-    if (!obj2.empty())
-    {
-        tell(str, 1, obj->odesc2(), " with a ");
-        tell(obj2, 1, pick_one(ho_hum));
-    }
-    else
-    {
-        tell(str, 1, obj->odesc2(), pick_one(ho_hum));
-    }
-    return true;
-}
-
 bool jargon::operator()() const
 {
     return tell("Well, FOO, BAR, and BLETCH to you too!");
@@ -3331,29 +3358,3 @@ namespace room_funcs
 
 }
 
-bool balloon_burn()
-{
-    ObjectP prso = ::prso();
-    const ObjectP& ball = sfind_obj("BALLO");
-    tell("The ", 1, prso->odesc2(), " burns inside the receptacle.");
-    burnup_int = clock_int(brnin, prso->osize() * 20);
-    tro(prso, Bits::flamebit, Bits::lightbit, Bits::onbit);
-    trz(prso, Bits::takebit, Bits::readbit);
-    if (binf)
-    {
-    }
-    else
-    {
-        tell("The cloth bag inflates as it fills with hot air.");
-        if (!flags[FlagId::blab])
-        {
-            auto& blabe = sfind_obj("BLABE");
-            ball->ocontents().push_front(blabe);
-            blabe->ocan() = ball;
-        }
-        flags[FlagId::blab] = true;
-        binf = prso;
-        clock_int(bint, 3);
-    }
-    return true;
-}

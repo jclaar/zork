@@ -21,6 +21,153 @@ using namespace std::string_view_literals;
 namespace
 {
     RoomP munged_room;
+
+    bool put_balloon(const ObjectP& ball, std::string_view there, std::string_view str)
+    {
+        if (member("LEDG", here->rid()) || here == find_room("VLBOT"))
+        {
+            tell("You watch as the balloon slowly ", 1, str);
+        }
+        remove_object(ball);
+        insert_object(ball, bloc = find_room(there));
+        return true;
+    }
+
+    bool rise_and_shine(const ObjectP& ball)
+    {
+        const AdvP& winner = *::winner;
+        bool in = winner->avehicle() == ball;
+        RoomP bl = bloc;
+
+        clock_int(bint, 3);
+        const char* m;
+        if (m = member("VAIR", bl->rid()))
+        {
+            if (rest(m, 4) == "4"sv)
+            {
+                clock_disable(burnup_int);
+                clock_disable(bint);
+                remove_object(ball);
+                const auto& vlbot = sfind_room("VLBOT");
+                insert_object(sfind_obj("DBALL"), vlbot);
+                if (in)
+                {
+                    jigs_up("Your balloon has hit the rim of the volcano, ripping the cloth and\n"
+                        "causing you a 500 foot drop.  Did you get your flight insurance?");
+                }
+                else if (here == vlbot)
+                {
+                    tell("You watch the balloon explode after hitting the rim; its tattered\n"
+                        "remains land on the ground by your feet.");
+                }
+                else
+                {
+                    tell("You hear a boom and notice that the balloon is falling to the ground.");
+                }
+                bloc = vlbot;
+            }
+            else
+            {
+                std::string s = "     ";
+                substruc(bl->rid(), 0, 4, s);
+                s[4] = m[4] + 1;
+                if (in)
+                {
+                    goto_(bloc = find_room(s));
+                    tell("The balloon ascends.");
+                    room_info()();
+                }
+                else
+                {
+                    put_balloon(ball, s, "ascends.");
+                }
+            }
+        }
+        else if (m = member("LEDG", bl->rid()))
+        {
+            char s[6] = { 0 };
+            substruc("VAIR", 0, 4, s);
+            s[4] = m[4];
+            if (in)
+            {
+                goto_(bloc = find_room(s));
+                tell("The balloon leaves the ledge.");
+                room_info()();
+            }
+            else
+            {
+                clock_int(vlgin, 10);
+                put_balloon(ball, s, "floats away.  It seems to be ascending\ndue to its light load.");
+            }
+        }
+        else if (in)
+        {
+            goto_(bloc = sfind_room("VAIR1"));
+            tell("The balloon slowly rises from the ground.");
+            room_info()();
+        }
+        else
+        {
+            put_balloon(ball, "VAIR1", "lifts off.");
+        }
+        return true;
+    }
+
+    bool decline_and_fall(const ObjectP& ball)
+    {
+        const AdvP& winner = *::winner;
+        bool in = winner->avehicle() == ball;
+        RoomP bl = bloc;
+        clock_int(bint, 3);
+        const char* m;
+        if (m = member("VAIR", bl->rid()))
+        {
+            if (rest(m, 4) == std::string("1"))
+            {
+                if (in)
+                {
+                    goto_(bloc = sfind_room("VLBOT"));
+                    if (binf)
+                    {
+                        tell("The balloon has landed.");
+                        clock_int(bint, 0);
+                        room_info()();
+                    }
+                    else
+                    {
+                        remove_object(ball);
+                        insert_object(sfind_obj("DBALL"), bloc);
+                        winner->avehicle(ObjectP());
+                        clock_disable(clock_int(bint, 0));
+                        tell("You have landed, but the balloon did not survive.");
+                    }
+                }
+                else
+                {
+                    put_balloon(ball, "VLBOT", "lands.");
+                }
+            }
+            else
+            {
+                std::string s = "     ";
+                substruc(bl->rid(), 0, 4, s);
+                s[4] = m[4] - 1;
+                if (in)
+                {
+                    goto_(bloc = sfind_room(s));
+                    tell("The balloon descends.");
+                    room_info()();
+                }
+                else
+                {
+                    put_balloon(ball, s, "descends.");
+                }
+            }
+        }
+        return true;
+    }
+
+
 }
 
 bool digger::operator()() const
@@ -162,152 +309,6 @@ bool geronimo::operator()() const
 {
     return (*winner)->avehicle() == sfind_obj("BARRE") ? jigs_up(over_falls_str) : tell("Wasn't he an Indian?");
 }
-
-bool put_balloon(const ObjectP& ball, std::string_view there, std::string_view str)
-{
-    if (member("LEDG", here->rid()) || here == find_room("VLBOT"))
-    {
-        tell("You watch as the balloon slowly ", 1, str);
-    }
-    remove_object(ball);
-    insert_object(ball, bloc = find_room(there));
-    return true;
-}
-
-bool rise_and_shine(const ObjectP& ball)
-{
-    const AdvP& winner = *::winner;
-    bool in = winner->avehicle() == ball;
-    RoomP bl = bloc;
-
-    clock_int(bint, 3);
-    const char* m;
-    if (m = member("VAIR", bl->rid()))
-    {
-        if (rest(m, 4) == "4"sv)
-        {
-            clock_disable(burnup_int);
-            clock_disable(bint);
-            remove_object(ball);
-            const auto& vlbot = sfind_room("VLBOT");
-            insert_object(sfind_obj("DBALL"), vlbot);
-            if (in)
-            {
-                jigs_up("Your balloon has hit the rim of the volcano, ripping the cloth and\n"
-                    "causing you a 500 foot drop.  Did you get your flight insurance?");
-            }
-            else if (here == vlbot)
-            {
-                tell("You watch the balloon explode after hitting the rim; its tattered\n"
-                    "remains land on the ground by your feet.");
-            }
-            else
-            {
-                tell("You hear a boom and notice that the balloon is falling to the ground.");
-            }
-            bloc = vlbot;
-        }
-        else
-        {
-            std::string s = "     ";
-            substruc(bl->rid(), 0, 4, s);
-            s[4] = m[4] + 1;
-            if (in)
-            {
-                goto_(bloc = find_room(s));
-                tell("The balloon ascends.");
-                room_info()();
-            }
-            else
-            {
-                put_balloon(ball, s, "ascends.");
-            }
-        }
-    }
-    else if (m = member("LEDG", bl->rid()))
-    {
-        char s[6] = { 0 };
-        substruc("VAIR", 0, 4, s);
-        s[4] = m[4];
-        if (in)
-        {
-            goto_(bloc = find_room(s));
-            tell("The balloon leaves the ledge.");
-            room_info()();
-        }
-        else
-        {
-            clock_int(vlgin, 10);
-            put_balloon(ball, s, "floats away.  It seems to be ascending\ndue to its light load.");
-        }
-    }
-    else if (in)
-    {
-        goto_(bloc = sfind_room("VAIR1"));
-        tell("The balloon slowly rises from the ground.");
-        room_info()();
-    }
-    else
-    {
-        put_balloon(ball, "VAIR1", "lifts off.");
-    }
-    return true;
-}
-
-bool decline_and_fall(const ObjectP& ball)
-{
-    const AdvP& winner = *::winner;
-    bool in = winner->avehicle() == ball;
-    RoomP bl = bloc;
-    clock_int(bint, 3);
-    const char* m;
-    if (m = member("VAIR", bl->rid()))
-    {
-        if (rest(m, 4) == std::string("1"))
-        {
-            if (in)
-            {
-                goto_(bloc = sfind_room("VLBOT"));
-                if (binf)
-                {
-                    tell("The balloon has landed.");
-                    clock_int(bint, 0);
-                    room_info()();
-                }
-                else
-                {
-                    remove_object(ball);
-                    insert_object(sfind_obj("DBALL"), bloc);
-                    winner->avehicle(ObjectP());
-                    clock_disable(clock_int(bint, 0));
-                    tell("You have landed, but the balloon did not survive.");
-                }
-            }
-            else
-            {
-                put_balloon(ball, "VLBOT", "lands.");
-            }
-        }
-        else
-        {
-            std::string s = "     ";
-            substruc(bl->rid(), 0, 4, s);
-            s[4] = m[4] - 1;
-            if (in)
-            {
-                goto_(bloc = sfind_room(s));
-                tell("The balloon descends.");
-                room_info()();
-            }
-            else
-            {
-                put_balloon(ball, s, "descends.");
-            }
-        }
-    }
-    return true;
-}
-
 
 bool blast::operator()() const
 {

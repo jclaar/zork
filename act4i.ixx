@@ -234,6 +234,55 @@ namespace
         return true;
     }
 
+    bool check_answer(Iterator<ParseContV> ans)
+    {
+        Iterator<std::array<QuestionP, 3>> nqv = nqvec;
+        const QuestionP& ques = nqv[0];
+        if (verbq("C-INT"))
+        {
+            tell("The booming voice asks:\n'", 1, ques->qstr(), "'");
+            clock_int(inqin, 2);
+        }
+        else if (ans && flags[FlagId::inqstartflag] && nqatt < 5)
+        {
+            if (correct(ans, ques->qans()))
+            {
+                tell("The dungeon master says 'Excellent.'");
+                if (empty(nqv = rest(nqv)))
+                {
+                    tell(quiz_win, long_tell1);
+                    dopen(sfind_obj("QDOOR"));
+                    clock_disable(inqin);
+                }
+                else
+                {
+                    nqatt = 0;
+                    nqvec = nqv;
+                    tell("The booming voice asks:\n'", 1, nqv[0]->qstr(), "'");
+                    clock_int(inqin, 2);
+                }
+            }
+            else
+            {
+                tell("The dungeon master says 'You are wrong.", 0);
+                if (++nqatt == 5)
+                {
+                    tell(inq_lose, long_tell1);
+                    clock_disable(inqin);
+                }
+                else
+                {
+                    tell(" You have ", 1, nums[5 - nqatt - 1], " more chance", nqatt == 4 ? ".'" : "s.'");
+                }
+            }
+        }
+        else
+        {
+            tell("There is no reply.");
+        }
+        return true;
+    }
+
 }
 
 bool follow::operator()() const
@@ -294,55 +343,6 @@ const RoomP& go_e_w(const RoomP& rm, direction dir)
     const std::string& spr = rm->rid();
     std::string str = std::string((dir != direction::Ne && dir != direction::Se) ? mrwstr : mrestr);
     return find_room(substruc(spr, 0, 3, str));
-}
-
-bool check_answer(Iterator<ParseContV> ans)
-{
-    Iterator<std::array<QuestionP, 3>> nqv = nqvec;
-    const QuestionP& ques = nqv[0];
-    if (verbq("C-INT"))
-    {
-        tell("The booming voice asks:\n'", 1, ques->qstr(), "'");
-        clock_int(inqin, 2);
-    }
-    else if (ans && flags[FlagId::inqstartflag] && nqatt < 5)
-    {
-        if (correct(ans, ques->qans()))
-        {
-            tell("The dungeon master says 'Excellent.'");
-            if (empty(nqv = rest(nqv)))
-            {
-                tell(quiz_win, long_tell1);
-                dopen(sfind_obj("QDOOR"));
-                clock_disable(inqin);
-            }
-            else
-            {
-                nqatt = 0;
-                nqvec = nqv;
-                tell("The booming voice asks:\n'", 1, nqv[0]->qstr(), "'");
-                clock_int(inqin, 2);
-            }
-        }
-        else
-        {
-            tell("The dungeon master says 'You are wrong.", 0);
-            if (++nqatt == 5)
-            {
-                tell(inq_lose, long_tell1);
-                clock_disable(inqin);
-            }
-            else
-            {
-                tell(" You have ", 1, nums[5 - nqatt - 1], " more chance", nqatt == 4 ? ".'" : "s.'");
-            }
-        }
-    }
-    else
-    {
-        tell("There is no reply.");
-    }
-    return true;
 }
 
 bool answer::operator()() const

@@ -15,41 +15,41 @@ namespace
     const int strength_min = 2;
     const int strength_max = 7;
     const int cure_wait = 30;
-}
 
-int fight_strength(const AdvP& hero, bool adjust)
-{
-    int s, smax = strength_max, smin = strength_min;
-    int pct = hero->ascore() * 100 / score_max();
-    pct *= (smax - smin);
-    pct += 50;
-    s = (pct / 100) + smin;
-    return adjust ? (s + hero->astrength()) : s;
-}
-
-int villain_strength(const ObjectP& villain)
-{
-    int od = villain->ostrength();
-    if (od > 0)
+    int fight_strength(const AdvP& hero, bool adjust = true)
     {
-        if (villain == sfind_obj("THIEF") && flags[FlagId::thief_engrossed])
+        int s, smax = strength_max, smin = strength_min;
+        int pct = hero->ascore() * 100 / score_max();
+        pct *= (smax - smin);
+        pct += 50;
+        s = (pct / 100) + smin;
+        return adjust ? (s + hero->astrength()) : s;
+    }
+
+    int villain_strength(const ObjectP& villain)
+    {
+        int od = villain->ostrength();
+        if (od > 0)
         {
-            od = std::min(od, 2);
-            flags[FlagId::thief_engrossed] = 0;
-        }
-        if (auto prsi = ::prsi())
-        {
-            trnn(prsi, Bits::weaponbit);
-            auto wv = memq(villain, best_weapons);
-            if (wv)
+            if (villain == sfind_obj("THIEF") && flags[FlagId::thief_engrossed])
             {
-                auto& [v, weapon, val] = *(*wv);
-                if (weapon == prsi)
-                    od = std::max(1, (od - val));
+                od = std::min(od, 2);
+                flags[FlagId::thief_engrossed] = 0;
+            }
+            if (auto prsi = ::prsi())
+            {
+                trnn(prsi, Bits::weaponbit);
+                auto wv = memq(villain, best_weapons);
+                if (wv)
+                {
+                    auto& [v, weapon, val] = *(*wv);
+                    if (weapon == prsi)
+                        od = std::max(1, (od - val));
+                }
             }
         }
+        return od;
     }
-    return od;
 }
 
 bool winning(const ObjectP& v, const AdvP& h)
