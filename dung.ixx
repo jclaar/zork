@@ -51,7 +51,7 @@ extern ObjectP bunch_obj;
 extern SIterator indentstr;
 extern GObjectPtr it_object;
 export int deaths = 0;
-extern HackP robber_demon;
+export extern HackP robber_demon;
 extern HackP sword_demon;
 extern HackP fight_demon;
 extern HackP clocker;
@@ -117,6 +117,8 @@ public:
         copy(h);
         return *this;
     }
+
+	~hack() = default;
 
     hackfn haction() const { return _haction; }
     void haction(hackfn fn) { _haction = fn; }
