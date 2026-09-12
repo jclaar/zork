@@ -42,6 +42,31 @@ namespace
     void dopen(const ObjectP& obj) { tro(obj, Bits::openbit); }
     void dclose(const ObjectP& obj) { trz(obj, Bits::openbit); }
 
+    ObjList movies(const RoomP& rm)
+    {
+        ObjList list;
+        const ObjList& co = cobjs;
+        for (const ObjectP& o : rm->robjs())
+        {
+            if (!memq(o, co))
+            {
+                list.push_back(o);
+            }
+        }
+        return list;
+    }
+
+    void stuff(const RoomP& r, const ObjList& l1, const ObjList& l2)
+    {
+        // Combines l1 and l2 into r->robjs.
+        r->robjs() = l1;
+        r->robjs().insert(r->robjs().end(), l2.begin(), l2.end());
+        for (const ObjectP& o : r->robjs())
+        {
+            o->oroom(r);
+        }
+    }
+
     ObjectP beam_stopped()
     {
         const ObjectP& beam = sfind_obj("BEAM");
@@ -212,31 +237,6 @@ namespace
             }
         }
         return false;
-    }
-
-    ObjList movies(const RoomP& rm)
-    {
-        ObjList list;
-        const ObjList& co = cobjs;
-        for (const ObjectP& o : rm->robjs())
-        {
-            if (!memq(o, co))
-            {
-                list.push_back(o);
-            }
-        }
-        return list;
-    }
-
-    void stuff(const RoomP& r, const ObjList& l1, const ObjList& l2)
-    {
-        // Combines l1 and l2 into r->robjs.
-        r->robjs() = l1;
-        r->robjs().insert(r->robjs().end(), l2.begin(), l2.end());
-        for (const ObjectP& o : r->robjs())
-        {
-            o->oroom(r);
-        }
     }
 
     bool incantation(Iterator<ParseContV> lv)

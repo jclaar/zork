@@ -35,18 +35,12 @@ public:
         ar& static_cast<Base&>(*this);
     }
 
-private:
+	Flags<FlagType, sz>& operator&(const Flags<FlagType, sz>& rhs)
+	{
+		Base::operator&=(static_cast<const Base&>(rhs));
+		return *this;
+	}
 
-    template <typename FT, size_t Sz>
-    friend Flags<FT, Sz> operator&(const Flags<FT, Sz>& lhs, const Flags<FT, Sz>& rhs);
+private:
 };
 
-export template <typename FlagType, size_t sz>
-Flags<FlagType, sz> operator&(const Flags<FlagType, sz>& lhs, const Flags<FlagType, sz>& rhs)
-{
-    auto& fl = static_cast<const Flags<FlagType, sz>::Base&>(lhs);
-    auto& fr = static_cast<const Flags<FlagType, sz>::Base&>(rhs);
-    Flags<FlagType, sz> rv(fl & fr);
-
-    return rv;
-}
