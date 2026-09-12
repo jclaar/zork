@@ -831,7 +831,7 @@ namespace obj_funcs
         if (verbq("DIG"))
         {
             rv = true;
-            static size_t guano_dig = 0;
+            static std::size_t guano_dig = 0;
             tell(++guano_dig > cdigs.size() ? "This is getting you nowhere." : cdigs[guano_dig - 1]);
         }
         return rv;
@@ -868,7 +868,7 @@ namespace obj_funcs
             }
             else
             {
-                tell(bdigs[size_t(cnt) - 1]);
+                tell(bdigs[std::size_t(cnt) - 1]);
             }
         }
         return rv;
@@ -1034,7 +1034,7 @@ namespace obj_funcs
         // The fweep function apparently rang the terminal bell, so
         // instead just print what Zork I does.
         fweep(4, 1);
-        for (size_t i = 0; i < 3; ++i)
+        for (std::size_t i = 0; i < 3; ++i)
         {
             tell("    Fweep!");
         }

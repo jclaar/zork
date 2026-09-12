@@ -1090,12 +1090,12 @@ ObjectP get_last(const ObjList& l)
     return ObjectP();
 }
 
-std::string lcify(const std::string& str, size_t len)
+std::string lcify(const std::string& str, std::size_t len)
 {
     std::string rv;
     std::string::const_iterator end = len == std::string::npos ? str.end() : (str.begin() + len);
     std::transform(str.begin(), end,
-        std::back_inserter(rv), tolower);
+        std::back_inserter(rv), [](char c) { return std::tolower(c); });
     return rv;
 }
 

@@ -33,7 +33,7 @@ namespace
     void cp_corner(int locn, int col, int row)
     {
         auto s = (col != 0 && row != 0) ? "??" :
-            ((col = cpuvec[size_t(locn) - 1]) == 0) ? "  " :
+            ((col = cpuvec[std::size_t(locn) - 1]) == 0) ? "  " :
             (col == 1) ? "MM" :
             "SS";
         tell(s, no_crlf);
@@ -51,10 +51,10 @@ namespace
     {
         int here = cphere;
         auto& uvec = cpuvec;
-        int n = uvec[size_t(here) - 8 - 1];
-        int s = uvec[size_t(here) + 8 - 1];
-        int e = uvec[size_t(here) + 1 - 1];
-        int w = uvec[size_t(here) - 1 - 1];
+        int n = uvec[std::size_t(here) - 8 - 1];
+        int s = uvec[std::size_t(here) + 8 - 1];
+        int e = uvec[std::size_t(here) + 1 - 1];
+        int w = uvec[std::size_t(here) - 1 - 1];
 
         tell("      |", no_crlf);
         cp_corner(here - 9, n, w);
@@ -202,9 +202,9 @@ namespace
     bool cpgoto(int fx)
     {
         rtrz(here, RoomBit::rseenbit);
-        cpobjs[size_t(cphere) - 1] = here->robjs();
+        cpobjs[std::size_t(cphere) - 1] = here->robjs();
         cphere = fx;
-        here->robjs() = cpobjs[size_t(fx) - 1];
+        here->robjs() = cpobjs[std::size_t(fx) - 1];
         perform(room_desc(), find_verb("LOOK"));
         return true;
     }
@@ -1061,8 +1061,8 @@ namespace obj_funcs
         bool flg = false;
         int here = cphere;
 #pragma warning(suppress: 6282)
-        if ((cpuvec[size_t(here) + 1 - 1] == -2) && (flg = true) ||
-            cpuvec[size_t(here) - 1 - 1] == -3)
+        if ((cpuvec[std::size_t(here) + 1 - 1] == -2) && (flg = true) ||
+            cpuvec[std::size_t(here) - 1 - 1] == -3)
         {
             if (verbq("CLUP", "CLUDG"))
             {
@@ -1099,12 +1099,12 @@ namespace obj_funcs
         {
             ObjectP prso = ::prso();
             nxt = cpnext(here, prso);
-            wl = uvec[size_t(nxt) - 1];
+            wl = uvec[std::size_t(nxt) - 1];
             if (wl == 0)
             {
                 tell("There is only a passage in that direction.");
             }
-            else if (wl == 1 || (nnxt = cpnext(nxt, prso)) && !((nwl = uvec[size_t(nnxt) - 1]) == 0))
+            else if (wl == 1 || (nnxt = cpnext(nxt, prso)) && !((nwl = uvec[std::size_t(nnxt) - 1]) == 0))
             {
                 tell("The wall does not budge.");
             }
@@ -1113,8 +1113,8 @@ namespace obj_funcs
                 tell("The wall slides forward and you follow it", 1, flags[FlagId::cppush] ? " to this position." : complex_desc);
                 //tell(flags[FlagId::cppush] ? " to this position." : complex_desc);
                 flags[FlagId::cppush] = true;
-                uvec[size_t(nxt) - 1] = 0;
-                uvec[size_t(nnxt) - 1] = wl;
+                uvec[std::size_t(nxt) - 1] = 0;
+                uvec[std::size_t(nnxt) - 1] = wl;
                 nnxt == 10 && (flags[FlagId::cpblock] = true);
                 cpgoto(nxt);
             }
@@ -2115,7 +2115,7 @@ namespace room_funcs
                 tell("On the ground below you can see:  ", 0);
                 auto& ftree = sfind_obj("FTREE");
                 remove_object(ftree);
-                size_t remain = fore3->robjs().size();
+                std::size_t remain = fore3->robjs().size();
                 for (auto& y : fore3->robjs())
                 {
                     princ("a ");

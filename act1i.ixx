@@ -39,7 +39,7 @@ namespace
         const OlintP& foo = obj->olint();
         int cnt, tim;
         foo->val() = cnt = (foo->val() + 1);
-        clock_int(cev, tim = *(tick + size_t(cnt) - 1));
+        clock_int(cev, tim = *(tick + std::size_t(cnt) - 1));
         if (tim == 0)
         {
             if (!obj->oroom() || obj->oroom() == here)
@@ -50,7 +50,7 @@ namespace
         }
         else if (!obj->oroom() || obj->oroom() == here)
         {
-            ::tell(*(tell_start + size_t(cnt) - 1));
+            ::tell(*(tell_start + std::size_t(cnt) - 1));
         }
     }
 
@@ -1662,7 +1662,7 @@ static int aos_sos(int foo)
     }
     else
     {
-        tell(cyclomad[size_t(std::abs(foo)) - 1]);
+        tell(cyclomad[std::size_t(std::abs(foo)) - 1]);
     }
     return foo;
 }
@@ -2033,7 +2033,7 @@ namespace obj_funcs
                 flags[FlagId::cyclops_flag] = false;
                 trz(cyc, Bits::sleepbit);
                 tro(cyc, Bits::fightbit);
-                cyclowrath = abs(count);
+                cyclowrath = std::abs(count);
             }
         }
         else if (verbq("GIVE"))
@@ -2102,7 +2102,7 @@ namespace obj_funcs
             rv = true;
             if (here == sfind_room("CYCLO"))
             {
-                if (abs(count) > 5)
+                if (std::abs(count) > 5)
                 {
                     clock_disable(cycin);
                     jigs_up(cyclokill);

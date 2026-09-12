@@ -9,6 +9,10 @@ module;
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/bitset.hpp>
 
+#ifndef _ASSERT
+#define _ASSERT(x) assert(x)
+#endif
+
 export module Zork:SrI;
 import :Sr;
 import :fwd;

@@ -526,7 +526,7 @@ void mung_room(const RoomP& rm, std::string_view str)
 
 void print_contents(const ObjList& olst)
 {
-    size_t count = olst.size();
+    auto count = olst.size();
     for (auto& o : olst)
     {
         princ("a ");
@@ -1609,8 +1609,8 @@ bool bugger::operator()(bool feech) const
 {
     if (feech)
     {
-        time_t t;
-        time(&t);
+        std::time_t t;
+        std::time(&t);
         auto tm = std::localtime(&t);
         tell("This software was feature-complete approximately ", 1, tm->tm_year - 81, " years ago.\n"
             "Perhaps you can contact the original authors to see if there\n"
