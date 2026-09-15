@@ -1,4 +1,12 @@
 export module Zork;
+export import :fwd;
+export import :CEvent;
+export import :Objfns;
+export import :Roomfns;
+export import :Makstr;
+export import :Melee;
+export import :Object;
 export import :Speech;
+export import :Room;
 export import :Rooms;
 export import :Dungeon;

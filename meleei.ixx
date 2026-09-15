@@ -6,7 +6,7 @@ export import :Melee;
 
 import ZException;
 import :Util;
-import :Adv;
+import :AdvI;
 import :Parser;
 import :Memq;
 
@@ -267,13 +267,13 @@ bool diagnose::operator()() const
     {
         static const std::array msgs =
         {
-            "You are at death's door.",
-            "You can be killed by one more light wound.",
-            "You can be killed by a serious wound.",
-            "You can survive one serious wound.",
-            "You are strong enough to take several wounds."
+            "You are at death's door."sv,
+            "You can be killed by one more light wound."sv,
+            "You can be killed by a serious wound."sv,
+            "You can survive one serious wound."sv,
+            "You are strong enough to take several wounds."sv
         };
-        const char* msg = (rs < msgs.size() - 1) ? msgs[rs] : msgs.back();
+        auto msg = (rs < msgs.size() - 1) ? msgs[rs] : msgs.back();
         tell(msg);
     }
 

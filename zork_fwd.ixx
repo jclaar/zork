@@ -29,7 +29,7 @@ class Object;
 using ObjectP = std::shared_ptr<Object>;
 using ObjList = std::list<ObjectP>;
 
-class Room;
+export class Room;
 using RoomP = std::shared_ptr<Room>;
 using RoomList = std::list<RoomP>;
 

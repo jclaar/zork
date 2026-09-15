@@ -117,7 +117,7 @@ using Ex = std::tuple<direction, ExitType>;
 inline bool operator==(const Ex& e, direction d) { return std::get<0>(e) == d; }
 inline bool operator==(direction d, const Ex& e) { return e == d; }
 
-class Room
+export class Room
 {
 public:
     Room(std::string_view rid, std::string_view d1, std::string_view d2,

@@ -56,8 +56,8 @@ endif()
 
 # Make sure we have at least gcc-11.
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11")
-        message(FATAL_ERROR "Must use at least gcc-11.")
+    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "15")
+        message(FATAL_ERROR "Must use at least gcc-15.")
     endif()
 endif()
 
