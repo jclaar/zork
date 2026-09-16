@@ -40,7 +40,7 @@ private:
     int _val = 0;
     CEventP _ev;
 };
-typedef std::shared_ptr<olint_t> OlintP;
+export using OlintP = std::shared_ptr<olint_t>;
 
 class OP
 {
@@ -192,9 +192,9 @@ typedef std::map<std::string, ObjList, std::less<>> ObjectPobl;
 const ObjectPobl& object_pobl();
 bool is_obj(const std::string& obj);
 const ObjectP& find_obj(std::string_view name);
-const ObjectP& sfind_obj(std::string_view name);
+export const ObjectP& sfind_obj(std::string_view name);
 
-inline bool trnn(const ObjectP& op, Bits b)
+export bool trnn(const ObjectP& op, Bits b)
 {
     return op->oflags().test(b);
 }
@@ -207,13 +207,13 @@ bool trnn(const ObjectP& op, Bits first, Args... args)
     return trnn(op, args...);
 }
 
-template <typename T>
+export template <typename T>
 int trz(const ObjectP& op, T b)
 {
     return op->oflags()[b] = 0;
 }
 
-template <typename T, typename... Args>
+export template <typename T, typename... Args>
 int trz(const ObjectP& op, T first, Args... args)
 {
     trz(op, first);
@@ -266,7 +266,7 @@ bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
 }
 
 void trc(const ObjectP& op, Bits b);
-bool flaming(const ObjectP& obj);
+export bool flaming(const ObjectP& obj);
 
 // ORPHANS -- mysterious vector of orphan data
 export using OrphanSlotType = std::variant<std::monostate, ObjectP, PhraseP>;

@@ -98,14 +98,14 @@ inline Iterator<ParseContV> member(const std::string& s, Iterator<ParseContV> pv
     return pv;
 }
 
-extern ParseVec prsvec;
-extern PrepVec prepvec;
+export extern ParseVec prsvec;
+export extern PrepVec prepvec;
 inline const VerbP& prsa()
 {
     return std::get<VerbP>(prsvec[0]);
 }
 
-inline bool verbq(const char* al)
+export bool verbq(const char* al)
 {
     bool rv = false;
     try
@@ -120,7 +120,7 @@ inline bool verbq(const char* al)
 }
 
 //bool verbq(const char *al);
-template <typename T, typename ...Args>
+export template <typename T, typename ...Args>
 bool verbq(T first, Args... args)
 {
     if (verbq(first))
@@ -173,7 +173,7 @@ typedef std::unique_ptr<StuffVec> StuffVecP;
 
 typedef std::optional<const std::vector<Bits>*> Globals;
 
-Iterator<ParseContV> lex(SIterator s, SIterator sx = SIterator());
+export Iterator<ParseContV> lex(SIterator s, SIterator sx = SIterator());
 bool eparse(Iterator<ParseContV> pv, bool vb);
 
 // Generic class to return WIN from parse.

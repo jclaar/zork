@@ -17,7 +17,7 @@ RP rg(const std::initializer_list<Bits>& rb)
 }
 
 // Special message on no exit
-class NExit
+export class NExit
 {
 public:
     explicit NExit(const char* desc) : nexit_desc(desc) {}
@@ -28,9 +28,9 @@ private:
 };
 
 // Values that can be returned from an exit function.
-using ExitFuncVal = std::variant<std::monostate, bool, RoomP>;
-using ex_rapplic = std::function<ExitFuncVal()>;
-ExitFuncVal apply_random(ex_rapplic fcn);
+export using ExitFuncVal = std::variant<std::monostate, bool, RoomP>;
+export using ex_rapplic = std::function<ExitFuncVal()>;
+export ExitFuncVal apply_random(ex_rapplic fcn);
 
 
 // Special exit conditions
@@ -66,7 +66,7 @@ private:
     ex_rapplic _fn;
 };
 
-typedef std::shared_ptr<CExit> CExitPtr;
+export using CExitPtr = std::shared_ptr<CExit>;
 
 class DoorExit
 {
@@ -97,7 +97,7 @@ private:
     std::string _str;
     ex_rapplic _fn;
 };
-typedef std::shared_ptr<DoorExit> DoorExitPtr;
+export using DoorExitPtr = std::shared_ptr<DoorExit>;
 
 class SetgExit
 {
@@ -112,8 +112,8 @@ private:
 };
 typedef std::shared_ptr<SetgExit> SetgExitP;
 
-typedef std::variant<std::monostate, NExit, CExitPtr, DoorExitPtr, SetgExitP, std::string, RoomP> ExitType;
-using Ex = std::tuple<direction, ExitType>;
+export using ExitType = std::variant<std::monostate, NExit, CExitPtr, DoorExitPtr, SetgExitP, std::string, RoomP>;
+export using Ex = std::tuple<direction, ExitType>;
 inline bool operator==(const Ex& e, direction d) { return std::get<0>(e) == d; }
 inline bool operator==(direction d, const Ex& e) { return e == d; }
 
@@ -197,11 +197,11 @@ private:
 
 void init_rooms();
 const RoomP& get_room(std::string_view rid, RoomP init_val = RoomP());
-const RoomP& find_room(std::string_view rid);
-const RoomP& sfind_room(std::string_view s) { return find_room(s); }
-RoomList& rooms();
-typedef std::map<std::string, RoomP, std::less<>> RoomMap;
-RoomMap& room_map();
+export const RoomP& find_room(std::string_view rid);
+export const RoomP& sfind_room(std::string_view s) { return find_room(s); }
+export RoomList& rooms();
+export typedef std::map<std::string, RoomP, std::less<>> RoomMap;
+export RoomMap& room_map();
 
 inline RoomList::iterator rest(RoomList::iterator i, int count = 1)
 {
@@ -236,7 +236,7 @@ inline bool operator==(const Ex& exit, const RoomP& p)
 // Set or 0 object bit or bits.
 void rtrc(const RoomP& p, RoomBit b);
 bool gtrnn(const RoomP&, Bits);
-bool eg_infested(const RoomP& r);
+export bool eg_infested(const RoomP& r);
 
 export namespace exit_funcs {
     EX_RAPPLIC(bkleavew);

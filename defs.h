@@ -31,6 +31,7 @@
 #define ERAPPLIC(x) export RAPPLIC(x)
 #define ERAPPLIC_RARG(x) export RAPPLIC_RARG(x)
 #define ERAPPLIC_DEF(x, type, def) export RAPPLIC_DEF(x, type, def)
+#define EHACKFN(x) export HACKFN(x)
 
 
 

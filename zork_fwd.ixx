@@ -23,19 +23,19 @@ export enum class ObjectSlots
 };
 
 class Adv;
-using AdvP = std::shared_ptr<Adv>;
+export using AdvP = std::shared_ptr<Adv>;
 
 class Object;
-using ObjectP = std::shared_ptr<Object>;
-using ObjList = std::list<ObjectP>;
+export using ObjectP = std::shared_ptr<Object>;
+export using ObjList = std::list<ObjectP>;
 
 export class Room;
-using RoomP = std::shared_ptr<Room>;
-using RoomList = std::list<RoomP>;
+export using RoomP = std::shared_ptr<Room>;
+export using RoomList = std::list<RoomP>;
 
 class hack;
 export using HackP = std::shared_ptr<hack>;
 export using hackfn = std::function<bool(const HackP&)>;
 
 class GObject;
-typedef std::shared_ptr<GObject> GObjectPtr;
+export using GObjectPtr = std::shared_ptr<GObject>;

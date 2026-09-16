@@ -26,4 +26,4 @@ export enum class attack_state
 };
 
 std::optional<attack_state> blow(const AdvP& hero, ObjectP villain, const tofmsgs* remarks, bool bhero, std::optional<int> out);
-bool winning(const ObjectP & v, const AdvP & h);
+export bool winning(const ObjectP & v, const AdvP & h);

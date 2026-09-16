@@ -24,15 +24,15 @@ private:
 };
 
 // Current location
-extern RoomP here;
-extern rapplic dead_player;
-extern direction fromdir;
-extern const AdvP* winner;
-extern int raw_score;
+export extern RoomP here;
+export extern rapplic dead_player;
+export extern direction fromdir;
+export extern const AdvP* winner;
+export extern int raw_score;
 export int moves = 0;
 extern std::list<HackP> demons;
 
-const CEventP& clock_int(const CEventP& cev, std::optional<int> num = std::nullopt, bool flag = false);
+export const CEventP& clock_int(const CEventP& cev, std::optional<int> num = std::nullopt, bool flag = false);
 bool clock_disable(const CEventP& cev);
 bool clock_enable(const CEventP& cev);
 
@@ -54,21 +54,21 @@ private:
 };
 typedef std::shared_ptr<ParseCont> ParseContP;
 const int lexsize = 30;
-using ParseContV = std::array<ParseContP, lexsize>;
+export using ParseContV = std::array<ParseContP, lexsize>;
 
-extern Iterator<ParseContV> parse_cont;
+export extern Iterator<ParseContV> parse_cont;
 
 std::string unspeakable_code();
 std::string_view remarkably_disgusting_code();
 void start(std::string_view rm, std::string_view st);
 export void save_it(bool start = true);
-void contin(bool foo = false);
-bool goto_(const RoomP& rm, const AdvP& win = *winner);
-bool object_action();
-bool long_desc_obj(const ObjectP& obj, int full = 1, bool fullq = false, bool first = false);
-bool find_frob(const ObjList& objl, std::string_view str1, std::string_view str2, std::string_view str3);
-bool kill_cints();
-void print_contents(const ObjList& olst);
+export void contin(bool foo = false);
+export bool goto_(const RoomP& rm, const AdvP& win = *winner);
+export bool object_action();
+export bool long_desc_obj(const ObjectP& obj, int full = 1, bool fullq = false, bool first = false);
+export bool find_frob(const ObjList& objl, std::string_view str1, std::string_view str2, std::string_view str3);
+export bool kill_cints();
+export void print_contents(const ObjList& olst);
 void print_cont(const ObjectP& obj, const ObjectP& av, const ObjectP& win, SIterator indent, bool cse = true);
 bool quit();
 export void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
@@ -83,14 +83,14 @@ inline void record(int score, int movs, int deaths, const char* quit, RoomP loc)
 void recout(int score, int moves, int deaths, const RecOutQuit& quit, const RoomP& loc);
 void score_room(const RoomP& rm);
 void mung_room(const RoomP& rm, std::string_view str);
-RAPPLIC(room_desc);
-bool jigs_up(std::string_view desc, bool player = false);
+ERAPPLIC(room_desc);
+export bool jigs_up(std::string_view desc, bool player = false);
 void score_upd(int num);
 void score_bless();
 bool nogo(std::string_view str, direction dir);
 int weight(const ObjList& objl);
 void score_obj(const ObjectP& obj);
-const RoomP& get_door_room(const RoomP& rm, const DoorExitPtr& leavings);
+export const RoomP& get_door_room(const RoomP& rm, const DoorExitPtr& leavings);
 bool valchk(const std::any& flg, const ObjectP& obj, Iterator<ObjVector> allbut);
 
 RAPPLIC_DEF(takefn, bool, true);
@@ -134,7 +134,7 @@ RAPPLIC(opener);
 RAPPLIC_DEF(play_time, bool, true);
 RAPPLIC_DEF(putter, bool, true);
 RAPPLIC(restart);
-RAPPLIC_DEF(room_info, std::optional<int>, std::nullopt);
+ERAPPLIC_DEF(room_info, std::optional<int>, std::nullopt);
 RAPPLIC(room_name);
 RAPPLIC(room_obj);
 RAPPLIC(room_room);
@@ -149,20 +149,20 @@ RAPPLIC(unboard);
 RAPPLIC(verbose);
 RAPPLIC(version);
 RAPPLIC_DEF(wait_, int, 3);
-RAPPLIC(walk);
+ERAPPLIC(walk);
 
 namespace obj_funcs
 {
     bool valuables_c_(std::any everything, const Iterator<ObjVector>& allbut);
 }
 
-inline bool rtrnn(const RoomP& p, RoomBit bits)
+export bool rtrnn(const RoomP& p, RoomBit bits)
 {
     return p->rbits().test(bits);
 }
 
 // Returns true if any bit in the room bits is set.
-template <typename... Args>
+export template <typename... Args>
 bool rtrnn(const RoomP& p, RoomBit first, Args... bits)
 {
     if (rtrnn(p, first))

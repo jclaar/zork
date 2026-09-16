@@ -13,7 +13,12 @@ import :Adv;
 import :Util;
 import :Memq;
 import :Objfns;
+import :Parser;
+import :Makstr;
+import :Melee;
 import ZString;
+import ZFuncs;
+import ZGlobals;
 import std;
 
 CEventP burnup_int;
@@ -747,7 +752,7 @@ bool torch_off(const ObjectP& t)
     return true;
 }
 
-bool bomb(ObjectP o)
+bool bomb(const ObjectP& o)
 {
     ObjectP brick;
     ObjectP fuse;

@@ -392,6 +392,6 @@ inline bool apply_random(hackfn fcn, const HackP& demon)
 }
 
 // Demons
-HACKFN(robber);
-HACKFN(sword_glow);
-HACKFN(fighting);
+EHACKFN(robber);
+EHACKFN(sword_glow);
+EHACKFN(fighting);
