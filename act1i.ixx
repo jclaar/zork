@@ -4,10 +4,15 @@ module;
 export module Zork:Act1I;
 export import :Act1;
 
+import ZString;
+import ZFuncs;
+import ZGlobals;
+import :fwd;
 import :CEvent;
 import :Object;
 import :Room;
 import :Rooms;
+import :Roomfns;
 import :Dungeon;
 import :Adv;
 import :Util;
@@ -16,9 +21,6 @@ import :Objfns;
 import :Parser;
 import :Makstr;
 import :Melee;
-import ZString;
-import ZFuncs;
-import ZGlobals;
 import std;
 
 CEventP burnup_int;

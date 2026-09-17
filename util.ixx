@@ -1,7 +1,9 @@
 export module Zork:Util;
 import std;
+import ZDefs;
 import :fwd;
 import :Rooms;
+import :Speech;
 
 export bool always_lit = false;
 

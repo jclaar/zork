@@ -255,10 +255,7 @@ bool describable(const ObjectP& obj)
     return !trnn(obj, Bits::ndescbit);
 }
 
-bool see_inside(const ObjectP& op)
-{
-    return trnn(op, Bits::ovison) && (trnn(op, Bits::transbit) || trnn(op, Bits::openbit));
-}
+export bool see_inside(const ObjectP& op);
 
 bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
 {

@@ -16,7 +16,7 @@ using WordsPobl = std::map<std::string, WordP, std::less<>>;
 using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;
 using ActionsPobl = std::map<std::string, ActionP, std::less<>>;
 
-WordsPobl words_pobl;
+export WordsPobl words_pobl;
 export int cphere;
 namespace
 {
@@ -60,7 +60,7 @@ using ASSpan = std::span<const attack_state>;
 extern const std::vector<ASSpan> def1_res;
 extern const std::vector<ASSpan> def2_res;
 extern const std::vector<ASSpan> def3_res;
-extern int cyclowrath;
+export int cyclowrath = 0;
 extern std::vector<VerbP> robot_actions;
 extern std::vector<VerbP> master_actions;
 extern RoomP bloc;
@@ -280,7 +280,7 @@ OrphanSlotType as_ost(ParseVecVal pv)
         }, pv);
 }
 
-inline direction as_dir(const ParseVecVal& a)
+export direction as_dir(const ParseVecVal& a)
 {
     return std::get<direction>(a);
 }

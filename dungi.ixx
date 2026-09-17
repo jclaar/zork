@@ -136,8 +136,6 @@ SIterator indentstr(indentstrb, indentstrb.end());
 ParseVecA prsveca;
 ParseVec prsvec(prsveca);
 
-int cyclowrath = 0;
-
 // Cells for endgame
 std::array<ObjList, 8> cells;
 

@@ -35,7 +35,7 @@ private:
     std::string _w;
 };
 
-class prep_t : public word
+export class prep_t : public word
 {
 public:
     prep_t(std::string_view s) : word(s) {}

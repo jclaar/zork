@@ -100,7 +100,7 @@ inline Iterator<ParseContV> member(const std::string& s, Iterator<ParseContV> pv
 
 export extern ParseVec prsvec;
 export extern PrepVec prepvec;
-inline const VerbP& prsa()
+export const VerbP& prsa()
 {
     return std::get<VerbP>(prsvec[0]);
 }
@@ -174,7 +174,7 @@ typedef std::unique_ptr<StuffVec> StuffVecP;
 typedef std::optional<const std::vector<Bits>*> Globals;
 
 export Iterator<ParseContV> lex(SIterator s, SIterator sx = SIterator());
-bool eparse(Iterator<ParseContV> pv, bool vb);
+export bool eparse(Iterator<ParseContV> pv, bool vb);
 
 // Generic class to return WIN from parse.
 class cwin

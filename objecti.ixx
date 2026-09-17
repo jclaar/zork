@@ -494,3 +494,9 @@ void add_inqobj(const ObjectP& obj)
 {
     inqobjs.push_front(obj);
 }
+
+bool see_inside(const ObjectP& op)
+{
+    return trnn(op, Bits::ovison) && (trnn(op, Bits::transbit) || trnn(op, Bits::openbit));
+}
+

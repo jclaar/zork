@@ -82,7 +82,7 @@ inline void record(int score, int movs, int deaths, const char* quit, RoomP loc)
 }
 void recout(int score, int moves, int deaths, const RecOutQuit& quit, const RoomP& loc);
 void score_room(const RoomP& rm);
-void mung_room(const RoomP& rm, std::string_view str);
+export void mung_room(const RoomP& rm, std::string_view str);
 ERAPPLIC(room_desc);
 export bool jigs_up(std::string_view desc, bool player = false);
 void score_upd(int num);
