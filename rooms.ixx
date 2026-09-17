@@ -36,7 +36,7 @@ export const CEventP& clock_int(const CEventP& cev, std::optional<int> num = std
 export bool clock_disable(const CEventP& cev);
 export bool clock_enable(const CEventP& cev);
 
-struct ParseCont
+export struct ParseCont
 {
     ParseCont() : s1b("     "), s2b(" "), i1(0)
     {
@@ -52,8 +52,8 @@ private:
     std::string s1b;
     std::string s2b;
 };
-typedef std::shared_ptr<ParseCont> ParseContP;
-const int lexsize = 30;
+export using ParseContP = std::shared_ptr<ParseCont>;
+export const int lexsize = 30;
 export using ParseContV = std::array<ParseContP, lexsize>;
 
 export extern Iterator<ParseContV> parse_cont;

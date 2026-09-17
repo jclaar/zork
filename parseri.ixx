@@ -1,11 +1,14 @@
 export module Zork:ParserI;
 export import :Parser;
+import ZException;
+import ZFuncs;
+import ZGlobals;
+import :fwd;
 import :Memq;
 import :Adv;
 import :Object;
 import :UtilI;
-import ZException;
-import ZFuncs;
+import :Rooms;
 
 const char* brks = "\"' 	:.,?!\n";
 Orphans orphans;
