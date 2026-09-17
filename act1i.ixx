@@ -403,7 +403,7 @@ bool robber::operator()(const HackP& hack) const
     return true;
 }
 
-bool infested(const RoomP& r)
+static bool infested(const RoomP& r)
 {
     const ObjList& villains = ::villains;
     const HackP& dem = get_demon("THIEF");
@@ -469,7 +469,7 @@ bool sword_glow::operator()(const HackP& dem) const
     }
     else
     {
-        dem->haction(nullptr);
+        dem->haction() = nullptr;
     }
     return false;
 }
@@ -680,7 +680,7 @@ bool swinger::operator()() const
     return perform(attacker(), find_verb("ATTAC"), prsi(), prso());
 }
 
-bool thief_in_treasure(const ObjectP& hobj)
+static bool thief_in_treasure(const ObjectP& hobj)
 {
     if (length(here->robjs()) != 2)
     {
@@ -746,7 +746,7 @@ bool tie_up::operator()() const
     return true;
 }
 
-bool torch_off(const ObjectP& t)
+static bool torch_off(const ObjectP& t)
 {
     t->odesc2() = "burned out ivory torch";
     t->odesc1() = "There is a burned out ivory torch here.";
@@ -895,7 +895,7 @@ bool deflater::operator()() const
     return true;
 }
 
-void dput(std::string_view str)
+static void dput(std::string_view str)
 {
     ObjectP prso = ::prso();
     for (const Ex& ex : here->rexits())
@@ -1187,7 +1187,7 @@ bool reader::operator()() const
     return true;
 }
 
-int otval_frob(const ObjList& l)
+static int otval_frob(const ObjList& l)
 {
     int value = 0;
     for (auto& x : l)
@@ -1840,7 +1840,7 @@ namespace obj_funcs
                     }
                 }
             }
-            dem->haction(nullptr);
+            dem->haction() = nullptr;
         }
         else if (verbq("1ST?"))
         {
@@ -1848,7 +1848,7 @@ namespace obj_funcs
         }
         else if (verbq("OUT!"))
         {
-            dem->haction(nullptr);
+            dem->haction() = nullptr;
             trz(sfind_obj("STILL"), Bits::ovison);
             t->odesc1() = robber_u_desc;
         }
@@ -1864,7 +1864,7 @@ namespace obj_funcs
                 tell("The robber revives, briefly feigning continued unconsciousness, and\n"
                     "when he sees his moment, scrambles away from you.");
             }
-            dem->haction(robber());
+            dem->haction() = robber();
             t->odesc1() = robber_c_desc;
             tro(sfind_obj("STILL"), Bits::ovison);
         }
@@ -1896,7 +1896,7 @@ namespace obj_funcs
             if (t->ostrength() < 0)
             {
                 t->ostrength() = -t->ostrength();
-                dem->haction(robber());
+                dem->haction() = robber();
                 tro(sfind_obj("STILL"), Bits::ovison);
                 t->odesc1() = robber_c_desc;
                 tell("Your proposed victim suddenly recovers consciousness.");
@@ -2478,7 +2478,7 @@ namespace obj_funcs
         const AdvP& winner = *::winner;
         if (verbq("TAKE") && winner == player())
         {
-            sword_demon->haction(sword_glow());
+            sword_demon->haction() = sword_glow();
         }
         return false;
     }

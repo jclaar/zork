@@ -48,7 +48,7 @@ extern const ObjList small_papers;
 extern const ObjList palobjs;
 extern ObjList inqobjs;
 extern ObjectP bunch_obj;
-extern SIterator indentstr;
+export extern SIterator indentstr;
 extern GObjectPtr it_object;
 export int deaths = 0;
 export extern HackP robber_demon;
@@ -120,8 +120,7 @@ public:
 
 	~hack() = default;
 
-    hackfn haction() const { return _haction; }
-    void haction(hackfn fn) { _haction = fn; }
+    PROP(haction);
 
     bool hflag() const { return _hflag; }
     void hflag(bool flg) { _hflag = flg; }

@@ -180,7 +180,7 @@ void init_objects();
 void init_gobjects();
 void init_synonyms();
 
-inline bool empty(const ObjectP& op)
+export bool empty(const ObjectP& op)
 {
     return !op;
 }

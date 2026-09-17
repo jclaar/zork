@@ -69,7 +69,7 @@ export bool long_desc_obj(const ObjectP& obj, int full = 1, bool fullq = false, 
 export bool find_frob(const ObjList& objl, std::string_view str1, std::string_view str2, std::string_view str3);
 export bool kill_cints();
 export void print_contents(const ObjList& olst);
-void print_cont(const ObjectP& obj, const ObjectP& av, const ObjectP& win, SIterator indent, bool cse = true);
+export void print_cont(const ObjectP& obj, const ObjectP& av, const ObjectP& win, SIterator indent, bool cse = true);
 bool quit();
 export void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
 // recout's quit parameter can be a boolean or a string. If it's a string,
@@ -86,7 +86,7 @@ export void mung_room(const RoomP& rm, std::string_view str);
 ERAPPLIC(room_desc);
 export bool jigs_up(std::string_view desc, bool player = false);
 void score_upd(int num);
-void score_bless();
+export void score_bless();
 bool nogo(std::string_view str, direction dir);
 int weight(const ObjList& objl);
 void score_obj(const ObjectP& obj);

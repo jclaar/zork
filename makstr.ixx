@@ -1,7 +1,3 @@
-module;
-//#include "object.h"
-//#include "speech.h"
-
 export module Zork:Makstr;
 import ZDefs;
 import :Speech;

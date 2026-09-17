@@ -133,7 +133,7 @@ void restore_robber(archive& ar)
     ar& btemp;
     robber->hflag(btemp);
     ar& btemp;
-    robber->haction(btemp ? ::robber() : hackfn());
+    robber->haction() = btemp ? ::robber() : hackfn();
 }
 
 template <class archive>
@@ -311,7 +311,7 @@ bool restore_game(const std::string& f)
                 restore_robber(ia);
                 bool btemp;
                 ia& btemp;
-                sword_demon->haction(btemp ? sword_glow() : hackfn());
+                sword_demon->haction() = btemp ? sword_glow() : hackfn();
                 restore_clockers(ia);
                 restore_winners(ia);
                 // Restore various globals.

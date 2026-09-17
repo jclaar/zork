@@ -152,8 +152,8 @@ namespace
         c->val() = 0;
         c->ev()->ctick(350);
         c->ev()->cflag(false);
-        sword_demon->haction(sword_glow());
-        robber_demon->haction(nullptr);
+        sword_demon->haction() = sword_glow();
+        robber_demon->haction() = nullptr;
 
         // Disable all active events in the adventurer's possession.
         for (const ObjectP& o : w->aobjs())
