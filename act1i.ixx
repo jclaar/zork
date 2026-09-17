@@ -31,12 +31,12 @@ namespace
     using namespace std::string_view_literals;
 
     constexpr std::array candle_ticks{ 20, 10, 5, 0 };
-    constexpr auto cdimmer = "The candles grow shorter."sv;
-    constexpr std::array candle_tells{ cdimmer, cdimmer, "The candles are very short."sv };
+    const auto cdimmer = "The candles grow shorter."sv;
+    const std::array candle_tells{ cdimmer, cdimmer, "The candles are very short."sv };
 
     constexpr std::array lamp_ticks{ 50, 30, 20, 10, 4, 0 };
-    constexpr auto dimmer = "The lamp appears to be getting dimmer."sv;
-    constexpr std::array lamp_tells{ dimmer, dimmer, dimmer, dimmer, "The lamp is dying."sv };
+    const auto dimmer = "The lamp appears to be getting dimmer."sv;
+    const std::array lamp_tells{ dimmer, dimmer, dimmer, dimmer, "The lamp is dying."sv };
 
     template <typename CountIter, typename DescIter>
     void light_int(const ObjectP& obj, const CEventP& cev, CountIter tick, DescIter tell_start)
@@ -455,7 +455,7 @@ bool sword_glow::operator()(const HackP& dem) const
         }
         if (ng != g)
         {
-            constexpr auto tells = std::to_array(
+            const auto tells = std::to_array(
                 {
                     "Your sword is no longer glowing."sv,
                     "Your sword is glowing with a faint blue glow."sv,
