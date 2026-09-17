@@ -209,13 +209,13 @@ inline RoomList::iterator rest(RoomList::iterator i, int count = 1)
 }
 
 // Set or 0 room bit
-inline bool rtro(const RoomP& p, RoomBit b)
+export bool rtro(const RoomP& p, RoomBit b)
 {
     p->rbits()[b] = true;
     return true;
 }
 
-inline bool rtrz(const RoomP& p, RoomBit b)
+export bool rtrz(const RoomP& p, RoomBit b)
 {
     p->rbits()[b] = false;
     return true;

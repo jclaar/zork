@@ -33,8 +33,8 @@ export int moves = 0;
 extern std::list<HackP> demons;
 
 export const CEventP& clock_int(const CEventP& cev, std::optional<int> num = std::nullopt, bool flag = false);
-bool clock_disable(const CEventP& cev);
-bool clock_enable(const CEventP& cev);
+export bool clock_disable(const CEventP& cev);
+export bool clock_enable(const CEventP& cev);
 
 struct ParseCont
 {
@@ -93,7 +93,7 @@ void score_obj(const ObjectP& obj);
 export const RoomP& get_door_room(const RoomP& rm, const DoorExitPtr& leavings);
 bool valchk(const std::any& flg, const ObjectP& obj, Iterator<ObjVector> allbut);
 
-RAPPLIC_DEF(takefn, bool, true);
+ERAPPLIC_DEF(takefn, bool, true);
 HACKFN(clock_demon);
 bool frob_lots(Iterator<ObjVector> uv);
 
@@ -132,7 +132,7 @@ RAPPLIC(move);
 RAPPLIC(no_obj_hack);
 RAPPLIC(opener);
 RAPPLIC_DEF(play_time, bool, true);
-RAPPLIC_DEF(putter, bool, true);
+ERAPPLIC_DEF(putter, bool, true);
 RAPPLIC(restart);
 ERAPPLIC_DEF(room_info, std::optional<int>, std::nullopt);
 RAPPLIC(room_name);

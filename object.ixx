@@ -221,14 +221,14 @@ int trz(const ObjectP& op, T first, Args... args)
     return 0;
 }
 
-template <typename T>
+export template <typename T>
 const ObjectP& tro(const ObjectP& op, T b)
 {
     op->oflags()[b] = 1;
     return op;
 }
 
-template <typename T, typename... Args>
+export template <typename T, typename... Args>
 const ObjectP& tro(const ObjectP& op, T first, Args... args)
 {
     tro(op, first);
@@ -311,7 +311,7 @@ private:
     std::string _oname;
 };
 
-ObjectP last_it;
+export ObjectP last_it;
 
 typedef std::array<ObjList, 64> PuzzleContents;
 extern PuzzleContents cpobjs;
