@@ -68,7 +68,7 @@ typedef Flags<Bits, numbits> OFlags;
 class Object;
 using ObjectP = std::shared_ptr<Object>;
 using ObjList = std::list<ObjectP>;
-using ObjVector = std::vector<ObjectP>;
+export using ObjVector = std::vector<ObjectP>;
 
 
 class Object

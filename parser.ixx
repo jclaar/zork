@@ -3,14 +3,19 @@ module;
 
 export module Zork:Parser;
 import std;
+import ZFuncs;
+import ZFlagSupport;
 import :fwd;
+import :Speech;
 import :Rooms;
 import :Dungeon;
+import :Object;
+import :Makstr;
 
 // Possible levels of false returns from parser.
-typedef std::pair<ObjectP, int> Nefals;
-extern Nefals nefals;
-extern Nefals nefals2;
+export using Nefals = std::pair<ObjectP, int>;
+export extern Nefals nefals;
+export extern Nefals nefals2;
 inline bool operator==(const Nefals& ne, const ObjectP& obj)
 {
     return ne.first == obj;
@@ -100,10 +105,7 @@ inline Iterator<ParseContV> member(const std::string& s, Iterator<ParseContV> pv
 
 export extern ParseVec prsvec;
 export extern PrepVec prepvec;
-export const VerbP& prsa()
-{
-    return std::get<VerbP>(prsvec[0]);
-}
+export const VerbP& prsa();
 
 export bool verbq(const char* al)
 {
@@ -173,7 +175,7 @@ typedef std::unique_ptr<StuffVec> StuffVecP;
 
 typedef std::optional<const std::vector<Bits>*> Globals;
 
-export Iterator<ParseContV> lex(SIterator s, SIterator sx = SIterator());
+export Iterator<ParseContV> lex(SIterator s, SIterator sx);
 export bool eparse(Iterator<ParseContV> pv, bool vb);
 
 // Generic class to return WIN from parse.

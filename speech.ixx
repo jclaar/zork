@@ -54,7 +54,7 @@ class adjective : public word
 public:
     adjective(std::string_view s) : word(s) {}
 };
-using AdjectiveP = std::shared_ptr<adjective>;
+export using AdjectiveP = std::shared_ptr<adjective>;
 inline bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
 inline bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
 
@@ -68,7 +68,7 @@ struct _varg
     PrepP vprep; // preposition that must precede(?) object
     Flags<vword_flag, numvbits> vword;
 };
-typedef std::shared_ptr<_varg> VargP;
+export using VargP = std::shared_ptr<_varg>;
 
 
 struct verb : public word
@@ -98,9 +98,9 @@ struct syntax
     VerbP sfcn;
     Flags<SyntaxBits, std::to_underlying(SyntaxBits::snumflags)> sflags;
 };
-typedef std::shared_ptr<syntax> SyntaxP;
+export using SyntaxP = std::shared_ptr<syntax>;
 
-typedef std::vector<SyntaxP> vspec;
+export using vspec = std::vector<SyntaxP>;
 
 struct Action
 {
@@ -136,8 +136,8 @@ private:
     WordP _pprep;
     ObjectP _pobj;
 };
-typedef std::shared_ptr<phrase> PhraseP;
-using PhraseVecV = std::vector<PhraseP>;
+export using PhraseP = std::shared_ptr<phrase>;
+export using PhraseVecV = std::vector<PhraseP>;
 PhraseP make_phrase(const WordP& p, const ObjectP& op);
 
 export using QuestionValue = std::variant<std::string_view, ObjectP, ActionP>;

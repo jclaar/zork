@@ -254,8 +254,8 @@ extern const BestWeaponsList best_weapons;
 // 0: ActionP or VerbP
 // 1: ObjectP or direction
 // 2: ObjectP or nothing
-typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction> ParseVecVal;
-typedef std::array<ParseVecVal, 3> ParseVecA;
+export using ParseVecVal = std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction>;
+export using ParseVecA = std::array<ParseVecVal, 3>;
 typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction, WordP, std::string, ObjList> ParseAval;
 
 ParseVecVal as_pvv(const ParseAval& pv)

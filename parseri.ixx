@@ -1510,3 +1510,8 @@ ObjectP prso()
     ObjectP* p = std::get_if<ObjectP>(&prsvec[1]);
     return p ? *p : ObjectP();
 }
+
+const VerbP& prsa()
+{
+    return std::get<VerbP>(prsvec[0]);
+}
