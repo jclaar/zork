@@ -16,7 +16,7 @@ import :Makstr;
 export using Nefals = std::pair<ObjectP, int>;
 export extern Nefals nefals;
 export extern Nefals nefals2;
-inline bool operator==(const Nefals& ne, const ObjectP& obj)
+export bool operator==(const Nefals& ne, const ObjectP& obj)
 {
     return ne.first == obj;
 }
@@ -32,13 +32,13 @@ extern std::list<VerbP> bunchers;
 extern SIterator scrstr;
 
 // Specialization for ParseVec
-inline ParseVec put(ParseVec a, int index, std::nullptr_t)
+export ParseVec put(ParseVec a, int index, std::nullptr_t)
 {
     a[index] = std::monostate();
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, const ObjectP& o)
+export ParseVec put(ParseVec a, int index, const ObjectP& o)
 {
     if (o)
         a[index] = o;
@@ -47,13 +47,13 @@ inline ParseVec put(ParseVec a, int index, const ObjectP& o)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, direction d)
+export ParseVec put(ParseVec a, int index, direction d)
 {
     a[index] = d;
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, const VerbP& v)
+export ParseVec put(ParseVec a, int index, const VerbP& v)
 {
     if (v)
         a[index] = v;
@@ -62,13 +62,13 @@ inline ParseVec put(ParseVec a, int index, const VerbP& v)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, ParseVecVal an)
+export ParseVec put(ParseVec a, int index, ParseVecVal an)
 {
     a[index] = an;
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, const ActionP& v)
+export ParseVec put(ParseVec a, int index, const ActionP& v)
 {
     if (v)
         a[index] = v;
@@ -77,7 +77,7 @@ inline ParseVec put(ParseVec a, int index, const ActionP& v)
     return a;
 }
 
-inline ParseVec put(ParseVec a, int index, const PhraseP& p)
+export ParseVec put(ParseVec a, int index, const PhraseP& p)
 {
     if (p)
         a[index] = p;
@@ -86,12 +86,12 @@ inline ParseVec put(ParseVec a, int index, const PhraseP& p)
     return a;
 }
 
-inline void put(Iterator<ObjVector> a, int index, ObjectP o)
+export void put(Iterator<ObjVector> a, int index, ObjectP o)
 {
     a[index] = o;
 }
 
-inline Iterator<ParseContV> member(const std::string& s, Iterator<ParseContV> pv)
+export Iterator<ParseContV> member(const std::string& s, Iterator<ParseContV> pv)
 {
     while (pv.cur() != pv.end())
     {
@@ -130,7 +130,7 @@ bool verbq(T first, Args... args)
     return verbq(args...);
 }
 
-inline void add_buncher(const char* b)
+export void add_buncher(const char* b)
 {
     bunchers.push_front(find_verb(b));
 }
@@ -142,7 +142,7 @@ void add_buncher(T first, Args... args)
     add_buncher(args...);
 }
 
-inline void add_buncher(const std::initializer_list<const char*>& verbs)
+export void add_buncher(const std::initializer_list<const char*>& verbs)
 {
     for (auto vb : verbs)
     {
