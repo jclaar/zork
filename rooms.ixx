@@ -74,9 +74,9 @@ bool quit();
 export void rdcom(Iterator<ParseContV> ivec = Iterator<ParseContV>());
 // recout's quit parameter can be a boolean or a string. If it's a string,
 // print that instead of Quit or Died.
-typedef std::variant<bool, std::string_view> RecOutQuit;
+export using RecOutQuit = std::variant<bool, std::string_view>;
 void record(int score, int moves, int deaths, RecOutQuit quit, const RoomP& loc);
-inline void record(int score, int movs, int deaths, const char* quit, RoomP loc)
+export void record(int score, int movs, int deaths, const char* quit, RoomP loc)
 {
     record(score, movs, deaths, std::string(quit), loc);
 }
@@ -123,12 +123,12 @@ export struct finish
     bool operator()(const RecOutQuit& ask) const { return (*this)(Rarg(), ask); }
 };
 
-RAPPLIC(help);
-RAPPLIC(info);
+ERAPPLIC(help);
+ERAPPLIC(info);
 RAPPLIC_DEF(invent, const AdvP&, *winner);
-RAPPLIC(lamp_off);
-RAPPLIC(lamp_on);
-RAPPLIC(move);
+ERAPPLIC(lamp_off);
+ERAPPLIC(lamp_on);
+ERAPPLIC(move);
 RAPPLIC(no_obj_hack);
 RAPPLIC(opener);
 RAPPLIC_DEF(play_time, bool, true);
@@ -137,8 +137,8 @@ RAPPLIC(restart);
 ERAPPLIC_DEF(room_info, std::optional<int>, std::nullopt);
 RAPPLIC(room_name);
 RAPPLIC(room_obj);
-RAPPLIC(room_room);
-struct score
+ERAPPLIC(room_room);
+export struct score
 {
     score() {}
     int operator()(bool ask = false) const;

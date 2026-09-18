@@ -2,8 +2,14 @@ module;
 #include "cevent.h"
 
 export module Zork:RoomsI;
-import std;
 import :Rooms;
+import std;
+import ZFuncs;
+import ZString;
+import ZStrings;
+import ZInfo;
+
+import :fwd;
 import :Object;
 import :Adv;
 import :Util;
@@ -11,12 +17,10 @@ import :Dungeon;
 import :Parser;
 import :Memq;
 import :Sr;
-import ZFuncs;
-import ZString;
-import ZStrings;
 import :CEvent;
+import :Parser;
+import :Room;
 import :Objfns;
-import ZInfo;
 
 using namespace std::string_view_literals;
 

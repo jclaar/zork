@@ -6,15 +6,11 @@ export module Zork:Room;
 import ZDefs;
 import ZGlobals;
 import :Object;
+import :fwd;
 import std;
 
 using RPValue = std::variant<int, std::vector<Bits>>;
-using RP = std::tuple<ObjectSlots, RPValue>;
-RP rg(const std::initializer_list<Bits>& rb)
-{
-    std::vector<Bits> bits(rb);
-    return RP(ObjectSlots::ksl_rglobal, bits);
-}
+export using RP = std::tuple<ObjectSlots, RPValue>;
 
 // Special message on no exit
 export class NExit
@@ -34,7 +30,7 @@ export ExitFuncVal apply_random(ex_rapplic fcn);
 
 
 // Special exit conditions
-class CExit
+export class CExit
 {
 public:
     typedef std::variant<FlagId, rapplic> FlagVar;
@@ -114,8 +110,8 @@ typedef std::shared_ptr<SetgExit> SetgExitP;
 
 export using ExitType = std::variant<std::monostate, NExit, CExitPtr, DoorExitPtr, SetgExitP, std::string, RoomP>;
 export using Ex = std::tuple<direction, ExitType>;
-inline bool operator==(const Ex& e, direction d) { return std::get<0>(e) == d; }
-inline bool operator==(direction d, const Ex& e) { return e == d; }
+export bool operator==(const Ex& e, direction d) { return std::get<0>(e) == d; }
+export bool operator==(direction d, const Ex& e) { return e == d; }
 
 export class Room
 {
@@ -203,7 +199,7 @@ export RoomList& rooms();
 export typedef std::map<std::string, RoomP, std::less<>> RoomMap;
 export RoomMap& room_map();
 
-inline RoomList::iterator rest(RoomList::iterator i, int count = 1)
+export RoomList::iterator rest(RoomList::iterator i, int count = 1)
 {
     return std::next(i);
 }
@@ -222,13 +218,13 @@ export bool rtrz(const RoomP& p, RoomBit b)
 }
 
 // Used for memq
-inline bool operator==(const RoomP& p, const Ex& exit)
+export bool operator==(const RoomP& p, const Ex& exit)
 {
     auto rid = std::get_if<std::string>(&std::get<1>(exit));
     return rid ? (*rid == p->rid()) : false;
 }
 
-inline bool operator==(const Ex& exit, const RoomP& p)
+export bool operator==(const Ex& exit, const RoomP& p)
 {
     return p == exit;
 }

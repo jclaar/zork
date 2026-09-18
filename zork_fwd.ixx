@@ -25,9 +25,10 @@ export enum class ObjectSlots
 class Adv;
 export using AdvP = std::shared_ptr<Adv>;
 
-class Object;
+export class Object;
 export using ObjectP = std::shared_ptr<Object>;
 export using ObjList = std::list<ObjectP>;
+export using ObjVector = std::vector<ObjectP>;
 
 export class Room;
 export using RoomP = std::shared_ptr<Room>;

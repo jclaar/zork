@@ -6,11 +6,12 @@ module;
 #include "defs.h"
 
 export module Zork:Object;
+import ZDefs;
+import ZStrings;
+import ZFlagSupport;
 import :fwd;
 import :Speech;
 import :CEvent;
-import ZStrings;
-import ZFlagSupport;
 
 typedef std::initializer_list<const char*> StringList;
 
@@ -65,13 +66,10 @@ private:
 };
 
 typedef Flags<Bits, numbits> OFlags;
-class Object;
-using ObjectP = std::shared_ptr<Object>;
-using ObjList = std::list<ObjectP>;
-export using ObjVector = std::vector<ObjectP>;
+export class Object;
 
 
-class Object
+export class Object
 {
 public:
 
@@ -236,12 +234,12 @@ const ObjectP& tro(const ObjectP& op, T first, Args... args)
     return op;
 }
 
-inline bool openable(const ObjectP& op)
+export bool openable(const ObjectP& op)
 {
     return trnn(op, Bits::doorbit, Bits::contbit);
 }
 
-bool apply_object(const ObjectP& op)
+export bool apply_object(const ObjectP& op)
 {
     bool rv;
     auto& fn = op->oaction();
@@ -250,14 +248,14 @@ bool apply_object(const ObjectP& op)
     return rv;
 }
 
-bool describable(const ObjectP& obj)
+export bool describable(const ObjectP& obj)
 {
     return !trnn(obj, Bits::ndescbit);
 }
 
 export bool see_inside(const ObjectP& op);
 
-bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
+export bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
 {
     return (op->oflags() & bits_to_check).any();
 }
@@ -314,8 +312,8 @@ typedef std::array<ObjList, 64> PuzzleContents;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
 typedef std::tuple<std::string_view, int> cpwall_val;
-bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }
-bool operator==(const cpwall_val& cp, const ObjectP& o) { return o == cp; }
+export bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }
+export bool operator==(const cpwall_val& cp, const ObjectP& o) { return o == cp; }
 
 constexpr std::array cpwalls = {
             cpwall_val("CPSWL", 8),
