@@ -52,7 +52,7 @@ export extern SIterator indentstr;
 extern GObjectPtr it_object;
 export int deaths = 0;
 export extern HackP robber_demon;
-extern HackP sword_demon;
+export extern HackP sword_demon;
 extern HackP fight_demon;
 extern HackP clocker;
 extern VerbP buncher;

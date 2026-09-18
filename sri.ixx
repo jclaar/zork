@@ -14,6 +14,7 @@ module;
 #endif
 
 export module Zork:SrI;
+import std;
 import :Sr;
 import :fwd;
 import :Room;
@@ -81,7 +82,7 @@ void restore_rooms(archive& ia)
     ia& rm_map;
     _ASSERT(rm_map.size() == room_map().size());
 
-    for (auto rm : rm_map)
+    for (auto &rm : rm_map)
     {
         auto dest = room_map().find(rm.first);
         _ASSERT(dest != room_map().end());
