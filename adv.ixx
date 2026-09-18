@@ -15,7 +15,7 @@ enum class AdvBits
 };
 using AdvBitset = Flags<AdvBits, std::to_underlying(AdvBits::anumbits)>;
 
-class Adv
+export class Adv
 {
 public:
 
@@ -75,19 +75,19 @@ private:
     int _astrength = 0;              // Fighting strength
     AdvBitset bits;
 };
-using AdvArray = std::array <AdvP, std::to_underlying(e_oactor::none)>;
+export using AdvArray = std::array <AdvP, std::to_underlying(e_oactor::none)>;
 
-inline bool atrnn(const AdvP& adv, AdvBits b)
+export bool atrnn(const AdvP& adv, AdvBits b)
 {
     return adv->flags()[b] != 0;
 }
 
-inline void atrz(const AdvP& adv, AdvBits b)
+export void atrz(const AdvP& adv, AdvBits b)
 {
     adv->flags()[b] = 0;
 }
 
-inline void atro(const AdvP& adv, AdvBits b)
+export inline void atro(const AdvP& adv, AdvBits b)
 {
     adv->flags()[b] = 1;
 }

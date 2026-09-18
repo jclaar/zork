@@ -32,7 +32,7 @@ void Adv::save(archive& ar, const unsigned int version) const
     ar& _astrength;
     ar& bits;
     std::list<std::string> obj_list;
-    for (auto o : _aobjs)
+    for (const auto &o : _aobjs)
     {
         obj_list.push_back(o->oid());
     }
@@ -56,7 +56,7 @@ void Adv::load(archive& ar, const unsigned int version)
     ar& bits;
     std::list<std::string> obj_list;
     ar& obj_list;
-    for (auto s : obj_list)
+    for (const auto &s : obj_list)
     {
         _aobjs.push_back(sfind_obj(s));
     }
