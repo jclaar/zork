@@ -55,8 +55,8 @@ public:
     adjective(std::string_view s) : word(s) {}
 };
 export using AdjectiveP = std::shared_ptr<adjective>;
-inline bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
-inline bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
+export inline bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
+export inline bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
 
 export using WordP = std::shared_ptr<word>;
 
@@ -159,13 +159,13 @@ private:
 };
 using QuestionP = std::shared_ptr<question>;
 
-inline bool vtrnn(const VargP& va, vword_flag bit)
+export inline bool vtrnn(const VargP& va, vword_flag bit)
 {
     return va->vword[bit];
 }
 
 // Check status of specific bit in object or room.
-bool strnn(const SyntaxP& syn, SyntaxBits b)
+export inline bool strnn(const SyntaxP& syn, SyntaxBits b)
 {
     return syn->sflags.test(b);
 }
