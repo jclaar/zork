@@ -81,7 +81,7 @@ inline void record(int score, int movs, int deaths, const char* quit, RoomP loc)
     record(score, movs, deaths, std::string(quit), loc);
 }
 void recout(int score, int moves, int deaths, const RecOutQuit& quit, const RoomP& loc);
-void score_room(const RoomP& rm);
+export void score_room(const RoomP& rm);
 export void mung_room(const RoomP& rm, std::string_view str);
 ERAPPLIC(room_desc);
 export bool jigs_up(std::string_view desc, bool player = false);
@@ -112,7 +112,7 @@ RAPPLIC(dropper);
 RAPPLIC(feech);
 RAPPLIC(find);
 
-struct finish
+export struct finish
 {
     bool operator()(Rarg arg, bool ask = true) const { return (*this)(arg, RecOutQuit(ask)); }
     bool operator()(Rarg arg, const char* ask) const { return (*this)(arg, RecOutQuit(std::string_view(ask))); }
@@ -148,7 +148,7 @@ RAPPLIC(superbrief);
 RAPPLIC(unboard);
 RAPPLIC(verbose);
 RAPPLIC(version);
-RAPPLIC_DEF(wait_, int, 3);
+ERAPPLIC_DEF(wait_, int, 3);
 ERAPPLIC(walk);
 
 namespace obj_funcs

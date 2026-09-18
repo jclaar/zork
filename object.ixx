@@ -188,8 +188,8 @@ export bool empty(const ObjectP& op)
 ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
 ObjList& global_objects();
 
-typedef std::map<std::string, ObjList, std::less<>> ObjectPobl;
-const ObjectPobl& object_pobl();
+export using ObjectPobl = std::map<std::string, ObjList, std::less<>>;
+export const ObjectPobl& object_pobl();
 bool is_obj(const std::string& obj);
 const ObjectP& find_obj(std::string_view name);
 export const ObjectP& sfind_obj(std::string_view name);

@@ -157,7 +157,7 @@ private:
     std::string _qstr;
     std::vector<QuestionValue> _qans;
 };
-using QuestionP = std::shared_ptr<question>;
+export using QuestionP = std::shared_ptr<question>;
 
 export inline bool vtrnn(const VargP& va, vword_flag bit)
 {

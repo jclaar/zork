@@ -3,7 +3,6 @@ module;
 export module ZDefs;
 import std;
 import ZFlagSupport;
-#include "defs.h"
 
 export enum class direction
 {

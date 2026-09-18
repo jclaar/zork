@@ -46,7 +46,7 @@ export DirectionsPobl directions_pobl = {
 export ActionsPobl actions_pobl;
 extern const ObjList small_papers;
 extern const ObjList palobjs;
-extern ObjList inqobjs;
+export extern ObjList inqobjs;
 extern ObjectP bunch_obj;
 export extern SIterator indentstr;
 extern GObjectPtr it_object;
@@ -62,18 +62,18 @@ extern const std::vector<ASSpan> def2_res;
 extern const std::vector<ASSpan> def3_res;
 export int cyclowrath = 0;
 extern std::vector<VerbP> robot_actions;
-extern std::vector<VerbP> master_actions;
+export extern std::vector<VerbP> master_actions;
 extern RoomP bloc;
-extern const RoomP startroom;
-extern const RoomP& northend;
-extern const RoomP& southend;
-extern const ObjList cobjs;
-extern const ObjList nobjs;
-extern const ObjList pobjs;
-extern std::array<ObjList, 8> cells;
+export extern const RoomP startroom;
+export extern const RoomP& northend;
+export extern const RoomP& southend;
+export extern const ObjList cobjs;
+export extern const ObjList nobjs;
+export extern const ObjList pobjs;
+export extern std::array<ObjList, 8> cells;
 
 using NumObjs = std::pair<std::string_view, int>;
-constexpr std::array numobjs =
+export constexpr std::array numobjs =
 {
     NumObjs{"ONE", 1},
     NumObjs{"TWO", 2},
@@ -89,7 +89,7 @@ constexpr std::array numobjs =
 using DVPair = std::pair<direction, int>;
 inline bool operator==(const DVPair& dp, direction d) { return std::get<0>(dp) == d; }
 inline bool operator==(direction d, const DVPair& dp) { return dp == d; }
-constexpr std::array dirvec = {
+export constexpr std::array dirvec = {
     DVPair(direction::North, 0),
     DVPair(direction::Ne, 45),
     DVPair(direction::East, 90),

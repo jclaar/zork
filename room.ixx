@@ -255,4 +255,4 @@ export namespace exit_funcs {
     EX_RAPPLIC(maybe_door);
 }
 
-extern RoomP mloc;
+export extern RoomP mloc;

@@ -3,18 +3,25 @@ module;
 
 export module Zork:Act4I;
 export import :Act4;
-import :Act1;
-import :Dungeon;
-import :Parser;
-import :Memq;
-import :Adv;
-import :Util;
-import :Room;
-
 import ZException;
 import ZString;
 import ZFuncs;
 import std;
+
+import ZGlobals;
+import :Objfns;
+import :Roomfns;
+import :Act1;
+import :Dungeon;
+import :Parser;
+import :Memq;
+import :Makstr;
+import :Adv;
+import :Util;
+import :Room;
+import :Rooms;
+import :Speech;
+
 
 int mdir = 270;
 

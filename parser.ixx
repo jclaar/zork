@@ -21,7 +21,7 @@ export bool operator==(const Nefals& ne, const ObjectP& obj)
     return ne.first == obj;
 }
 
-extern Iterator<ParseContV> lexv;
+export extern Iterator<ParseContV> lexv;
 export bool gwim_disable = false;
 
 export using PrepVec = Iterator<PhraseVecV>;

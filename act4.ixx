@@ -3,17 +3,18 @@ module;
 
 export module Zork:Act4;
 import std;
+import ZFuncs;
+import ZDefs;
 import :Speech;
 import :Object;
 import :Rooms;
-import ZFuncs;
 
 export std::string pw(SIterator unm, SIterator key);
 
 ERAPPLIC(answer);
-RAPPLIC(incant);
+ERAPPLIC(incant);
 //RAPPLIC_DEF(inquisitor, Iterator<ParseContV>, Iterator<ParseContV>());
 
-RAPPLIC(stats);
-RAPPLIC(stay);
-RAPPLIC(turnto);
+ERAPPLIC(stats);
+ERAPPLIC(stay);
+ERAPPLIC(turnto);
