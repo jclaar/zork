@@ -2,6 +2,7 @@ module;
 #include "defs.h"
 
 export module Zork:Dungeon;
+import ZException;
 import :Speech;
 import :Melee;
 import :Object;
@@ -225,10 +226,10 @@ using namespace std::string_view_literals;
 
 constexpr std::array scol_walls =
 {
-    ScolWalls{ "BKVW"sv, "WEAST"sv, "BKVE"sv },
-    ScolWalls{ "BKVE"sv, "WWEST"sv, "BKVW"sv },
-    ScolWalls{ "BKTWI"sv, "WSOUT"sv, "BKVAU"sv },
-    ScolWalls{ "BKVAU"sv, "WNORT"sv, "BKTWI"sv }
+    ScolWalls{ "BKVW", "WEAST", "BKVE" },
+    ScolWalls{ "BKVE", "WWEST", "BKVW" },
+    ScolWalls{ "BKTWI", "WSOUT", "BKVAU" },
+    ScolWalls{ "BKVAU", "WNORT", "BKTWI" }
 };
 
 constexpr std::array scol_rooms =

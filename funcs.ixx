@@ -1,10 +1,9 @@
-module;
-#include "defs.h"
 export module ZFuncs;
 import ZDefs;
 import ZException;
 import ZGlobals;
 import std;
+#include "defs.h"
 
 // Bits for tell
 export constexpr std::uint32_t long_tell = 0x40000000;

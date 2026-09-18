@@ -1,8 +1,8 @@
-module;
-#include "cevent.h"
-
 export module Zork:Act1I;
 export import :Act1;
+import std;
+
+#include "cevent.h"
 
 import ZString;
 import ZFuncs;
@@ -21,7 +21,6 @@ import :Objfns;
 import :Parser;
 import :Makstr;
 import :Melee;
-import std;
 
 CEventP burnup_int;
 

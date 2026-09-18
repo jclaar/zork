@@ -1703,7 +1703,7 @@ namespace exit_funcs
     {
         direction dir = as_dir(prsvec[1]);
         auto nrm = memq(dir, here->rexits());
-        auto& cex = std::get<CExitPtr>(std::get<1>(**nrm));
+        CExitPtr cex = std::get<CExitPtr>(std::get<1>(**nrm));
         RoomP torm = cex->cxroom();
         int mdir = ::mdir;
 
