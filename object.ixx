@@ -71,7 +71,7 @@ using ObjList = std::list<ObjectP>;
 export using ObjVector = std::vector<ObjectP>;
 
 
-export class Object
+class Object
 {
 public:
 
