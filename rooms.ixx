@@ -30,7 +30,7 @@ export extern direction fromdir;
 export extern const AdvP* winner;
 export extern int raw_score;
 export int moves = 0;
-extern std::list<HackP> demons;
+export extern std::list<HackP> demons;
 
 export const CEventP& clock_int(const CEventP& cev, std::optional<int> num = std::nullopt, bool flag = false);
 export bool clock_disable(const CEventP& cev);

@@ -12,7 +12,7 @@ import ZFlagSupport;
 import std;
 
 // Flags in vword of a varg
-enum class vword_flag
+export enum class vword_flag
 {
     vabit,      // Look in AOBJS
     vrbit,      // Look in ROBJS
@@ -21,7 +21,7 @@ enum class vword_flag
     vfbit,      // true: Care if can't reach the object.
     numvbits
 };
-constexpr size_t numvbits = std::to_underlying(vword_flag::numvbits);
+export constexpr size_t numvbits = std::to_underlying(vword_flag::numvbits);
 
 export class word
 {
@@ -43,13 +43,13 @@ public:
 
 export using PrepP = std::shared_ptr<prep_t>;
 
-class buzz : public word
+export class buzz : public word
 {
 public:
     buzz(std::string_view s) : word(s) {}
 };
 
-class adjective : public word
+export class adjective : public word
 {
 public:
     adjective(std::string_view s) : word(s) {}
@@ -61,7 +61,7 @@ inline bool operator==(const std::string& s, const AdjectiveP& a) { return a == 
 export using WordP = std::shared_ptr<word>;
 
 
-struct _varg
+export struct _varg
 {
     Flags<Bits, numbits> vbit;   // acceptable object characteristics (default any)
     Flags<Bits, numbits> vfwim;  // spec for fwimming
@@ -71,7 +71,7 @@ struct _varg
 export using VargP = std::shared_ptr<_varg>;
 
 
-struct verb : public word
+export struct verb : public word
 {
 public:
     verb(std::string_view w, rapplic vf = nullptr) : word(w), _vfcn(vf) {}
@@ -85,14 +85,14 @@ private:
 export using VerbP = std::shared_ptr<verb>;
 
 // Flags for syntax
-enum class SyntaxBits
+export enum class SyntaxBits
 {
     sflip,
     sdriver,
     snumflags
 };
 
-struct syntax
+export struct syntax
 {
     VargP syn[2];
     VerbP sfcn;
@@ -102,7 +102,7 @@ export using SyntaxP = std::shared_ptr<syntax>;
 
 export using vspec = std::vector<SyntaxP>;
 
-struct Action
+export struct Action
 {
 private:
     std::string vname_;
@@ -142,7 +142,7 @@ PhraseP make_phrase(const WordP& p, const ObjectP& op);
 
 export using QuestionValue = std::variant<std::string_view, ObjectP, ActionP>;
 
-struct question
+export struct question
 {
 public:
     question(std::string_view question, const std::vector<QuestionValue>& answers) :
@@ -175,5 +175,5 @@ inline PhraseP make_phrase(const WordP& p, const ObjectP& op)
     return std::make_shared<phrase>(p, op);
 }
 
-std::vector<QuestionP> qvec;
+export std::vector<QuestionP> qvec;
 

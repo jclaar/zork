@@ -6,6 +6,7 @@ import ZDefs;
 import ZFlagSupport;
 import :Rooms;
 import :Dungeon;
+import :Speech;
 import std;
 
 namespace
@@ -22,17 +23,19 @@ namespace
 
 WordP make_word(SpeechType st, std::string_view val)
 {
-    static_assert((int)SpeechType::kVerb == 0 && (int)SpeechType::kPrep == 1);
-    static_assert((int)SpeechType::kAdj == 2 && (int)SpeechType::kBuzz == 3);
-    using WordFn = std::function<WordP(std::string_view)>;
-    const WordFn fns[] =
+    switch (st)
     {
-        mw<verb>(),
-        mw<prep_t>(),
-        mw<adjective>(),
-        mw<buzz>()
-    };
-    return fns[(int)st](val);
+    case SpeechType::kVerb:
+        return mw<verb>()(val);
+    case SpeechType::kPrep:
+        return mw<prep_t>()(val);
+    case SpeechType::kAdj:
+        return mw<adjective>()(val);
+    case SpeechType::kBuzz:
+        return mw<buzz>()(val);
+    default:
+        throw std::runtime_error("Invalid speech type");
+    }
 }
 
 void add_demon(const HackP& x)

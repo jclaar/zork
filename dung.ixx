@@ -12,7 +12,7 @@ import :CEvent;
 import :Makstr;
 import std;
 
-using WordsPobl = std::map<std::string, WordP, std::less<>>;
+export using WordsPobl = std::map<std::string, WordP, std::less<>>;
 using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;
 using ActionsPobl = std::map<std::string, ActionP, std::less<>>;
 
@@ -25,7 +25,7 @@ namespace
             return std::make_pair<DirectionsPobl::key_type>(sd, d);
         };
 }
-DirectionsPobl directions_pobl = {
+export DirectionsPobl directions_pobl = {
         mp("#!#!#", direction::NullExit),
         mp("NORTH", direction::North),
         mp("SOUTH", direction::South),
@@ -43,7 +43,7 @@ DirectionsPobl directions_pobl = {
         mp("EXIT", direction::Exit),
         mp("CROSS", direction::Cross)
 };
-ActionsPobl actions_pobl;
+export ActionsPobl actions_pobl;
 extern const ObjList small_papers;
 extern const ObjList palobjs;
 extern ObjList inqobjs;

@@ -324,7 +324,7 @@ constexpr std::array cpwalls = {
             cpwall_val("CPWWL", -1)
 };
 
-void add_inqobj(const ObjectP& obj);
+export void add_inqobj(const ObjectP& obj);
 
 export ObjectP btie;
 export ObjectP binf;
