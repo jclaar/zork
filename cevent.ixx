@@ -107,9 +107,15 @@ export using EventList = std::list<CEventP>;
 
 namespace
 {
-    CEventP mke(int tick, rapplic action, bool flag, const char* id, bool death)
+    template<typename F>
+    CEventP mke(int tick, F action, bool flag, const char* id, bool death)
     {
-        return std::make_shared<CEvent>(tick, action, flag, id, death);
+        rapplic r = [action](std::optional<ApplyRandomArg> /*arg*/) -> bool {
+            // RAPPLIC functors implement operator()() so we can ignore the
+            // ApplyRandomArg and just call the no-arg operator.
+            return action();
+            };
+        return std::make_shared<CEvent>(tick, r, flag, id, death);
     }
 }
 
