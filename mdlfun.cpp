@@ -14,7 +14,7 @@ std::string pw(SIterator unm, SIterator key);
 
 using namespace std::string_view_literals;
 
-int run_zork()
+static int run_zork()
 {
 	// Option to print incantation to skip directly to the endgame.
 #if 0

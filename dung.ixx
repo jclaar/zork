@@ -57,10 +57,10 @@ export extern HackP sword_demon;
 extern HackP fight_demon;
 extern HackP clocker;
 extern VerbP buncher;
-using ASSpan = std::span<const attack_state>;
-extern const std::vector<ASSpan> def1_res;
-extern const std::vector<ASSpan> def2_res;
-extern const std::vector<ASSpan> def3_res;
+export using ASSpan = std::span<const attack_state>;
+export extern const std::vector<ASSpan> def1_res;
+export extern const std::vector<ASSpan> def2_res;
+export extern const std::vector<ASSpan> def3_res;
 export int cyclowrath = 0;
 extern std::vector<VerbP> robot_actions;
 export extern std::vector<VerbP> master_actions;
@@ -240,15 +240,15 @@ constexpr std::array scol_rooms =
     ScolRooms{direction::South, "BKVAU"}
 };
 
-extern const ObjList villains;
-extern ObjList oppv;
-extern std::vector<int> villain_probs;
+export extern const ObjList villains;
+export extern ObjList oppv;
+export extern std::vector<int> villain_probs;
 
 export using BestWeapons = std::tuple<ObjectP, ObjectP, int>;
-bool operator==(const ObjectP& villain, const BestWeapons& bw);
+export bool operator==(const ObjectP& villain, const BestWeapons& bw);
 export bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
 typedef std::array<BestWeapons, 2> BestWeaponsList;
-extern const BestWeaponsList best_weapons;
+export extern const BestWeaponsList best_weapons;
 
 // Parse vector is defined in parser.mud. It is a 3-element vector,
 // containing various items:

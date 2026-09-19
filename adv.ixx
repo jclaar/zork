@@ -8,12 +8,12 @@ import ZDefs;
 import ZFlagSupport;
 import std;
 
-enum class AdvBits
+export enum class AdvBits
 {
     astaggered,
     anumbits
 };
-using AdvBitset = Flags<AdvBits, std::to_underlying(AdvBits::anumbits)>;
+export using AdvBitset = Flags<AdvBits, std::to_underlying(AdvBits::anumbits)>;
 
 export class Adv
 {
