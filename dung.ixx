@@ -88,8 +88,8 @@ export constexpr std::array numobjs =
 
 // Direction vector for mirror
 using DVPair = std::pair<direction, int>;
-inline bool operator==(const DVPair& dp, direction d) { return std::get<0>(dp) == d; }
-inline bool operator==(direction d, const DVPair& dp) { return dp == d; }
+export bool operator==(const DVPair& dp, direction d) { return std::get<0>(dp) == d; }
+export bool operator==(direction d, const DVPair& dp) { return dp == d; }
 export constexpr std::array dirvec = {
     DVPair(direction::North, 0),
     DVPair(direction::Ne, 45),
@@ -191,8 +191,8 @@ struct CpExit
     int offset;
     constexpr CpExit(direction d, int o) : dir(d), offset(o) {}
 };
-inline bool operator==(const CpExit& cp, direction d) { return cp.dir == d; }
-inline bool operator==(direction d, const CpExit& cp) { return cp == d; }
+export bool operator==(const CpExit& cp, direction d) { return cp.dir == d; }
+export bool operator==(direction d, const CpExit& cp) { return cp == d; }
 constexpr std::array cpexits = {
     CpExit(direction::North, -8),
     CpExit(direction::South, 8),
@@ -212,8 +212,8 @@ struct ScolRooms
     direction dir;
     const char* rm;
 };
-inline bool operator==(direction d, const ScolRooms& sr) { return sr.dir == d; }
-inline bool operator==(const ScolRooms& sr, direction d) { return d == sr; }
+export bool operator==(direction d, const ScolRooms& sr) { return sr.dir == d; }
+export bool operator==(const ScolRooms& sr, direction d) { return d == sr; }
 
 struct ScolWalls
 {
@@ -244,9 +244,9 @@ extern const ObjList villains;
 extern ObjList oppv;
 extern std::vector<int> villain_probs;
 
-typedef std::tuple<ObjectP, ObjectP, int> BestWeapons;
+export using BestWeapons = std::tuple<ObjectP, ObjectP, int>;
 bool operator==(const ObjectP& villain, const BestWeapons& bw);
-inline bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
+export bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
 typedef std::array<BestWeapons, 2> BestWeaponsList;
 extern const BestWeaponsList best_weapons;
 
@@ -259,7 +259,7 @@ export using ParseVecVal = std::variant<std::monostate, ActionP, VerbP, ObjectP,
 export using ParseVecA = std::array<ParseVecVal, 3>;
 typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction, WordP, std::string, ObjList> ParseAval;
 
-ParseVecVal as_pvv(const ParseAval& pv)
+export ParseVecVal as_pvv(const ParseAval& pv)
 {
     return std::visit(overload{
             [](const ActionP& ap) { return ParseVecVal(ap); },
@@ -271,7 +271,7 @@ ParseVecVal as_pvv(const ParseAval& pv)
         }, pv);
 }
 
-OrphanSlotType as_ost(ParseVecVal pv)
+export OrphanSlotType as_ost(ParseVecVal pv)
 {
     return std::visit(overload{
         [](const ObjectP& op) { return OrphanSlotType(op); },
@@ -285,7 +285,7 @@ export direction as_dir(const ParseVecVal& a)
     return std::get<direction>(a);
 }
 
-inline ObjectP as_obj(const ParseVecVal& pvv)
+export ObjectP as_obj(const ParseVecVal& pvv)
 {
     try
     {
@@ -297,12 +297,12 @@ inline ObjectP as_obj(const ParseVecVal& pvv)
     }
 }
 
-inline WordP as_word(const ParseAval& a)
+export WordP as_word(const ParseAval& a)
 {
     return std::get<WordP>(a);
 }
 
-inline VerbP as_verb(const ParseVecVal& a)
+export VerbP as_verb(const ParseVecVal& a)
 {
     try
     {
@@ -331,7 +331,7 @@ void synonym(const char* n1, T first, Args... args)
     synonym(n1, args...);
 }
 
-inline void dsynonym(const char* dir, const char* syn)
+export void dsynonym(const char* dir, const char* syn)
 {
     auto iter = directions_pobl.find(dir);
     if (iter == directions_pobl.end())
@@ -386,7 +386,7 @@ void add_buzz(T first, Args... args)
     add_buzz(args...);
 }
 
-inline bool apply_random(hackfn fcn, const HackP& demon)
+export bool apply_random(hackfn fcn, const HackP& demon)
 {
     return fcn(demon);
 }
