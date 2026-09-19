@@ -189,7 +189,7 @@ ObjList& global_objects();
 export using ObjectPobl = std::map<std::string, ObjList, std::less<>>;
 export const ObjectPobl& object_pobl();
 bool is_obj(const std::string& obj);
-const ObjectP& find_obj(std::string_view name);
+export const ObjectP& find_obj(std::string_view name);
 export const ObjectP& sfind_obj(std::string_view name);
 
 export bool trnn(const ObjectP& op, Bits b)

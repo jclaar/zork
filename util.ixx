@@ -36,6 +36,11 @@ export bool lfcn(const ObjList& l);
 export bool lit(const RoomP& rm);
 export bool prob(int goodluck, int badluck = -1);
 export bool perform(rapplic fcn, const VerbP& vb, const ObjectP& obj1 = ObjectP(), const ObjectP& obj2 = ObjectP());
+export template <typename Fn>
+bool perform(Fn f, const VerbP& vb, const ObjectP& obj1 = ObjectP(), const ObjectP& obj2 = ObjectP())
+{
+	return perform(rapplic(f), vb, obj1, obj2);
+}
 export ObjList rob_adv(const AdvP& win, ObjList newlist);
 export ObjList rob_room(const RoomP& rm, ObjList newlist, int prob);
 export bool yes_no(bool no_is_bad = false);

@@ -6,9 +6,11 @@ export import :Act4;
 import ZException;
 import ZString;
 import ZFuncs;
+import ZGlobals;
+import ZDefs;
 import std;
 
-import ZGlobals;
+import :fwd;
 import :Objfns;
 import :Roomfns;
 import :Act1;
@@ -1781,7 +1783,7 @@ std::string pw(SIterator unm, SIterator key)
 {
     auto su = Iterator(swu);
     auto ku = Iterator(kwu);
-    SIterator str = ::str;
+    SIterator str(::str);
     int usum;
 
     auto fn = [&](SIterator s, Iterator<decltype(swu)> su, SIterator k, Iterator<decltype(kwu)> ku) -> bool

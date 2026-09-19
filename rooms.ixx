@@ -85,7 +85,7 @@ export void score_room(const RoomP& rm);
 export void mung_room(const RoomP& rm, std::string_view str);
 ERAPPLIC(room_desc);
 export bool jigs_up(std::string_view desc, bool player = false);
-void score_upd(int num);
+export void score_upd(int num);
 export void score_bless();
 bool nogo(std::string_view str, direction dir);
 int weight(const ObjList& objl);

@@ -64,7 +64,7 @@ extern const std::vector<ASSpan> def3_res;
 export int cyclowrath = 0;
 extern std::vector<VerbP> robot_actions;
 export extern std::vector<VerbP> master_actions;
-extern RoomP bloc;
+export extern RoomP bloc;
 export extern const RoomP startroom;
 export extern const RoomP& northend;
 export extern const RoomP& southend;

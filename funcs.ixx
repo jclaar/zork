@@ -97,22 +97,6 @@ export std::string readst(std::string_view prompt)
 
 // Various MDL functions mapped to C++ equivalents
 export char *back(char *s, std::size_t count) { return s - count; }
-export std::string& substruc(const std::string& src, std::size_t start, std::size_t end, std::string& dest)
-{
-    std::copy(src.begin() + start, src.begin() + end, dest.begin() + start);
-    return dest;
-}
-
-export char* substruc(const char* src, std::size_t start, std::size_t end, char* dest)
-{
-    while (start != end)
-    {
-        dest[start] = src[start];
-        ++start;
-    }
-    return dest;
-}
-
 export const char* member(std::string_view subst, const std::string& str)
 {
     std::string::size_type pos = str.find(subst, 0);
@@ -128,7 +112,7 @@ public:
     using iterator = typename T::iterator;
     using value_type = typename T::value_type;
 
-    Iterator() : c(nullptr) {}
+    explicit Iterator() : c(nullptr) {}
     Iterator(T& container) : c(&container) { p = c->begin(); }
     Iterator(T& container, iterator i) : c(&container), p(i) {}
     Iterator(T* container, iterator i) : c(container), p(i) {}
@@ -241,6 +225,7 @@ export class SIterator : public Iterator<std::string>
 {
     typedef Iterator<std::string> Base;
 public:
+    explicit SIterator(std::string& s) : Base(s) {}
     typedef std::string value_type;
     typedef std::int32_t difference_type;
     typedef std::string* pointer;
@@ -331,6 +316,22 @@ export SIterator substruc(SIterator src, int start, int end, SIterator dest)
 export SIterator substruc(const char* msg, int start, int end, SIterator dest)
 {
     std::copy(msg + start, msg + end, dest);
+    return dest;
+}
+
+export std::string& substruc(const std::string& src, std::size_t start, std::size_t end, std::string& dest)
+{
+    std::copy(src.begin() + start, src.begin() + end, dest.begin() + start);
+    return dest;
+}
+
+export char* substruc(const char* src, std::size_t start, std::size_t end, char* dest)
+{
+    while (start != end)
+    {
+        dest[start] = src[start];
+        ++start;
+    }
     return dest;
 }
 

@@ -7,14 +7,21 @@ import std;
 import ZException;
 import ZStrings;
 import ZFuncs;
+import ZString;
+import ZGlobals;
 import :fwd;
+import :Objfns;
+import :Roomfns;
 import :CEvent;
 import :Parser;
 import :Adv;
 import :Util;
 import :Act1;
 import :Memq;
-import ZString;
+import :Makstr;
+import :Object;
+import :Rooms;
+import :Dungeon;
 
 using namespace std::string_view_literals;
 
