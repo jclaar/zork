@@ -26,6 +26,7 @@ bool operator==(const ObjectP& villain, const BestWeapons& bw)
 
 namespace
 {
+
     void init_actors()
     {
         // Dungeon master
@@ -118,18 +119,18 @@ namespace {
         attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound });
 }
 
-const std::vector<ASSpan> def1_res = {
+const std::vector<ASSpan> def1_res {
     {std::begin(def1), std::end(def1)},
     {std::begin(def1) + 1, std::end(def1)},
     {std::begin(def1) + 2, std::end(def1)}
 };
-const std::vector<ASSpan> def2_res = {
+const std::vector<ASSpan> def2_res {
     {std::begin(def2a), std::end(def2a)},
     {std::begin(def2b), std::end(def2b)},
     {std::begin(def2b) + 1, std::end(def2b)},
     {std::begin(def2b) + 2, std::end(def2b)}
 };
-const std::vector<ASSpan> def3_res = {
+const std::vector<ASSpan> def3_res {
     {std::begin(def3a), std::end(def3a)},
     {std::begin(def3a) + 1, std::end(def3a)},
     {std::begin(def3b), std::end(def3b)},

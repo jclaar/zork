@@ -135,7 +135,7 @@ export void add_buncher(const char* b)
     bunchers.push_front(find_verb(b));
 }
 
-template <typename T, typename ...Args>
+export template <typename T, typename ...Args>
 void add_buncher(T first, Args... args)
 {
     add_buncher(first);

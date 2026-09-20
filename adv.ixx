@@ -92,8 +92,15 @@ export inline void atro(const AdvP& adv, AdvBits b)
     adv->flags()[b] = 1;
 }
 
-void add_actor(e_oactor actor_name, const RoomP& room,
+export void add_actor(e_oactor actor_name, const RoomP& room,
     const ObjectP& obj, rapplic action, int strength);
+export template <typename Fn>
+void add_actor(e_oactor actor_name, const RoomP& room,
+	const ObjectP& obj, Fn action, int strength)
+{
+	add_actor(actor_name, room, obj, rapplic(action), strength);
+}
+
 export AdvArray& actors();
 
 export const AdvP& player() { return actors()[std::to_underlying(e_oactor::player)]; }
