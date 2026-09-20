@@ -13,10 +13,10 @@ import :fwd;
 import :Speech;
 import :CEvent;
 
-typedef std::initializer_list<const char*> StringList;
+export using StringList = std::initializer_list<const char*>;
 
 // Structure for cevents
-class olint_t
+export class olint_t
 {
 public:
     olint_t(int v, const CEventP& ev, int init_val) :_val(v), _ev(ev)
@@ -43,7 +43,7 @@ private:
 };
 export using OlintP = std::shared_ptr<olint_t>;
 
-class OP
+export class OP
 {
 public:
     using melee_func = const tofmsgs*;
@@ -73,7 +73,7 @@ export class Object
 {
 public:
 
-    Object() : _melee_func(nullptr) {}
+    Object() = default;
 
     Object(const StringList& syns, const StringList& adj = {}, const char* desc = "",
         const std::initializer_list<Bits>& bits = {}, rapplic obj_fun = nullptr, const StringList& contents = {},
@@ -148,10 +148,10 @@ protected:
     int _ocapac = 0;
     e_oactor _oactor = e_oactor::none;
     RoomBit _ovtype = RoomBit::rnumbits;
-    OP::melee_func _melee_func;
+    OP::melee_func _melee_func = nullptr;
 };
 
-class GObject : public Object
+export class GObject : public Object
 {
 public:
     GObject(Bits gbits, const StringList& syns, const StringList& adj = {},

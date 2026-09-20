@@ -5,7 +5,13 @@ export module Zork:ObjectI;
 export import :Object;
 import ZFlagSupport;
 import ZString;
+import ZStrings;
 import ZGlobals;
+import ZDefs;
+import ZException;
+
+import :fwd;
+import :Objfns;
 import :Room;
 import :Rooms;
 import :Makstr;
@@ -56,7 +62,7 @@ namespace
     }
 
     // List of all global objects.
-    typedef std::vector<GObjectPtr> GObjectArray;
+    using GObjectArray = std::vector<GObjectPtr>;
     GObjectArray load_gobjects()
     {
 #include "gobject.h"
@@ -175,6 +181,32 @@ void Object::restore(const Object& o)
     _odesc1 = o._odesc1;
 }
 
+template<typename T>
+void assign_prop(T & member, const OP & obj_prop)
+{
+    if (auto p = std::get_if<T>(&obj_prop.value()))
+    {
+        member = *p;
+    }
+    else
+    {
+        error("Invalid type for property");
+    }
+};
+
+template <typename Stored, typename Cast>
+void assign_prop_cast(Cast& member, const OP& obj_prop)
+{
+	if (auto p = std::get_if<Stored>(&obj_prop.value()))
+	{
+		member = Cast(*p);
+	}
+	else
+	{
+		error("Invalid type for property");
+	}
+}
+
 Object::Object(const std::initializer_list<const char*>& syns, const std::initializer_list<const char*>& adj, const char* description,
     const std::initializer_list<Bits>& bits, rapplic objfun, const StringList& cntnts,
     const std::initializer_list<OP>& props) :
@@ -206,66 +238,77 @@ Object::Object(const std::initializer_list<const char*>& syns, const std::initia
         {
         case ObjectSlots::ksl_oread:
         {
-            _oread = std::get<std::string>(obj_prop.value());
+            assign_prop(_oread, obj_prop);
             break;
         }
         case ObjectSlots::ksl_odesco:
         {
-            _odesco = std::get<std::string>(obj_prop.value());
+			assign_prop(_odesco, obj_prop);
             break;
         }
         case ObjectSlots::ksl_odesc1:
         {
-            _odesc1 = std::get<std::string>(obj_prop.value());
+            assign_prop(_odesc1, obj_prop);
             break;
         }
         case ObjectSlots::ksl_otval:
         {
-            _otval = std::get<int>(obj_prop.value());
+            assign_prop(_otval, obj_prop);
             break;
         }
         case ObjectSlots::ksl_ofval:
         {
-            _ofval = std::get<int>(obj_prop.value());
+			assign_prop(_ofval, obj_prop);
             break;
         }
         case ObjectSlots::ksl_olint:
         {
-            _olint = std::make_shared<olint_t>(std::get<olint_t>(obj_prop.value()));
-            clock_disable(clock_int(_olint->ev(), _olint->ev()->ctick()));
+            if (auto p = std::get_if<olint_t>(&obj_prop.value()))
+            {
+                _olint = std::make_shared<olint_t>(*p);
+                clock_disable(clock_int(_olint->ev(), _olint->ev()->ctick()));
+            }
+            else
+            {
+				error("Invalid type for olint property");
+            }
             break;
         }
         case ObjectSlots::ksl_ostrength:
         {
-            _ostrength = std::get<int>(obj_prop.value());
+			assign_prop(_ostrength, obj_prop);
             break;
         }
         case ObjectSlots::ksl_osize:
         {
-            _osize = std::get<int>(obj_prop.value());
+            assign_prop(_osize, obj_prop);
             break;
         }
         case ObjectSlots::ksl_omatch:
         {
-            _omatch = std::get<int>(obj_prop.value());
+            assign_prop(_omatch, obj_prop);
             break;
         }
         case ObjectSlots::ksl_ocapac:
         {
-            _ocapac = std::get<int>(obj_prop.value());
+            assign_prop(_ocapac, obj_prop);
             break;
         }
         case ObjectSlots::ksl_oglobal:
-            _oglobal = (Bits)std::get<int>(obj_prop.value());
+        {
+            Bits gb;
+            assign_prop_cast<int>(gb, obj_prop);
+            _oglobal = gb;
+        }
             break;
         case ObjectSlots::ksl_oactor:
-            _oactor = (e_oactor)std::get<int>(obj_prop.value());
+            assign_prop_cast<int>(_oactor, obj_prop);
             break;
         case ObjectSlots::ksl_ovtype:
-            _ovtype = std::get<RoomBit>(obj_prop.value());
+            assign_prop(_ovtype, obj_prop);
             break;
         case ObjectSlots::ksl_ofmsgs:
-            _melee_func = std::get<OP::melee_func>(obj_prop.value());
+			assign_prop(_melee_func, obj_prop);
             break;
         case ObjectSlots::ksl_obverb:
             // Never used? Just ignore.

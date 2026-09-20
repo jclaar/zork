@@ -94,7 +94,7 @@ export inline void atro(const AdvP& adv, AdvBits b)
 
 void add_actor(e_oactor actor_name, const RoomP& room,
     const ObjectP& obj, rapplic action, int strength);
-AdvArray& actors();
+export AdvArray& actors();
 
 export const AdvP& player() { return actors()[std::to_underlying(e_oactor::player)]; }
 
