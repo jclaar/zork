@@ -138,7 +138,7 @@ private:
 };
 export using PhraseP = std::shared_ptr<phrase>;
 export using PhraseVecV = std::vector<PhraseP>;
-PhraseP make_phrase(const WordP& p, const ObjectP& op);
+export PhraseP make_phrase(const WordP& p, const ObjectP& op);
 
 export using QuestionValue = std::variant<std::string_view, ObjectP, ActionP>;
 

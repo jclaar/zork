@@ -174,21 +174,21 @@ private:
 };
 
 
-void init_objects();
-void init_gobjects();
-void init_synonyms();
+export void init_objects();
+export void init_gobjects();
+export void init_synonyms();
 
 export bool empty(const ObjectP& op)
 {
     return !op;
 }
 
-ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
+export ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
 ObjList& global_objects();
 
 export using ObjectPobl = std::map<std::string, ObjList, std::less<>>;
 export const ObjectPobl& object_pobl();
-bool is_obj(const std::string& obj);
+export bool is_obj(const std::string& obj);
 export const ObjectP& find_obj(std::string_view name);
 export const ObjectP& sfind_obj(std::string_view name);
 
@@ -308,10 +308,10 @@ private:
 
 export ObjectP last_it;
 
-typedef std::array<ObjList, 64> PuzzleContents;
+export using PuzzleContents = std::array<ObjList, 64>;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
-typedef std::tuple<std::string_view, int> cpwall_val;
+export using cpwall_val = std::tuple<std::string_view, int>;
 export bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }
 export bool operator==(const cpwall_val& cp, const ObjectP& o) { return o == cp; }
 

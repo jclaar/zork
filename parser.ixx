@@ -213,4 +213,4 @@ std::string prfunny(const WordP& prep);
 void swap_em();
 
 // Verb functions
-RAPPLIC(bunchem);
+ERAPPLIC(bunchem);

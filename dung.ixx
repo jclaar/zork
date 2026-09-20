@@ -55,7 +55,6 @@ export int deaths = 0;
 export extern HackP robber_demon;
 export extern HackP sword_demon;
 extern HackP fight_demon;
-extern HackP clocker;
 extern VerbP buncher;
 export using ASSpan = std::span<const attack_state>;
 export extern const std::vector<ASSpan> def1_res;
@@ -101,7 +100,7 @@ export constexpr std::array dirvec = {
     DVPair(direction::Nw, 315),
 };
 
-class hack
+export class hack
 {
 public:
     hack(hackfn ha, const ObjList& ho, const RoomList& hr, const RoomP& rm, const ObjectP& obj) :
@@ -180,7 +179,6 @@ private:
     }
 };
 
-using HackP = std::shared_ptr<hack>;
 using hackfn = std::function<bool(const HackP&)>;
 
 
@@ -247,7 +245,7 @@ export extern std::vector<int> villain_probs;
 export using BestWeapons = std::tuple<ObjectP, ObjectP, int>;
 export bool operator==(const ObjectP& villain, const BestWeapons& bw);
 export bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
-typedef std::array<BestWeapons, 2> BestWeaponsList;
+export using BestWeaponsList = std::array<BestWeapons, 2>;
 export extern const BestWeaponsList best_weapons;
 
 // Parse vector is defined in parser.mud. It is a 3-element vector,
@@ -318,13 +316,13 @@ void dir_syns();
 
 export void init_dung();
 
-template <typename T>
+export template <typename T>
 void synonym(const char* n1, T n2)
 {
     const WordP& wp = words_pobl[n1];
     words_pobl[n2] = wp;
 }
-template <typename T, typename ...Args>
+export template <typename T, typename ...Args>
 void synonym(const char* n1, T first, Args... args)
 {
     synonym(n1, first);
@@ -339,13 +337,13 @@ export void dsynonym(const char* dir, const char* syn)
     directions_pobl[syn] = iter->second;
 }
 
-template <typename T>
+export template <typename T>
 void vsynonym(const char* verb, T syn)
 {
     actions_pobl[syn] = actions_pobl[verb];
 }
 
-template <typename T, typename ...Args>
+export template <typename T, typename ...Args>
 void vsynonym(const char* verb, T first, Args... args)
 {
     vsynonym(verb, first);
@@ -373,13 +371,13 @@ void add_zork(SpeechType st, T first, Args... args)
     add_zork(st, args...);
 }
 
-template <typename T>
+export template <typename T>
 void add_buzz(T w)
 {
     add_zork(SpeechType::kBuzz, w);
 }
 
-template <typename T, typename ...Args>
+export template <typename T, typename ...Args>
 void add_buzz(T first, Args... args)
 {
     add_buzz(first);
