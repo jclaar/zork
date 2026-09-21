@@ -57,9 +57,54 @@ export extern HackP sword_demon;
 extern HackP fight_demon;
 extern VerbP buncher;
 export using ASSpan = std::span<const attack_state>;
-export extern const std::vector<ASSpan> def1_res;
-export extern const std::vector<ASSpan> def2_res;
-export extern const std::vector<ASSpan> def3_res;
+// Attacking things...
+namespace {
+    constexpr auto def1 = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::unconscious, attack_state::unconscious,
+        attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed });
+    constexpr auto def2a = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound,
+        attack_state::unconscious });
+    constexpr auto def2b = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::unconscious,
+        attack_state::killed, attack_state::killed, attack_state::killed });
+    constexpr auto def3a = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound });
+    constexpr auto def3b = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound });
+    constexpr auto def3c = std::to_array({ attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound });
+}
+
+constexpr std::array def1_res{
+    ASSpan(def1.data(), def1.size()),
+    ASSpan(def1.data() + 1, def1.size() - 1),
+    ASSpan(def1.data() + 2, def1.size() - 2)
+};
+constexpr std::array def2_res{
+    ASSpan(def2a.data(), def2a.size()),
+    ASSpan(def2b.data(), def2b.size()),
+    ASSpan(def2b.data() + 1, def2b.size() - 1),
+    ASSpan(def2b.data() + 2, def2b.size() - 2)
+};
+constexpr std::array def3_res{
+    ASSpan(def3a.data(), def3a.size()),
+    ASSpan(def3a.data() + 1, def3a.size() - 1),
+    ASSpan(def3b.data(), def3b.size()),
+    ASSpan(def3b.data() + 1, def3b.size() - 1),
+    ASSpan(def3c.data(), def3c.size())
+};
+
 export int cyclowrath = 0;
 extern std::vector<VerbP> robot_actions;
 export extern std::vector<VerbP> master_actions;
