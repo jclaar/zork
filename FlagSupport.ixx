@@ -7,7 +7,7 @@ import std;
 export template <typename FlagType, size_t sz>
 class Flags : private std::bitset<sz>
 {
-    typedef std::bitset<sz> Base;
+    using Base = std::bitset<sz>;
     Flags(const Base& b) : Base(b)
     {}
 public:
@@ -35,18 +35,9 @@ public:
         ar& static_cast<Base&>(*this);
     }
 
-    template <typename FlagType, size_t sz>
-    friend Flags<FlagType, sz> operator&(const Flags<FlagType, sz>& lhs, const Flags<FlagType, sz>& rhs);
-
-private:
+	static Flags<FlagType, sz> and_(const Flags<FlagType, sz>& lhs, const Flags<FlagType, sz>& rhs)
+	{
+		return Flags<FlagType, sz>(lhs & rhs);
+	}
 };
 
-export template <typename FlagType, size_t sz>
-Flags<FlagType, sz> operator&(const Flags<FlagType, sz>& lhs, const Flags<FlagType, sz>& rhs)
-{
-    auto& fl = static_cast<const Flags<FlagType, sz>::Base&>(lhs);
-    auto& fr = static_cast<const Flags<FlagType, sz>::Base&>(rhs);
-    Flags<FlagType, sz> rv(fl & fr);
-
-    return rv;
-}

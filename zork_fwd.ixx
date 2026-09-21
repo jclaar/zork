@@ -22,7 +22,7 @@ export enum class ObjectSlots
     ksl_rval
 };
 
-class Adv;
+export class Adv;
 export using AdvP = std::shared_ptr<Adv>;
 
 export class Object;
@@ -34,9 +34,9 @@ export class Room;
 export using RoomP = std::shared_ptr<Room>;
 export using RoomList = std::list<RoomP>;
 
-class hack;
+export class hack;
 export using HackP = std::shared_ptr<hack>;
 export using hackfn = std::function<bool(const HackP&)>;
 
-class GObject;
+export class GObject;
 export using GObjectPtr = std::shared_ptr<GObject>;

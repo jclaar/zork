@@ -65,7 +65,7 @@ private:
     PropVal val;
 };
 
-typedef Flags<Bits, numbits> OFlags;
+using OFlags = Flags<Bits, numbits>;
 export class Object;
 
 
@@ -255,9 +255,9 @@ export bool describable(const ObjectP& obj)
 
 export bool see_inside(const ObjectP& op);
 
-export bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
+export bool trnn_bits(const ObjectP& op, const OFlags& bits_to_check)
 {
-    return (op->oflags() & bits_to_check).any();
+    return OFlags::and_(op->oflags(), bits_to_check).any();
 }
 
 void trc(const ObjectP& op, Bits b);
