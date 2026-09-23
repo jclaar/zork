@@ -660,7 +660,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
                 // No verb.
                 try
                 {
-                    auto& op = std::get<ObjectP>(pv[1]);
+                    auto op = var_get<ObjectP>(pv[1]);
                     tell("What should I do with the ", 1, op->odesc2(), "?");
                 }
                 catch (std::bad_variant_access&)

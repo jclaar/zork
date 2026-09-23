@@ -250,8 +250,8 @@ constexpr std::array cpexits = {
 };
 
 // Bank puzzle
-extern RoomP scol_room;
-extern RoomP scol_active;
+export extern RoomP scol_room;
+export extern RoomP scol_active;
 struct ScolRooms
 {
     direction dir;
@@ -327,7 +327,7 @@ export OrphanSlotType as_ost(ParseVecVal pv)
 
 export direction as_dir(const ParseVecVal& a)
 {
-    return std::get<direction>(a);
+    return var_get<direction>(a);
 }
 
 export ObjectP as_obj(const ParseVecVal& pvv)
@@ -339,7 +339,7 @@ export ObjectP as_obj(const ParseVecVal& pvv)
 
 export WordP as_word(const ParseAval& a)
 {
-    return std::get<WordP>(a);
+    return var_get<WordP>(a);
 }
 
 export VerbP as_verb(const ParseVecVal& a)

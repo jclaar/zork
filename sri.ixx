@@ -15,6 +15,9 @@ module;
 
 export module Zork:SrI;
 import std;
+import ZGlobals;
+import ZDefs;
+import ZFuncs;
 import :Sr;
 import :fwd;
 import :Room;
