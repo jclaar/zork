@@ -35,8 +35,8 @@ public:
         ar& static_cast<Base&>(*this);
     }
 
-    template <typename FlagType, size_t sz>
-    friend Flags<FlagType, sz> operator&(const Flags<FlagType, sz>& lhs, const Flags<FlagType, sz>& rhs);
+    template <typename FT, size_t siz>
+    friend Flags<FT, siz> operator&(const Flags<FT, siz>& lhs, const Flags<FT, siz>& rhs);
 
 private:
 };

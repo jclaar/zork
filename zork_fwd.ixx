@@ -22,7 +22,7 @@ export enum class ObjectSlots
     ksl_rval
 };
 
-class Adv;
+export class Adv;
 export using AdvP = std::shared_ptr<Adv>;
 
 export class Object;
