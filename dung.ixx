@@ -58,9 +58,56 @@ extern HackP fight_demon;
 extern HackP clocker;
 export extern VerbP buncher;
 using ASSpan = std::span<const attack_state>;
-extern const std::vector<ASSpan> def1_res;
-extern const std::vector<ASSpan> def2_res;
-extern const std::vector<ASSpan> def3_res;
+extern VerbP buncher;
+export using ASSpan = std::span<const attack_state>;
+// Attacking things...
+namespace {
+    constexpr auto def1 = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::unconscious, attack_state::unconscious,
+        attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed });
+    constexpr auto def2a = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound,
+        attack_state::unconscious });
+    constexpr auto def2b = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::unconscious,
+        attack_state::killed, attack_state::killed, attack_state::killed });
+    constexpr auto def3a = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound });
+    constexpr auto def3b = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound });
+    constexpr auto def3c = std::to_array({ attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound });
+}
+
+constexpr std::array def1_res{
+    ASSpan(def1.data(), def1.size()),
+    ASSpan(def1.data() + 1, def1.size() - 1),
+    ASSpan(def1.data() + 2, def1.size() - 2)
+};
+constexpr std::array def2_res{
+    ASSpan(def2a.data(), def2a.size()),
+    ASSpan(def2b.data(), def2b.size()),
+    ASSpan(def2b.data() + 1, def2b.size() - 1),
+    ASSpan(def2b.data() + 2, def2b.size() - 2)
+};
+constexpr std::array def3_res{
+    ASSpan(def3a.data(), def3a.size()),
+    ASSpan(def3a.data() + 1, def3a.size() - 1),
+    ASSpan(def3b.data(), def3b.size()),
+    ASSpan(def3b.data() + 1, def3b.size() - 1),
+    ASSpan(def3c.data(), def3c.size())
+};
+
 export int cyclowrath = 0;
 extern std::vector<VerbP> robot_actions;
 export extern std::vector<VerbP> master_actions;
@@ -101,7 +148,7 @@ export constexpr std::array dirvec = {
     DVPair(direction::Nw, 315),
 };
 
-class hack
+export class hack
 {
 public:
     hack(hackfn ha, const ObjList& ho, const RoomList& hr, const RoomP& rm, const ObjectP& obj) :
@@ -180,7 +227,6 @@ private:
     }
 };
 
-using HackP = std::shared_ptr<hack>;
 using hackfn = std::function<bool(const HackP&)>;
 
 
@@ -240,15 +286,15 @@ constexpr std::array scol_rooms =
     ScolRooms{direction::South, "BKVAU"}
 };
 
-extern const ObjList villains;
-extern ObjList oppv;
-extern std::vector<int> villain_probs;
+export extern const ObjList villains;
+export extern ObjList oppv;
+export extern std::vector<int> villain_probs;
 
 export using BestWeapons = std::tuple<ObjectP, ObjectP, int>;
-bool operator==(const ObjectP& villain, const BestWeapons& bw);
+export bool operator==(const ObjectP& villain, const BestWeapons& bw);
 export bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
-typedef std::array<BestWeapons, 2> BestWeaponsList;
-extern const BestWeaponsList best_weapons;
+export using BestWeaponsList = std::array<BestWeapons, 2>;
+export extern const BestWeaponsList best_weapons;
 
 // Parse vector is defined in parser.mud. It is a 3-element vector,
 // containing various items:
@@ -318,13 +364,13 @@ void dir_syns();
 
 export void init_dung();
 
-template <typename T>
+export template <typename T>
 void synonym(const char* n1, T n2)
 {
     const WordP& wp = words_pobl[n1];
     words_pobl[n2] = wp;
 }
-template <typename T, typename ...Args>
+export template <typename T, typename ...Args>
 void synonym(const char* n1, T first, Args... args)
 {
     synonym(n1, first);
@@ -339,20 +385,20 @@ export void dsynonym(const char* dir, const char* syn)
     directions_pobl[syn] = iter->second;
 }
 
-template <typename T>
+export template <typename T>
 void vsynonym(const char* verb, T syn)
 {
     actions_pobl[syn] = actions_pobl[verb];
 }
 
-template <typename T, typename ...Args>
+export template <typename T, typename ...Args>
 void vsynonym(const char* verb, T first, Args... args)
 {
     vsynonym(verb, first);
     vsynonym(verb, args...);
 }
 
-template <typename T>
+export template <typename T>
 void add_zork(SpeechType st, T wc)
 {
     // One hack -- remove LOWER from the adjective list so that
@@ -366,20 +412,20 @@ void add_zork(SpeechType st, T wc)
     }
 }
 
-template <typename T, typename ...Args>
+export template <typename T, typename ...Args>
 void add_zork(SpeechType st, T first, Args... args)
 {
     add_zork(st, first);
     add_zork(st, args...);
 }
 
-template <typename T>
+export template <typename T>
 void add_buzz(T w)
 {
     add_zork(SpeechType::kBuzz, w);
 }
 
-template <typename T, typename ...Args>
+export template <typename T, typename ...Args>
 void add_buzz(T first, Args... args)
 {
     add_buzz(first);

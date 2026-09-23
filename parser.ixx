@@ -135,7 +135,7 @@ export void add_buncher(const char* b)
     bunchers.push_front(find_verb(b));
 }
 
-template <typename T, typename ...Args>
+export template <typename T, typename ...Args>
 void add_buncher(T first, Args... args)
 {
     add_buncher(first);
@@ -202,8 +202,8 @@ bool take_it(const ObjectP& obj, VargP varg);
 bool orfeo(int slot, const VargP& syn, ParseVec objs);
 ObjectP gwim_slot(int fx, const VargP& varg, ParseVec& objs);
 Nefals gwim(const Flags<Bits, numbits>& bits, VargP fword);
-Nefals fwim(Bits b, const ObjList& objs, bool no_care);
-Nefals fwim(const Flags<Bits, numbits>& bits, const ObjList& objs, bool no_care);
+export Nefals fwim(Bits b, const ObjList& objs, bool no_care);
+export Nefals fwim(const Flags<Bits, numbits>& bits, const ObjList& objs, bool no_care);
 bool do_take(ObjectP obj);
 std::string foostr(std::string nam, bool first = true, bool lc = false);
 std::string prstr(const std::string& sp);
@@ -213,4 +213,4 @@ std::string prfunny(const WordP& prep);
 void swap_em();
 
 // Verb functions
-RAPPLIC(bunchem);
+ERAPPLIC(bunchem);

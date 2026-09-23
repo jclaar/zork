@@ -13,10 +13,10 @@ import :fwd;
 import :Speech;
 import :CEvent;
 
-typedef std::initializer_list<const char*> StringList;
+export using StringList = std::initializer_list<const char*>;
 
 // Structure for cevents
-class olint_t
+export class olint_t
 {
 public:
     olint_t(int v, const CEventP& ev, int init_val) :_val(v), _ev(ev)
@@ -43,7 +43,7 @@ private:
 };
 export using OlintP = std::shared_ptr<olint_t>;
 
-class OP
+export class OP
 {
 public:
     using melee_func = const tofmsgs*;
@@ -65,7 +65,7 @@ private:
     PropVal val;
 };
 
-typedef Flags<Bits, numbits> OFlags;
+using OFlags = Flags<Bits, numbits>;
 export class Object;
 
 
@@ -73,7 +73,7 @@ export class Object
 {
 public:
 
-    Object() : _melee_func(nullptr) {}
+    Object() = default;
 
     Object(const StringList& syns, const StringList& adj = {}, const char* desc = "",
         const std::initializer_list<Bits>& bits = {}, rapplic obj_fun = nullptr, const StringList& contents = {},
@@ -148,10 +148,10 @@ protected:
     int _ocapac = 0;
     e_oactor _oactor = e_oactor::none;
     RoomBit _ovtype = RoomBit::rnumbits;
-    OP::melee_func _melee_func;
+    OP::melee_func _melee_func = nullptr;
 };
 
-class GObject : public Object
+export class GObject : public Object
 {
 public:
     GObject(Bits gbits, const StringList& syns, const StringList& adj = {},
@@ -174,21 +174,21 @@ private:
 };
 
 
-void init_objects();
-void init_gobjects();
-void init_synonyms();
+export void init_objects();
+export void init_gobjects();
+export void init_synonyms();
 
 export bool empty(const ObjectP& op)
 {
     return !op;
 }
 
-ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
+export ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
 export ObjList& global_objects();
 
 export using ObjectPobl = std::map<std::string, ObjList, std::less<>>;
 export const ObjectPobl& object_pobl();
-bool is_obj(const std::string& obj);
+export bool is_obj(const std::string& obj);
 export const ObjectP& find_obj(std::string_view name);
 export const ObjectP& sfind_obj(std::string_view name);
 
@@ -255,9 +255,9 @@ export bool describable(const ObjectP& obj)
 
 export bool see_inside(const ObjectP& op);
 
-export bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
+export bool trnn_bits(const ObjectP& op, const OFlags& bits_to_check)
 {
-    return (op->oflags() & bits_to_check).any();
+    return OFlags::and_(op->oflags(), bits_to_check).any();
 }
 
 void trc(const ObjectP& op, Bits b);
@@ -308,10 +308,10 @@ private:
 
 export ObjectP last_it;
 
-typedef std::array<ObjList, 64> PuzzleContents;
+export using PuzzleContents = std::array<ObjList, 64>;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
-typedef std::tuple<std::string_view, int> cpwall_val;
+export using cpwall_val = std::tuple<std::string_view, int>;
 export bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }
 export bool operator==(const cpwall_val& cp, const ObjectP& o) { return o == cp; }
 

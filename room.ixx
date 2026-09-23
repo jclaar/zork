@@ -191,8 +191,8 @@ private:
     rapplic _room_fn = nullptr;
 };
 
-void init_rooms();
-const RoomP& get_room(std::string_view rid, RoomP init_val = RoomP());
+export void init_rooms();
+export const RoomP& get_room(std::string_view rid, RoomP init_val = RoomP());
 export const RoomP& find_room(std::string_view rid);
 export const RoomP& sfind_room(std::string_view s) { return find_room(s); }
 export RoomList& rooms();

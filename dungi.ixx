@@ -1,17 +1,23 @@
 export module Zork:DungeonI;
+export import :Dungeon;
 import std;
-import :Dungeon;
+import ZFuncs;
+import :fwd;
 import :Rooms;
 import :Adv;
+import :Speech;
+import :Makstr;
 import :Speech;
 import :Parser;
 import :Act1;
 import :Act3;
 import :Act4;
 import :Memq;
-import ZFuncs;
 import :Objfns;
+import :Melee;
 import :Roomfns;
+import :Object;
+import :Room;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {
@@ -20,6 +26,7 @@ bool operator==(const ObjectP& villain, const BestWeapons& bw)
 
 namespace
 {
+
     void init_actors()
     {
         // Dungeon master
@@ -54,7 +61,7 @@ namespace
 }
 
 // Bunch vector.
-ObjVector bunch_cont()
+static ObjVector bunch_cont()
 {
     ObjVector ov(8, sfind_obj("#####"));
     return ov;
@@ -63,7 +70,7 @@ ObjVector bunuvec_cont;
 Iterator<ObjVector> bunuvec;
 Iterator<ObjVector> bunch;
 
-void init_bunch()
+static void init_bunch()
 {
     bunuvec_cont = bunch_cont();
     bunuvec = Iterator<ObjVector>(bunuvec_cont, bunuvec_cont.end());
@@ -74,7 +81,7 @@ void init_bunch()
 PhraseVecV prepvecb;
 PrepVec prepvec;
 
-void init_prepvec()
+static void init_prepvec()
 {
     auto with_prep = find_prep("WITH");
     auto& cretin = sfind_obj("#####");
@@ -82,54 +89,6 @@ void init_prepvec()
     std::generate_n(std::back_inserter(prepvecb), 5, [&with_prep, &cretin]() { return make_phrase(with_prep, cretin); });
     prepvec = prepvecb;
 }
-
-// Attacking things...
-namespace {
-    constexpr auto def1 = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::unconscious, attack_state::unconscious,
-        attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed });
-    constexpr auto def2a = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound,
-        attack_state::unconscious });
-    constexpr auto def2b = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
-        attack_state::unconscious,
-        attack_state::killed, attack_state::killed, attack_state::killed });
-    constexpr auto def3a = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound,
-        attack_state::serious_wound, attack_state::serious_wound });
-    constexpr auto def3b = std::to_array({ attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
-        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound });
-    constexpr auto def3c = std::to_array({ attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
-        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound });
-}
-
-const std::vector<ASSpan> def1_res = {
-    {std::begin(def1), std::end(def1)},
-    {std::begin(def1) + 1, std::end(def1)},
-    {std::begin(def1) + 2, std::end(def1)}
-};
-const std::vector<ASSpan> def2_res = {
-    {std::begin(def2a), std::end(def2a)},
-    {std::begin(def2b), std::end(def2b)},
-    {std::begin(def2b) + 1, std::end(def2b)},
-    {std::begin(def2b) + 2, std::end(def2b)}
-};
-const std::vector<ASSpan> def3_res = {
-    {std::begin(def3a), std::end(def3a)},
-    {std::begin(def3a) + 1, std::end(def3a)},
-    {std::begin(def3b), std::end(def3b)},
-    {std::begin(def3b) + 1, std::end(def3b)},
-    {std::begin(def3c), std::end(def3c)}
-};
 
 std::string indentstrb = "        ";
 SIterator indentstr(indentstrb, indentstrb.end());
@@ -816,7 +775,7 @@ namespace
         sadd_action("LISTT", [](Rarg arg = Rarg()) {
             auto& op = object_pobl();
             std::set<ObjectP> dups;
-            for (auto o : op)
+            for (const auto &o : op)
             {
                 ObjectP obj = *o.second.begin();
                 if (obj->otval() > 0)

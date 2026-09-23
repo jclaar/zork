@@ -5,10 +5,20 @@ export module Zork:MeleeI;
 export import :Melee;
 
 import ZException;
+import ZGlobals;
+import ZStrings;
+import ZFuncs;
+import ZDefs;
+import :fwd;
+import :Objfns;
 import :Util;
+import :Makstr;
 import :AdvI;
 import :Parser;
 import :Memq;
+import :Dungeon;
+import :Rooms;
+import :Object;
 
 namespace
 {
@@ -285,7 +295,7 @@ bool diagnose::operator()() const
     return true;
 }
 
-bool pres(const tofmsg& tab, std::string_view a, std::string_view d, std::string_view w)
+static bool pres(const tofmsg& tab, std::string_view a, std::string_view d, std::string_view w)
 {
     int l = (int)tab.size();
     // Replace a %D% with the name.

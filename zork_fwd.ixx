@@ -34,7 +34,7 @@ export class Room;
 export using RoomP = std::shared_ptr<Room>;
 export using RoomList = std::list<RoomP>;
 
-class hack;
+export class hack;
 export using HackP = std::shared_ptr<hack>;
 export using hackfn = std::function<bool(const HackP&)>;
 

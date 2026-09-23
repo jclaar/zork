@@ -31,6 +31,8 @@ export extern const AdvP* winner;
 export extern int raw_score;
 export int moves = 0;
 export extern std::list<HackP> demons;
+export extern HackP clocker;
+
 
 export const CEventP& clock_int(const CEventP& cev, std::optional<int> num = std::nullopt, bool flag = false);
 export bool clock_disable(const CEventP& cev);
@@ -96,23 +98,23 @@ export const RoomP& get_door_room(const RoomP& rm, const DoorExitPtr& leavings);
 bool valchk(const std::any& flg, const ObjectP& obj, Iterator<ObjVector> allbut);
 
 ERAPPLIC_DEF(takefn, bool, true);
-HACKFN(clock_demon);
+EHACKFN(clock_demon);
 bool frob_lots(Iterator<ObjVector> uv);
 
-RAPPLIC(backer);
-RAPPLIC(board);
-RAPPLIC(brief);
-RAPPLIC_DEF(bugger, bool, false);
-RAPPLIC(closer);
-RAPPLIC(command);
-RAPPLIC(do_restore);
-RAPPLIC(do_save);
-RAPPLIC(do_script);
-RAPPLIC_DEF(do_unscript, bool, true);
-RAPPLIC(doc);
-RAPPLIC(dropper);
-RAPPLIC(feech);
-RAPPLIC(find);
+ERAPPLIC(backer);
+ERAPPLIC(board);
+ERAPPLIC(brief);
+ERAPPLIC_DEF(bugger, bool, false);
+ERAPPLIC(closer);
+ERAPPLIC(command);
+ERAPPLIC(do_restore);
+ERAPPLIC(do_save);
+ERAPPLIC(do_script);
+ERAPPLIC_DEF(do_unscript, bool, true);
+ERAPPLIC(doc);
+ERAPPLIC(dropper);
+ERAPPLIC(feech);
+ERAPPLIC(find);
 
 export struct finish
 {
@@ -127,18 +129,18 @@ export struct finish
 
 ERAPPLIC(help);
 ERAPPLIC(info);
-RAPPLIC_DEF(invent, const AdvP&, *winner);
+ERAPPLIC_DEF(invent, const AdvP&, *winner);
 ERAPPLIC(lamp_off);
 ERAPPLIC(lamp_on);
 ERAPPLIC(move);
-RAPPLIC(no_obj_hack);
-RAPPLIC(opener);
-RAPPLIC_DEF(play_time, bool, true);
+ERAPPLIC(no_obj_hack);
+ERAPPLIC(opener);
+ERAPPLIC_DEF(play_time, bool, true);
 ERAPPLIC_DEF(putter, bool, true);
-RAPPLIC(restart);
+ERAPPLIC(restart);
 ERAPPLIC_DEF(room_info, std::optional<int>, std::nullopt);
-RAPPLIC(room_name);
-RAPPLIC(room_obj);
+ERAPPLIC(room_name);
+ERAPPLIC(room_obj);
 ERAPPLIC(room_room);
 export struct score
 {
@@ -146,10 +148,10 @@ export struct score
     int operator()(bool ask = false) const;
     int operator()(Rarg arg = Rarg(), bool ask = false) { return (*this)(ask); }
 };
-RAPPLIC(superbrief);
-RAPPLIC(unboard);
-RAPPLIC(verbose);
-RAPPLIC(version);
+ERAPPLIC(superbrief);
+ERAPPLIC(unboard);
+ERAPPLIC(verbose);
+ERAPPLIC(version);
 ERAPPLIC_DEF(wait_, int, 3);
 ERAPPLIC(walk);
 
