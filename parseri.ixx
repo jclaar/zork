@@ -1,14 +1,17 @@
 export module Zork:ParserI;
 export import :Parser;
+import std;
 import ZException;
 import ZFuncs;
 import ZGlobals;
 import :fwd;
 import :Memq;
+import :Makstr;
 import :Adv;
 import :Object;
 import :UtilI;
 import :Rooms;
+import :Dungeon;
 
 using namespace std::string_view_literals;
 

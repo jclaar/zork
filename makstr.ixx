@@ -19,7 +19,7 @@ void add_demon(const HackP& x);
 
 PrepP find_prep(std::string_view prep);
 export VerbP find_verb(std::string_view verb);
-const ActionP& find_action(std::string_view action);
+export const ActionP& find_action(std::string_view action);
 direction find_dir(const std::string& dir);
 
 // Actions

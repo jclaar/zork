@@ -38,5 +38,5 @@ class hack;
 export using HackP = std::shared_ptr<hack>;
 export using hackfn = std::function<bool(const HackP&)>;
 
-class GObject;
+export class GObject;
 export using GObjectPtr = std::shared_ptr<GObject>;

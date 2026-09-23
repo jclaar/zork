@@ -14,8 +14,8 @@ import :Makstr;
 import std;
 
 export using WordsPobl = std::map<std::string, WordP, std::less<>>;
-using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;
-using ActionsPobl = std::map<std::string, ActionP, std::less<>>;
+export using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;
+export using ActionsPobl = std::map<std::string, ActionP, std::less<>>;
 
 export WordsPobl words_pobl;
 export int cphere;
@@ -48,15 +48,15 @@ export ActionsPobl actions_pobl;
 extern const ObjList small_papers;
 extern const ObjList palobjs;
 export extern ObjList inqobjs;
-extern ObjectP bunch_obj;
+export extern ObjectP bunch_obj;
 export extern SIterator indentstr;
-extern GObjectPtr it_object;
+export extern GObjectPtr it_object;
 export int deaths = 0;
 export extern HackP robber_demon;
 export extern HackP sword_demon;
 extern HackP fight_demon;
 extern HackP clocker;
-extern VerbP buncher;
+export extern VerbP buncher;
 using ASSpan = std::span<const attack_state>;
 extern const std::vector<ASSpan> def1_res;
 extern const std::vector<ASSpan> def2_res;
@@ -257,7 +257,7 @@ extern const BestWeaponsList best_weapons;
 // 2: ObjectP or nothing
 export using ParseVecVal = std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction>;
 export using ParseVecA = std::array<ParseVecVal, 3>;
-typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction, WordP, std::string, ObjList> ParseAval;
+export using ParseAval = std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction, WordP, std::string, ObjList>;
 
 export ParseVecVal as_pvv(const ParseAval& pv)
 {

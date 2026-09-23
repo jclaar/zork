@@ -26,8 +26,8 @@ export bool gwim_disable = false;
 
 export using PrepVec = Iterator<PhraseVecV>;
 export using ParseVec = Iterator<ParseVecA>;
-extern Iterator<ObjVector> bunuvec;
-extern Iterator<ObjVector> bunch;
+export extern Iterator<ObjVector> bunuvec;
+export extern Iterator<ObjVector> bunch;
 extern std::list<VerbP> bunchers;
 extern SIterator scrstr;
 
@@ -154,7 +154,7 @@ export ObjectP prso();
 export ObjectP prsi();
 
 
-struct StuffVec
+export struct StuffVec
 {
     PrepVec iprepvec;
     ParseVec iparsevec;
@@ -171,18 +171,18 @@ struct StuffVec
         return !empty(iprepvec) && !empty(iparsevec);
     }
 };
-typedef std::unique_ptr<StuffVec> StuffVecP;
+export using StuffVecP = std::unique_ptr<StuffVec>;
 
-typedef std::optional<const std::vector<Bits>*> Globals;
+export using Globals = std::optional<const std::vector<Bits>*>;
 
 export Iterator<ParseContV> lex(SIterator s, SIterator sx);
 export bool eparse(Iterator<ParseContV> pv, bool vb);
 
 // Generic class to return WIN from parse.
-class cwin
+export class cwin
 {};
 
-typedef std::variant<std::monostate, cwin, ParseVec, bool> SParseVal;
+export using SParseVal = std::variant<std::monostate, cwin, ParseVec, bool>;
 SParseVal sparse(Iterator<ParseContV> sv, bool vb);
 export Nefals search_list(const std::string& objname, const ObjList& slist, const AdjectiveP& adj, bool first = true, const Globals& global = Globals());
 bool this_it(const std::string& objname, const ObjectP& obj, const AdjectiveP& adj, Globals global);

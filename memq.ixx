@@ -18,7 +18,7 @@ MemqRet<Container> memq(const T& i, const Container& c)
     return iter == std::end(c) ? std::nullopt : MemqRet<Container>(iter);
 }
 
-bool memq(const ObjectP& op, Iterator<ObjVector> ol)
+export bool memq(const ObjectP& op, Iterator<ObjVector> ol)
 {
     while (ol.cur() != ol.end())
     {
@@ -29,7 +29,7 @@ bool memq(const ObjectP& op, Iterator<ObjVector> ol)
     return false;
 }
 
-Iterator<ParseVec> memq(const ObjectP& o, ParseVec pv)
+export Iterator<ParseVec> memq(const ObjectP& o, ParseVec pv)
 {
     Iterator<ParseVec> i(pv, pv.begin());
     while (i.cur() != i.end())

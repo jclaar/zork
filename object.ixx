@@ -184,7 +184,7 @@ export bool empty(const ObjectP& op)
 }
 
 ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
-ObjList& global_objects();
+export ObjList& global_objects();
 
 export using ObjectPobl = std::map<std::string, ObjList, std::less<>>;
 export const ObjectPobl& object_pobl();
