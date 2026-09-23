@@ -26,6 +26,7 @@ import :Speech;
 
 
 int mdir = 270;
+using namespace std::string_view_literals;
 
 namespace
 {

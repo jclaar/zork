@@ -10,6 +10,8 @@ import :Object;
 import :UtilI;
 import :Rooms;
 
+using namespace std::string_view_literals;
+
 const char* brks = "\"' 	:.,?!\n";
 Orphans orphans;
 Nefals nefals0;
