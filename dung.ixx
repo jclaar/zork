@@ -54,7 +54,7 @@ export extern GObjectPtr it_object;
 export int deaths = 0;
 export extern HackP robber_demon;
 export extern HackP sword_demon;
-extern HackP fight_demon;
+export extern HackP fight_demon;
 extern HackP clocker;
 export extern VerbP buncher;
 extern VerbP buncher;

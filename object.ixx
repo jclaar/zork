@@ -197,7 +197,7 @@ export bool trnn(const ObjectP& op, Bits b)
     return op->oflags().test(b);
 }
 
-template <typename... Args>
+export template <typename... Args>
 bool trnn(const ObjectP& op, Bits first, Args... args)
 {
     if (trnn(op, first))
@@ -309,7 +309,7 @@ private:
 export ObjectP last_it;
 
 export using PuzzleContents = std::array<ObjList, 64>;
-extern PuzzleContents cpobjs;
+export extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
 export using cpwall_val = std::tuple<std::string_view, int>;
 export bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }

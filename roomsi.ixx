@@ -2,12 +2,13 @@ module;
 #include "cevent.h"
 
 export module Zork:RoomsI;
-import :Rooms;
+export import :Rooms;
 import std;
 import ZFuncs;
 import ZString;
 import ZStrings;
 import ZInfo;
+import ZGlobals;
 
 import :fwd;
 import :Object;
@@ -16,6 +17,7 @@ import :Util;
 import :Dungeon;
 import :Parser;
 import :Memq;
+import :Makstr;
 import :Sr;
 import :CEvent;
 import :Parser;
@@ -337,7 +339,7 @@ bool room_info::operator()(std::optional<int> full) const
             }
             else
             {
-                tell("I see nothing special about the ", 1, std::get<ObjectP>(prso)->odesc2(), ".");
+                tell("I see nothing special about the ", 1, var_get<ObjectP>(prso)->odesc2(), ".");
             }
             return true;
         }
@@ -628,7 +630,7 @@ void rdcom(Iterator<ParseContV> ivec)
                 }
 
                 no_tell = false;        // 739
-                if (vval && std::get<VerbP>(cv)->vfcn() && apply_random(std::get<VerbP>(cv)->vfcn()))  // 740
+                if (vval && var_get<VerbP>(cv)->vfcn() && apply_random(var_get<VerbP>(cv)->vfcn()))  // 740
                 {
                     no_tell = false;
                     // If the room has changed due to the open, display the room info.
@@ -1584,8 +1586,8 @@ bool play_time::operator()(bool loser) const
     // Not an exact translation of the MDL code, but gets the point across...
     flags[FlagId::tell_flag] = true;
 
-    auto d = steady_clock::now() - start_time;
-    auto h = duration_cast<hours>(d);
+    auto d = std::chrono::steady_clock::now() - start_time;
+    auto h = duration_cast<std::chrono::hours>(d);
     d -= h;
     auto m = duration_cast<minutes>(d);
     d -= m;
@@ -1752,15 +1754,15 @@ bool walk::operator()() const
         }
         else
         {
-            losstr = std::get<NExit>(leavings).desc();
+            losstr = var_get<NExit>(leavings).desc();
             leavings = std::monostate();
         }
     }
 
     bool rv = false;
-    if (nrm && !is_empty(leavings) && (lit(rm) || lit(std::get<RoomP>(leavings))))
+    if (nrm && !is_empty(leavings) && (lit(rm) || lit(var_get<RoomP>(leavings))))
     {
-        rv = goto_(std::get<RoomP>(leavings)) && room_info()();
+        rv = goto_(var_get<RoomP>(leavings)) && room_info()();
     }
     else if (me == player() && (dark = !lit(rm)) && prob(25, 50))
     {

@@ -1,5 +1,5 @@
 export module Zork:Sr;
 import std;
 
-bool restore_game(const std::string& filename);
-bool save_game(const std::string& filename);
+export bool restore_game(const std::string& filename);
+export bool save_game(const std::string& filename);

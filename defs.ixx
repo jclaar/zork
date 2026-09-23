@@ -3,6 +3,7 @@ module;
 export module ZDefs;
 import std;
 import ZFlagSupport;
+import ZException;
 
 export enum class direction
 {
@@ -213,4 +214,13 @@ export bool apply_random(const rapplic& fcn)
 export bool apply_random(rapplic fcn, ApplyRandomArg arg)
 {
     return fcn(arg);
+}
+
+export template <typename Type, typename Variant>
+Type var_get(Variant& var)
+{
+    auto t = std::get_if<Type>(&var);
+    if (!t)
+        error("Bad variant retrieve");
+    return *t;
 }

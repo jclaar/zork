@@ -106,7 +106,7 @@ private:
     std::string sname;
     CExitPtr ce;
 };
-typedef std::shared_ptr<SetgExit> SetgExitP;
+export using SetgExitP = std::shared_ptr<SetgExit>;
 
 export using ExitType = std::variant<std::monostate, NExit, CExitPtr, DoorExitPtr, SetgExitP, std::string, RoomP>;
 export using Ex = std::tuple<direction, ExitType>;
