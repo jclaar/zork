@@ -223,15 +223,8 @@ private:
 
 export class SIterator : public Iterator<std::string>
 {
-    typedef Iterator<std::string> Base;
 public:
-    explicit SIterator(std::string& s) : Base(s) {}
-    typedef std::string value_type;
-    typedef std::int32_t difference_type;
-    typedef std::string* pointer;
-    typedef std::string& reference;
-    typedef std::random_access_iterator_tag iterator_category;
-
+    // Bring in all the constructors.
     using Iterator<std::string>::Iterator;
 
     operator std::string() const
