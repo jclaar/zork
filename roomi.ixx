@@ -149,21 +149,25 @@ Room::Room(std::string_view rid, std::string_view d1, std::string_view d2, const
         {
             auto& prop = std::get<1>(p);
             // Must be a vector of bits.
-            const std::vector<Bits>& pvb = std::get<std::vector<Bits>>(prop);
-            _rglobal = pvb;
+            const std::vector<Bits>* pvb = std::get_if<std::vector<Bits>>(&prop);
+            if (!pvb)
+                error("Invalid rglobal bits");
+            _rglobal = *pvb;
             break;
         }
         case ObjectSlots::ksl_rval:
         {
-            int val = std::get<int>(std::get<1>(p));
-            _rval = val;
+            auto val = std::get_if<int>(&std::get<1>(p));
+            if (!val)
+                error("Invalid rval slot.");
+            _rval = *val;
             if (_room_bits[RoomBit::rendgame])
             {
-                eg_score_max += val;
+                eg_score_max += *val;
             }
             else
             {
-                inc_score_max(val);
+                inc_score_max(*val);
             }
             break;
         }

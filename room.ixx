@@ -64,7 +64,7 @@ private:
 
 export using CExitPtr = std::shared_ptr<CExit>;
 
-class DoorExit
+export class DoorExit
 {
 public:
     DoorExit(std::string_view oid, std::string_view rm1, std::string_view rm2, std::string_view str = std::string_view(), ex_rapplic fn = nullptr) :
