@@ -40,21 +40,13 @@ export bool clock_enable(const CEventP& cev);
 
 export struct ParseCont
 {
-    ParseCont() : s1b("     "),
-        s2b(" "),
-        i1(0),
-        s1(s1b, s1b.end()),
-        s2(s2b)
-    {
-    }
-
 private:
-    std::string s1b;
-    std::string s2b;
+    std::string s1b = "     ";
+    std::string s2b = " ";
 public:
-    SIterator s1;
-    SIterator s2;
-    int i1;
+    SIterator s1 = SIterator(s1b, s1b.end());
+    SIterator s2 = SIterator(s2b);
+    int i1 = 0;
 };
 export using ParseContP = std::shared_ptr<ParseCont>;
 export const int lexsize = 30;
