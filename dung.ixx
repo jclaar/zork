@@ -57,7 +57,6 @@ export extern HackP sword_demon;
 extern HackP fight_demon;
 extern HackP clocker;
 export extern VerbP buncher;
-using ASSpan = std::span<const attack_state>;
 extern VerbP buncher;
 export using ASSpan = std::span<const attack_state>;
 // Attacking things...
@@ -89,18 +88,18 @@ namespace {
         attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound });
 }
 
-constexpr std::array def1_res{
+const std::array def1_res{
     ASSpan(def1.data(), def1.size()),
     ASSpan(def1.data() + 1, def1.size() - 1),
     ASSpan(def1.data() + 2, def1.size() - 2)
 };
-constexpr std::array def2_res{
+const std::array def2_res{
     ASSpan(def2a.data(), def2a.size()),
     ASSpan(def2b.data(), def2b.size()),
     ASSpan(def2b.data() + 1, def2b.size() - 1),
     ASSpan(def2b.data() + 2, def2b.size() - 2)
 };
-constexpr std::array def3_res{
+const std::array def3_res{
     ASSpan(def3a.data(), def3a.size()),
     ASSpan(def3a.data() + 1, def3a.size() - 1),
     ASSpan(def3b.data(), def3b.size()),
