@@ -333,14 +333,9 @@ export direction as_dir(const ParseVecVal& a)
 
 export ObjectP as_obj(const ParseVecVal& pvv)
 {
-    try
-    {
-        return std::get<ObjectP>(pvv);
-    }
-    catch (std::bad_variant_access&)
-    {
-        return ObjectP();
-    }
+    // Get if an object, otherwise return empty object.
+    auto op = std::get_if<ObjectP>(&pvv);
+    return op ? *op : ObjectP();
 }
 
 export WordP as_word(const ParseAval& a)
@@ -350,14 +345,8 @@ export WordP as_word(const ParseAval& a)
 
 export VerbP as_verb(const ParseVecVal& a)
 {
-    try
-    {
-        return std::get<VerbP>(a);
-    }
-    catch (std::bad_variant_access&)
-    {
-        return VerbP();
-    }
+    auto vp = std::get_if<VerbP>(&a);
+    return vp ? *vp : VerbP();
 }
 
 void dir_syns();
