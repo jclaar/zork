@@ -233,7 +233,6 @@ private:
 
 class SIterator : public Iterator<std::string>
 {
-    typedef Iterator<std::string> Base;
 public:
     using Iterator<std::string>::Iterator;
 
