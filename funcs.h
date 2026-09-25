@@ -233,14 +233,7 @@ private:
 
 class SIterator : public Iterator<std::string>
 {
-    typedef Iterator<std::string> Base;
 public:
-    typedef std::string value_type;
-    typedef int32_t difference_type;
-    typedef std::string *pointer;
-    typedef std::string &reference;
-    typedef std::random_access_iterator_tag iterator_category;
-
     using Iterator<std::string>::Iterator;
 
     operator std::string() const
