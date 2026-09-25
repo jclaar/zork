@@ -20,89 +20,191 @@ using namespace std::string_view_literals;
 namespace
 {
     const char *through_desc = "You feel somewhat disoriented as you pass through...";
+    bool go_and_look(RoomP rm)
+    {
+        bool seen = rtrnn(rm, RoomBit::rseenbit);
+        goto_(rm);
+        perform(room_desc(), find_verb("LOOK"));
+        seen || rtrz(rm, RoomBit::rseenbit);
+        return true;
+    }
+
+    void cp_corner(int locn, int col, int row)
+    {
+        auto s = (col != 0 && row != 0) ? "??" :
+            ((col = cpuvec[size_t(locn) - 1]) == 0) ? "  " :
+            (col == 1) ? "MM" :
+            "SS";
+        tell(s, no_crlf);
+    }
+
+    void cp_ortho(int contents)
+    {
+        auto ss = contents == 0 ? "  " :
+            contents == 1 ? "MM" :
+            "SS";
+        tell(ss, no_crlf);
+    }
+
+    bool cpwhere()
+    {
+        int here = cphere;
+        auto& uvec = cpuvec;
+        int n = uvec[size_t(here) - 8 - 1];
+        int s = uvec[size_t(here) + 8 - 1];
+        int e = uvec[size_t(here) + 1 - 1];
+        int w = uvec[size_t(here) - 1 - 1];
+
+        tell("      |", no_crlf);
+        cp_corner(here - 9, n, w);
+        tell(" ", no_crlf);
+        cp_ortho(n);
+        tell(" ", no_crlf);
+        cp_corner(here - 7, n, e);
+        tell("|");
+        tell("West  |", no_crlf);
+        cp_ortho(w);
+        tell(" .. ", no_crlf);
+        cp_ortho(e);
+        tell("| East\n      |", no_crlf);
+        cp_corner(here + 7, s, w);
+        tell(" ", no_crlf);
+        cp_ortho(s);
+        tell(" ", no_crlf);
+        cp_corner(here + 9, s, e);
+        tell("|");
+
+        switch (here)
+        {
+        case 10:
+            tell("In the ceiling above you is a large circular opening.");
+            break;
+        case 37:
+            tell("The center of the floor here is noticeably depressed.");
+            break;
+        case 52:
+            tell("The west wall here has a large ", 1, flags[FlagId::cpout] ? "opening" : "steel door", " at its center.  On one\n"
+                "side of the door is a small slit.");
+            break;
+        }
+
+        if (e == -2)
+            tell("There is a ladder here, firmly attached to the east wall.");
+        if (w == -3)
+            tell("There is a ladder here, firmly attached to the west wall.");
+        return true;
+    }
+
+    void numtell(int num, std::string_view str)
+    {
+        if (num == 0)
+        {
+            princ("no");
+        }
+        else
+        {
+            princ(num);
+        }
+        tell(" ", 0, str);
+        num == 1 || tell("s", 0);
+        tell(".");
+    }
+
+    void pcheck()
+    {
+        auto& lid = plid();
+        auto& mat = sfind_obj("MAT");
+        const ObjList& objs = palobjs;
+        if (is_empty(prsvec[1]))
+            return;
+        flags[FlagId::plook] = false;
+        if (verbq("TAKE") && memq(prso(), objs))
+        {
+            trnn(lid, Bits::openbit);
+            if (flags[FlagId::ptouch])
+            {
+                tell("The lid falls to cover the keyhole.");
+                trz(lid, Bits::openbit);
+            }
+            else
+            {
+                flags[FlagId::ptouch] = true;
+            }
+        }
+
+        for (const ObjectP& obj : objs)
+        {
+            if (memq(obj, sfind_obj("PKH1")->ocontents()) || memq(obj, sfind_obj("PKH2")->ocontents()))
+            {
+                tro(obj, Bits::ndescbit);
+            }
+            else
+            {
+                trz(obj, Bits::ndescbit);
+            }
+        }
+
+        if (!mat->oroom() || mat->ocan())
+        {
+            flags[FlagId::mud] = false;
+        }
+
+        if (flags[FlagId::mud])
+        {
+            remove_object(mat);
+            insert_object(mat, here);
+            tro(mat, Bits::ndescbit);
+        }
+        else
+        {
+            trz(mat, Bits::ndescbit);
+        }
+    }
+
+    void plookat(const RoomP& rm)
+    {
+        RoomP here = ::here;
+        // go_and_look changes ::here
+        go_and_look(rm);
+        goto_(here);
+    }
+
+    bool iceboom()
+    {
+        mung_room(here, icemung);
+        jigs_up(iceblast);
+        return true;
+    }
+
+    int cpnext(int rm, const ObjectP& obj)
+    {
+        auto m = memq(obj, cpwalls);
+        return rm + std::get<1>(**m);
+    }
+
+    bool cpgoto(int fx)
+    {
+        rtrz(here, RoomBit::rseenbit);
+        cpobjs[size_t(cphere) - 1] = here->robjs();
+        cphere = fx;
+        here->robjs() = cpobjs[size_t(fx) - 1];
+        perform(room_desc(), find_verb("LOOK"));
+        return true;
+    }
+
+    RoomP bkleavee_(const RoomP& rm)
+    {
+        return (held(sfind_obj("BILLS")) || held(sfind_obj("PORTR"))) ? RoomP() : rm;
+    }
+
 }
 
 ObjectP matobj;
 ObjectP timber_tie;
 
-bool go_and_look(RoomP rm)
-{
-    bool seen = rtrnn(rm, RoomBit::rseenbit);
-    goto_(rm);
-    perform(room_desc(), find_verb("LOOK"));
-    seen || rtrz(rm, RoomBit::rseenbit);
-    return true;
-}
-
 bool climb_down::operator()() const
 {
     return climb_up()(direction::Down);
-}
-
-void cp_corner(int locn, int col, int row)
-{
-    auto s = (col != 0 && row != 0) ? "??" :
-        ((col = cpuvec[size_t(locn) - 1]) == 0) ? "  " :
-        (col == 1) ? "MM" :
-        "SS";
-    tell(s, no_crlf);
-}
-
-void cp_ortho(int contents)
-{
-    auto ss = contents == 0 ? "  " :
-        contents == 1 ? "MM" :
-        "SS";
-    tell(ss, no_crlf);
-}
-
-bool cpwhere()
-{
-    int here = cphere;
-    auto &uvec = cpuvec;
-    int n = uvec[size_t(here) - 8 - 1];
-    int s = uvec[size_t(here) + 8 - 1];
-    int e = uvec[size_t(here) + 1 - 1];
-    int w = uvec[size_t(here) - 1 - 1];
-
-    tell("      |", no_crlf);
-    cp_corner(here - 9, n, w);
-    tell(" ", no_crlf);
-    cp_ortho(n);
-    tell(" ", no_crlf);
-    cp_corner(here - 7, n, e);
-    tell("|");
-    tell("West  |", no_crlf);
-    cp_ortho(w);
-    tell(" .. ", no_crlf);
-    cp_ortho(e);
-    tell("| East\n      |", no_crlf);
-    cp_corner(here + 7, s, w);
-    tell(" ", no_crlf);
-    cp_ortho(s);
-    tell(" ", no_crlf);
-    cp_corner(here + 9, s, e);
-    tell("|");
-
-    switch (here)
-    {
-    case 10:
-        tell("In the ceiling above you is a large circular opening.");
-        break;
-    case 37:
-        tell("The center of the floor here is noticeably depressed.");
-        break;
-    case 52:
-        tell("The west wall here has a large ", 1, flags[FlagId::cpout] ? "opening" : "steel door", " at its center.  On one\n"
-            "side of the door is a small slit.");
-        break;
-    }
-
-    if (e == -2)
-        tell("There is a ladder here, firmly attached to the east wall.");
-    if (w == -3)
-        tell("There is a ladder here, firmly attached to the west wall.");
-    return true;
 }
 
 bool frobozz::operator()() const
@@ -130,75 +232,9 @@ bool maker::operator()() const
     return rv;
 }
 
-void numtell(int num, std::string_view str)
-{
-    if (num == 0)
-    {
-        princ("no");
-    }
-    else
-    {
-        princ(num);
-    }
-    tell(" ", 0, str);
-    num == 1 || tell("s", 0);
-    tell(".");
-}
-
 bool oops::operator()() const
 {
     return tell("You haven't made any spelling mistakes....lately.");
-}
-
-void pcheck()
-{
-    auto &lid = plid();
-    auto &mat = sfind_obj("MAT");
-    const ObjList &objs = palobjs;
-    if (is_empty(prsvec[1]))
-        return;
-    flags[FlagId::plook] = false;
-    if (verbq("TAKE") && memq(prso(), objs))
-    {
-        trnn(lid, Bits::openbit);
-        if (flags[FlagId::ptouch])
-        {
-            tell("The lid falls to cover the keyhole.");
-            trz(lid, Bits::openbit);
-        }
-        else
-        {
-            flags[FlagId::ptouch] = true;
-        }
-    }
-
-    for (const ObjectP &obj : objs)
-    {
-        if (memq(obj, sfind_obj("PKH1")->ocontents()) || memq(obj, sfind_obj("PKH2")->ocontents()))
-        {
-            tro(obj, Bits::ndescbit);
-        }
-        else
-        {
-            trz(obj, Bits::ndescbit);
-        }
-    }
-
-    if (!mat->oroom() || mat->ocan())
-    {
-        flags[FlagId::mud] = false;
-    }
-
-    if (flags[FlagId::mud])
-    {
-        remove_object(mat);
-        insert_object(mat, here);
-        tro(mat, Bits::ndescbit);
-    }
-    else
-    {
-        trz(mat, Bits::ndescbit);
-    }
 }
 
 bool pdoor(std::string_view str, const ObjectP &lid, const ObjectP &keyhole)
@@ -267,14 +303,6 @@ bool play::operator()() const
 const ObjectP &plid(const ObjectP &obj1, const ObjectP &obj2)
 {
     return memq(obj1, here->robjs()) ? obj1 : obj2;
-}
-
-void plookat(const RoomP &rm)
-{
-    RoomP here = ::here;
-    // go_and_look changes ::here
-    go_and_look(rm);
-    goto_(here);
 }
 
 bool put_under::operator()() const
@@ -621,13 +649,6 @@ bool pass_the_bucket(const RoomP &r, const ObjectP &b)
     return true;
 }
 
-bool iceboom()
-{
-    mung_room(here, icemung);
-    jigs_up(iceblast);
-    return true;
-}
-
 bool held(const ObjectP &obj)
 {
     const ObjectP &can = obj->ocan();
@@ -707,22 +728,6 @@ bool zgnome_init::operator()() const
         }
     }
     return rv;
-}
-
-int cpnext(int rm, const ObjectP &obj)
-{
-    auto m = memq(obj, cpwalls);
-    return rm + std::get<1>(**m);
-}
-
-bool cpgoto(int fx)
-{
-    rtrz(here, RoomBit::rseenbit);
-    cpobjs[size_t(cphere) - 1] = here->robjs();
-    cphere = fx;
-    here->robjs() = cpobjs[size_t(fx) - 1];
-    perform(room_desc(), find_verb("LOOK"));
-    return true;
 }
 
 std::string username()
@@ -2282,11 +2287,6 @@ namespace exit_funcs
         return rm;
     }
 
-    RoomP bkleavee_(const RoomP &rm)
-    {
-        return (held(sfind_obj("BILLS")) || held(sfind_obj("PORTR"))) ? RoomP() : rm;
-    }
-
     ExitFuncVal bkleavee::operator()() const
     {
         RoomP rm = bkleavee_(sfind_room("BKTE"));
@@ -2301,15 +2301,6 @@ namespace exit_funcs
         if (rm)
             return rm;
         return std::monostate();
-    }
-
-    bool cpgoto(int fx)
-    {
-        rtrz(here, RoomBit::rseenbit);
-        cpobjs[size_t(cphere) - 1] = here->robjs();
-        cphere = fx;
-        here->robjs() = cpobjs[size_t(fx) - 1];
-        return perform(room_desc(), find_verb("LOOK"));
     }
 
     ExitFuncVal cpexit::operator()() const

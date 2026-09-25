@@ -8,7 +8,6 @@ extern ObjectP timber_tie;
 extern ObjectP matobj;
 
 bool bad_egg(const ObjectP &begg);
-bool cpgoto(int fx);
 ScolWalls get_wall(const RoomP& rm);
 bool held(const ObjectP& obj);
 bool pdoor(std::string_view str, const ObjectP& lid, const ObjectP& keyhole);
