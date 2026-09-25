@@ -12,8 +12,6 @@
 #include "defs.h"
 #include "rooms.h"
 
-extern bool always_lit;
-
 // Returns a new list with the specified object removed.
 ObjList splice_out(const ObjectP &op, const ObjList &al);
 ObjList &splice_out_in_place(const ObjectP& op, ObjList& al);

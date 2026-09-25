@@ -5,6 +5,9 @@ module;
 
 export module ZUtil;
 
+export bool always_lit = false;
+
+
 std::mt19937& global_gen()
 {
     static thread_local std::mt19937 g{std::random_device{}()};

@@ -6,8 +6,6 @@
 #include "memq.h"
 import ZUtil;
 
-bool always_lit = false;
-
 const HackP &get_demon(const char *id)
 {
     const ObjectP &obj = find_obj(id);
