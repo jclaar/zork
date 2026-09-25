@@ -3,6 +3,7 @@
 #include <chrono>
 #include <boost/serialization/serialization.hpp>
 
+import ZInfo;
 #include "sr.h"
 #include "adv.h"
 #include "dung.h"
@@ -17,7 +18,6 @@
 #include "globals.h"
 #include "funcs.h"
 #include "cevent.h"
-#include "info.h"
 #include "memq.h"
 
 using namespace std::string_view_literals;

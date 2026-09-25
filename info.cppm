@@ -1,6 +1,9 @@
-#include "info.h"
+module;
+#include <string_view>
 
-const std::string_view info_str = R"(Welcome to Zork!
+export module ZInfo;
+
+export const std::string_view info_str = R"(Welcome to Zork!
 
 You are near a large dungeon, which is reputed to contain vast
 quantities of treasure.  Naturally, you wish to acquire some of it.
@@ -35,8 +38,8 @@ ionally stop in a room you are visiting, but more often he just wanders
 through and rips you off (he is a skilled pickpocket).
 )";
 
-const std::string_view help_str =
-    R"(Useful commands:
+export const std::string_view help_str =
+R"(Useful commands:
 
    The 'BRIEF' command suppresses printing of long room descriptions
 for rooms which have been visited.  The 'SUPERBRIEF' command suppresses
@@ -137,4 +140,4 @@ the following types of things--
         If there is only one possible object, the parser will assume
         that it should be used.  Otherwise, the parser will ask.
         Most questions asked by the parser can be answered.)"
-;
+    ;
