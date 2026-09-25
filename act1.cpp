@@ -1200,7 +1200,7 @@ namespace exit_funcs
     ExitFuncVal carousel_out::operator()() const
     {
         _ASSERT(here->rexits().size() >= 8);
-        const Ex &cx = here->rexits()[rand() % 8];
+        const Ex &cx = here->rexits()[ZRand(0, 7)];
         return std::get<CExitPtr>(std::get<1>(cx))->cxroom();
     }
 

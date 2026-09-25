@@ -4,6 +4,7 @@
 #include "rooms.h"
 #include "dung.h"
 #include "memq.h"
+import ZUtil;
 
 bool always_lit = false;
 
@@ -178,14 +179,6 @@ bool lit(const RoomP &rm)
     return is_lit;
 }
 
-bool prob(int goodluck, int badluck)
-{
-    if (badluck == -1)
-        badluck = goodluck;
-    int val = rand() % 100;
-    return val < (flags[FlagId::lucky] ? goodluck : badluck);
-}
-
 bool perform(rapplic fcn, const VerbP &vb, const ObjectP &obj1, const ObjectP &obj2)
 {
     ParseVec& pv = prsvec;
@@ -218,12 +211,12 @@ ObjList rob_adv(const AdvP &win, ObjList newlist)
     return newlist;
 }
 
-ObjList rob_room(const RoomP &rm, ObjList newlist, int prob)
+ObjList rob_room(const RoomP &rm, ObjList newlist, int probability)
 {
     ObjList robjs = rm->robjs();
     for (const ObjectP &x : robjs)
     {
-        if (x->otval() > 0 && !trnn(x, Bits::sacredbit) && trnn(x, Bits::ovison) && ::prob(prob))
+        if (x->otval() > 0 && !trnn(x, Bits::sacredbit) && trnn(x, Bits::ovison) && prob(probability))
         {
             remove_object(x);
             tro(x, Bits::touchbit);

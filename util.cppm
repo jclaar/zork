@@ -11,14 +11,26 @@ std::mt19937& global_gen()
     return g;
 }
 
+export int ZRand(int low, int high)
+{
+	std::uniform_int_distribution<> dis(low, high);
+	return dis(global_gen());
+}
+
 export template <typename T>
 const typename T::value_type& pick_one(const T& items)
 {
-	std::uniform_int_distribution<> dis(0, items.size() - 1);
-    size_t idx = dis(global_gen());
+    size_t idx = ZRand(0, items.size() - 1);
     return items[idx];
 }
 
+export bool prob(int goodluck, std::optional<int> badluck = std::nullopt)
+{
+    if (!badluck.has_value())
+        badluck = goodluck;
+    int val = ZRand(0, 99);
+    return val < (flags[FlagId::lucky] ? goodluck : badluck);
+}
 
 export bool yes_no(bool no_is_bad = false)
 {

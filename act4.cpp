@@ -11,6 +11,7 @@
 #include "act4.h"
 #include "objfns.h"
 #include "roomfns.h"
+import ZUtil;
 
 std::vector<QuestionP> qvec;
 int mdir = 270;
@@ -964,7 +965,7 @@ namespace obj_funcs
         }
         else if (verbq("SPIN"))
         {
-            pnumb = (rand() % 8) + 1;
+            pnumb = ZRand(1, 8);
             tell("The dial spins and comes to a stop pointing at '", post_crlf, nums[pnumb - 1], "'.");
         }
         else
