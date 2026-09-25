@@ -205,21 +205,6 @@ bool perform(rapplic fcn, const VerbP &vb, const ObjectP &obj1, const ObjectP &o
 }
 
 
-bool yes_no(bool no_is_bad)
-{
-    std::string inbuf = readst("");
-    bool rv;
-    if (no_is_bad)
-    {
-        rv = inbuf.find_first_of("NnfF") == std::string::npos;
-    }
-    else
-    {
-        rv = inbuf.find_first_of("YyTt") != std::string::npos;
-    }
-    return rv;
-}
-
 ObjList rob_adv(const AdvP &win, ObjList newlist)
 {
     // First move all non-sacred valuables to the front of

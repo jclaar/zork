@@ -14,13 +14,6 @@
 
 extern bool always_lit;
 
-template <typename T>
-const typename T::value_type &pick_one(const T &items)
-{
-	size_t idx = rand() % items.size();
-	return items[idx];
-}
-
 // Returns a new list with the specified object removed.
 ObjList splice_out(const ObjectP &op, const ObjList &al);
 ObjList &splice_out_in_place(const ObjectP& op, ObjList& al);
@@ -42,4 +35,4 @@ bool prob(int goodluck, int badluck = -1);
 bool perform(rapplic fcn, const VerbP &vb, const ObjectP &obj1 = ObjectP(), const ObjectP &obj2 = ObjectP());
 ObjList rob_adv(const AdvP &win, ObjList newlist);
 ObjList rob_room(const RoomP &rm, ObjList newlist, int prob);
-bool yes_no(bool no_is_bad = false);
+

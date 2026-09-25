@@ -107,6 +107,7 @@ target_sources(zork PRIVATE
 	zstring.h zstring.cpp
 	PUBLIC FILE_SET modules TYPE CXX_MODULES FILES
 	   info.cppm
+       util.cppm
 	   ZorkException.ixx
 )
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})

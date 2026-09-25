@@ -14,6 +14,7 @@
 #include "cevent.h"
 #include "memq.h"
 #include "roomfns.h"
+import ZUtil;
 
 namespace
 {

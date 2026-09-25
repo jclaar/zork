@@ -13,6 +13,7 @@
 #include "makstr.h"
 #include "memq.h"
 #include "roomfns.h"
+import ZUtil;
 
 using namespace std::string_view_literals;
 
