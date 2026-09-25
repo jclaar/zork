@@ -2070,7 +2070,7 @@ namespace room_funcs
         {
             auto dir_room = memq(fromdir, scol_rooms);
             if (!dir_room)
-                throw ZorkException("Requested an unsupported direction in the bank.");
+                error("Requested an unsupported direction in the bank.");
             scol_room = find_room((*dir_room)->rm);
         }
         return rv;

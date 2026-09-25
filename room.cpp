@@ -1,7 +1,6 @@
 #include "room.h"
 #include "globals.h"
 #include "object.h"
-#include "ZorkException.h"
 #include "act3.h"
 #include "roomfns.h"
 #include "zstring.h"

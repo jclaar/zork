@@ -7,7 +7,6 @@
 #include "melee.h"
 #include "objfns.h"
 #include "roomfns.h"
-#include "ZorkException.h"
 #include <tuple>
 
 CEventP sphere_clock;

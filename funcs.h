@@ -1,9 +1,9 @@
 #ifndef FUNCS_H
 #define FUNCS_H
 
+import ZorkException;
 #include <ostream>
 #include <string_view>
-#include "ZorkException.h"
 #include "globals.h"
 
 #ifdef _MSC_VER

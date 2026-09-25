@@ -4,7 +4,6 @@
 #include "dung.h"
 #include "makstr.h"
 #include "parser.h"
-#include "ZorkException.h"
 
 namespace
 {
