@@ -10,6 +10,9 @@
 #include "adv.h"
 #include "makstr.h"
 #include "dung.h"
+
+import ZStrings;
+
 struct ObjectDefinition {
     StringList syns;
     StringList adj;
