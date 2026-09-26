@@ -15,6 +15,7 @@
 #include "memq.h"
 #include "roomfns.h"
 import ZUtil;
+import ZGlobals;
 
 namespace
 {

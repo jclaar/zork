@@ -20,6 +20,7 @@
 import ZUtil;
 import ZInfo;
 import ZSr;
+import ZGlobals;
 
 using namespace std::string_view_literals;
 

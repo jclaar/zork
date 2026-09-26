@@ -9,6 +9,7 @@
 #include "memq.h"
 #include "act1.h"
 import ZUtil;
+import ZGlobals;
 
 namespace
 {

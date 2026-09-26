@@ -7,13 +7,6 @@
 #include <bitset>
 #include "defs.h"
 
-int score_max();
-void inc_score_max(int inc);
-extern int eg_score_max;
-const int bigfix = INT_MAX;
-extern std::string inbuf;
-extern std::string inbuf1;
-
 extern ObjectP last_it;
 
 enum class FlagId
@@ -107,5 +100,3 @@ constexpr std::array cpwalls = {
 };
 extern FlagBits flags;
 
-int load_max();
-void load_max(int new_load);

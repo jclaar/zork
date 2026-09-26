@@ -12,6 +12,7 @@
 #include "dung.h"
 
 import ZStrings;
+import ZGlobals;
 
 struct ObjectDefinition {
     StringList syns;

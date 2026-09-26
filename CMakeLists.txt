@@ -105,6 +105,7 @@ target_sources(zork PRIVATE
 	version.h
 	zstring.h zstring.cpp
 	PUBLIC FILE_SET modules TYPE CXX_MODULES FILES
+	   globals.cppm
 	   info.cppm
 	   sr.cppm
 	   "strings.cppm"

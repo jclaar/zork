@@ -12,6 +12,7 @@
 #include "objfns.h"
 #include "roomfns.h"
 import ZUtil;
+import ZGlobals;
 
 std::vector<QuestionP> qvec;
 int mdir = 270;

@@ -10,6 +10,8 @@
 #include "adv.h"
 #include "memq.h"
 
+import ZGlobals;
+
 const char *brks = "\"' 	:.,?!\n";
 Orphans orphans;
 Nefals nefals0;
