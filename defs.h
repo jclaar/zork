@@ -261,8 +261,7 @@ struct verb : public word
 public:
     verb(std::string_view w, rapplic vf = nullptr) : word(w), _vfcn(vf) {}
     
-    const rapplic &vfcn() const { return _vfcn; }
-    void set_vfcn(const rapplic &fn) { _vfcn = fn; }
+    PROP(vfcn);
 
 private:
     rapplic _vfcn;

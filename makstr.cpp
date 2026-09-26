@@ -227,7 +227,7 @@ namespace
             const AVSyntax &av = *avp;
             VerbP verb = find_verb(av.verb());
             if (verb->vfcn() == nullptr)
-                verb->set_vfcn(av.fn());
+                verb->vfcn() = av.fn();
             pd.syntax_->sfcn = verb;
         }
         if (std::holds_alternative<driver>(itm))
