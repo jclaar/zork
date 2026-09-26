@@ -87,16 +87,15 @@ enum class FlagId
     safe_flag,
     num_flag_bits
 };
-constexpr size_t num_flag_bits = std::to_underlying(FlagId::num_flag_bits);
 
-typedef Flags<FlagId, num_flag_bits> FlagBits;
+using FlagBits = Flags<FlagId, std::to_underlying(FlagId::num_flag_bits)>;
 
 // Puzzle room
 extern int cphere;
-typedef std::array<ObjList, 64> PuzzleContents;
+using PuzzleContents = std::array<ObjList, 64>;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
-typedef std::tuple<std::string_view, int> cpwall_val;
+using cpwall_val = std::tuple<std::string_view, int>;
 bool operator==(const ObjectP& o, const cpwall_val& cp);
 bool operator==(const cpwall_val& cp, const ObjectP& o);
 

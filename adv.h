@@ -8,7 +8,7 @@ enum class AdvBits
     astaggered,
     anumbits
 };
-typedef Flags<AdvBits, std::to_underlying(AdvBits::anumbits)> AdvBitset;
+using AdvBitset = Flags<AdvBits, std::to_underlying(AdvBits::anumbits)>;
 
 class Adv
 {
