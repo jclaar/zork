@@ -3,7 +3,6 @@
 #include <chrono>
 #include <boost/serialization/serialization.hpp>
 
-#include "sr.h"
 #include "adv.h"
 #include "dung.h"
 #include "util.h"
@@ -20,6 +19,7 @@
 #include "memq.h"
 import ZUtil;
 import ZInfo;
+import ZSr;
 
 using namespace std::string_view_literals;
 

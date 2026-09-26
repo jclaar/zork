@@ -1,3 +1,4 @@
+module;
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/unique_ptr.hpp>
 #include <boost/archive/text_oarchive.hpp>
@@ -7,7 +8,6 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/array.hpp>
 #include <algorithm>
-#include "sr.h"
 #include "act1.h"
 #include "act2.h"
 #include "act3.h"
@@ -21,35 +21,36 @@
 #include "adv.h"
 #include "objser.h"
 
-typedef std::vector<int> SV;
-typedef SV::iterator SVI;
+export module ZSr;
+using SV = std::vector<int>;
+using SVI = SV::iterator;
 
 namespace
 {
     const int save_version = 6;
-    RoomP room_from_str(const std::string &s)
+    RoomP room_from_str(const std::string& s)
     {
         return (s.empty() ? RoomP() : sfind_room(s));
     }
 
-    ObjectP obj_from_str(const std::string &s)
+    ObjectP obj_from_str(const std::string& s)
     {
         return (s.empty() ? ObjectP() : sfind_obj(s));
     }
 }
 
 template <class archive>
-void dump_objects(archive &oa)
+void dump_objects(archive& oa)
 {
-    oa & object_pobl();
+    oa& object_pobl();
 }
 
 template <class archive>
-void restore_objects(archive &oa)
+void restore_objects(archive& oa)
 {
     ObjectPobl rest_objs;
-    oa & rest_objs;
-    const ObjectPobl &old_objs = object_pobl();
+    oa& rest_objs;
+    const ObjectPobl& old_objs = object_pobl();
     for (auto rest : rest_objs)
     {
         auto old = old_objs.find(rest.first);
@@ -67,16 +68,16 @@ void restore_objects(archive &oa)
 }
 
 template <class archive>
-void dump_rooms(archive &oa)
+void dump_rooms(archive& oa)
 {
-    oa & room_map();
+    oa& room_map();
 }
 
 template <class archive>
-void restore_rooms(archive &ia)
+void restore_rooms(archive& ia)
 {
     RoomMap rm_map;
-    ia & rm_map;
+    ia& rm_map;
     _ASSERT(rm_map.size() == room_map().size());
 
     for (auto rm : rm_map)
@@ -88,36 +89,36 @@ void restore_rooms(archive &ia)
 }
 
 template <class archive>
-void dump_robber(archive &ar)
+void dump_robber(archive& ar)
 {
     HackP robber = robber_demon;
     std::list<std::string> rob_objs;
     std::transform(robber->hobjs_ob().begin(), robber->hobjs_ob().end(),
         std::back_inserter(rob_objs), [](ObjectP o) { return o->oid(); });
-    ar & rob_objs;
+    ar& rob_objs;
 
     // Save the head of the first room he's heading to.
-    ar & robber->hrooms().front()->rid();
-    ar & robber->hroom()->rid();
+    ar& robber->hrooms().front()->rid();
+    ar& robber->hroom()->rid();
     bool temp = robber->hflag();
-    ar & temp;
+    ar& temp;
     temp = (robber->haction() ? true : false);
-    ar & temp;
+    ar& temp;
 }
 
 template <class archive>
-void restore_robber(archive &ar)
+void restore_robber(archive& ar)
 {
     HackP robber = robber_demon;
     std::list<std::string> rob_objs;
-    ar & rob_objs;
+    ar& rob_objs;
     ObjList robber_items;
     std::transform(rob_objs.begin(), rob_objs.end(), std::back_inserter(robber_items),
-        [](const std::string &s) { return sfind_obj(s); });
+        [](const std::string& s) { return sfind_obj(s); });
     robber->hobjs(robber_items);
 
     std::string temp;
-    ar & temp;
+    ar& temp;
     RoomP rm = room_from_str(temp);
     RoomList hack_list = rooms();
     auto cur_room = std::find_if(hack_list.begin(), hack_list.end(), [rm](RoomP cur) {return cur->rid() == rm->rid(); });
@@ -125,35 +126,35 @@ void restore_robber(archive &ar)
     hack_list.erase(hack_list.begin(), cur_room);
     robber->hrooms() = hack_list;
 
-    ar & temp;
+    ar& temp;
     robber->hroom(room_from_str(temp));
     bool btemp;
-    ar & btemp;
+    ar& btemp;
     robber->hflag(btemp);
-    ar & btemp;
+    ar& btemp;
     robber->haction(btemp ? ::robber() : hackfn());
 }
 
 template <class archive>
-void dump_clockers(archive &oa)
+void dump_clockers(archive& oa)
 {
-    oa & clocker->hobjs_ev();
+    oa& clocker->hobjs_ev();
 }
 
 template <class archive>
-void restore_clockers(archive &ia)
+void restore_clockers(archive& ia)
 {
     EventList el;
-    ia & el;
+    ia& el;
     // Iterate through the whole event list, and create a new
     // one with the actual events in it.
     EventList restored_list;
     for (auto e : el)
     {
         auto iter = std::find_if(ev.begin(), ev.end(), [e](CEventP ev)
-        {
-            return e->cid() == ev->cid();
-        });
+            {
+                return e->cid() == ev->cid();
+            });
         // The event better exist...
         _ASSERT(iter != ev.end());
         (*iter)->restore(*e.get());
@@ -163,16 +164,16 @@ void restore_clockers(archive &ia)
 }
 
 template <class archive>
-void dump_winners(archive &oa)
+void dump_winners(archive& oa)
 {
-    oa & actors();
+    oa& actors();
 }
 
 template <class archive>
-void restore_winners(archive &ia)
+void restore_winners(archive& ia)
 {
     AdvArray rest_actors;
-    ia & rest_actors;
+    ia& rest_actors;
     for (size_t i = 0; i < rest_actors.size(); ++i)
     {
         actors()[i]->restore(*rest_actors[i].get());
@@ -180,19 +181,19 @@ void restore_winners(archive &ia)
 }
 
 template <class archive>
-void save_puzzle(archive &oa)
+void save_puzzle(archive& oa)
 {
-    oa & cpobjs;
-    oa & cphere;
-    oa & sfind_room("CP")->robjs();
-    oa & cpuvec;
+    oa& cpobjs;
+    oa& cphere;
+    oa& sfind_room("CP")->robjs();
+    oa& cpuvec;
 }
 
 template <class archive>
-void restore_puzzle(archive &ia)
+void restore_puzzle(archive& ia)
 {
     PuzzleContents cpo;
-    ia & cpo;
+    ia& cpo;
     // Restore all objects into cpobjs.
     _ASSERT(cpo.size() == cpobjs.size());
     auto src_iter = cpo.cbegin();
@@ -208,20 +209,20 @@ void restore_puzzle(archive &ia)
         }
     }
 
-    ia & cphere;
+    ia& cphere;
 
     ObjList robjs, robjs2;
-    ia & robjs;
+    ia& robjs;
     for (auto o : robjs)
     {
         ObjectP rest_obj = sfind_obj(o->oid());
         robjs2.push_back(rest_obj);
     }
     sfind_room("CP")->robjs() = robjs2;
-    ia & cpuvec;
+    ia& cpuvec;
 }
 
-bool save_game(const std::string &f)
+export bool save_game(const std::string& f)
 {
     auto h = robber_demon;
     std::ofstream sf(f);
@@ -238,32 +239,32 @@ bool save_game(const std::string &f)
         dump_rooms(oa);
         dump_robber(oa);
         bool temp = (sword_demon->haction() ? true : false);
-        oa & temp;
+        oa& temp;
         dump_clockers(oa);
         dump_winners(oa);
         // Save various globals (from MGVALS in dung.mud)
-        oa & flags;
-        oa & (binf ? binf->oid() : emp);
-        oa & (btie ? btie->oid() : emp);
-        oa & light_shaft;
-        oa & moves;
-        oa & raw_score;
-        oa & deaths;
-        oa & water_level;
-        oa & cyclowrath;
-        oa & eg_score;
-        oa & beach_dig;
-        oa & cphere;
+        oa& flags;
+        oa& (binf ? binf->oid() : emp);
+        oa& (btie ? btie->oid() : emp);
+        oa& light_shaft;
+        oa& moves;
+        oa& raw_score;
+        oa& deaths;
+        oa& water_level;
+        oa& cyclowrath;
+        oa& eg_score;
+        oa& beach_dig;
+        oa& cphere;
 
         // Save room globals (RMGVALS)
-        oa & (bloc ? bloc->rid() : emp);
-        oa & (here ? here->rid() : emp);
-        oa & (scol_room ? scol_room->rid() : emp);
-        oa & (scol_active ? scol_active->rid() : emp);
+        oa& (bloc ? bloc->rid() : emp);
+        oa& (here ? here->rid() : emp);
+        oa& (scol_room ? scol_room->rid() : emp);
+        oa& (scol_active ? scol_active->rid() : emp);
 
         // OBJGVALS
-        oa & (matobj ? matobj->oid() : emp);
-        oa & (timber_tie ? timber_tie->oid() : emp);
+        oa& (matobj ? matobj->oid() : emp);
+        oa& (timber_tie ? timber_tie->oid() : emp);
 
         save_puzzle(oa);
 
@@ -277,7 +278,7 @@ bool save_game(const std::string &f)
     return true;
 }
 
-bool restore_game(const std::string &f)
+export bool restore_game(const std::string& f)
 {
     bool rv = true;
     try
@@ -308,42 +309,42 @@ bool restore_game(const std::string &f)
                 restore_rooms(ia);
                 restore_robber(ia);
                 bool btemp;
-                ia & btemp;
+                ia& btemp;
                 sword_demon->haction(btemp ? sword_glow() : hackfn());
                 restore_clockers(ia);
                 restore_winners(ia);
                 // Restore various globals.
-                ia & flags;
+                ia& flags;
                 std::string temp;
-                ia & temp;
+                ia& temp;
                 binf = obj_from_str(temp);
-                ia & temp;
+                ia& temp;
                 btie = obj_from_str(temp);
-                ia & light_shaft;
-                ia & moves;
-                ia & raw_score;
-                ia & deaths;
-                ia & water_level;
-                ia & cyclowrath;
-                ia & eg_score;
-                ia & beach_dig;
-                ia & cphere;
+                ia& light_shaft;
+                ia& moves;
+                ia& raw_score;
+                ia& deaths;
+                ia& water_level;
+                ia& cyclowrath;
+                ia& eg_score;
+                ia& beach_dig;
+                ia& cphere;
 
                 // RMGVALS
-                ia & temp, bloc = room_from_str(temp);
-                ia & temp, here = room_from_str(temp);
-                ia & temp, scol_room = room_from_str(temp);
-                ia & temp, scol_active = room_from_str(temp);
+                ia& temp, bloc = room_from_str(temp);
+                ia& temp, here = room_from_str(temp);
+                ia& temp, scol_room = room_from_str(temp);
+                ia& temp, scol_active = room_from_str(temp);
 
                 // OBJGVALS
-                ia & temp, matobj = obj_from_str(temp);
-                ia & temp, timber_tie = obj_from_str(temp);
+                ia& temp, matobj = obj_from_str(temp);
+                ia& temp, timber_tie = obj_from_str(temp);
 
                 restore_puzzle(ia);
             }
         }
     }
-    catch (boost::archive::archive_exception &)
+    catch (boost::archive::archive_exception&)
     {
         tell("Unable to process save file. Maybe corrupt or not a Zork save file?");
     }

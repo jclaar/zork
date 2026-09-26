@@ -100,13 +100,13 @@ target_sources(zork PRIVATE
 	roomdefs.h
 	roomfns.h roomfns.cpp
 	rooms.h rooms.cpp
-	sr.h sr.cpp
 	strings.h
 	util.h util.cpp
 	version.h
 	zstring.h zstring.cpp
 	PUBLIC FILE_SET modules TYPE CXX_MODULES FILES
 	   info.cppm
+	   sr.cppm
 	   "strings.cppm"
        util.cppm
 	   ZorkException.ixx
