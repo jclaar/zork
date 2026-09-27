@@ -189,7 +189,7 @@ enum class vword_flag
     vfbit,      // true: Care if can't reach the object.
     numvbits
 };
-constexpr size_t numvbits = std::to_underlying(vword_flag::numvbits);
+using VwordFlags = Flags<vword_flag, std::to_underlying(vword_flag::numvbits)>;
 
 class word
 {
@@ -232,7 +232,7 @@ struct _varg
     ObjBits vbit;   // acceptable object characteristics (default any)
     ObjBits vfwim;  // spec for fwimming
     PrepP vprep; // preposition that must precede(?) object
-    Flags<vword_flag, numvbits> vword;
+    VwordFlags vword;
 };
 using VargP = std::shared_ptr<_varg>;
 

@@ -196,7 +196,7 @@ namespace
             }
 
             vv->vprep = pd.prep;
-            Flags<vword_flag, numvbits> vbits;
+            VwordFlags vbits;
             pd.prep = nullptr;
             if (memq<aobjs>(al))
                 vbits[vword_flag::vabit] = true;
