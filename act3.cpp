@@ -8,12 +8,12 @@
 #include "funcs.h"
 #include "parser.h"
 #include "makstr.h"
-#include "zstring.h"
 #include "cevent.h"
 #include "adv.h"
 #include "memq.h"
 #include "roomfns.h"
 import ZUtil;
+import ZString;
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;

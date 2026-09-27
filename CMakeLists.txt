@@ -103,7 +103,7 @@ target_sources(zork PRIVATE
 	strings.h
 	util.h util.cpp
 	version.h
-	zstring.h zstring.cpp
+	
 	PUBLIC FILE_SET modules TYPE CXX_MODULES FILES
 	   globals.cppm
 	   info.cppm
@@ -111,7 +111,7 @@ target_sources(zork PRIVATE
 	   "strings.cppm"
        util.cppm
 	   ZorkException.ixx
-)
+ "zstring.cppm")
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
 target_link_libraries(zork Threads::Threads)

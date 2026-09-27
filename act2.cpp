@@ -5,7 +5,6 @@
 #include "defs.h"
 #include "funcs.h"
 #include "rooms.h"
-#include "zstring.h"
 #include "util.h"
 #include "dung.h"
 #include "parser.h"
@@ -15,6 +14,7 @@
 #include "roomfns.h"
 import ZUtil;
 import ZGlobals;
+import ZString;
 
 using namespace std::string_view_literals;
 

@@ -1,5 +1,6 @@
 module;
 #include <string>
+#include <limits.h>
 
 export module ZGlobals;
 

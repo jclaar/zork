@@ -4,7 +4,6 @@
 #include "dung.h"
 #include "adv.h"
 #include "memq.h"
-#include "zstring.h"
 #include "util.h"
 #include "act1.h"
 #include "act3.h"
@@ -13,6 +12,7 @@
 #include "roomfns.h"
 import ZUtil;
 import ZGlobals;
+import ZString;
 
 std::vector<QuestionP> qvec;
 int mdir = 270;
