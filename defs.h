@@ -379,9 +379,6 @@ bool apply_object(const ObjectP &op);
 bool describable(const ObjectP &op);
 bool see_inside(const ObjectP &op);
 
-extern int no_tell;
-extern int eg_score;
-
 bool apply_random(const rapplic& fcn);
 inline bool apply_random(rapplic fcn, ApplyRandomArg arg)
 {

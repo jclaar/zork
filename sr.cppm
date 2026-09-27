@@ -22,6 +22,8 @@ module;
 #include "objser.h"
 
 export module ZSr;
+import ZDefs;
+
 using SV = std::vector<int>;
 using SVI = SV::iterator;
 

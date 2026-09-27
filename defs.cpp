@@ -5,8 +5,6 @@
 #include "dung.h"
 import ZDefs;
 
-int no_tell = 0;
-int eg_score = 0;
 
 PhraseP make_phrase(const WordP &p, const ObjectP &op)
 {

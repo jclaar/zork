@@ -4,6 +4,9 @@ module;
 
 export module ZDefs;
 
+export int no_tell = 0;
+export int eg_score = 0;
+
 // For variant stuff.
 export template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
 export template<class... Ts> overload(Ts...) -> overload<Ts...>;
