@@ -209,7 +209,7 @@ public:
     prep_t(std::string_view s) : word(s) {}
 };
 
-typedef std::shared_ptr<prep_t> PrepP;
+using PrepP = std::shared_ptr<prep_t>;
 
 class buzz : public word
 {
@@ -256,16 +256,17 @@ enum class SyntaxBits
     sdriver,
     snumflags
 };
+using SyntaxFlags = Flags<SyntaxBits, std::to_underlying(SyntaxBits::snumflags)>;
 
 struct syntax
 {
     VargP syn[2];
     VerbP sfcn;
-    Flags<SyntaxBits, std::to_underlying(SyntaxBits::snumflags)> sflags;
+    SyntaxFlags sflags;
 };
-typedef std::shared_ptr<syntax> SyntaxP;
+using SyntaxP = std::shared_ptr<syntax>;
 
-typedef std::vector<SyntaxP> vspec;
+using vspec = std::vector<SyntaxP>;
 
 struct Action
 {
@@ -285,7 +286,7 @@ public:
     const vspec &vdecl() const { return vdecl_; }
     const std::string &vstr() const { return vstr_; }
 };
-typedef std::shared_ptr<Action> ActionP;
+using ActionP = std::shared_ptr<Action>;
 
 class phrase
 {
