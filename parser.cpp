@@ -11,6 +11,7 @@
 #include "memq.h"
 
 import ZGlobals;
+import ZDefs;
 
 const char *brks = "\"' 	:.,?!\n";
 Orphans orphans;

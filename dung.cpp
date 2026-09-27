@@ -17,6 +17,7 @@
 #include "adv.h"
 #include "parser.h"
 #include "roomfns.h"
+import ZDefs;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {
@@ -73,6 +74,27 @@ void init_bunch()
     bunuvec_cont = bunch_cont();
     bunuvec = Iterator<ObjVector>(bunuvec_cont, bunuvec_cont.end());
     bunch = bunuvec;
+}
+
+ParseVecVal as_pvv(const ParseAval& pv)
+{
+    return std::visit(overload{
+            [](const ActionP& ap) { return ParseVecVal(ap); },
+            [](const VerbP& vp) { return ParseVecVal(vp); },
+            [](const ObjectP& op) { return ParseVecVal(op); },
+            [](const PhraseP& pp) { return ParseVecVal(pp); },
+            [](direction d) { return ParseVecVal(d); },
+            [](auto unused) { return ParseVecVal(); }
+        }, pv);
+}
+
+OrphanSlotType as_ost(ParseVecVal pv)
+{
+    return std::visit(overload{
+        [](const ObjectP& op) { return OrphanSlotType(op); },
+        [](const PhraseP& pp) { return OrphanSlotType(pp); },
+        [](auto unused) { return OrphanSlotType(); }
+        }, pv);
 }
 
 WordsPobl words_pobl;

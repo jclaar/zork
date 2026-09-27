@@ -16,6 +16,7 @@
 import ZUtil;
 import ZGlobals;
 import ZString;
+import ZDefs;
 
 namespace
 {

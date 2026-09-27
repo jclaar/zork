@@ -3,6 +3,7 @@
 #include "defs.h"
 #include "object.h"
 #include "dung.h"
+import ZDefs;
 
 int no_tell = 0;
 int eg_score = 0;
@@ -81,4 +82,13 @@ bool flaming(const ObjectP &obj)
     // True if all of the light-giving bits are set.
     auto& f = obj->oflags();
     return f[Bits::flamebit] && f[Bits::onbit] && f[Bits::lightbit];
+}
+
+void Orphans::oslot1(const OrphanSlotType& a) {
+    static_assert(std::variant_size<OrphanSlotType>() == 3);
+    std::visit(overload{
+        [&](const ObjectP& op) { _oslot1 = op; },
+        [&](const PhraseP& pp) { _oslot1 = pp->obj(); },
+        [&](auto p) { _oslot1.reset(); }
+        }, a);
 }

@@ -9,6 +9,8 @@
 #include "rooms.h"
 #include "version.h"
 
+import ZDefs;
+
 std::string pw(SIterator unm, SIterator key);
 std::string username();
 

@@ -8,10 +8,6 @@
 #include <bitset>
 #include "FlagSupport.h"
 
-// For variant stuff.
-template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
-template<class... Ts> overload(Ts...)->overload<Ts...>;
-
 // Handy macro to define a property using the deducing this support in C++23.
 #define PROP(p) auto && p(this auto && self) noexcept \
  { \
@@ -26,7 +22,7 @@ enum class ApplyRandomArg
     read_in
 };
 // Defines a functor for an rapplic. The ApplyRandomArg argument is optional.
-typedef std::optional<ApplyRandomArg> Rarg;
+using Rarg = std::optional<ApplyRandomArg>;
 #define RAPPLIC(x) struct x { \
     bool operator()() const; \
     bool operator()(Rarg ra) const { return (*this)(); } \
@@ -44,12 +40,6 @@ typedef std::optional<ApplyRandomArg> Rarg;
     bool operator()(const HackP &dem) const; \
 }
 
-inline std::string operator+(std::string_view s1, std::string_view s2)
-{
-    std::string ss1(s1);
-    ss1 += s2;
-    return ss1;
-}
 
 enum class e_oactor
 {
@@ -371,14 +361,7 @@ public:
     void oname(std::string_view name) { _oname = name; }
 
     const ObjectP &oslot1() const { return _oslot1; }
-    void oslot1(const OrphanSlotType &a) {
-        static_assert(std::variant_size<OrphanSlotType>() == 3);
-        std::visit(overload{
-            [&](const ObjectP& op) { _oslot1 = op; },
-            [&](const PhraseP& pp) { _oslot1 = pp->obj(); },
-            [&](auto p) { _oslot1.reset(); }
-            }, a);
-    }
+    void oslot1(const OrphanSlotType& a);
 
     const OrphanSlotType &oslot2() const { return _oslot2; }
     void oslot2(const OrphanSlotType &a) { _oslot2 = a; }

@@ -21,6 +21,7 @@ import ZInfo;
 import ZSr;
 import ZGlobals;
 import ZString;
+import ZDefs;
 
 using namespace std::string_view_literals;
 

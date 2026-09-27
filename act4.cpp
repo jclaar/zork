@@ -13,6 +13,7 @@
 import ZUtil;
 import ZGlobals;
 import ZString;
+import ZDefs;
 
 std::vector<QuestionP> qvec;
 int mdir = 270;

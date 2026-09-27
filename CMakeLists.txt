@@ -111,7 +111,7 @@ target_sources(zork PRIVATE
 	   "strings.cppm"
        util.cppm
 	   ZorkException.ixx
- "zstring.cppm")
+ "zstring.cppm" "defs.cppm")
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
 target_link_libraries(zork Threads::Threads)

@@ -230,26 +230,9 @@ typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction
 typedef std::array<ParseVecVal, 3> ParseVecA;
 typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction, WordP, std::string, ObjList> ParseAval;
 
-inline ParseVecVal as_pvv(const ParseAval &pv)
-{
-    return std::visit(overload{
-            [](const ActionP& ap) { return ParseVecVal(ap); },
-            [](const VerbP& vp) { return ParseVecVal(vp); },
-            [](const ObjectP& op) { return ParseVecVal(op); },
-            [](const PhraseP& pp) { return ParseVecVal(pp); },
-            [](direction d) { return ParseVecVal(d); },
-            [](auto unused) { return ParseVecVal(); }
-        }, pv);
-}
+ParseVecVal as_pvv(const ParseAval& pv);
 
-inline OrphanSlotType as_ost(ParseVecVal pv)
-{
-    return std::visit(overload{
-        [](const ObjectP& op) { return OrphanSlotType(op); },
-        [](const PhraseP& pp) { return OrphanSlotType(pp); },
-        [](auto unused) { return OrphanSlotType(); }
-        }, pv);
-}
+OrphanSlotType as_ost(ParseVecVal pv);
 
 inline direction as_dir(const ParseVecVal &a)
 {
