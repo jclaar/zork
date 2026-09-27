@@ -108,7 +108,7 @@ enum class Bits
     masterbit,
     numbits
 };
-using FBits = Flags<Bits, std::to_underlying(Bits::numbits)>;
+using ObjBits = Flags<Bits, std::to_underlying(Bits::numbits)>;
 
 enum class RoomBit
 {
@@ -229,8 +229,8 @@ using WordP = std::shared_ptr<word>;
 
 struct _varg
 {
-    FBits vbit;   // acceptable object characteristics (default any)
-    FBits vfwim;  // spec for fwimming
+    ObjBits vbit;   // acceptable object characteristics (default any)
+    ObjBits vfwim;  // spec for fwimming
     PrepP vprep; // preposition that must precede(?) object
     Flags<vword_flag, numvbits> vword;
 };

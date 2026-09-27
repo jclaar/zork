@@ -87,7 +87,7 @@ export PhraseP make_phrase(const WordP& p, const ObjectP& op)
     return std::make_shared<phrase>(p, op);
 }
 
-export bool trnn_bits(const ObjectP& op, const FBits& bits_to_check)
+export bool trnn_bits(const ObjectP& op, const ObjBits& bits_to_check)
 {
     return (op->oflags() & bits_to_check).any();
 }

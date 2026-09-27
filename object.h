@@ -87,7 +87,7 @@ private:
     PropVal val;
 };
 
-using OFlags = FBits;
+using OFlags = ObjBits;
 
 class Object
 {
