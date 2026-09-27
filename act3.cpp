@@ -13,6 +13,7 @@
 #include "memq.h"
 #include "roomfns.h"
 import ZUtil;
+import ZDefs;
 import ZString;
 
 using namespace std::string_literals;

@@ -24,6 +24,11 @@ SyntaxP bunch_syn;
 bool gwim_disable = false;
 std::list<VerbP> bunchers;
 
+static bool vtrnn(const VargP& va, vword_flag bit)
+{
+    return va->vword[bit];
+}
+
 // Takes an input string and lowercases it.
 // first implies that the first letter will remain the same (if it's uppercase)
 // If lc is false, the string will be unchanged.

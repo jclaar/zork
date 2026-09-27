@@ -126,8 +126,7 @@ enum class RoomBit
     rnwallbit,   // "This room doesn't have walls"
     rnumbits
 };
-constexpr size_t rnumbits = std::to_underlying(RoomBit::rnumbits);
-using RoomBits = Flags<RoomBit, rnumbits>;
+using RoomBits = Flags<RoomBit, std::to_underlying(RoomBit::rnumbits)>;
 
 using BitsList = std::list<Bits>;
 
@@ -159,25 +158,19 @@ using ObjectP = std::shared_ptr<Object>;
 using ObjList = std::list<ObjectP>;
 using ObjVector = std::vector<ObjectP>;
 class GObject;
-typedef std::shared_ptr<GObject> GObjectPtr;
+using GObjectPtr = std::shared_ptr<GObject>;
 class Room;
 using RoomP = std::shared_ptr<Room>;
 using RoomList = std::list<RoomP>;
 class CEvent;
-typedef std::shared_ptr<CEvent> CEventP;
-typedef std::list<CEventP> EventList;
+using CEventP = std::shared_ptr<CEvent>;
+using EventList = std::list<CEventP>;
 class Adv;
-typedef std::unique_ptr<Adv> AdvP;
-typedef std::array <AdvP, std::to_underlying(e_oactor::none)> AdvArray;
+using AdvP = std::unique_ptr<Adv>;
+using AdvArray = std::array <AdvP, std::to_underlying(e_oactor::none)>;
 
 class hack;
-typedef std::shared_ptr<hack> HackP;
-
-template <typename T0, typename... Ts>
-bool is_empty(const std::variant<T0, Ts...> &v)
-{
-    return std::holds_alternative<std::monostate>(v);
-}
+using HackP = std::shared_ptr<hack>;
 
 // Values that can be returned from an exit function.
 using ExitFuncVal = std::variant<std::monostate, bool, RoomP>;
@@ -233,7 +226,7 @@ using AdjectiveP = std::shared_ptr<adjective>;
 inline bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
 inline bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
 
-typedef std::shared_ptr<word> WordP;
+using WordP = std::shared_ptr<word>;
 
 
 struct _varg
@@ -243,7 +236,7 @@ struct _varg
     PrepP vprep; // preposition that must precede(?) object
     Flags<vword_flag, numvbits> vword;
 };
-typedef std::shared_ptr<_varg> VargP;
+using VargP = std::shared_ptr<_varg>;
 
 
 struct verb : public word
@@ -256,7 +249,7 @@ public:
 private:
     rapplic _vfcn;
 };
-typedef std::shared_ptr<verb> VerbP;
+using VerbP = std::shared_ptr<verb>;
 
 // Flags for syntax
 enum class SyntaxBits
@@ -310,11 +303,10 @@ private:
     WordP _pprep;
     ObjectP _pobj;
 };
-typedef std::shared_ptr<phrase> PhraseP;
-typedef std::vector<PhraseP> PhraseVecV;
-PhraseP make_phrase(const WordP &p, const ObjectP &op);
+using PhraseP = std::shared_ptr<phrase>;
+using PhraseVecV = std::vector<PhraseP>;
 
-typedef std::variant<std::string_view, ObjectP, ActionP> QuestionValue;
+using QuestionValue = std::variant<std::string_view, ObjectP, ActionP>;
 
 struct question
 {
@@ -331,15 +323,10 @@ private:
     std::string _qstr;
     std::vector<QuestionValue> _qans;
 };
-typedef std::shared_ptr<question> QuestionP;
-
-inline bool vtrnn(const VargP &va, vword_flag bit)
-{
-    return va->vword[bit];
-}
+using QuestionP = std::shared_ptr<question>;
 
 // ORPHANS -- mysterious vector of orphan data
-typedef std::variant<std::monostate, ObjectP, PhraseP> OrphanSlotType;
+using OrphanSlotType = std::variant<std::monostate, ObjectP, PhraseP>;
 class Orphans
 {
 public:
@@ -375,34 +362,7 @@ private:
     std::string _oname;
 };
 
-bool apply_object(const ObjectP &op);
-bool describable(const ObjectP &op);
-bool see_inside(const ObjectP &op);
-
-bool apply_random(const rapplic& fcn);
-inline bool apply_random(rapplic fcn, ApplyRandomArg arg)
-{
-    return fcn(arg);
-}
-ExitFuncVal apply_random(ex_rapplic fcn);
-bool apply_random(hackfn fcn, const HackP &demon);
-
 // oflags, rflags testers and setter
 
-// Check status of specific bit in object or room.
-bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check);
-void trc(const ObjectP &op, Bits b);
-bool strnn(const SyntaxP &syn, SyntaxBits b);
-bool gtrnn(const RoomP &, Bits);
-// Set or 0 object bit or bits.
-void rtrc(const RoomP &p, RoomBit b);
 
-template <typename T>
-int length(const T& c)
-{
-    return (int) c.size();
-}
-
-
-bool flaming(const ObjectP &obj);
 

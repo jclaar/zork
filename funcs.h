@@ -90,7 +90,6 @@ void princ(const T &v)
 {
     tty << v;
 }
-void prin1(int val);
 inline void printstring(std::string_view str) { tty << str; }
 
 RAPPLIC(terminal);
