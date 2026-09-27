@@ -10,6 +10,7 @@ namespace
     int max_load = 100;
 }
 
+export int cphere;
 export constexpr int bigfix = INT_MAX;
 export std::string inbuf;
 export std::string inbuf1;

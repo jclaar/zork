@@ -23,6 +23,7 @@ module;
 
 export module ZSr;
 import ZDefs;
+import ZGlobals;
 
 using SV = std::vector<int>;
 using SVI = SV::iterator;

@@ -84,7 +84,6 @@ enum class FlagId
 using FlagBits = Flags<FlagId, std::to_underlying(FlagId::num_flag_bits)>;
 
 // Puzzle room
-extern int cphere;
 using PuzzleContents = std::array<ObjList, 64>;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
