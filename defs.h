@@ -108,7 +108,7 @@ enum class Bits
     masterbit,
     numbits
 };
-constexpr size_t numbits = std::to_underlying(Bits::numbits);
+using FBits = Flags<Bits, std::to_underlying(Bits::numbits)>;
 
 enum class RoomBit
 {
@@ -223,16 +223,14 @@ public:
     adjective(std::string_view s) : word(s) {}
 };
 using AdjectiveP = std::shared_ptr<adjective>;
-inline bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
-inline bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
 
 using WordP = std::shared_ptr<word>;
 
 
 struct _varg
 {
-    Flags<Bits, numbits> vbit;   // acceptable object characteristics (default any)
-    Flags<Bits, numbits> vfwim;  // spec for fwimming
+    FBits vbit;   // acceptable object characteristics (default any)
+    FBits vfwim;  // spec for fwimming
     PrepP vprep; // preposition that must precede(?) object
     Flags<vword_flag, numvbits> vword;
 };

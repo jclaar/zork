@@ -87,7 +87,7 @@ private:
     PropVal val;
 };
 
-typedef Flags<Bits, numbits> OFlags;
+using OFlags = FBits;
 
 class Object
 {

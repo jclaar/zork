@@ -27,6 +27,9 @@ export std::string operator+(std::string_view s1, std::string_view s2)
     return ss1;
 }
 
+export bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
+export bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
+
 export bool apply_random(const rapplic& fcn)
 {
     return fcn(Rarg());
@@ -84,7 +87,7 @@ export PhraseP make_phrase(const WordP& p, const ObjectP& op)
     return std::make_shared<phrase>(p, op);
 }
 
-export bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
+export bool trnn_bits(const ObjectP& op, const FBits& bits_to_check)
 {
     return (op->oflags() & bits_to_check).any();
 }
