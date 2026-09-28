@@ -257,3 +257,5 @@ inline bool openable(const ObjectP& op)
     return trnn(op, Bits::doorbit, Bits::contbit);
 }
 
+extern ObjectP last_it;
+

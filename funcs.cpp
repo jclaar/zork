@@ -7,6 +7,7 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
+import ZGlobals;
 
 namespace
 {

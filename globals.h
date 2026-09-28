@@ -7,8 +7,6 @@
 #include <bitset>
 #include "defs.h"
 
-extern ObjectP last_it;
-
 enum class FlagId
 {
     null_flag,
@@ -80,23 +78,4 @@ enum class FlagId
     safe_flag,
     num_flag_bits
 };
-
-using FlagBits = Flags<FlagId, std::to_underlying(FlagId::num_flag_bits)>;
-
-// Puzzle room
-extern int cphere;
-using PuzzleContents = std::array<ObjList, 64>;
-extern PuzzleContents cpobjs;
-extern std::array<int, 64> cpuvec;
-using cpwall_val = std::tuple<std::string_view, int>;
-bool operator==(const ObjectP& o, const cpwall_val& cp);
-bool operator==(const cpwall_val& cp, const ObjectP& o);
-
-constexpr std::array cpwalls = {
-            cpwall_val("CPSWL", 8),
-            cpwall_val("CPNWL", -8),
-            cpwall_val("CPEWL", 1),
-            cpwall_val("CPWWL", -1)
-};
-extern FlagBits flags;
 

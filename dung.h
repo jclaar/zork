@@ -46,6 +46,12 @@ extern const ObjList nobjs;
 extern const ObjList pobjs;
 extern std::array<ObjList, 8> cells;
 
+// Puzzle room
+using PuzzleContents = std::array<ObjList, 64>;
+extern PuzzleContents cpobjs;
+extern std::array<int, 64> cpuvec;
+
+
 using NumObjs = std::pair<std::string_view, int>;
 constexpr std::array numobjs =
 {

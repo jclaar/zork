@@ -253,7 +253,6 @@ std::vector<VerbP> master_actions;
 RoomP scol_room = get_room("BKVW");
 RoomP scol_active;
 
-int cphere;
 PuzzleContents cpobjs;
 std::array<int, 64> cpuvec = {
     1,  1,  1,  1,  1,  1,  1,  1,
