@@ -17,6 +17,7 @@ import ZGlobals;
 import ZString;
 import ZDefs;
 import ZMemq;
+import ZTell;
 
 namespace
 {

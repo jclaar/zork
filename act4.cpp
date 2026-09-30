@@ -14,6 +14,7 @@ import ZGlobals;
 import ZString;
 import ZDefs;
 import ZMemq;
+import ZTell;
 
 std::vector<QuestionP> qvec;
 int mdir = 270;

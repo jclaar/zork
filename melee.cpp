@@ -10,6 +10,7 @@
 import ZUtil;
 import ZGlobals;
 import ZMemq;
+import ZTell;
 
 namespace
 {

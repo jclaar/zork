@@ -18,6 +18,7 @@
 #include "roomfns.h"
 import ZDefs;
 import ZMemq;
+import ZTell;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {

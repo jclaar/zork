@@ -112,9 +112,4 @@ export void rtrc(const RoomP& p, RoomBit b)
     p->rbits()[b].flip();
 }
 
-export void prin1(int val)
-{
-    tty << val;
-}
-
 

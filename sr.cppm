@@ -24,6 +24,7 @@ module;
 export module ZSr;
 import ZDefs;
 import ZGlobals;
+import ZTell;
 
 using SV = std::vector<int>;
 using SVI = SV::iterator;
