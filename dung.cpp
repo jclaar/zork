@@ -4,7 +4,6 @@
 #include <iostream>
 #endif
 #include "dung.h"
-#include "memq.h"
 #include "funcs.h"
 #include "object.h"
 #include "rooms.h"
@@ -18,6 +17,7 @@
 #include "parser.h"
 #include "roomfns.h"
 import ZDefs;
+import ZMemq;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {

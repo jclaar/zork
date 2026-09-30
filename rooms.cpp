@@ -15,13 +15,13 @@
 #include "globals.h"
 #include "funcs.h"
 #include "cevent.h"
-#include "memq.h"
 import ZUtil;
 import ZInfo;
 import ZSr;
 import ZGlobals;
 import ZString;
 import ZDefs;
+import ZMemq;
 
 using namespace std::string_view_literals;
 

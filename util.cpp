@@ -3,8 +3,9 @@
 #include "funcs.h"
 #include "rooms.h"
 #include "dung.h"
-#include "memq.h"
+#include "parser.h"
 import ZUtil;
+import ZMemq;
 
 const HackP &get_demon(const char *id)
 {

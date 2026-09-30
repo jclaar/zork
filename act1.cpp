@@ -11,12 +11,12 @@
 #include "object.h"
 #include "adv.h"
 #include "cevent.h"
-#include "memq.h"
 #include "roomfns.h"
 import ZUtil;
 import ZGlobals;
 import ZString;
 import ZDefs;
+import ZMemq;
 
 namespace
 {

@@ -3,7 +3,6 @@
 #include "funcs.h"
 #include "dung.h"
 #include "adv.h"
-#include "memq.h"
 #include "util.h"
 #include "act1.h"
 #include "act3.h"
@@ -14,6 +13,7 @@ import ZUtil;
 import ZGlobals;
 import ZString;
 import ZDefs;
+import ZMemq;
 
 std::vector<QuestionP> qvec;
 int mdir = 270;

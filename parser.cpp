@@ -8,10 +8,10 @@
 #include "globals.h"
 #include "rooms.h"
 #include "adv.h"
-#include "memq.h"
 
 import ZGlobals;
 import ZDefs;
+import ZMemq;
 
 const char *brks = "\"' 	:.,?!\n";
 Orphans orphans;

@@ -211,3 +211,18 @@ void swap_em();
 
 // Verb functions
 RAPPLIC(bunchem);
+
+inline Iterator<ParseVec> memq(const ObjectP& o, ParseVec pv)
+{
+    Iterator<ParseVec> i(pv, pv.begin());
+    while (i.cur() != i.end())
+    {
+        if (ObjectP* op = std::get_if<ObjectP>(&i[0]))
+        {
+            if (*op == o)
+                return i;
+        }
+        ++i;
+    }
+    return i;
+}
