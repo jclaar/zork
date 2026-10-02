@@ -23,11 +23,10 @@ import ZDefs;
 import ZMemq;
 import ZTell;
 import ZAct1;
+import ZAct3;
 
 using namespace std::string_view_literals;
 
-ObjVector obj_uv_b(20);
-Iterator<ObjVector> obj_uv(obj_uv_b, obj_uv_b.end());
 RoomP here;
 rapplic dead_player = nullptr;
 int raw_score = 0;
@@ -2028,114 +2027,5 @@ bool wait_::operator()(int num) const
     {
     }
     return true;
-}
-
-namespace obj_funcs
-{
-    bool valuables_c_(std::any everything, const Iterator<ObjVector> &allbut)
-    {
-        ParseVec prsvec = ::prsvec;
-        Iterator<ObjVector> suv(obj_uv);
-        Iterator<ObjVector> tuv(top(suv));
-        int lu = length(tuv);
-        RoomP here = ::here;
-        const AdvP &winner = *::winner;
-        bool wrong_verb = false;
-        const ObjList &room_list = winner->avehicle() ? winner->avehicle()->ocontents() : here->robjs();
-
-        if (memq(sfind_obj("POSSE"), prsvec))
-        {
-            everything = 1;
-        }
-        if (verbq("TAKE"))
-        {
-            for (const ObjectP &x : room_list)
-            {
-                if (trnn(x, Bits::ovison) && !trnn(x, Bits::actorbit) && valchk(everything, x, allbut))
-                {
-                    if (suv == tuv)
-                    {
-                        tell(losstr);
-                        break;
-                    }
-                    suv = back(suv);
-                    put(suv, 0, x);
-                }
-            }
-        }
-        else if (verbq("DROP"))
-        {
-            for (const ObjectP &x : winner->aobjs())
-            {
-                if (valchk(everything, x, allbut))
-                {
-                    suv = back(suv);
-                    put(suv, 0, x);
-                }
-            }
-        }
-        else if (verbq("PUT"))
-        {
-            auto putfn = [&]() -> bool
-            {
-                for (const ObjectP &x : room_list)
-                {
-                    if (suv == tuv && x != prsi())
-                    {
-                        tell(losstr);
-                        return true;
-                    }
-                    if (trnn(x, Bits::ovison) && valchk(everything, x, allbut))
-                    {
-                        suv = back(suv);
-                        put(suv, 0, x);
-                    }
-                }
-
-                for (const ObjectP &x : winner->aobjs())
-                {
-                    if (suv == tuv && x != prsi())
-                    {
-                        tell(losstr);
-                        return true;
-                    }
-                    if (valchk(everything, x, allbut))
-                    {
-                        suv = back(suv);
-                        put(suv, 0, x);
-                    }
-                }
-                return true;
-            };
-            putfn();
-        }
-        else
-        {
-            wrong_verb = true;
-        }
-
-        if (wrong_verb)
-        {
-            tell("I can't do that with everything at once.");
-        }
-        else if (empty(suv))
-        {
-            tell("I couldn't find any", 1, everything.has_value() ? "thing." : " valuables.");
-        }
-        else
-        {
-            frob_lots(suv);
-        }
-
-        return true;
-    }
-
-    bool valuables_c::operator()() const
-    {
-        // Everything?
-        auto iter = memq(sfind_obj("EVERY"), prsvec);
-        bool everything = iter.cur() != Iterator<ParseVec>(prsvec).end();
-        return valuables_c_(everything ? everything : std::any(), Iterator<ObjVector>());
-    }
 }
 

@@ -17,6 +17,14 @@ bool terminal::operator()() const
     return tell(now_on ? "Terminal mode enabled." : "Terminal mode disabled.");
 }
 
+std::string username()
+{
+    const char* un;
+    return (un = getenv("USERNAME")) ? un :
+        (un = getenv("USER")) ? un :
+        "Occupant";
+}
+
 std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest)
 {
     _ASSERT(dest.size() >= end);

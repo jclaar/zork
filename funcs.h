@@ -249,4 +249,6 @@ typename T::mapped_type plookup(std::string_view a, const T &l)
     return iter == l.end() ? typename T::mapped_type() : iter->second;
 }
 
+std::string username();
+
 #endif

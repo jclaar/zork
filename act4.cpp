@@ -15,6 +15,7 @@ import ZDefs;
 import ZMemq;
 import ZTell;
 import ZAct1;
+import ZAct3;
 
 std::vector<QuestionP> qvec;
 int mdir = 270;

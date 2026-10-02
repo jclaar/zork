@@ -19,6 +19,7 @@ import ZMemq;
 import ZTell;
 import ZAct1;
 import ZAct2;
+import ZAct3;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {
@@ -229,7 +230,6 @@ const ObjList villains = build_olist("TROLL", "THIEF", "CYCLO");
 ObjList oppv(villains.size());
 std::vector<int> villain_probs(villains.size());
 const ObjList small_papers = build_olist("BLABE", "LABEL", "CARD", "WARNI", "PAPER", "GUIDE");
-const ObjList palobjs = build_olist("SCREW", "KEYS", "STICK", "PKEY");
 ObjList inqobjs;
 const RoomP &northend = get_room("MRD");
 RoomP mloc = get_room("MRB");
@@ -254,16 +254,6 @@ std::vector<VerbP> master_actions;
 RoomP scol_room = get_room("BKVW");
 RoomP scol_active;
 
-PuzzleContents cpobjs;
-std::array<int, 64> cpuvec = {
-    1,  1,  1,  1,  1,  1,  1,  1,
-    1,  0, -1,  0,  0, -1,  0,  1,
-    1, -1,  0,  1,  0, -2,  0,  1,
-    1,  0,  0,  0,  0,  1,  0,  1,
-    1, -3,  0,  0, -1, -1,  0,  1,
-    1,  0,  0, -1,  0,  0,  0,  1,
-    1,  1,  1,  0,  0,  0,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1 };
 
 namespace
 {

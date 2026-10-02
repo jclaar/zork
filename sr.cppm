@@ -25,6 +25,7 @@ import ZGlobals;
 import ZTell;
 import ZAct1;
 import ZAct2;
+import ZAct3;
 
 using SV = std::vector<int>;
 using SVI = SV::iterator;
