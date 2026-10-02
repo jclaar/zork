@@ -75,7 +75,7 @@ add_executable(zork
 )
 
 target_sources(zork PRIVATE 
-	act3.h act3.cpp
+	 
 	act4.h act4.cpp
 	adv.h adv.cpp
 	cevent.h cevent.cpp

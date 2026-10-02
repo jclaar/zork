@@ -1,5 +1,4 @@
 #include <algorithm>
-#include "act3.h"
 #include "act4.h"
 #include "cevent.h"
 #include "melee.h"
