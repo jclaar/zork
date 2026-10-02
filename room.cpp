@@ -5,6 +5,7 @@
 #include "roomfns.h"
 import ZGlobals;
 import ZString;
+import ZAct1;
 
 // These are all exit definitions in the original MDL code.
 #define notree_FORE1 NExit("There is no tree here suitable for climbing.")

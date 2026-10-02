@@ -1,5 +1,4 @@
 #include <algorithm>
-#include "act1.h"
 #include "act2.h"
 #include "act3.h"
 #include "act4.h"
@@ -8,6 +7,7 @@
 #include "objfns.h"
 #include "roomfns.h"
 #include <tuple>
+import ZAct1;
 
 CEventP sphere_clock;
 

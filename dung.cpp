@@ -8,7 +8,6 @@
 #include "object.h"
 #include "rooms.h"
 #include "room.h"
-#include "act1.h"
 #include "act2.h"
 #include "act3.h"
 #include "act4.h"
@@ -19,6 +18,7 @@
 import ZDefs;
 import ZMemq;
 import ZTell;
+import ZAct1;
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {

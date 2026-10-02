@@ -4,7 +4,6 @@
 #include "dung.h"
 #include "adv.h"
 #include "util.h"
-#include "act1.h"
 #include "act3.h"
 #include "act4.h"
 #include "objfns.h"
@@ -15,6 +14,7 @@ import ZString;
 import ZDefs;
 import ZMemq;
 import ZTell;
+import ZAct1;
 
 std::vector<QuestionP> qvec;
 int mdir = 270;
@@ -235,16 +235,6 @@ namespace
         return true;
     }
 
-}
-
-bool eg_infested(const RoomP &r)
-{
-    auto &m = sfind_room("MRG");
-    _ASSERT(m);
-    return (r == m ||
-        (mloc == m && r == sfind_room("INMIR")) ||
-        r == sfind_room("MRGE") ||
-        r == sfind_room("MRGW"));
 }
 
 bool follow::operator()() const

@@ -11,7 +11,6 @@ std::string_view dpr(const ObjectP& obj);
 inline void dopen(const ObjectP& obj) { tro(obj, Bits::openbit); }
 inline void dclose(const ObjectP& obj) { trz(obj, Bits::openbit); }
 bool enter_end_game();
-bool eg_infested(const RoomP& r);
 const RoomP& go_e_w(const RoomP& rm, direction dir);
 bool inqstart();
 typedef std::variant<std::monostate, bool, const char*> LookToVal;

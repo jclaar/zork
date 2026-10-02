@@ -11,7 +11,6 @@
 #include <algorithm>
 #include "makstr.h"
 #include "parser.h"
-#include "act1.h"
 #include "globals.h"
 #include "funcs.h"
 #include "cevent.h"
@@ -23,6 +22,7 @@ import ZString;
 import ZDefs;
 import ZMemq;
 import ZTell;
+import ZAct1;
 
 using namespace std::string_view_literals;
 
