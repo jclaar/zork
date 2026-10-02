@@ -2,11 +2,9 @@
 // This file is auto-generated. Do not edit.
 #include "defs.h"
 namespace obj_funcs {
-    RAPPLIC(bcontents);
     RAPPLIC(beam_function);
     RAPPLIC(bills_object);
     RAPPLIC(bird_object);
-    RAPPLIC(brick_function);
     RAPPLIC(brochure);
     RAPPLIC(bronze_door);
     RAPPLIC(buttons);
@@ -19,32 +17,20 @@ namespace obj_funcs {
     RAPPLIC(cpwall_object);
     RAPPLIC(cretin);
     RAPPLIC(crypt_object);
-    RAPPLIC(dboat_function);
     RAPPLIC(dial);
     RAPPLIC(dialbutton);
-    RAPPLIC(dumbwaiter);
     RAPPLIC(eatme_function);
     RAPPLIC(egg_object);
     RAPPLIC(flask_function);
-    RAPPLIC(fly_me);
-    RAPPLIC(fuse_function);
-    RAPPLIC(gnome_function);
-    RAPPLIC(ground_function);
-    RAPPLIC(grue_function);
-    RAPPLIC(guano_function);
     RAPPLIC(guardians);
-    RAPPLIC(gunk_function);
     RAPPLIC(head_function);
-    RAPPLIC(iboat_function);
     RAPPLIC(locked_door);
-    RAPPLIC(machine_function);
     RAPPLIC(master_function);
     RAPPLIC(mat_function);
     RAPPLIC(mends);
     RAPPLIC(mirror_function);
     RAPPLIC(mpanels);
     RAPPLIC(mrswitch);
-    RAPPLIC(mswitch_function);
     RAPPLIC(palantir);
     RAPPLIC(panel_function);
     RAPPLIC(pdoor_function);
@@ -55,15 +41,12 @@ namespace obj_funcs {
     RAPPLIC(pwind_function);
     RAPPLIC(robot_function);
     RAPPLIC(rope_function);
-    RAPPLIC(safe_function);
-    RAPPLIC(sand_function);
     RAPPLIC(scol_object);
     RAPPLIC(scolwall);
     RAPPLIC(short_pole);
     RAPPLIC(slide_function);
     RAPPLIC(slide_rope);
     RAPPLIC(sphere_function);
-    RAPPLIC(stick_function);
     RAPPLIC(stove_function);
     RAPPLIC(take_five);
     RAPPLIC(timbers);
@@ -71,11 +54,7 @@ namespace obj_funcs {
     RAPPLIC(wall_function);
     RAPPLIC(wclif_object);
     RAPPLIC(well_function);
-    RAPPLIC(wire_function);
     RAPPLIC(wood_door);
     RAPPLIC(zgnome_function);
-    RAPPLIC_RARG(balloon);
-    RAPPLIC_RARG(barrel);
     RAPPLIC_RARG(bucket);
-    RAPPLIC_RARG(rboat_function);
 }

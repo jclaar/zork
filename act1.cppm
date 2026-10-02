@@ -647,12 +647,12 @@ bool sword_glow::operator()(const HackP& dem) const
         }
         if (ng != g)
         {
-            constexpr auto tells = std::to_array(
+            constexpr std::array tells = 
                 {
                     "Your sword is no longer glowing."sv,
                     "Your sword is glowing with a faint blue glow."sv,
                     "Your sword has begun to glow very brightly."sv
-                });
+                };
             _ASSERT(ng >= 0 && ng <= 2);
             tell(tells[ng]);
         }

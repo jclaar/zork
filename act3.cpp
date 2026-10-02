@@ -1,6 +1,5 @@
 #include <numeric>
 #include <algorithm>
-#include "act2.h"
 #include "act3.h"
 #include "util.h"
 #include "objfns.h"
@@ -17,6 +16,7 @@ import ZGlobals;
 import ZMemq;
 import ZTell;
 import ZAct1;
+import ZAct2;
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;

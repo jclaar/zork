@@ -75,7 +75,6 @@ add_executable(zork
 )
 
 target_sources(zork PRIVATE 
-	act2.h act2.cpp
 	act3.h act3.cpp
 	act4.h act4.cpp
 	adv.h adv.cpp
@@ -110,7 +109,7 @@ target_sources(zork PRIVATE
 	   "strings.cppm"
        util.cppm
 	   ZorkException.ixx
- "zstring.cppm" "defs.cppm" "tell.cppm")
+ "zstring.cppm" "defs.cppm" "tell.cppm" "act2.cppm")
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
 target_link_libraries(zork Threads::Threads)

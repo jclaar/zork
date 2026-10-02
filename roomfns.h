@@ -2,24 +2,18 @@
 // This file is auto-generated. Do not edit.
 #include "defs.h"
 namespace room_funcs {
-    RAPPLIC(bats_room);
     RAPPLIC(bdoor_function);
     RAPPLIC(bkbox_room);
-    RAPPLIC(boom_room);
     RAPPLIC(caged_room);
     RAPPLIC(cell_room);
-    RAPPLIC(cliff_function);
     RAPPLIC(cmach_room);
     RAPPLIC(cp_room);
     RAPPLIC(cpout_room);
     RAPPLIC(crypt_function);
-    RAPPLIC(falls_room);
     RAPPLIC(fdoor_function);
     RAPPLIC(forest_room);
     RAPPLIC(guardians);
     RAPPLIC(inslide);
-    RAPPLIC(ledge_function);
-    RAPPLIC(machine_room);
     RAPPLIC(magic_mirror);
     RAPPLIC(magnet_room);
     RAPPLIC(mraew);
@@ -33,14 +27,10 @@ namespace room_funcs {
     RAPPLIC(ncell_room);
     RAPPLIC(ncorr_room);
     RAPPLIC(nirvana);
-    RAPPLIC(no_objs);
-    RAPPLIC(over_falls);
     RAPPLIC(palantir_room);
     RAPPLIC(parapet);
     RAPPLIC(pcell_room);
     RAPPLIC(prm_room);
-    RAPPLIC(rivr4_room);
-    RAPPLIC(safe_room);
     RAPPLIC(scorr_room);
     RAPPLIC(sledg_room);
     RAPPLIC(slide_room);

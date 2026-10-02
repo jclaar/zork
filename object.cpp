@@ -14,6 +14,7 @@ import ZStrings;
 import ZString;
 import ZGlobals;
 import ZAct1;
+import ZAct2;
 
 struct ObjectDefinition {
     StringList syns;

@@ -1,15 +1,14 @@
-#include "act2.h"
-#include "cevent.h"
-#include "objfns.h"
-#include "defs.h"
-#include "funcs.h"
+module;
+#include <string_view>
+#include "room.h"
 #include "rooms.h"
-#include "util.h"
-#include "dung.h"
+#include "defs.h"
 #include "parser.h"
 #include "adv.h"
-#include "makstr.h"
-#include "roomfns.h"
+#include "util.h"
+
+export module ZAct2;
+
 import ZUtil;
 import ZGlobals;
 import ZString;
@@ -17,16 +16,66 @@ import ZMemq;
 import ZTell;
 import ZAct1;
 
+ERAPPLIC(blast);
+ERAPPLIC(breathe);
+ERAPPLIC(burnup);
+ERAPPLIC(digger);
+ERAPPLIC(geronimo);
+ERAPPLIC(ledge_mung);
+ERAPPLIC(safe_mung);
+ERAPPLIC(shaker);
+ERAPPLIC(swimmer);
+ERAPPLIC(volgnome);
+
+export namespace room_funcs
+{
+    RAPPLIC(bats_room);
+    RAPPLIC(boom_room);
+    RAPPLIC(cliff_function);
+    RAPPLIC(falls_room);
+    RAPPLIC(ledge_function);
+    RAPPLIC(machine_room);
+    RAPPLIC(no_objs);
+    RAPPLIC(over_falls);
+    RAPPLIC(rivr4_room);
+    RAPPLIC(safe_room);
+}
+
+export namespace obj_funcs
+{
+    RAPPLIC(bcontents);
+    RAPPLIC(brick_function);
+    RAPPLIC(dboat_function);
+    RAPPLIC(dumbwaiter);
+    RAPPLIC(fly_me);
+    RAPPLIC(fuse_function);
+    RAPPLIC(gnome_function);
+    RAPPLIC(ground_function);
+    RAPPLIC(grue_function);
+    RAPPLIC(guano_function);
+    RAPPLIC(gunk_function);
+    RAPPLIC(iboat_function);
+    RAPPLIC(machine_function);
+    RAPPLIC(mswitch_function);
+    RAPPLIC(safe_function);
+    RAPPLIC(sand_function);
+    RAPPLIC(stick_function);
+    RAPPLIC(wire_function);
+    RAPPLIC_RARG(balloon);
+    RAPPLIC_RARG(barrel);
+    RAPPLIC_RARG(rboat_function);
+}
+
 using namespace std::string_view_literals;
 
-int beach_dig = 0;
 namespace
 {
     RoomP munged_room;
 }
 
-int light_shaft = []() { inc_score_max(10); return 10; }();
-ObjectP btie;
+export int beach_dig = 0;
+export int light_shaft = []() { inc_score_max(10); return 10; }();
+export ObjectP btie;
 
 bool digger::operator()() const
 {
@@ -49,7 +98,7 @@ bool digger::operator()() const
 bool ledge_mung::operator()() const
 {
     RoomP rm = sfind_room("LEDG4");
-    const AdvP &winner = *::winner;
+    const AdvP& winner = *::winner;
     if (here == rm)
     {
         if (winner->avehicle())
@@ -131,7 +180,7 @@ bool shaker::operator()() const
     }
     else if (trnn(prso, Bits::openbit) && !empty(prso->ocontents()))
     {
-        for (const ObjectP &x : prso->ocontents())
+        for (const ObjectP& x : prso->ocontents())
         {
             x->ocan() = nullptr;
             insert_object(x, here);
@@ -168,7 +217,7 @@ bool geronimo::operator()() const
     return (*winner)->avehicle() == sfind_obj("BARRE") ? jigs_up(over_falls_str) : tell("Wasn't he an Indian?");
 }
 
-bool put_balloon(const ObjectP &ball, std::string_view there, std::string_view str)
+static bool put_balloon(const ObjectP& ball, std::string_view there, std::string_view str)
 {
     if (member("LEDG", here->rid()) || here == find_room("VLBOT"))
     {
@@ -179,14 +228,14 @@ bool put_balloon(const ObjectP &ball, std::string_view there, std::string_view s
     return true;
 }
 
-bool rise_and_shine(const ObjectP &ball)
+static bool rise_and_shine(const ObjectP& ball)
 {
-    const AdvP &winner = *::winner;
+    const AdvP& winner = *::winner;
     bool in = winner->avehicle() == ball;
     RoomP bl = bloc;
 
     clock_int(bint, 3);
-    const char *m;
+    const char* m;
     if (m = member("VAIR", bl->rid()))
     {
         if (rest(m, 4) == "4"sv)
@@ -259,13 +308,13 @@ bool rise_and_shine(const ObjectP &ball)
     return true;
 }
 
-bool decline_and_fall(const ObjectP &ball)
+static bool decline_and_fall(const ObjectP& ball)
 {
-    const AdvP &winner = *::winner;
+    const AdvP& winner = *::winner;
     bool in = winner->avehicle() == ball;
     RoomP bl = bloc;
     clock_int(bint, 3);
-    const char *m;
+    const char* m;
     if (m = member("VAIR", bl->rid()))
     {
         if (rest(m, 4) == std::string("1"))
@@ -325,9 +374,9 @@ bool breathe::operator()() const
 
 bool burnup::operator()() const
 {
-    const ObjectP &r = sfind_obj("RECEP");
+    const ObjectP& r = sfind_obj("RECEP");
     _ASSERT(r->ocontents().size() == 1);
-    const ObjectP &obj = r->ocontents().front();
+    const ObjectP& obj = r->ocontents().front();
     if (here == bloc)
     {
         tell("You notice that the ", 1, obj->odesc2(), " has burned out, and that\n"
@@ -338,7 +387,7 @@ bool burnup::operator()() const
     return true;
 }
 
-void fweep(int, int)
+void fweep(int, int = 0)
 {
     // This function uses the "IMAGE 7" command apparently to ring
     // the terminal bell. Since that will be annoying, to say the
@@ -349,7 +398,7 @@ namespace obj_funcs
 {
     bool dboat_function::operator()() const
     {
-        const ObjectP &dboat = sfind_obj("DBOAT");
+        const ObjectP& dboat = sfind_obj("DBOAT");
         bool rv = true;
         if (verbq("INFLA"))
         {
@@ -384,7 +433,7 @@ namespace obj_funcs
     bool gunk_function::operator()() const
     {
         const ObjectP& g = sfind_obj("GUNK");
-        const ObjectP &m = g->ocan();
+        const ObjectP& m = g->ocan();
         if (m)
         {
             splice_out_in_place(g, m->ocontents());
@@ -397,8 +446,8 @@ namespace obj_funcs
 
     bool fuse_function::operator()() const
     {
-        const ObjectP &fuse = sfind_obj("FUSE");
-        const ObjectP &brick = sfind_obj("BRICK");
+        const ObjectP& fuse = sfind_obj("FUSE");
+        const ObjectP& brick = sfind_obj("BRICK");
         RoomP brick_room;
 
         bool rv = true;
@@ -411,7 +460,7 @@ namespace obj_funcs
         {
             if (fuse->ocan() == brick)
             {
-                if (auto &oc = brick->ocan())
+                if (auto& oc = brick->ocan())
                 {
                     brick_room = oc->oroom();
                 }
@@ -444,7 +493,7 @@ namespace obj_funcs
                     clock_int(safin, 5);
                     munged_room = brick->oroom();
 
-                    for (const ObjectP &x : brick_room->robjs())
+                    for (const ObjectP& x : brick_room->robjs())
                     {
                         if (trnn(x, Bits::takebit))
                         {
@@ -454,7 +503,7 @@ namespace obj_funcs
 
                     if (brick_room == sfind_room("LROOM"))
                     {
-                        for (const ObjectP &x : sfind_obj("TCASE")->ocontents())
+                        for (const ObjectP& x : sfind_obj("TCASE")->ocontents())
                         {
                             x->ocan() = nullptr;
                         }
@@ -494,8 +543,8 @@ namespace obj_funcs
 
     bool gnome_function::operator()() const
     {
-        auto &gnome = sfind_obj("GNOME");
-        if (verbq( "GIVE", "THROW" ))
+        auto& gnome = sfind_obj("GNOME");
+        if (verbq("GIVE", "THROW"))
         {
             ObjectP prso = ::prso();
             if (prso->otval() != 0)
@@ -545,8 +594,8 @@ namespace obj_funcs
 
     bool balloon::operator()(Rarg arg) const
     {
-        auto &ball = sfind_obj("BALLO");
-        auto &cont = sfind_obj("RECEP");
+        auto& ball = sfind_obj("BALLO");
+        auto& cont = sfind_obj("RECEP");
         ObjectP binf = ::binf;
         if (arg == ApplyRandomArg::read_out)
         {
@@ -558,7 +607,7 @@ namespace obj_funcs
                 }
                 else
                 {
-					// The word "the" is doubled in the MDL source code.
+                    // The word "the" is doubled in the MDL source code.
                     tell("The cloth bag is draped over the basket.");
                 }
                 if (btie)
@@ -585,7 +634,7 @@ namespace obj_funcs
                         ExitType rex = std::get<1>(**m);
                         RoomP r;
                         _ASSERT(!std::get_if<RoomP>(&rex));
-                        std::string *sp;
+                        std::string* sp;
                         (sp = std::get_if<std::string>(&rex)) &&
                             (r = sfind_room(*sp)) &&
                             (bloc = r);
@@ -638,7 +687,7 @@ namespace obj_funcs
         bool rv = true;
         ObjectP prso = ::prso();
 
-        if (verbq( "TAKE", "FIND", "EXAMI" ))
+        if (verbq("TAKE", "FIND", "EXAMI"))
         {
             bcontents()();
         }
@@ -684,7 +733,7 @@ namespace obj_funcs
             tell("The ", 0, prso->odesc2(), " is an integral part of the basket and cannot\nbe removed.");
             tell(prso == sfind_obj("BROPE") ? " The wire might possibly be tied, though." : "");
         }
-        else if (verbq( "FIND", "EXAMI" ))
+        else if (verbq("FIND", "EXAMI"))
         {
             prso = ::prso();
             tell("The ", 1, prso->odesc2(), " is part of the basket.  It may be manipulated\n"
@@ -748,7 +797,7 @@ namespace obj_funcs
             auto& screw = sfind_obj("SCREW");
             if (prsio == screw)
             {
-                auto &mach = sfind_obj("MACHI");
+                auto& mach = sfind_obj("MACHI");
                 if (trnn(mach, Bits::openbit))
                 {
                     tell("The machine doesn't seem to want to do anything.");
@@ -758,7 +807,7 @@ namespace obj_funcs
                     tell("The machine comes to life (figuratively) with a dazzling display of\n"
                         "colored lights and bizarre noises.  After a few moments, the\n"
                         "excitement abates.", long_tell1);
-                    auto &c = sfind_obj("COAL");
+                    auto& c = sfind_obj("COAL");
                     if (c->ocan() == mach)
                     {
                         remove_object(c);
@@ -777,7 +826,7 @@ namespace obj_funcs
                         // Make a copy of the list, since remove_object changes 
                         // mach->ocontents.
                         ObjList temp_list = mach->ocontents();
-                        for (auto &o : temp_list)
+                        for (auto& o : temp_list)
                         {
                             remove_object(o);
                         }
@@ -801,7 +850,7 @@ namespace obj_funcs
         bool rv = false;
         if (here == sfind_room("MACHI"))
         {
-            const ObjectP &mach = sfind_obj("MACHI");
+            const ObjectP& mach = sfind_obj("MACHI");
             if (verbq("OPEN"))
             {
                 rv = true;
@@ -895,9 +944,9 @@ namespace obj_funcs
     bool rboat_function::operator()(Rarg arg) const
     {
         bool rv = true;
-        const ObjectP &rboat = sfind_obj("RBOAT");
-        const ObjectP &iboat = sfind_obj("IBOAT");
-        const AdvP &winner = *::winner;
+        const ObjectP& rboat = sfind_obj("RBOAT");
+        const ObjectP& iboat = sfind_obj("IBOAT");
+        const AdvP& winner = *::winner;
         if (arg) // Must be a holdover from something -- never used in MDL.
         {
             return false;
@@ -944,8 +993,8 @@ namespace obj_funcs
 
     bool iboat_function::operator()() const
     {
-        const ObjectP &iboat = sfind_obj("IBOAT");
-        const ObjectP &rboat = sfind_obj("RBOAT");
+        const ObjectP& iboat = sfind_obj("IBOAT");
+        const ObjectP& rboat = sfind_obj("RBOAT");
         bool rv;
         if (rv = verbq("INFLA"))
         {
@@ -975,10 +1024,10 @@ namespace obj_funcs
 
     bool dumbwaiter::operator()() const
     {
-        const ObjectP &tb = sfind_obj("TBASK");
-        const RoomP &top = sfind_room("TSHAF");
-        const RoomP &bot = sfind_room("BSHAF");
-        const ObjectP &fb = sfind_obj("FBASK");
+        const ObjectP& tb = sfind_obj("TBASK");
+        const RoomP& top = sfind_room("TSHAF");
+        const RoomP& bot = sfind_room("BSHAF");
+        const ObjectP& fb = sfind_obj("FBASK");
         bool ct = flags[FlagId::cage_top];
         bool lit = ::lit(here);
 
@@ -1105,23 +1154,23 @@ namespace room_funcs
     bool boom_room::operator()() const
     {
         bool rv = false;
-        const AdvP &winner = *::winner;
-        const ObjList &aobjs = winner->aobjs();
-        if (bool dummy = false; verbq("GO-IN") || (dummy = verbq( "ON", "TRNON", "LIGHT", "BURN" )))
+        const AdvP& winner = *::winner;
+        const ObjList& aobjs = winner->aobjs();
+        if (bool dummy = false; verbq("GO-IN") || (dummy = verbq("ON", "TRNON", "LIGHT", "BURN")))
         {
             // Check if the player has the candles, torch, or matches, and
             // if one of them is burning.
             auto o = [&aobjs]()
-            {
-                const char* objs[] = { "CANDL", "TORCH", "MATCH" };
-                for (auto obj_name : objs)
                 {
-                    auto& obj = sfind_obj(obj_name);
-                    if (memq(obj, aobjs) && trnn(obj, Bits::onbit))
-                        return obj;
-                }
-                return ObjectP();
-            }();
+                    const char* objs[] = { "CANDL", "TORCH", "MATCH" };
+                    for (auto obj_name : objs)
+                    {
+                        auto& obj = sfind_obj(obj_name);
+                        if (memq(obj, aobjs) && trnn(obj, Bits::onbit))
+                            return obj;
+                    }
+                    return ObjectP();
+                }();
 
             if (o)
             {
@@ -1194,7 +1243,7 @@ namespace room_funcs
 
     bool no_objs::operator()() const
     {
-        const AdvP &winner = *::winner;
+        const AdvP& winner = *::winner;
         flags[FlagId::empty_handed] = empty(winner->aobjs());
         if (here == sfind_room("BSHAF") && lit(here))
         {
@@ -1206,7 +1255,7 @@ namespace room_funcs
 
     bool rivr4_room::operator()() const
     {
-        const AdvP &winner = *::winner;
+        const AdvP& winner = *::winner;
         if (memq(sfind_obj("BUOY"), winner->aobjs()) && flags[FlagId::buoy_flag])
         {
             tell("Something seems funny about the feel of the buoy.");
@@ -1217,7 +1266,7 @@ namespace room_funcs
 
     bool cliff_function::operator()() const
     {
-        const AdvP &winner = *::winner;
+        const AdvP& winner = *::winner;
         if (memq(sfind_obj("RBOAT"), winner->aobjs()))
         {
             flags[FlagId::deflate] = false;
@@ -1232,7 +1281,7 @@ namespace room_funcs
     bool bats_room::operator()() const
     {
         bool rv = true;
-        const AdvP &winner = *::winner;
+        const AdvP& winner = *::winner;
         if (verbq("GO-IN") && !memq(sfind_obj("GARLI"), winner->aobjs()))
         {
             rv = obj_funcs::fly_me()();
