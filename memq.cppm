@@ -1,5 +1,6 @@
 module;
 #include <optional>
+#include <algorithm>
 export module ZMemq;
 
 // Simulates MEMQ returns. If a value is returned, it is an
