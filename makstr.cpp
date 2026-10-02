@@ -1,9 +1,9 @@
 #include <array>
-#include "act4.h"
 #include "rooms.h"
 #include "dung.h"
 #include "makstr.h"
 #include "parser.h"
+import ZAct4;
 
 namespace
 {
