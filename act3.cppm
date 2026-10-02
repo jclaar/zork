@@ -2,6 +2,7 @@ module;
 #include <string>
 #include <string_view>
 #include <numeric>
+#include "defs.h"
 #include "room.h"
 #include "rooms.h"
 #include "parser.h"
@@ -2573,7 +2574,7 @@ namespace exit_funcs
         }
 
         auto m = memq(dir, cpexits);
-        _ASSERT(m);
+        _ASSERT(m.has_value());
         fx = (*m)->offset;
 
         if ((abs(fx) >= 1 && abs(fx) <= 8) ||
