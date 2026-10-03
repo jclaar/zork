@@ -86,7 +86,7 @@ target_sources(zork PRIVATE
 	dung.h dung.cpp
 	FlagSupport.h
 	funcs.h funcs.cpp
-	globals.h globals.cpp
+	globals.h
 	gobject.h 
 	makstr.h makstr.cpp
 	mdlfun.cpp

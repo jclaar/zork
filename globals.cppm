@@ -1,6 +1,7 @@
 module;
 #include <string>
 #include <limits.h>
+#include "object.h"
 
 export module ZGlobals;
 
@@ -36,4 +37,30 @@ export void load_max(int new_load)
 {
     max_load = new_load;
 }
+
+export using cpwall_val = std::tuple<std::string_view, int>;
+export bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }
+export bool operator==(const cpwall_val& cp, const ObjectP& o) { return o == cp; }
+
+export constexpr std::array cpwalls = {
+            cpwall_val("CPSWL", 8),
+            cpwall_val("CPNWL", -8),
+            cpwall_val("CPEWL", 1),
+            cpwall_val("CPWWL", -1)
+};
+
+export FlagBits flags = []()
+    {
+        FlagBits fl;
+        // Only have to init flags that are non-zero.
+        fl[FlagId::tell_flag] = true;
+        fl[FlagId::lucky] = true;
+        fl[FlagId::mr1] = true;
+        fl[FlagId::mr2] = true;
+        fl[FlagId::brief_flag] = true;
+        fl[FlagId::cage_top] = true;
+        fl[FlagId::buoy_flag] = true;
+        fl[FlagId::folflag] = true;
+        return fl;
+    }();
 

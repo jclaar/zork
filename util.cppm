@@ -4,6 +4,7 @@ module;
 #include "funcs.h"
 
 export module ZUtil;
+import ZGlobals;
 
 export bool always_lit = false;
 

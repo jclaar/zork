@@ -64,6 +64,15 @@ import ZString;
 #define wd_FDOOR wd_BDOOR
 #define nd_NCELL std::make_shared<DoorExit>("ODOOR", "NCELL", "NIRVA")
 
+
+bool CExit::cxflag() const {
+    if (auto fid = std::get_if<FlagId>(&_flid))
+    {
+        return flags[*fid];
+    }
+    return false;
+}
+
 RoomList &rooms()
 {
     static RoomList rps;
