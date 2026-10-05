@@ -11,12 +11,23 @@ namespace
     int max_load = 100;
 }
 
-export int cphere;
+using FlagBits = Flags<FlagId, std::to_underlying(FlagId::num_flag_bits)>;
+
 export constexpr int bigfix = INT_MAX;
 export std::string inbuf;
 export std::string inbuf1;
+export int cphere;
 
 export int eg_score_max = 0;
+
+export using cpwall_val = std::tuple<std::string_view, int>;
+
+export constexpr std::array cpwalls = {
+            cpwall_val("CPSWL", 8),
+            cpwall_val("CPNWL", -8),
+            cpwall_val("CPEWL", 1),
+            cpwall_val("CPWWL", -1)
+};
 
 export int score_max()
 {
@@ -38,16 +49,8 @@ export void load_max(int new_load)
     max_load = new_load;
 }
 
-export using cpwall_val = std::tuple<std::string_view, int>;
 export bool operator==(const ObjectP& o, const cpwall_val& cp) { return o->oid() == std::get<0>(cp); }
 export bool operator==(const cpwall_val& cp, const ObjectP& o) { return o == cp; }
-
-export constexpr std::array cpwalls = {
-            cpwall_val("CPSWL", 8),
-            cpwall_val("CPNWL", -8),
-            cpwall_val("CPEWL", 1),
-            cpwall_val("CPWWL", -1)
-};
 
 export FlagBits flags = []()
     {

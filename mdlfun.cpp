@@ -10,6 +10,7 @@
 #include "version.h"
 
 import ZDefs;
+import ZTell;
 
 std::string pw(SIterator unm, SIterator key);
 std::string username();

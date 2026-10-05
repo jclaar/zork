@@ -6,10 +6,11 @@
 #include "parser.h"
 #include "makstr.h"
 #include "cevent.h"
-#include "memq.h"
-#include "act1.h"
 import ZUtil;
 import ZGlobals;
+import ZMemq;
+import ZTell;
+import ZAct1;
 
 namespace
 {

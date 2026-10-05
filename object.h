@@ -5,15 +5,13 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <list>
 #include <memory>
-#include <bitset>
 #include "funcs.h"
 #include "defs.h"
 #include "strings.h"
 #include "cevent.h"
 
-typedef std::initializer_list<const char*> StringList;
+using StringList = std::initializer_list<const char*>;
 
 enum class ObjectSlots
 {
@@ -63,7 +61,7 @@ private:
     int _val = 0;
     CEventP _ev;
 };
-typedef std::shared_ptr<olint_t> OlintP;
+using OlintP = std::shared_ptr<olint_t>;
 
 class OP
 {
@@ -204,7 +202,7 @@ inline bool empty(const ObjectP &op)
 ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
 ObjList &global_objects();
 
-typedef std::map<std::string, ObjList, std::less<>> ObjectPobl;
+using ObjectPobl = std::map<std::string, ObjList, std::less<>>;
 const ObjectPobl &object_pobl();
 bool is_obj(const std::string &obj);
 const ObjectP &find_obj(std::string_view name);
@@ -257,3 +255,15 @@ inline bool openable(const ObjectP& op)
     return trnn(op, Bits::doorbit, Bits::contbit);
 }
 
+extern ObjectP last_it;
+
+inline bool memq(const ObjectP& op, Iterator<ObjVector> ol)
+{
+    while (ol.cur() != ol.end())
+    {
+        if (ol[0] == op)
+            return true;
+        ol = rest(ol);
+    }
+    return false;
+}

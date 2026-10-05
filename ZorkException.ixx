@@ -15,7 +15,7 @@ private:
     std::string _what;
 };
 
-export inline void error(const char* msg)
+export [[noreturn]] inline void error(const char* msg)
 {
     throw ZorkException(msg);
 }

@@ -40,6 +40,10 @@ using Rarg = std::optional<ApplyRandomArg>;
     bool operator()(const HackP &dem) const; \
 }
 
+#define ERAPPLIC(x) export RAPPLIC(x)
+#define EHACKFN(x) export HACKFN(x)
+#define ERAPPLIC_DEF(x, type, def) export RAPPLIC_DEF(x, type, def)
+
 
 enum class e_oactor
 {

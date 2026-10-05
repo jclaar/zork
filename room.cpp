@@ -1,10 +1,12 @@
 #include "room.h"
 #include "globals.h"
 #include "object.h"
-#include "act3.h"
 #include "roomfns.h"
 import ZGlobals;
 import ZString;
+import ZAct1;
+import ZAct2;
+import ZAct3;
 
 // These are all exit definitions in the original MDL code.
 #define notree_FORE1 NExit("There is no tree here suitable for climbing.")
@@ -63,7 +65,6 @@ import ZString;
 #define wd_BDOOR std::make_shared<DoorExit>("QDOOR", "BDOOR", "FDOOR")
 #define wd_FDOOR wd_BDOOR
 #define nd_NCELL std::make_shared<DoorExit>("ODOOR", "NCELL", "NIRVA")
-
 
 bool CExit::cxflag() const {
     if (auto fid = std::get_if<FlagId>(&_flid))

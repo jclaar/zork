@@ -8,9 +8,6 @@ module;
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/array.hpp>
 #include <algorithm>
-#include "act1.h"
-#include "act2.h"
-#include "act3.h"
 #include <fstream>
 #include <vector>
 #include "object.h"
@@ -24,6 +21,10 @@ module;
 export module ZSr;
 import ZDefs;
 import ZGlobals;
+import ZTell;
+import ZAct1;
+import ZAct2;
+import ZAct3;
 
 using SV = std::vector<int>;
 using SVI = SV::iterator;

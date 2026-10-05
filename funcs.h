@@ -16,82 +16,6 @@ import ZorkException;
 #define _ASSERT assert
 #endif
 
-extern std::ostream tty;
-
-// Bits for tell
-constexpr uint32_t long_tell = 0x40000000;
-constexpr uint32_t pre_crlf = 0x00000002;
-constexpr uint32_t post_crlf = 0x00000001;
-constexpr uint32_t no_crlf = 0x00000000;
-constexpr uint32_t long_tell1 = long_tell | post_crlf;
-
-class tell_base
-{
-protected:
-    void tell_pre(uint32_t flags);
-    void tell_post(uint32_t flags);
-public:
-    operator bool() const { return true; }
-};
-
-class ctellt : public tell_base
-{
-    template <typename T>
-    void tellt2(const T& s)
-    {
-        tty << s;
-    }
-
-    void tellt2(std::monostate ms)
-    {
-        
-    }
-
-    template <typename T, typename... Args>
-    void tellt2(const T& s, Args... args)
-    {
-        tty << s;
-        tellt2(args...);
-    }
-
-    template <typename... Args>
-    ctellt(std::string_view s, uint32_t flags, Args...args)
-    {
-        tell_pre(flags);
-        tty << s;
-        tellt2(args...);
-        tell_post(flags);
-    }
-
-    ctellt(std::string_view s, uint32_t flags)
-    {
-        tell_pre(flags);
-        tty << s;
-        tell_post(flags);
-    }
-    template <typename... Args>
-    friend bool tell(std::string_view s, uint32_t flags, Args...args);
-    friend bool tell(std::string_view s, uint32_t flags);
-};
-
-template <typename... Args>
-bool tell(std::string_view s, uint32_t flags, Args...args)
-{
-    return ctellt(s, flags, args...);
-}
-
-// Add a separate template function with flags, since GCC
-// doesn't like templates with default arguments.
-bool tell(std::string_view s, uint32_t flags = post_crlf);
-
-inline void crlf() { tty << std::endl; }
-template <typename T>
-void princ(const T &v)
-{
-    tty << v;
-}
-inline void printstring(std::string_view str) { tty << str; }
-
 RAPPLIC(terminal);
 
 std::string readst(std::string_view prompt);
@@ -324,5 +248,7 @@ typename T::mapped_type plookup(std::string_view a, const T &l)
     auto iter = l.find(a);
     return iter == l.end() ? typename T::mapped_type() : iter->second;
 }
+
+std::string username();
 
 #endif

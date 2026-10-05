@@ -75,13 +75,8 @@ add_executable(zork
 )
 
 target_sources(zork PRIVATE 
-	act1.h act1.cpp
-	act2.h act2.cpp
-	act3.h act3.cpp
-	act4.h act4.cpp
 	adv.h adv.cpp
 	cevent.h cevent.cpp
-	
 	defs.h defs.cpp
 	dung.h dung.cpp
 	FlagSupport.h
@@ -91,7 +86,6 @@ target_sources(zork PRIVATE
 	makstr.h makstr.cpp
 	mdlfun.cpp
 	melee.h melee.cpp
-	memq.h memq.cpp
 	objdefs.h
 	object.h object.cpp
 	objfns.h objser.h
@@ -105,13 +99,15 @@ target_sources(zork PRIVATE
 	version.h
 	
 	PUBLIC FILE_SET modules TYPE CXX_MODULES FILES
+	   act1.cppm
 	   globals.cppm
 	   info.cppm
+	   memq.cppm
 	   sr.cppm
 	   "strings.cppm"
        util.cppm
 	   ZorkException.ixx
- "zstring.cppm" "defs.cppm")
+ "zstring.cppm" "defs.cppm" "tell.cppm" "act2.cppm" "act3.cppm" "act4.cppm")
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
 target_link_libraries(zork Threads::Threads)

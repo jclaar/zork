@@ -8,75 +8,21 @@
 #include <chrono>
 #include <thread>
 import ZGlobals;
+import ZTell;
 
-namespace
-{
-    // Output stream, supporting scripting.
-    class TtyBuff : public std::basic_stringbuf<char, std::char_traits<char>>
-    {
-    public:
-        TtyBuff() : gen(std::random_device{}()), dist(50, 200) {}
-
-        bool IsTerminal() const { return term_sim; }
-        void SetTerminal(bool on) { term_sim = on; }
-
-    protected:
-        int sync() override
-        {
-            using namespace std::chrono_literals;
-            // Delay between each character in terminal mode.
-            auto delay = term_sim ? 10ms : 0ms;
-            char c;
-            if (term_sim)
-            {
-                // If in terminal mode, pause for a little bit to simulate memory/disk access, etc.
-                std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen)));
-            }
-            while ((c = this->sbumpc()) != (char)traits_type::eof())
-            {
-                std::cout << c;
-                if (delay != 0ms)
-                {
-                    std::cout.flush();
-                    std::this_thread::sleep_for(delay);
-                }
-                // If scripting, write this character to the script channel as well.
-                if (script_channel)
-                {
-                    (*script_channel) << c;
-                }
-            }
-            if (script_channel)
-                script_channel->flush();
-            return 0;
-        }
-
-    private:
-        std::mt19937 gen;                               // random engine
-        std::uniform_int_distribution<int> dist;        // distribution
-        bool term_sim = false;
-    };
-
-    TtyBuff tty_buf;
-}
-std::ostream tty(&tty_buf);
-
-void tell_base::tell_pre(uint32_t flags)
-{
-    ::flags[FlagId::tell_flag] = true;
-    if (flags & pre_crlf)
-        tty << std::endl;
-}
-void tell_base::tell_post(uint32_t flags)
-{
-    if (flags & post_crlf)
-        tty << std::endl;
-}
 
 bool terminal::operator()() const
 {
-    tty_buf.SetTerminal(!tty_buf.IsTerminal());
-    return tell(tty_buf.IsTerminal() ? "Terminal mode enabled." : "Terminal mode disabled.");
+    bool now_on = toggle_terminal();
+    return tell(now_on ? "Terminal mode enabled." : "Terminal mode disabled.");
+}
+
+std::string username()
+{
+    const char* un;
+    return (un = getenv("USERNAME")) ? un :
+        (un = getenv("USER")) ? un :
+        "Occupant";
 }
 
 std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest)
@@ -116,8 +62,3 @@ SIterator uppercase(SIterator src)
     return src;
 }
 
-bool tell(std::string_view s, uint32_t flags)
-{
-    //return ctellt(s, flags);
-    return tell(s, flags, std::monostate());
-}

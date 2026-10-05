@@ -18,7 +18,6 @@ extern WordsPobl words_pobl;
 extern DirectionsPobl directions_pobl;
 extern ActionsPobl actions_pobl;
 extern const ObjList small_papers;
-extern const ObjList palobjs;
 extern ObjList inqobjs;
 extern ObjectP bunch_obj;
 extern SIterator indentstr;
@@ -45,6 +44,7 @@ extern const ObjList cobjs;
 extern const ObjList nobjs;
 extern const ObjList pobjs;
 extern std::array<ObjList, 8> cells;
+
 
 using NumObjs = std::pair<std::string_view, int>;
 constexpr std::array numobjs =
