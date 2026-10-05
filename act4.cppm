@@ -15,6 +15,7 @@ import ZUtil;
 import ZGlobals;
 import ZString;
 import ZDefs;
+import ZFuncs;
 import ZMemq;
 import ZTell;
 import ZAct1;

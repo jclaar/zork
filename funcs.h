@@ -16,18 +16,6 @@ import ZorkException;
 #define _ASSERT assert
 #endif
 
-RAPPLIC(terminal);
-
-// Various MDL functions mapped to C++ equivalents
-//inline char *back(char *s, size_t count) { return s - count; }
-std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest);
-char *substruc(const char *src, size_t start, size_t end, char *dest);
-inline const char *member(std::string_view subst, const std::string &str)
-{
-    std::string::size_type pos = str.find(subst, 0);
-    return (pos == std::string::npos) ? nullptr : &str[pos];
-}
-
 // Class to support iterating through a container. 
 // Mainly useful for supporting REST and BACK.
 template <typename T>
@@ -210,21 +198,6 @@ inline SIterator rest(SIterator it, int offset = 1)
 	return it;
 }
 
-template <typename T>
-concept StringLike = std::is_convertible_v<T, std::string_view>;
-
-inline std::string_view rest(StringLike auto&& s, int len = 1)
-{
-	return std::string_view(&s[len], std::string_view(s).size() - len);
-}
-
-template <typename T>
-T back(T it, int offset = 1)
-{
-    it.advance(-offset);
-    return it;
-}
-
 SIterator uppercase(SIterator src);
 
 inline SIterator substruc(SIterator src, int start, int end, SIterator dest)
@@ -243,14 +216,5 @@ inline SIterator substruc(const char *msg, int start, int end, SIterator dest)
     std::copy(msg + start, msg + end, dest);
     return dest;
 }
-
-template <typename T>
-typename T::mapped_type plookup(std::string_view a, const T &l)
-{
-    auto iter = l.find(a);
-    return iter == l.end() ? typename T::mapped_type() : iter->second;
-}
-
-std::string username();
 
 #endif

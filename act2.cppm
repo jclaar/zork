@@ -14,6 +14,7 @@ import ZGlobals;
 import ZString;
 import ZMemq;
 import ZTell;
+import ZFuncs;
 import ZAct1;
 
 ERAPPLIC(blast);

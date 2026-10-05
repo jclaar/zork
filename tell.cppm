@@ -6,9 +6,12 @@ module;
 #include <random>
 #include <thread>
 #include "rooms.h"
+#include "defs.h"
 export module ZTell;
 import ZGlobals;
 import ZorkException;
+
+ERAPPLIC(terminal);
 
 // Bits for tell
 export constexpr uint32_t long_tell = 0x40000000;
@@ -89,7 +92,7 @@ namespace
 }
 export std::ostream tty(&tty_buf);
 
-export bool toggle_terminal()
+static bool toggle_terminal()
 {
     tty_buf.SetTerminal(!tty_buf.IsTerminal());
     return tty_buf.IsTerminal();
@@ -193,4 +196,9 @@ export std::string readst(std::string_view prompt)
     return buffer;
 }
 
+bool terminal::operator()() const
+{
+    bool now_on = toggle_terminal();
+    return tell(now_on ? "Terminal mode enabled." : "Terminal mode disabled.");
+}
 

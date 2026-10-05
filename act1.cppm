@@ -7,6 +7,7 @@ module;
 
 export module ZAct1;
 import ZGlobals;
+import ZFuncs;
 import ZMemq;
 import ZUtil;
 import ZTell;
