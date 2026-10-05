@@ -1,7 +1,7 @@
 #include "cevent.h"
-#include "melee.h"
 #include "objfns.h"
 #include "rooms.h"
+import ZMelee;
 import ZAct1;
 import ZAct2;
 import ZAct3;

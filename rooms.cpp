@@ -20,6 +20,7 @@ import ZGlobals;
 import ZString;
 import ZMakstr;
 import ZDefs;
+import ZMelee;
 import ZMemq;
 import ZFuncs;
 import ZTell;

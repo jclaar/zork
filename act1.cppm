@@ -11,6 +11,7 @@ import ZFuncs;
 import ZMemq;
 import ZUtil;
 import ZMakstr;
+import ZMelee;
 import ZTell;
 import ZString;
 import ZDefs;
@@ -20,7 +21,6 @@ int hs = 0;
 
 // Demons
 EHACKFN(sword_glow);
-EHACKFN(fighting);
 EHACKFN(robber);
 
 // Object functiosn
