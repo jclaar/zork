@@ -1,4 +1,5 @@
 module;
+#include <array>
 #include "adv.h"
 #include "util.h"
 #include "dung.h"
@@ -65,23 +66,23 @@ namespace
         attack_state::light_wound, attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
         attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound };
 
-    const std::vector<ASSpan> def1_res = {
-        {std::begin(def1), std::end(def1)},
-        {std::begin(def1) + 1, std::end(def1)},
-        {std::begin(def1) + 2, std::end(def1)}
+    constexpr std::array def1_res = {
+        ASSpan(std::begin(def1), std::end(def1)),
+        ASSpan(std::begin(def1) + 1, std::end(def1)),
+        ASSpan(std::begin(def1) + 2, std::end(def1))    
     };
-    const std::vector<ASSpan> def2_res = {
-        {std::begin(def2a), std::end(def2a)},
-        {std::begin(def2b), std::end(def2b)},
-        {std::begin(def2b) + 1, std::end(def2b)},
-        {std::begin(def2b) + 2, std::end(def2b)}
+    constexpr std::array def2_res = {
+        ASSpan(std::begin(def2a), std::end(def2a)),
+        ASSpan(std::begin(def2b), std::end(def2b)),
+        ASSpan(std::begin(def2b) + 1, std::end(def2b)),
+        ASSpan(std::begin(def2b) + 2, std::end(def2b))
     };
-    const std::vector<ASSpan> def3_res = {
-        {std::begin(def3a), std::end(def3a)},
-        {std::begin(def3a) + 1, std::end(def3a)},
-        {std::begin(def3b), std::end(def3b)},
-        {std::begin(def3b) + 1, std::end(def3b)},
-        {std::begin(def3c), std::end(def3c)}
+    constexpr std::array<ASSpan, 5> def3_res = {
+        ASSpan(std::begin(def3a), std::end(def3a)),
+        ASSpan(std::begin(def3a) + 1, std::end(def3a)),
+        ASSpan(std::begin(def3b), std::end(def3b)),
+        ASSpan(std::begin(def3b) + 1, std::end(def3b)),
+        ASSpan(std::begin(def3c), std::end(def3c))
     };
 }
 
