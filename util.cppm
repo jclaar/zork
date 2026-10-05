@@ -5,6 +5,7 @@ module;
 
 export module ZUtil;
 import ZGlobals;
+import ZTell;
 
 export bool always_lit = false;
 

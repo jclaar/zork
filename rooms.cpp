@@ -37,7 +37,6 @@ Iterator<ParseContV> parse_cont;
 bool bugflag = false;
 std::list<HackP> demons;
 HackP clocker;
-std::unique_ptr<std::ofstream> script_channel;
 
 namespace
 {
@@ -1238,7 +1237,7 @@ bool do_save::operator()() const
 
 bool do_script::operator()() const
 {
-    if (script_channel)
+    if (is_scripting())
     {
         tell("You are already scripting.");
     }
@@ -1249,14 +1248,12 @@ bool do_script::operator()() const
         std::string s;
         std::cin >> s;
         flush_cin();
-        script_channel = std::make_unique<std::ofstream>(s);
-        if (script_channel->is_open())
+        if (enable_scripting(s))
         {
             tell("Scripting to ", 1, s, ".");
         }
         else
         {
-            script_channel.reset();
             tell("Unable to open scripting file.");
         }
     }
@@ -1265,10 +1262,10 @@ bool do_script::operator()() const
 
 bool do_unscript::operator()(bool verbose) const
 {
-    if (script_channel)
+    if (is_scripting())
     {
         // Automatically closes the file.
-        script_channel.reset();
+        disable_scripting();
         verbose && tell("Scripting off."sv);
     }
     else

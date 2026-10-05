@@ -8,6 +8,7 @@ module;
 #include "rooms.h"
 export module ZTell;
 import ZGlobals;
+import ZorkException;
 
 // Bits for tell
 export constexpr uint32_t long_tell = 0x40000000;
@@ -15,6 +16,26 @@ export constexpr uint32_t pre_crlf = 0x00000002;
 export constexpr uint32_t post_crlf = 0x00000001;
 export constexpr uint32_t no_crlf = 0x00000000;
 export constexpr uint32_t long_tell1 = long_tell | post_crlf;
+
+// Scripting support.
+std::unique_ptr<std::ofstream> script_channel;
+export bool is_scripting() { return script_channel != nullptr; }
+export bool enable_scripting(const std::string &filename)
+{
+    if (is_scripting())
+		error("Scripting already enabled.");
+	script_channel = std::make_unique<std::ofstream>(filename);
+	if (!script_channel->is_open())
+	{
+		script_channel.reset();
+	}
+    return is_scripting();
+}
+
+export void disable_scripting()
+{
+    script_channel.reset();
+}
 
 namespace
 {
@@ -158,4 +179,18 @@ export void prin1(int val)
 {
     tty << val;
 }
+
+export std::string readst(std::string_view prompt)
+{
+    tty << prompt;
+    tty.flush();
+    std::string buffer;
+    std::getline(std::cin, buffer);
+    if (script_channel)
+    {
+        (*script_channel) << buffer << std::endl;
+    }
+    return buffer;
+}
+
 

@@ -18,8 +18,6 @@ import ZorkException;
 
 RAPPLIC(terminal);
 
-std::string readst(std::string_view prompt);
-
 // Various MDL functions mapped to C++ equivalents
 //inline char *back(char *s, size_t count) { return s - count; }
 std::string &substruc(const std::string &src, size_t start, size_t end, std::string &dest);
@@ -200,21 +198,25 @@ Iterator<T> top(Iterator<T> it)
 }
 
 template <typename T>
-T rest(T it, int offset = 1)
+Iterator<T> rest(Iterator<T> it, int offset = 1)
 {
     it.advance(offset);
     return it;
 }
 
-template <>
-inline char *rest(char *s, int len) { return s + len; }
-template <>
-inline const char *rest(const char *s, int len) { return s + len; }
-inline std::string_view rest(const std::string& s, int len = 1)
+inline SIterator rest(SIterator it, int offset = 1)
 {
-    return std::string_view(&s[len], s.size() - len);
+	it.advance(offset);
+	return it;
 }
 
+template <typename T>
+concept StringLike = std::is_convertible_v<T, std::string_view>;
+
+inline std::string_view rest(StringLike auto&& s, int len = 1)
+{
+	return std::string_view(&s[len], std::string_view(s).size() - len);
+}
 
 template <typename T>
 T back(T it, int offset = 1)

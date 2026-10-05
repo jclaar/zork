@@ -100,6 +100,7 @@ target_sources(zork PRIVATE
 	
 	PUBLIC FILE_SET modules TYPE CXX_MODULES FILES
 	   act1.cppm
+	   funcs.cppm
 	   globals.cppm
 	   info.cppm
 	   memq.cppm

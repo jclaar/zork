@@ -43,19 +43,6 @@ char *substruc(const char *src, size_t start, size_t end, char *dest)
     return dest;
 }
 
-std::string readst(std::string_view prompt)
-{
-    tty << prompt;
-    tty.flush();
-    std::string buffer;
-    std::getline(std::cin, buffer);
-    if (script_channel)
-    {
-        (*script_channel) << buffer << std::endl;
-    }
-    return buffer;
-}
-
 SIterator uppercase(SIterator src)
 {
     std::transform(src.begin(), src.end(), src.begin(), [](char c) { return toupper(c); });
