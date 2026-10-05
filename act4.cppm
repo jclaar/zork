@@ -17,11 +17,11 @@ import ZString;
 import ZDefs;
 import ZFuncs;
 import ZMemq;
+import ZMakstr;
 import ZTell;
 import ZAct1;
 import ZAct3;
 
-export std::vector<QuestionP> qvec;
 int mdir = 270;
 
 using LookToVal = std::variant<std::monostate, bool, const char*>;

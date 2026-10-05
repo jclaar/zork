@@ -9,7 +9,6 @@
 #include "objfns.h"
 #include "rooms.h"
 #include <algorithm>
-#include "makstr.h"
 #include "parser.h"
 #include "globals.h"
 #include "funcs.h"
@@ -19,6 +18,7 @@ import ZInfo;
 import ZSr;
 import ZGlobals;
 import ZString;
+import ZMakstr;
 import ZDefs;
 import ZMemq;
 import ZFuncs;

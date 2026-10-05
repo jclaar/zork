@@ -4,11 +4,11 @@
 #include "dung.h"
 #include "rooms.h"
 #include "parser.h"
-#include "makstr.h"
 #include "cevent.h"
 import ZUtil;
 import ZGlobals;
 import ZMemq;
+import ZMakstr;
 import ZTell;
 import ZAct1;
 

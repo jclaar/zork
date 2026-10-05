@@ -5,7 +5,6 @@
 #include <span>
 #include <string>
 #include "defs.h"
-#include "makstr.h"
 #include "room.h"
 #include "funcs.h"
 #include "melee.h"
@@ -307,36 +306,3 @@ void vsynonym(const char *verb, T first, Args... args)
     vsynonym(verb, args...);
 }
 
-template <typename T>
-void add_zork(SpeechType st, T wc)
-{
-    // One hack -- remove LOWER from the adjective list so that
-    // it doesn't conflict with the verb LOWER. I don't know why 
-    // this isn't a problem in the MDL code? I'm guessing because
-    // of the different between a STRING and a PSTRING?
-    std::string w = wc;
-    if (w != "LOWER")
-    {
-        words_pobl[w] = make_word(st, wc);
-    }
-}
-
-template <typename T, typename ...Args>
-void add_zork(SpeechType st, T first, Args... args)
-{
-    add_zork(st, first);
-    add_zork(st, args...);
-}
-
-template <typename T>
-void add_buzz(T w)
-{
-    add_zork(SpeechType::kBuzz, w);
-}
-
-template <typename T, typename ...Args>
-void add_buzz(T first, Args... args)
-{
-    add_buzz(first);
-    add_buzz(args...);
-}

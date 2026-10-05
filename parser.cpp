@@ -3,7 +3,6 @@
 #include "dung.h"
 #include "object.h"
 #include "funcs.h"
-#include "makstr.h"
 #include "util.h"
 #include "globals.h"
 #include "rooms.h"
@@ -12,6 +11,7 @@
 import ZGlobals;
 import ZDefs;
 import ZMemq;
+import ZMakstr;
 import ZTell;
 import ZFuncs;
 
@@ -768,6 +768,19 @@ const Orphans &orphan(bool flag, const ActionP &action, const OrphanSlotType &sl
         orphans.oflag(false);
     }
     return orphans;
+}
+
+void add_buncher(const char* b)
+{
+    bunchers.push_front(find_verb(b));
+}
+
+void add_buncher(const std::initializer_list<const char*>& verbs)
+{
+    for (auto vb : verbs)
+    {
+        bunchers.push_front(find_verb(vb));
+    }
 }
 
 std::string prlcstr(const std::string &str)

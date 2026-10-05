@@ -14,6 +14,7 @@
 #include "roomfns.h"
 import ZDefs;
 import ZMemq;
+import ZMakstr;
 import ZTell;
 import ZAct1;
 import ZAct2;

@@ -6,7 +6,6 @@ module;
 #include "room.h"
 #include "rooms.h"
 #include "parser.h"
-#include "makstr.h"
 #include "util.h"
 #include "adv.h"
 #include "cevent.h"
@@ -18,6 +17,7 @@ import ZDefs;
 import ZString;
 import ZGlobals;
 import ZMemq;
+import ZMakstr;
 import ZFuncs;
 import ZTell;
 import ZFuncs;

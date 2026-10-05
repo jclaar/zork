@@ -7,12 +7,12 @@
 #include "objfns.h"
 #include "strings.h"
 #include "adv.h"
-#include "makstr.h"
 #include "dung.h"
 
 import ZStrings;
 import ZString;
 import ZGlobals;
+import ZMakstr;
 import ZAct1;
 import ZAct2;
 import ZAct3;

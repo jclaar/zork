@@ -14,6 +14,7 @@ import ZGlobals;
 import ZString;
 import ZMemq;
 import ZTell;
+import ZMakstr;
 import ZFuncs;
 import ZAct1;
 

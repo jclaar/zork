@@ -10,6 +10,7 @@ import ZGlobals;
 import ZFuncs;
 import ZMemq;
 import ZUtil;
+import ZMakstr;
 import ZTell;
 import ZString;
 import ZDefs;

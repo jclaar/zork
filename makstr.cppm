@@ -1,9 +1,17 @@
+module;
 #include <array>
+#include <string_view>
+#include "defs.h"
 #include "rooms.h"
 #include "dung.h"
+
+export module ZMakstr;
+
+#if 0
+#include <array>
 #include "makstr.h"
 #include "parser.h"
-import ZAct4;
+#endif
 
 namespace
 {
@@ -17,9 +25,47 @@ namespace
     };
 }
 
+export enum class SpeechType
+{
+    kVerb,
+    kPrep,
+    kAdj,
+    kBuzz,
+};
+
+export std::vector<QuestionP> qvec;
+
+// Actions
+// Object support flags.
+export class nrobj {};
+export class robjs {};
+export class reach {};
+export class obj {};
+export class aobjs {};
+export class have {};
+export class no_take {};
+export class try_ {}; // Added underscore to avoid using "try" keyword
+export class take {};
+export class driver {};
+export class flip {};
+export using ALType = std::variant<std::monostate, int, reach, robjs, aobjs, no_take, have, try_, take, Bits, std::list<Bits>>;
+export using AL = std::list<ALType>;
+export class AVSyntax : private std::tuple<std::string_view, rapplic>
+{
+public:
+    AVSyntax(std::string_view name, rapplic fn) : std::tuple<std::string_view, rapplic>(name, fn) {}
+
+    std::string_view verb() const { return std::get<0>(*this); }
+    rapplic fn() const { return std::get<1>(*this); }
+};
+typedef std::variant<const char*, obj, nrobj, AL, AVSyntax, driver, flip> ParseItem;
+export using AnyV = std::vector<ParseItem>;
+export using ActionVec = std::vector<AnyV>;
+
+
 WordP make_word(SpeechType st, std::string_view val)
 {
-    static_assert((int) SpeechType::kVerb == 0 && (int) SpeechType::kPrep == 1);
+    static_assert((int)SpeechType::kVerb == 0 && (int)SpeechType::kPrep == 1);
     static_assert((int)SpeechType::kAdj == 2 && (int)SpeechType::kBuzz == 3);
     using WordFn = std::function<WordP(std::string_view)>;
     const WordFn fns[] =
@@ -29,22 +75,22 @@ WordP make_word(SpeechType st, std::string_view val)
         mw<adjective>(),
         mw<buzz>()
     };
-    return fns[(int) st](val);
+    return fns[(int)st](val);
 }
 
-void add_demon(const HackP &x)
+export void add_demon(const HackP& x)
 {
     demons.push_front(x);
 }
 
-VerbP find_verb(std::string_view verbo)
+export VerbP find_verb(std::string_view verbo)
 {
     auto viter = words_pobl.find(verbo);
     if (viter == words_pobl.end())
     {
         viter = words_pobl.insert(std::pair(std::string(verbo), make_word(SpeechType::kVerb, verbo))).first;
     }
-    const WordP &wp = viter->second;
+    const WordP& wp = viter->second;
     _ASSERT(typeid(*wp.get()) == typeid(verb));
     VerbP vp = std::static_pointer_cast<verb>(wp);
     if (!vp)
@@ -54,7 +100,7 @@ VerbP find_verb(std::string_view verbo)
     return vp;
 }
 
-const ActionP &find_action(std::string_view act)
+export const ActionP& find_action(std::string_view act)
 {
     auto iter = actions_pobl.find(act);
     if (iter == actions_pobl.end())
@@ -62,7 +108,7 @@ const ActionP &find_action(std::string_view act)
     return iter->second;
 }
 
-PrepP find_prep(std::string_view prepo)
+export PrepP find_prep(std::string_view prepo)
 {
     // Is the preposition already in the list?
     // If so return that set. Otherwise insert an empty set
@@ -72,14 +118,14 @@ PrepP find_prep(std::string_view prepo)
     {
         wpi = words_pobl.insert(std::pair(std::string(prepo), make_word(SpeechType::kPrep, prepo))).first;
     }
-    auto &wp = wpi->second;
+    auto& wp = wpi->second;
     PrepP pp = std::dynamic_pointer_cast<prep_t>(wp);
     if (!pp)
         error("Requested preposition that wasn't a preposition");
     return pp;
 }
 
-direction find_dir(const std::string &dir)
+export direction find_dir(const std::string& dir)
 {
     auto iter = directions_pobl.find(dir);
     if (iter == directions_pobl.end())
@@ -102,26 +148,26 @@ namespace
     };
 
     template <typename T>
-    bool memq(const AL &al)
+    bool memq(const AL& al)
     {
-        auto iter = std::find_if(std::begin(al), std::end(al), [](const ALType &t)
-        {
-            return std::holds_alternative<T>(t);
-        });
+        auto iter = std::find_if(std::begin(al), std::end(al), [](const ALType& t)
+            {
+                return std::holds_alternative<T>(t);
+            });
         return iter != std::end(al);
     }
 
-    const ALType &idx(const AL &al, size_t index)
+    const ALType& idx(const AL& al, size_t index)
     {
         AL::const_iterator i = al.begin();
         std::advance(i, index);
         return *i;
     }
 
-    void parse_item(ParseItem itm, ParseData &pd)
+    void parse_item(ParseItem itm, ParseData& pd)
     {
         bool found = false;
-        if (const char **p = std::get_if<const char*>(&itm))
+        if (const char** p = std::get_if<const char*>(&itm))
         {
             pd.prep = find_prep(*p);
             found = true;
@@ -136,13 +182,13 @@ namespace
             itm = AL({ -1, robjs(), aobjs() });
             found = true;
         }
-        if (AL *alp = std::get_if<AL>(&itm))
+        if (AL* alp = std::get_if<AL>(&itm))
         {
             found = true;
-            const AL &al = *alp;
-            auto &a0 = idx(al, 0);
+            const AL& al = *alp;
+            auto& a0 = idx(al, 0);
             VargP vv = std::make_shared<_varg>();
-			if (auto b = std::get_if<Bits>(&a0))
+            if (auto b = std::get_if<Bits>(&a0))
             {
                 vv->vbit[*b] = 1;
             }
@@ -151,9 +197,9 @@ namespace
                 _ASSERT(*index_value == -1);
                 vv->vbit.set();
             }
-			else if (auto pbl = std::get_if<std::list<Bits>>(&a0))
+            else if (auto pbl = std::get_if<std::list<Bits>>(&a0))
             {
-                auto &bl = *pbl;
+                auto& bl = *pbl;
                 for (Bits b : bl)
                 {
                     vv->vbit[b] = 1;
@@ -168,8 +214,8 @@ namespace
             // It's basically used to distinguish between, for example,
             // attacking something (i.e. "strike troll") vs. lighting something.
             // (i.e. "strike match")
-			const Bits *b;
-            if (al.size() > 1 && (b = std::get_if<Bits>(&idx(al,1))))
+            const Bits* b;
+            if (al.size() > 1 && (b = std::get_if<Bits>(&idx(al, 1))))
             {
                 vv->vfwim[*b] = 1;
             }
@@ -190,7 +236,7 @@ namespace
                 }
                 else
                 {
-					_ASSERT(std::get<int>(a0) == -1);
+                    _ASSERT(std::get<int>(a0) == -1);
                     vv->vfwim.set();
                 }
             }
@@ -221,10 +267,10 @@ namespace
 
             pd.syntax_->syn[pd.whr++] = vv;
         }
-        if (const AVSyntax *avp = std::get_if<AVSyntax>(&itm))
+        if (const AVSyntax* avp = std::get_if<AVSyntax>(&itm))
         {
             found = true;
-            const AVSyntax &av = *avp;
+            const AVSyntax& av = *avp;
             VerbP verb = find_verb(av.verb());
             if (verb->vfcn() == nullptr)
                 verb->vfcn() = av.fn();
@@ -272,54 +318,89 @@ static vspec make_action(const AnyV& av)
     return vs;
 }
 
-static vspec make_action(const ActionVec &decl)
+static vspec make_action(const ActionVec& decl)
 {
     vspec vs;
-    for (const AnyV &av : decl)
+    for (const AnyV& av : decl)
     {
         make_action(av, vs);
     }
     return vs;
 }
 
-void oneadd_action(const char *str1, const char *str2, rapplic atm)
-{
-    add_action(str1, str2, AnyV{obj(), AVSyntax(str1, atm)});
-}
-
-void onenradd_action(const char *str1, const char *str2, rapplic atm)
-{
-    add_action(str1, str2, AnyV{nrobj(), AVSyntax(str1, atm)});
-}
-
-void add_action(const char* nam, const char* str, const AnyV& av)
+export void add_action(const char* nam, const char* str, const AnyV& av)
 {
     vspec vs = make_action(av);
     actions_pobl[nam] = std::make_shared<Action>(nam, vs, str);
 }
 
-void add_action(const char *nam, const char *str, const ActionVec &decl)
+export void add_action(const char* nam, const char* str, const ActionVec& decl)
 {
     vspec vs = make_action(decl);
     actions_pobl[nam] = std::make_shared<Action>(nam, vs, str);
 }
 
-void sadd_action(const char *name, rapplic action)
+export void oneadd_action(const char* str1, const char* str2, rapplic atm)
+{
+    add_action(str1, str2, AnyV{ obj(), AVSyntax(str1, atm) });
+}
+
+export void onenradd_action(const char* str1, const char* str2, rapplic atm)
+{
+    add_action(str1, str2, AnyV{ nrobj(), AVSyntax(str1, atm) });
+}
+
+export void sadd_action(const char* name, rapplic action)
 {
     add_action(name, "", AnyV{ AVSyntax(name, action) });
 }
 
-void add_inqobj(const ObjectP &obj)
+export void add_inqobj(const ObjectP& obj)
 {
     inqobjs.push_front(obj);
 }
 
-void add_question(const char *str, const std::initializer_list<QuestionValue> &vector)
+export void add_question(const char* str, const std::initializer_list<QuestionValue>& vector)
 {
     auto qp = std::make_shared<question>(str, vector);
     qvec.push_back(qp);
-    if (const ObjectP *o = std::get_if<ObjectP>(vector.begin()))
+    if (const ObjectP* o = std::get_if<ObjectP>(vector.begin()))
     {
         add_inqobj(*o);
     }
 }
+
+export template <typename T>
+void add_zork(SpeechType st, T wc)
+{
+    // One hack -- remove LOWER from the adjective list so that
+    // it doesn't conflict with the verb LOWER. I don't know why 
+    // this isn't a problem in the MDL code? I'm guessing because
+    // of the different between a STRING and a PSTRING?
+    std::string w = wc;
+    if (w != "LOWER")
+    {
+        words_pobl[w] = make_word(st, wc);
+    }
+}
+
+export template <typename T, typename ...Args>
+void add_zork(SpeechType st, T first, Args... args)
+{
+    add_zork(st, first);
+    add_zork(st, args...);
+}
+
+export template <typename T>
+void add_buzz(T w)
+{
+    add_zork(SpeechType::kBuzz, w);
+}
+
+export template <typename T, typename ...Args>
+void add_buzz(T first, Args... args)
+{
+    add_buzz(first);
+    add_buzz(args...);
+}
+

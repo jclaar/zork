@@ -83,7 +83,6 @@ target_sources(zork PRIVATE
 	funcs.h funcs.cpp
 	globals.h
 	gobject.h 
-	makstr.h makstr.cpp
 	mdlfun.cpp
 	melee.h melee.cpp
 	objdefs.h
@@ -103,6 +102,7 @@ target_sources(zork PRIVATE
 	   funcs.cppm
 	   globals.cppm
 	   info.cppm
+	   makstr.cppm
 	   memq.cppm
 	   sr.cppm
 	   "strings.cppm"
