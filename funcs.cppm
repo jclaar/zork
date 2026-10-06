@@ -2,6 +2,11 @@ module;
 #include <string>
 #include <string_view>
 #include <iostream>
+#include <assert.h>
+
+#ifndef _ASSERT
+#define _ASSERT(x) assert(x)
+#endif
 
 export module ZFuncs;
 
