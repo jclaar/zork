@@ -1,5 +1,8 @@
 module;
-#include <stdint.h>
+#include <cstdint>
+#include <string_view>
+#include <variant>
+#include <streambuf>
 #include <sstream>
 #include <chrono>
 #include <iostream>
@@ -7,6 +10,7 @@ module;
 #include <thread>
 #include "rooms.h"
 #include "defs.h"
+#include "globals.h"
 export module ZTell;
 import ZGlobals;
 import ZorkException;

@@ -120,16 +120,5 @@ inline void atro(const AdvP &adv, AdvBits b)
     adv->flags()[b] = 1;
 }
 
-void add_actor(e_oactor actor_name, const RoomP &room, 
-    const ObjectP &obj, rapplic action, int strength);
-AdvArray &actors();
 
-inline const AdvP &player() { return actors()[std::to_underlying(e_oactor::player)]; }
 
-// Actor functions
-namespace actor_funcs
-{
-    RAPPLIC(master_actor);
-    RAPPLIC(dead_function);
-    RAPPLIC(robot_actor);
-}

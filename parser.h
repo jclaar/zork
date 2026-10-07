@@ -6,7 +6,7 @@
 #include "funcs.h"
 
 // Possible levels of false returns from parser.
-typedef std::pair<ObjectP, int> Nefals;
+using Nefals = std::pair<ObjectP, int>;
 extern Nefals nefals;
 extern Nefals nefals2;
 inline bool operator==(const Nefals &ne, const ObjectP &obj)

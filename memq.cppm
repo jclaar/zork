@@ -1,5 +1,6 @@
 module;
 #include <optional>
+#include <iterator>
 #include <algorithm>
 export module ZMemq;
 

@@ -15,6 +15,7 @@ import ZMelee;
 import ZTell;
 import ZString;
 import ZDefs;
+import ZActors;
 import ZEvents;
 
 // Number of times the player has said "Hello, Sailor"

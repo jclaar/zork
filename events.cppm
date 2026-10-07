@@ -6,5 +6,5 @@ export import :Iface;
 
 CEventContainer ev;
 
-CEventP sphere_clock;
-CEventP burnup_int;
+export CEventP sphere_clock;
+export CEventP burnup_int;

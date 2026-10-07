@@ -16,6 +16,7 @@ import ZMemq;
 import ZMakstr;
 import ZMelee;
 import ZTell;
+import ZActors;
 import ZAct1;
 import ZAct2;
 import ZAct3;
@@ -62,7 +63,7 @@ namespace
 }
 
 // Bunch vector.
-ObjVector bunch_cont()
+static ObjVector bunch_cont()
 {
     ObjVector ov(8, sfind_obj("#####"));
     return ov;
@@ -71,7 +72,7 @@ ObjVector bunuvec_cont;
 Iterator<ObjVector> bunuvec;
 Iterator<ObjVector> bunch;
 
-void init_bunch()
+static void init_bunch()
 {
     bunuvec_cont = bunch_cont();
     bunuvec = Iterator<ObjVector>(bunuvec_cont, bunuvec_cont.end());
@@ -105,7 +106,7 @@ WordsPobl words_pobl;
 PhraseVecV prepvecb;
 PrepVec prepvec;
 
-void init_prepvec()
+static void init_prepvec()
 {
     auto with_prep = find_prep("WITH");
     auto &cretin = sfind_obj("#####");

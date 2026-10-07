@@ -23,6 +23,7 @@ import ZDefs;
 import ZMelee;
 import ZMemq;
 import ZFuncs;
+import ZActors;
 import ZTell;
 import ZEvents;
 import ZAct1;

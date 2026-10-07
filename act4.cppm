@@ -20,6 +20,7 @@ import ZMemq;
 import ZMakstr;
 import ZEvents;
 import ZTell;
+import ZActors;
 import ZAct1;
 import ZAct3;
 
@@ -1794,41 +1795,4 @@ namespace exit_funcs
     }
 }
 
-namespace actor_funcs
-{
-    bool master_actor::operator()() const
-    {
-        bool rv = true;
-        if (!trnn(sfind_obj("QDOOR"), Bits::openbit))
-        {
-            tell("There is no reply.");
-        }
-        else if (verbq("WALK"))
-        {
-            direction prso = as_dir(prsvec[1]);
-            if ((prso == direction::South || prso == direction::Enter) && here == sfind_room("NCORR") ||
-                (prso == direction::North || prso == direction::Enter) && here == sfind_room("SCORR"))
-            {
-                tell("'I am not permitted to enter the prison cell.'");
-            }
-            else
-            {
-                tell("'I prefer to stay where I am, thank you.'");
-            }
-        }
-        else if (memq(prsa(), master_actions))
-        {
-            if (!verbq("STAY", "FOLLO"))
-            {
-                tell("'If you wish,' he replies.");
-            }
-            rv = false;
-        }
-        else
-        {
-            tell("'I cannot perform that action for you.'");
-        }
-        return rv;
-    }
-}
 

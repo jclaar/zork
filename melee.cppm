@@ -15,6 +15,8 @@ import ZMemq;
 import ZMakstr;
 import ZTell;
 import ZEvents;
+import ZActors;
+//import ZAct1;
 
 EHACKFN(fighting);
 ERAPPLIC(cure_clock);

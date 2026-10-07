@@ -14,6 +14,7 @@ import ZString;
 import ZGlobals;
 import ZMakstr;
 import ZEvents;
+import ZActors;
 import ZAct1;
 import ZAct2;
 import ZAct3;
