@@ -2,12 +2,11 @@
 #include "objfns.h"
 #include "rooms.h"
 import ZMelee;
+import ZEvents;
 import ZAct1;
 import ZAct2;
 import ZAct3;
 import ZAct4;
-
-CEventP sphere_clock;
 
 namespace
 {
@@ -16,8 +15,6 @@ namespace
         return std::make_shared<CEvent>(tick, action, flag, id, death);
     }
 }
-
-CEventContainer ev;
 
 CEventContainer::CEventContainer() :
     Base({

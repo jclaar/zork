@@ -22,6 +22,7 @@ export module ZSr;
 import ZDefs;
 import ZGlobals;
 import ZTell;
+import ZEvents;
 import ZAct1;
 import ZAct2;
 import ZAct3;

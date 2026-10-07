@@ -16,6 +16,7 @@ import ZMemq;
 import ZTell;
 import ZMakstr;
 import ZFuncs;
+import ZEvents;
 import ZAct1;
 
 ERAPPLIC(blast);

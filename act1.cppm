@@ -15,6 +15,7 @@ import ZMelee;
 import ZTell;
 import ZString;
 import ZDefs;
+import ZEvents;
 
 // Number of times the player has said "Hello, Sailor"
 int hs = 0;
@@ -182,7 +183,6 @@ namespace
 }
 
 export int water_level = 0;
-export CEventP burnup_int;
 export ObjectP binf;
 
 export int otval_frob(const ObjList& l)

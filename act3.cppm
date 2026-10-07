@@ -21,6 +21,7 @@ import ZMakstr;
 import ZFuncs;
 import ZTell;
 import ZFuncs;
+import ZEvents;
 import ZAct1;
 import ZAct2;
 
