@@ -1,7 +1,9 @@
 module;
 #include <string>
 #include <random>
+#include <optional>
 #include "funcs.h"
+#include "globals.h"
 
 export module ZUtil;
 import ZGlobals;
@@ -9,7 +11,7 @@ import ZGlobals;
 export bool always_lit = false;
 
 
-std::mt19937& global_gen()
+static std::mt19937& global_gen()
 {
     static thread_local std::mt19937 g{std::random_device{}()};
     return g;
