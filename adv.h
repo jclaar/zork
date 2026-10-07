@@ -126,10 +126,3 @@ AdvArray &actors();
 
 inline const AdvP &player() { return actors()[std::to_underlying(e_oactor::player)]; }
 
-// Actor functions
-namespace actor_funcs
-{
-    RAPPLIC(master_actor);
-    RAPPLIC(dead_function);
-    RAPPLIC(robot_actor);
-}
