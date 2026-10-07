@@ -19,6 +19,7 @@ import ZString;
 import ZGlobals;
 import ZMemq;
 import ZTell;
+import ZActors;
 import ZAct1;
 import ZAct2;
 

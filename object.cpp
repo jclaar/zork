@@ -13,6 +13,7 @@
 import ZStrings;
 import ZString;
 import ZGlobals;
+import ZActors;
 import ZAct1;
 import ZAct2;
 import ZAct3;

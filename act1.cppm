@@ -12,6 +12,7 @@ import ZUtil;
 import ZTell;
 import ZString;
 import ZDefs;
+import ZActors;
 
 // Number of times the player has said "Hello, Sailor"
 int hs = 0;

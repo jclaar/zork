@@ -6,6 +6,7 @@
 #include "parser.h"
 import ZUtil;
 import ZMemq;
+import ZActors;
 
 const HackP &get_demon(const char *id)
 {

@@ -184,3 +184,24 @@ namespace actor_funcs
         return rv;
     }
 }
+
+namespace
+{
+    AdvArray actor_list;
+}
+
+export AdvArray& actors()
+{
+    return actor_list;
+}
+
+export void add_actor(e_oactor actor_name, const RoomP& room,
+    const ObjectP& obj, rapplic action, int strength)
+{
+    actor_list[std::to_underlying(actor_name)] = std::make_unique<Adv>(room, obj, action, strength);
+}
+
+const AdvP& player() 
+{ 
+    return actors()[std::to_underlying(e_oactor::player)]; 
+}

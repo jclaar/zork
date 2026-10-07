@@ -21,6 +21,7 @@ import ZGlobals;
 import ZString;
 import ZDefs;
 import ZMemq;
+import ZActors;
 import ZTell;
 import ZAct1;
 import ZAct3;

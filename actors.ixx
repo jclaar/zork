@@ -10,3 +10,5 @@ export namespace actor_funcs
     RAPPLIC(dead_function);
     RAPPLIC(robot_actor);
 }
+
+export const AdvP& player();
