@@ -96,7 +96,6 @@ target_sources(zork PRIVATE
 	rooms.h rooms.cpp
 	strings.h
 	util.h util.cpp
-	version.h
 	
 	PUBLIC FILE_SET modules TYPE CXX_MODULES FILES
 	   act1.cppm
@@ -105,6 +104,7 @@ target_sources(zork PRIVATE
 	   memq.cppm
 	   sr.cppm
 	   "strings.cppm"
+	   "version.cppm"
        util.cppm
 	   ZorkException.ixx
  "zstring.cppm" "defs.cppm" "tell.cppm" "act2.cppm" "act3.cppm" "act4.cppm"

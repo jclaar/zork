@@ -7,10 +7,10 @@
 #include "funcs.h"
 #include "dung.h"
 #include "rooms.h"
-#include "version.h"
 
 import ZDefs;
 import ZTell;
+import ZVersion;
 
 std::string pw(SIterator unm, SIterator key);
 std::string username();
