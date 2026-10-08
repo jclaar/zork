@@ -257,13 +257,4 @@ inline bool openable(const ObjectP& op)
 
 extern ObjectP last_it;
 
-inline bool memq(const ObjectP& op, Iterator<ObjVector> ol)
-{
-    while (ol.cur() != ol.end())
-    {
-        if (ol[0] == op)
-            return true;
-        ol = rest(ol);
-    }
-    return false;
-}
+bool memq(const ObjectP& op, Iterator<ObjVector> ol);

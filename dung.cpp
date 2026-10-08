@@ -141,8 +141,6 @@ DirectionsPobl directions_pobl = {
         mp("EXIT", direction::Exit),
         mp("CROSS", direction::Cross)
     };
-std::string indentstrb = "        ";
-SIterator indentstr(indentstrb, indentstrb.end());
 ParseVecA prsveca;
 ParseVec prsvec(prsveca);
 

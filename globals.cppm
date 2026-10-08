@@ -4,6 +4,7 @@ module;
 #include "object.h"
 
 export module ZGlobals;
+import ZFuncs;
 
 namespace
 {
@@ -83,7 +84,8 @@ export enum class FlagId
     num_flag_bits
 };
 
-
+std::string indentstrb = "        ";
+export SIterator indentstr(indentstrb, indentstrb.end());
 
 using FlagBits = Flags<FlagId, std::to_underlying(FlagId::num_flag_bits)>;
 

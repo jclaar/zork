@@ -18,7 +18,6 @@ extern ActionsPobl actions_pobl;
 extern const ObjList small_papers;
 extern ObjList inqobjs;
 extern ObjectP bunch_obj;
-extern SIterator indentstr;
 extern RoomP mloc;
 extern GObjectPtr it_object;
 extern int deaths;

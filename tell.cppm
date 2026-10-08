@@ -4,11 +4,11 @@ module;
 #include <variant>
 #include <streambuf>
 #include <sstream>
+#include <fstream>
 #include <chrono>
 #include <iostream>
 #include <random>
 #include <thread>
-#include "rooms.h"
 #include "defs.h"
 export module ZTell;
 import ZGlobals;

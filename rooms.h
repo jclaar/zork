@@ -8,7 +8,7 @@
 #include "defs.h"
 #include "funcs.h"
 #include "room.h"
-
+import ZFuncs;
 
 
 // Current location
