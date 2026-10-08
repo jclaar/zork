@@ -4,7 +4,6 @@
 import ZorkException;
 #include <ostream>
 #include <string_view>
-#include "globals.h"
 
 #ifdef _MSC_VER
 #include <crtdbg.h>

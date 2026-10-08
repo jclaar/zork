@@ -10,7 +10,6 @@ module;
 #include <thread>
 #include "rooms.h"
 #include "defs.h"
-#include "globals.h"
 export module ZTell;
 import ZGlobals;
 import ZorkException;

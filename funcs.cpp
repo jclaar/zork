@@ -1,6 +1,5 @@
 #include <iostream>
 #include "funcs.h"
-#include "globals.h"
 #include "rooms.h"
 #include <vector>
 #include <random>

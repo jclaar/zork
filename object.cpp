@@ -1,6 +1,5 @@
 #include <algorithm>
 #include "object.h"
-#include "globals.h"
 #include "funcs.h"
 #include "cevent.h"
 #include "util.h"

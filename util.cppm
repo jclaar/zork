@@ -3,7 +3,6 @@ module;
 #include <random>
 #include <optional>
 #include "funcs.h"
-#include "globals.h"
 
 export module ZUtil;
 import ZGlobals;

@@ -1,5 +1,4 @@
 #include "room.h"
-#include "globals.h"
 #include "object.h"
 #include "roomfns.h"
 import ZGlobals;

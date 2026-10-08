@@ -10,7 +10,6 @@
 #include "rooms.h"
 #include <algorithm>
 #include "parser.h"
-#include "globals.h"
 #include "funcs.h"
 #include "cevent.h"
 import ZUtil;

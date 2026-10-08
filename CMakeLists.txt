@@ -81,7 +81,6 @@ target_sources(zork PRIVATE
 	dung.h dung.cpp
 	FlagSupport.h
 	funcs.h funcs.cpp
-	globals.h
 	gobject.h 
 	mdlfun.cpp
 	objdefs.h
