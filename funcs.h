@@ -2,8 +2,8 @@
 #define FUNCS_H
 
 import ZorkException;
-#include <ostream>
-#include <string_view>
+#include <algorithm>
+#include <cctype>
 
 #ifdef _MSC_VER
 #include <crtdbg.h>
@@ -197,7 +197,11 @@ inline SIterator rest(SIterator it, int offset = 1)
 	return it;
 }
 
-SIterator uppercase(SIterator src);
+inline SIterator uppercase(SIterator src)
+{
+    std::transform(src.begin(), src.end(), src.begin(), [](char c) { return toupper(c); });
+    return src;
+}
 
 inline SIterator substruc(SIterator src, int start, int end, SIterator dest)
 {
