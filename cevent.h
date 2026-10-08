@@ -48,40 +48,7 @@ private:
     bool _cdeath = false;
 };
 
-enum class Event
-{
-    broin,
-    cycin,
-    sldin,
-    xbin,
-    xcin,
-    xbhin,
-    forin,
-    curin,
-    mntin,
-    lntin,
-    matin,
-    cndin,
-    bint,
-    brnin,
-    fusin,
-    ledin,
-    safin,
-    vlgin,
-    gnoin,
-    bckin,
-    sphin,
-    sclin,
-    egher,
-    zgnin,
-    zglin,
-    folin,
-    mrint,
-    pinin,
-    inqin,
-    strte,
-    numevs
-};
+
 
 
 // Handy macros to just refer to events by their names.
