@@ -23,6 +23,7 @@ import ZTell;
 import ZFuncs;
 import ZEvents;
 import ZActors;
+import ZUtilObj;
 import ZAct1;
 import ZAct2;
 

@@ -1,8 +1,13 @@
 #include "room.h"
 #include "object.h"
 #include "roomfns.h"
+#include "rooms.h"
+#include "adv.h"
 import ZGlobals;
 import ZString;
+import ZUtil;
+import ZUtilObj;
+import ZActors;
 import ZAct1;
 import ZAct2;
 import ZAct3;
@@ -222,5 +227,20 @@ const RoomP &find_room(std::string_view rid)
     auto iter = room_map().find(rid);
     _ASSERT(iter != room_map().end());
     return iter->second;
+}
+
+bool lit(const RoomP& rm)
+{
+    const AdvP& win = *winner;
+    bool is_lit = false;
+    if (rtrnn(rm, RoomBit::rlightbit) ||
+        lfcn(rm->robjs()) ||
+        rm == here && lfcn(win->aobjs()) ||
+        win != player() && here == player()->aroom() || lfcn(player()->aobjs()) ||
+        always_lit)
+    {
+        is_lit = true;
+    }
+    return is_lit;
 }
 

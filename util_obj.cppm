@@ -1,0 +1,207 @@
+module;
+#include "object.h"
+#include "room.h"
+#include "rooms.h"
+#include "adv.h"
+#include "parser.h"
+export module ZUtilObj;
+import ZMemq;
+import ZUtil;
+
+export ObjList splice_out(const ObjectP& op, const ObjList& al)
+{
+    ObjList new_list;
+    std::copy_if(al.begin(), al.end(), std::back_inserter(new_list), [&op](const ObjectP& o)
+        {
+            return o != op;
+        });
+    return new_list;
+}
+
+export ObjList& splice_out_in_place(const ObjectP& op, ObjList& al)
+{
+    al.remove(op);
+    return al;
+}
+
+export bool remove_object(const ObjectP& obj, const AdvP& winner = *::winner)
+{
+    // Remove it from the object that it's contained in.
+    if (auto& ocan = obj->ocan())
+    {
+        splice_out_in_place(obj, ocan->ocontents());
+    }
+    else if (auto& oroom = obj->oroom())
+    {
+        splice_out_in_place(obj, oroom->robjs());
+    }
+    else if (memq(obj, winner->aobjs()))
+    {
+        splice_out_in_place(obj, winner->aobjs());
+    }
+    obj->oroom(RoomP());
+    obj->ocan() = ObjectP();
+    // Return value is never used, except to make a conditional statement continue.
+    return true;
+}
+
+export bool insert_object(const ObjectP& obj, const RoomP& room)
+{
+    obj->oroom(room);
+    room->robjs().push_front(obj);
+    return true;
+}
+
+export void insert_into(const ObjectP& cnt, const ObjectP& obj)
+{
+    cnt->ocontents().push_front(obj);
+    obj->ocan() = cnt;
+    obj->oroom(RoomP());
+}
+
+export void remove_from(const ObjectP& cnt, const ObjectP& obj)
+{
+    splice_out_in_place(obj, cnt->ocontents());
+    obj->ocan() = ObjectP();
+}
+
+export void take_object(const ObjectP& obj, const AdvP& winner = *::winner)
+{
+    tro(obj, Bits::touchbit);
+    obj->oroom(RoomP());
+    winner->aobjs().push_front(obj);
+}
+
+export void drop_object(const ObjectP& obj, const AdvP& winner = *::winner)
+{
+    splice_out_in_place(obj, winner->aobjs());
+}
+
+export bool drop_if(const ObjectP& obj, const AdvP& winner = *::winner)
+{
+    auto rv = memq(obj, winner->aobjs());
+    if (rv)
+    {
+        drop_object(obj, winner);
+    }
+    return (bool)rv;
+}
+
+export const ObjectP& snarf_object(const ObjectP& who, const ObjectP& what)
+{
+    if (what->ocan() != who &&
+        (what->oroom() || what->ocan()))
+    {
+        remove_object(what);
+        insert_into(who, what);
+    }
+    return who;
+}
+
+export bool in_room(const ObjectP& obj, const RoomP& here = ::here)
+{
+    bool found = false;
+    const ObjectP& tobj = obj->ocan();
+    if (tobj)
+    {
+        if (tobj->oroom() == here)
+        {
+            found = true;
+        }
+        else if (trnn(tobj, Bits::searchbit))
+        {
+            found = in_room(tobj, here);
+        }
+    }
+    else
+    {
+        found = obj->oroom() == here;
+    }
+    return found;
+}
+
+export bool hackable(const ObjectP& obj, const RoomP& rm)
+{
+    bool h = false;
+    const AdvP& winner = *::winner;
+    const ObjectP& av = winner->avehicle();
+    const ObjList& ol = av ? av->ocontents() : rm->robjs();
+    h = search_list(obj->oid(), ol, AdjectiveP()).first != ObjectP();
+    return h;
+}
+
+
+export bool lfcn(const ObjList& l)
+{
+    for (auto& x : l)
+    {
+        if (trnn(x, Bits::onbit))
+            return true;
+        if (trnn(x, Bits::ovison) && (trnn(x, Bits::openbit) || trnn(x, Bits::transbit)))
+        {
+            for (auto& x2 : x->ocontents())
+            {
+                if (trnn(x2, Bits::onbit))
+                {
+                    return true;
+                }
+            }
+        }
+        if (trnn(x, Bits::actorbit) && lfcn((*x->oactor())->aobjs()))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+export bool perform(rapplic fcn, const VerbP& vb, const ObjectP& obj1 = ObjectP(), const ObjectP& obj2 = ObjectP())
+{
+    ParseVec& pv = prsvec;
+    // Save old parse vector.
+    auto oldpv0 = pv[0];
+    auto oldpv1 = pv[1];
+    auto oldpv2 = pv[2];
+    pv[0] = vb;
+    pv[1] = obj1 ? obj1 : ParseVecVal();
+    pv[2] = obj2 ? obj2 : ParseVecVal();
+    bool rv = fcn(Rarg());
+    // Restore original pv
+    pv[2] = oldpv2;
+    pv[1] = oldpv1;
+    pv[0] = oldpv0;
+    return rv;
+}
+
+
+export ObjList rob_adv(const AdvP& win, ObjList newlist)
+{
+    // First move all non-sacred valuables to the front of
+    // the list, then splice them into newlist.
+    ObjList& aobjs = win->aobjs();
+    auto end_val = std::partition(aobjs.begin(), aobjs.end(), [](const ObjectP& o)
+        {
+            return o->otval() > 0 && !trnn(o, Bits::sacredbit);
+        });
+    newlist.splice(newlist.begin(), aobjs, aobjs.begin(), end_val);
+    return newlist;
+}
+
+export ObjList rob_room(const RoomP& rm, ObjList newlist, int probability)
+{
+    ObjList robjs = rm->robjs();
+    for (const ObjectP& x : robjs)
+    {
+        if (x->otval() > 0 && !trnn(x, Bits::sacredbit) && trnn(x, Bits::ovison) && prob(probability))
+        {
+            remove_object(x);
+            tro(x, Bits::touchbit);
+            newlist.push_front(x);
+        }
+        else if (x->oactor())
+        {
+            newlist = rob_adv((*x->oactor()), newlist);
+        }
+    }
+    return newlist;
+}

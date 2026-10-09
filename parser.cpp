@@ -14,6 +14,7 @@ import ZMakstr;
 import ZTell;
 import ZFuncs;
 import ZActors;
+import ZUtilObj;
 
 const char *brks = "\"' 	:.,?!\n";
 Orphans orphans;

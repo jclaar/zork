@@ -109,7 +109,7 @@ target_sources(zork PRIVATE
 	   ZorkException.ixx
  "zstring.cppm" "defs.cppm" "tell.cppm" "act2.cppm" "act3.cppm" "act4.cppm" 
  "events.ixx" "events.cppm" "events.cpp"
-"actors.ixx" "actors.cppm" "actors.cpp")
+"actors.ixx" "actors.cppm" "actors.cpp" "util_obj.cppm")
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
 target_link_libraries(zork Threads::Threads)

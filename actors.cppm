@@ -12,6 +12,7 @@ import ZGlobals;
 import ZUtil;
 import ZString;
 import ZEvents;
+import ZUtilObj;
 
 namespace actor_funcs
 {

@@ -16,6 +16,7 @@ import ZMakstr;
 import ZTell;
 import ZEvents;
 import ZActors;
+import ZUtilObj;
 //import ZAct1;
 
 EHACKFN(fighting);
