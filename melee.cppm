@@ -313,7 +313,7 @@ export std::optional<attack_state> blow(const AdvP& hero, ObjectP villain, const
     // Line 256
     if (!heroq)
     {
-        hero->astrength(def == 0 ? -10000 : (def - od));
+        hero->astrength() = def == 0 ? -10000 : (def - od);
         if (def - od < 0)
         {
             clock_enable(curin);
@@ -321,7 +321,7 @@ export std::optional<attack_state> blow(const AdvP& hero, ObjectP villain, const
         }
         if (fight_strength(hero) < 0)
         {
-            hero->astrength(1 - fight_strength(hero));
+            hero->astrength() = 1 - fight_strength(hero);
             jigs_up("It appears that that last blow was too much for you.  I'm afraid you\n"
                 "are dead.");
             return res;
@@ -498,11 +498,11 @@ bool cure_clock::operator()() const
     CEventP i = curin;
     if (s > 0)
     {
-        hero->astrength(s = 0);
+        hero->astrength() = s = 0;
     }
     else if (s < 0)
     {
-        hero->astrength(++s);
+        hero->astrength() = ++s;
     }
     if (s < 0)
     {

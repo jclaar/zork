@@ -1677,7 +1677,7 @@ export namespace room_funcs
         }
         else if (auto& tc = sfind_obj("TCASE"); (verbq("TAKE") || (verbq("PUT") && prsi() == tc)))
         {
-            winner->ascore(raw_score + otval_frob(tc->ocontents()));
+            winner->ascore() = winner->ascore() + otval_frob(tc->ocontents());
             score_bless();
         }
         else

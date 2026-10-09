@@ -1,6 +1,7 @@
 #pragma once
 #include <utility>
 #include <boost/serialization/split_member.hpp>
+#include "defs.h"
 #include "room.h"
 
 enum class AdvBits
@@ -18,23 +19,12 @@ public:
 
     const ObjectP &aobj() const { return _aobj; }
 
-    int astrength() const { return _astrength; }
-    void astrength(int new_s) { _astrength = new_s; }
-
-    int ascore() const { return _ascore; }
-    void ascore(int new_score) { _ascore = new_score; }
-
-    const rapplic &aaction() const { return _aaction; }
-    void aaction(rapplic new_action) { _aaction = new_action; }
-
-    const RoomP &aroom() const { return _aroom; }
-    void aroom(const RoomP &rp) { _aroom = rp; }
-
-    const ObjectP &avehicle() const { return _avehicle; }
-    void avehicle(const ObjectP &op) { _avehicle = op; }
-
-    const ObjList &aobjs() const { return _aobjs; }
-    ObjList &aobjs() { return _aobjs; }
+    PROP(astrength);
+    PROP(ascore);
+    PROP(aaction);
+    PROP(aroom);
+    PROP(avehicle);
+    PROP(aobjs);
 
     AdvBitset &flags() { return bits; }
     const AdvBitset &flags() const { return bits; }

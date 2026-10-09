@@ -1279,7 +1279,7 @@ namespace obj_funcs
                 goto_(c);
                 remove_object(r);
                 insert_object(r, c);
-                (*r->oactor())->aroom(c);
+                (*r->oactor())->aroom() = c;
                 tro(r, Bits::ndescbit);
                 sphere_clock = clock_int(sphin, 10);
             }
@@ -1543,7 +1543,7 @@ namespace obj_funcs
                 tell("As you peer into the sphere, a strange vision takes shape of\n"
                     "a distant room, which can be described clearly....");
                 trz(obj, Bits::ovison);
-                winner->aroom(::here = rm);
+                winner->aroom() = ::here = rm;
                 perform(room_desc(), find_verb("LOOK"));
                 here == rm && tell("An astonished adventurer is staring into a crystal sphere.");
                 tro(obj, Bits::ovison);

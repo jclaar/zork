@@ -69,7 +69,7 @@ namespace actor_funcs
             tro(sfind_obj("SPHER"), Bits::takebit);
             remove_object(r);
             insert_object(r, c);
-            (*(ract = r->oactor()))->aroom(c);
+            (*(ract = r->oactor()))->aroom() = c;
             winner = ract;
             flags[FlagId::cage_solve] = true;
         }
@@ -169,7 +169,7 @@ namespace actor_funcs
             {
                 tro(find_obj("LAMP"), Bits::ovison);
                 goto_(find_room("FORE1"));
-                player()->aaction(nullptr);
+                player()->aaction() = nullptr;
                 gwim_disable = false;
                 always_lit = false;
                 flags[FlagId::dead] = false;

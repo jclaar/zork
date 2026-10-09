@@ -177,7 +177,7 @@ bool goto_(const RoomP &rm, const AdvP &win)
             remove_object(av);
             insert_object(av, rm);
         }
-        win->aroom(::here = rm);
+        win->aroom() = ::here = rm;
         score_room(rm);
         rv = true;
     }
@@ -207,7 +207,7 @@ void score_room(const RoomP &rm)
 void start(std::string_view rm, std::string_view st)
 {
     here = find_room(rm);
-    (*winner)->aroom(here);
+    (*winner)->aroom() = here;
     tell(st);
     if (!msg_string.empty())
         tell(msg_string);
@@ -218,7 +218,7 @@ void save_it(bool strt)
 {
     sfind_obj("PAPER")->odesc1() = unspeakable_code();
     dead_player = player()->aaction();
-    player()->aaction(nullptr);
+    player()->aaction() = nullptr;
     raw_score = 0;
     deaths = 0;
     moves = 0;
@@ -712,7 +712,7 @@ void score_upd(int num)
     else
     {
         raw_score += num;
-        (*winner)->ascore((*winner)->ascore() + num);
+        (*winner)->ascore() = (*winner)->ascore() + num;
         score_bless();
     }
 }
@@ -729,12 +729,12 @@ bool jigs_up(std::string_view desc, bool player)
     {
         tell("The ", 1, (*winner)->aobj()->odesc2(), " has died.");
         remove_object((*winner)->aobj());
-        (*winner)->aroom(sfind_room("FCHMP"));
+        (*winner)->aroom() = sfind_room("FCHMP");
 		return false;
     }
 
     score_upd(-10);
-    (*winner)->avehicle(nullptr);
+    (*winner)->avehicle() = nullptr;
     remove_object(sfind_obj("#####"));
     if (flags[FlagId::end_game_flag])
     {
@@ -757,7 +757,7 @@ bool jigs_up(std::string_view desc, bool player)
     flags[FlagId::dead] = true;
     gwim_disable = true;
     always_lit = true;
-    ::player()->aaction(dead_player);
+    ::player()->aaction() = dead_player;
 
     for (ObjectP &x : here->robjs())
     {
@@ -1074,7 +1074,7 @@ bool board::operator()() const
             if (!object_action())
             {
                 tell("You are now in the ", post_crlf, prso->odesc2(), ".");
-                win->avehicle(prso);
+                win->avehicle() = prso;
                 insert_into(prso, sfind_obj("#####"));
                 return true;
             }
@@ -1102,7 +1102,7 @@ bool unboard::operator()() const
         else if (rtrnn(here, RoomBit::rlandbit))
         {
             tell("You are on your own feet again.");
-            win->avehicle(nullptr);
+            win->avehicle() = nullptr;
             remove_from(prso, sfind_obj("#####"));
         }
         else
