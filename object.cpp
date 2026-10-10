@@ -14,6 +14,7 @@ import ZGlobals;
 import ZMakstr;
 import ZEvents;
 import ZActors;
+import ZFuncs;
 import ZAct1;
 import ZAct2;
 import ZAct3;
@@ -446,3 +447,13 @@ const ObjectP &sfind_obj(std::string_view name)
 }
 
 
+bool memq(const ObjectP& op, Iterator<ObjVector> ol)
+{
+    while (ol.cur() != ol.end())
+    {
+        if (ol[0] == op)
+            return true;
+        ol = rest(ol);
+    }
+    return false;
+}

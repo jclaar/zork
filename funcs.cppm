@@ -2,7 +2,9 @@ module;
 #include <string>
 #include <string_view>
 #include <iostream>
+#include <algorithm>
 #include <assert.h>
+#include "funcs.h"
 
 #ifndef _ASSERT
 #define _ASSERT(x) assert(x)
@@ -12,6 +14,13 @@ export module ZFuncs;
 
 template <typename T>
 concept StringLike = std::is_convertible_v<T, std::string_view>;
+
+export SIterator uppercase(SIterator src)
+{
+    std::transform(src.begin(), src.end(), src.begin(), [](char c) { return toupper(c); });
+    return src;
+}
+
 
 export inline std::string_view rest(StringLike auto&& s, int len = 1)
 {
@@ -64,3 +73,68 @@ export inline const char* member(std::string_view subst, const std::string& str)
     return (pos == std::string::npos) ? nullptr : &str[pos];
 }
 
+export template <typename T>
+Iterator<T> rest(Iterator<T> it, int offset = 1)
+{
+    it.advance(offset);
+    return it;
+}
+
+export inline SIterator rest(SIterator it, int offset = 1)
+{
+    it.advance(offset);
+    return it;
+}
+
+
+
+export inline SIterator substruc(SIterator src, int start, int end, SIterator dest)
+{
+    _ASSERT(start == 0);
+    for (int i = start; i < end; ++i)
+    {
+        dest[i] = src[i];
+    }
+    return dest;
+}
+
+export inline SIterator substruc(const char* msg, int start, int end, SIterator dest)
+{
+    _ASSERT(start == 0);
+    std::copy(msg + start, msg + end, dest);
+    return dest;
+}
+
+export template <typename T>
+bool empty(const Iterator<T>& it)
+{
+    return !it.is_init() || it.cur() == it.end();
+}
+
+export template <typename T>
+Iterator<T> top(Iterator<T> it)
+{
+    return Iterator<T>(it.cont(), it.begin());
+}
+
+export template <typename T>
+inline bool operator!=(const Iterator<T>& a, const Iterator<T>& b)
+{
+    // Equal if the two containers point to the same thing.
+    return a.cont() != b.cont() || a.cur() != b.cur();
+}
+
+export inline bool operator==(const SIterator& a, const char* b)
+{
+    return std::string(a.cur(), a.end()) == b;
+}
+
+export inline bool operator!= (const SIterator& a, const SIterator& b)
+{
+    return !(a == b);
+}
+
+export inline bool operator!=(const SIterator& a, const char* b)
+{
+    return std::string(a.cur(), a.end()) != b;
+}
