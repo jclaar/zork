@@ -17,13 +17,13 @@ import ZActors;
 import ZUtilObj;
 
 const char *brks = "\"' 	:.,?!\n";
-Orphans orphans;
-Nefals nefals0;
-Nefals nefals{ ObjectP(), 1 };
-Nefals nefals2{ ObjectP(), 2 };
-Nefals necontinue{ ObjectP(), 3 };
-Iterator<ParseContV> unknown;
-SyntaxP bunch_syn;
+static Orphans orphans;
+static const Nefals nefals0;
+static Nefals nefals{ ObjectP(), 1 };
+static Nefals nefals2{ ObjectP(), 2 };
+static Nefals necontinue{ ObjectP(), 3 };
+static Iterator<ParseContV> unknown;
+static SyntaxP bunch_syn;
 bool gwim_disable = false;
 std::list<VerbP> bunchers;
 
