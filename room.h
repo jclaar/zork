@@ -216,3 +216,4 @@ inline bool operator==(const Ex& exit, const RoomP& p)
     return p == exit;
 }
 
+bool lit(const RoomP& rm);
