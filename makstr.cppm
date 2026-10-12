@@ -6,6 +6,7 @@ module;
 #include "dung.h"
 
 export module ZMakstr;
+import ZDefs;
 
 #if 0
 #include <array>

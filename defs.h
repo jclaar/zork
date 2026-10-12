@@ -311,23 +311,6 @@ using PhraseVecV = std::vector<PhraseP>;
 
 using QuestionValue = std::variant<std::string_view, ObjectP, ActionP>;
 
-struct question
-{
-public:
-    question(std::string_view question, const std::vector<QuestionValue> &answers) :
-        _qstr(question),
-        _qans(answers)
-    {}
-
-    std::string_view qstr() const { return _qstr; }
-    const std::vector<QuestionValue> &qans() const { return _qans; }
-
-private:
-    std::string _qstr;
-    std::vector<QuestionValue> _qans;
-};
-using QuestionP = std::shared_ptr<question>;
-
 // ORPHANS -- mysterious vector of orphan data
 using OrphanSlotType = std::variant<std::monostate, ObjectP, PhraseP>;
 class Orphans

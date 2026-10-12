@@ -113,3 +113,20 @@ export void rtrc(const RoomP& p, RoomBit b)
 }
 
 
+export struct question
+{
+public:
+    question(std::string_view question, const std::vector<QuestionValue>& answers) :
+        _qstr(question),
+        _qans(answers)
+    {}
+
+    std::string_view qstr() const { return _qstr; }
+    const std::vector<QuestionValue>& qans() const { return _qans; }
+
+private:
+    std::string _qstr;
+    std::vector<QuestionValue> _qans;
+};
+export using QuestionP = std::shared_ptr<question>;
+
