@@ -22,7 +22,6 @@ typedef Iterator<ParseVecA> ParseVec;
 extern Iterator<ObjVector> bunuvec;
 extern Iterator<ObjVector> bunch;
 extern std::list<VerbP> bunchers;
-extern SIterator scrstr;
 
 // Specialization for ParseVec
 inline ParseVec put(ParseVec a, int index, std::nullptr_t)
@@ -162,7 +161,7 @@ typedef std::unique_ptr<StuffVec> StuffVecP;
 
 typedef std::optional<const std::vector<Bits>*> Globals;
 
-Iterator<ParseContV> lex(SIterator s, SIterator sx = SIterator());
+Iterator<ParseContV> lex(SIterator s, SIterator sx);
 bool eparse(Iterator<ParseContV> pv, bool vb);
 
 // Generic class to return WIN from parse.
