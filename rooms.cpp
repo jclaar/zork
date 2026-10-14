@@ -26,6 +26,7 @@ import ZActors;
 import ZTell;
 import ZUtilObj;
 import ZEvents;
+import ZParser;
 import ZAct1;
 import ZAct3;
 
@@ -1332,7 +1333,7 @@ bool dropper::operator()() const
             put(vec, 1, prsoo);
             put(vec, 2, av);
             putter()(false);
-            put(vec, 2, std::monostate());
+            put(vec, 2, nullptr);
             put(vec, 0, vb);
         }
         else

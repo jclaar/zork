@@ -35,7 +35,7 @@ static bool vtrnn(const VargP& va, vword_flag bit)
 // Takes an input string and lowercases it.
 // first implies that the first letter will remain the same (if it's uppercase)
 // If lc is false, the string will be unchanged.
-std::string foostr(std::string nam, bool first, bool lc)
+static std::string foostr(std::string nam, bool first = true, bool lc = false)
 {
     auto start_iter = nam.begin();
     if (!lc && first)
@@ -46,15 +46,6 @@ std::string foostr(std::string nam, bool first, bool lc)
             return tolower(c);
         });
     return nam;
-}
-
-ObjectP prsi()
-{
-    return std::visit(overload{
-        [](const ObjectP& op) { return op; },
-        [](const PhraseP& pp) { return pp->obj(); },
-        [](auto unused) ->ObjectP { return ObjectP(); }
-        }, prsvec[2]);
 }
 
 
@@ -74,7 +65,7 @@ Iterator<ParseContV> lexv1 = Iterator<ParseContV>(lexv1_v);
 Iterator<ParseContV> unknown_lexv = lexv;
 
 // Just swaps the values of both lexv and lexv1, and inbuf and inbuf1.
-void swap_em()
+static void swap_em()
 {
     std::swap(inbuf, inbuf1);
     std::swap(lexv, lexv1);
@@ -769,19 +760,6 @@ const Orphans &orphan(bool flag, const ActionP &action, const OrphanSlotType &sl
         orphans.oflag(false);
     }
     return orphans;
-}
-
-void add_buncher(const char* b)
-{
-    bunchers.push_front(find_verb(b));
-}
-
-void add_buncher(const std::initializer_list<const char*>& verbs)
-{
-    for (auto vb : verbs)
-    {
-        bunchers.push_front(find_verb(vb));
-    }
 }
 
 std::string prlcstr(const std::string &str)
@@ -1540,8 +1518,3 @@ bool bunchem::operator()() const
     return true;
 }
 
-ObjectP prso()
-{
-    ObjectP* p = std::get_if<ObjectP>(&prsvec[1]);
-    return p ? *p : ObjectP();
-}

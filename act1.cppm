@@ -18,6 +18,7 @@ import ZDefs;
 import ZActors;
 import ZEvents;
 import ZUtilObj;
+import ZParser;
 
 // Number of times the player has said "Hello, Sailor"
 int hs = 0;

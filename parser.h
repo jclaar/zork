@@ -24,57 +24,33 @@ extern Iterator<ObjVector> bunch;
 extern std::list<VerbP> bunchers;
 
 // Specialization for ParseVec
-inline ParseVec put(ParseVec a, int index, std::nullptr_t)
+template <typename T>
+ParseVec put(ParseVec a, int index, const T& val)
 {
-    a[index] = std::monostate();
-    return a;
-}
-
-inline ParseVec put(ParseVec a, int index, const ObjectP &o)
-{
-    if (o)
-        a[index] = o;
-    else
+    using U = std::decay_t<T>;
+    if constexpr (std::is_same_v<U, std::nullptr_t>)
+    {
         a[index] = std::monostate();
-    return a;
-}
-
-inline ParseVec put(ParseVec a, int index, direction d)
-{
-    a[index] = d;
-    return a;
-}
-
-inline ParseVec put(ParseVec a, int index, const VerbP &v)
-{
-    if (v)
-        a[index] = v;
+    }
+    else if constexpr (std::is_same_v<U, direction> ||
+        std::is_same_v<U, ParseVecVal>)
+    {
+        a[index] = val;
+    }
+    else if constexpr (std::is_same_v<U, ObjectP> ||
+        std::is_same_v<U, VerbP> ||
+        std::is_same_v<U, ActionP> ||
+        std::is_same_v<U, PhraseP>)
+    {
+        if (val)
+            a[index] = val;
+        else
+            a[index] = std::monostate();
+    }
     else
-        a[index] = std::monostate();
-    return a;
-}
-
-inline ParseVec put(ParseVec a, int index, ParseVecVal an)
-{
-    a[index] = an;
-    return a;
-}
-
-inline ParseVec put(ParseVec a, int index, const ActionP &v)
-{
-    if (v)
-        a[index] = v;
-    else
-        a[index] = std::monostate();
-    return a;
-}
-
-inline ParseVec put(ParseVec a, int index, const PhraseP &p)
-{
-    if (p)
-        a[index] = p;
-    else
-        a[index] = std::monostate();
+    {
+        static_assert(std::is_same_v<U, void>, "Unsupported type passed to put");
+    }
     return a;
 }
 
@@ -124,21 +100,6 @@ bool verbq(T first, Args... args)
         return true;
     return verbq(args...);
 }
-
-void add_buncher(const char* b);
-
-template <typename T, typename ...Args>
-void add_buncher(T first, Args... args)
-{
-    add_buncher(first);
-    add_buncher(args...);
-}
-
-void add_buncher(const std::initializer_list<const char*>& verbs);
-
-ObjectP prso();
-ObjectP prsi();
-
 
 struct StuffVec
 {
@@ -192,7 +153,6 @@ Nefals gwim(const ObjBits &bits, VargP fword);
 Nefals fwim(Bits b, const ObjList &objs, bool no_care);
 Nefals fwim(const ObjBits &bits, const ObjList &objs, bool no_care);
 bool do_take(ObjectP obj);
-std::string foostr(std::string nam, bool first = true, bool lc = false);
 std::string prstr(const std::string &sp);
 std::string prlcstr(const std::string &str);
 std::string prfunny(const WordP &prep);

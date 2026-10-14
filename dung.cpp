@@ -17,6 +17,7 @@ import ZMakstr;
 import ZMelee;
 import ZTell;
 import ZActors;
+import ZParser;
 import ZAct1;
 import ZAct2;
 import ZAct3;

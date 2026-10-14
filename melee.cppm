@@ -17,7 +17,7 @@ import ZTell;
 import ZEvents;
 import ZActors;
 import ZUtilObj;
-//import ZAct1;
+import ZParser;
 
 EHACKFN(fighting);
 ERAPPLIC(cure_clock);

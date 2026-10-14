@@ -24,6 +24,7 @@ import ZFuncs;
 import ZEvents;
 import ZActors;
 import ZUtilObj;
+import ZParser;
 import ZAct1;
 import ZAct2;
 

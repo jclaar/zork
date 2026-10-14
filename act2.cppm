@@ -18,6 +18,7 @@ import ZMakstr;
 import ZFuncs;
 import ZEvents;
 import ZUtilObj;
+import ZParser;
 import ZAct1;
 
 ERAPPLIC(blast);

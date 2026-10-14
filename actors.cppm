@@ -13,6 +13,7 @@ import ZUtil;
 import ZString;
 import ZEvents;
 import ZUtilObj;
+import ZParser;
 
 namespace actor_funcs
 {
