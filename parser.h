@@ -129,8 +129,6 @@ std::string prstr(const std::string &sp);
 std::string prlcstr(const std::string &str);
 std::string prfunny(const WordP &prep);
 
-void swap_em();
-
 // Verb functions
 RAPPLIC(bunchem);
 
