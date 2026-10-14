@@ -4,6 +4,7 @@
 #include <boost/process.hpp>
 #include <boost/dll.hpp>
 #include <string>
+#include <iostream>
 #include "funcs.h"
 #include "dung.h"
 #include "rooms.h"
@@ -11,16 +12,17 @@
 import ZDefs;
 import ZTell;
 import ZVersion;
+import ZAct4;
 
-std::string pw(SIterator unm, SIterator key);
-std::string username();
+//std::string pw(SIterator unm, SIterator key);
+//std::string username();
 
 using namespace std::string_view_literals;
 
 int run_zork()
 {
 	// Option to print incantation to skip directly to the endgame.
-#if 0
+#if 1
     std::string un = username();
     std::string hello("HELLO");
 	std::cerr << "Hello : " << pw(un, hello) << std::endl;

@@ -73,34 +73,6 @@ inline Iterator<ParseContV> member(const std::string &s, Iterator<ParseContV> pv
 
 extern ParseVec prsvec;
 extern PrepVec prepvec;
-inline const VerbP &prsa()
-{
-    return std::get<VerbP>(prsvec[0]);
-}
-
-inline bool verbq(const char *al)
-{
-    bool rv = false;
-    try
-    {
-        rv = prsa()->w() == al;
-    }
-    catch (...)
-    {
-        // Unrecognized word. Just return false.
-    }
-    return rv;
-}
-
-//bool verbq(const char *al);
-template <typename T, typename ...Args>
-bool verbq(T first, Args... args)
-{
-    if (verbq(first))
-        return true;
-    return verbq(args...);
-}
-
 struct StuffVec
 {
     PrepVec iprepvec;
@@ -162,17 +134,3 @@ void swap_em();
 // Verb functions
 RAPPLIC(bunchem);
 
-inline Iterator<ParseVec> memq(const ObjectP& o, ParseVec pv)
-{
-    Iterator<ParseVec> i(pv, pv.begin());
-    while (i.cur() != i.end())
-    {
-        if (ObjectP* op = std::get_if<ObjectP>(&i[0]))
-        {
-            if (*op == o)
-                return i;
-        }
-        ++i;
-    }
-    return i;
-}

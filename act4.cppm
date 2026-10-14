@@ -29,6 +29,7 @@ import ZAct3;
 int mdir = 270;
 
 using LookToVal = std::variant<std::monostate, bool, const char*>;
+export std::string pw(SIterator unm, SIterator key);
 
 ERAPPLIC(answer);
 ERAPPLIC(follow);
@@ -61,61 +62,6 @@ namespace
 
     inline void dopen(const ObjectP& obj) { tro(obj, Bits::openbit); }
     inline void dclose(const ObjectP& obj) { trz(obj, Bits::openbit); }
-
-    std::string pw(SIterator unm, SIterator key)
-    {
-        auto su = Iterator(swu);
-        auto ku = Iterator(kwu);
-        SIterator str = ::str;
-        int usum;
-
-        auto fn = [&](SIterator s, Iterator<decltype(swu)> su, SIterator k, Iterator<decltype(kwu)> ku) -> bool
-            {
-                while (1)
-                {
-                    if (empty(su))
-                        return true;
-                    if (empty(k))
-                        k = key;
-                    if (empty(s))
-                        s = unm;
-                    su[0] = s[0] - 64;
-                    ku[0] = k[0] - 64;
-                    k = rest(k);
-                    s = rest(s);
-                    su = rest(su);
-                    ku = rest(ku);
-                }
-                return true;
-            };
-        fn(unm, su, key, ku);
-
-        // usum is the sum of all items in su % 8 + 8 * (sum of all items in ku % 8)
-        usum = (std::accumulate(su.begin(), su.end(), 0) % 8) +
-            (std::accumulate(ku.begin(), ku.end(), 0) * 8) * 8;
-
-        std::fill(str.begin(), str.end(), 0);
-
-        auto fn2 = [&usum](Iterator<decltype(swu)> su, Iterator<decltype(kwu)> ku, SIterator str)
-            {
-                _ASSERT(su.size() == ku.size());
-                _ASSERT(su.size() == str.size());
-                for (; !empty(su); su = rest(su), ku = rest(ku), str = rest(str))
-                {
-                    int s = su[0], k = ku[0];
-                    s = ((s ^ k) ^ usum) & 31;
-                    usum = (usum + 1) % 32;
-                    if (s > 26)
-                        s = s % 26;
-                    if (s == 0)
-                        s = 1;
-                    str[0] = (char)(s + 64);
-                }
-            };
-        fn2(su, ku, str);
-
-        return str;
-    }
 
     bool member(const std::string& s1, const std::vector<QuestionValue>& qv)
     {
@@ -349,6 +295,61 @@ namespace
         return true;
     }
 
+}
+
+export std::string pw(SIterator unm, SIterator key)
+{
+    auto su = Iterator(swu);
+    auto ku = Iterator(kwu);
+    SIterator str = ::str;
+    int usum;
+
+    auto fn = [&](SIterator s, Iterator<decltype(swu)> su, SIterator k, Iterator<decltype(kwu)> ku) -> bool
+        {
+            while (1)
+            {
+                if (empty(su))
+                    return true;
+                if (empty(k))
+                    k = key;
+                if (empty(s))
+                    s = unm;
+                su[0] = s[0] - 64;
+                ku[0] = k[0] - 64;
+                k = rest(k);
+                s = rest(s);
+                su = rest(su);
+                ku = rest(ku);
+            }
+            return true;
+        };
+    fn(unm, su, key, ku);
+
+    // usum is the sum of all items in su % 8 + 8 * (sum of all items in ku % 8)
+    usum = (std::accumulate(su.begin(), su.end(), 0) % 8) +
+        (std::accumulate(ku.begin(), ku.end(), 0) * 8) * 8;
+
+    std::fill(str.begin(), str.end(), 0);
+
+    auto fn2 = [&usum](Iterator<decltype(swu)> su, Iterator<decltype(kwu)> ku, SIterator str)
+        {
+            _ASSERT(su.size() == ku.size());
+            _ASSERT(su.size() == str.size());
+            for (; !empty(su); su = rest(su), ku = rest(ku), str = rest(str))
+            {
+                int s = su[0], k = ku[0];
+                s = ((s ^ k) ^ usum) & 31;
+                usum = (usum + 1) % 32;
+                if (s > 26)
+                    s = s % 26;
+                if (s == 0)
+                    s = 1;
+                str[0] = (char)(s + 64);
+            }
+        };
+    fn2(su, ku, str);
+
+    return str;
 }
 
 bool follow::operator()() const

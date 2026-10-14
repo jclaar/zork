@@ -28,6 +28,21 @@ import ZParser;
 import ZAct1;
 import ZAct2;
 
+Iterator<ParseVec> memq(const ObjectP& o, ParseVec pv)
+{
+    Iterator<ParseVec> i(pv, pv.begin());
+    while (i.cur() != i.end())
+    {
+        if (ObjectP* op = std::get_if<ObjectP>(&i[0]))
+        {
+            if (*op == o)
+                return i;
+        }
+        ++i;
+    }
+    return i;
+}
+
 ERAPPLIC(chomp);
 ERAPPLIC(climb_down);
 ERAPPLIC(climb_foo);

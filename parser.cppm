@@ -6,6 +6,11 @@ export module ZParser;
 import ZDefs;
 import ZMakstr;
 
+export const VerbP& prsa()
+{
+    return std::get<VerbP>(prsvec[0]);
+}
+
 export ObjectP prso()
 {
     ObjectP* p = std::get_if<ObjectP>(&prsvec[1]);
@@ -31,5 +36,28 @@ void add_buncher(T first, Args... args)
 {
     add_buncher(first);
     add_buncher(args...);
+}
+
+export bool verbq(const char* al)
+{
+    bool rv = false;
+    try
+    {
+        rv = prsa()->w() == al;
+    }
+    catch (...)
+    {
+        // Unrecognized word. Just return false.
+    }
+    return rv;
+}
+
+//bool verbq(const char *al);
+export template <typename T, typename ...Args>
+bool verbq(T first, Args... args)
+{
+    if (verbq(first))
+        return true;
+    return verbq(args...);
 }
 
