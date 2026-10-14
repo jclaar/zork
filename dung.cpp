@@ -70,8 +70,8 @@ static ObjVector bunch_cont()
     return ov;
 }
 ObjVector bunuvec_cont;
-Iterator<ObjVector> bunuvec;
-Iterator<ObjVector> bunch;
+//Iterator<ObjVector> bunuvec;
+//Iterator<ObjVector> bunch;
 
 static void init_bunch()
 {

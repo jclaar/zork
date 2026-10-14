@@ -14,6 +14,7 @@ import ZMakstr;
 import ZTell;
 import ZFuncs;
 import ZActors;
+import ZParser;
 import ZUtilObj;
 
 const char *brks = "\"' 	:.,?!\n";
@@ -24,30 +25,21 @@ static Nefals nefals2{ ObjectP(), 2 };
 static Nefals necontinue{ ObjectP(), 3 };
 static Iterator<ParseContV> unknown;
 static SyntaxP bunch_syn;
-bool gwim_disable = false;
-std::list<VerbP> bunchers;
+//std::list<VerbP> bunchers;
 
 static bool vtrnn(const VargP& va, vword_flag bit)
 {
     return va->vword[bit];
 }
 
-// Takes an input string and lowercases it.
-// first implies that the first letter will remain the same (if it's uppercase)
-// If lc is false, the string will be unchanged.
-static std::string foostr(std::string nam, bool first = true, bool lc = false)
+static std::string lcify(const std::string& str, size_t len = std::string::npos)
 {
-    auto start_iter = nam.begin();
-    if (!lc && first)
-        ++start_iter;
-    std::transform(start_iter, nam.end(), start_iter,
-        [](char c)
-        {
-            return tolower(c);
-        });
-    return nam;
+    std::string rv;
+    std::string::const_iterator end = len == std::string::npos ? str.end() : (str.begin() + len);
+    std::transform(str.begin(), end,
+        std::back_inserter(rv), tolower);
+    return rv;
 }
-
 
 static std::array<ParseContP, lexsize> lex_prog()
 {
@@ -69,6 +61,298 @@ static void swap_em()
 {
     std::swap(inbuf, inbuf1);
     std::swap(lexv, lexv1);
+}
+
+static bool do_take(ObjectP obj)
+{
+    ParseVec pv = prsvec;
+    const ParseVecVal sav[] = { pv[0],pv[1], pv[2] };
+
+    pv[0] = find_verb("TAKE");
+    pv[1] = obj;
+    pv[2] = ParseVecVal();
+    bool res = gwim_disable ? false : takefn()(true);
+
+    std::copy(std::begin(sav), std::end(sav), std::begin(pv));
+
+    return res;
+}
+
+// TAKE-IT -- takes object, parse-vector, and syntax bits, tries to perform a TAKE of
+// the object from the room.Its value is more or less ignored.
+static bool take_it(const ObjectP& obj, VargP varg)
+{
+    ObjectP to;
+    if (obj->oglobal().has_value())
+    {
+    }
+    else
+    {
+        if (vtrnn(varg, vword_flag::vfbit) && (to = obj->ocan()) && !(trnn(to, Bits::openbit)))
+        {
+            tell("I can't reach the "sv, 1, obj->odesc2(), "."sv);
+            return false;
+        }
+        else if (!(vtrnn(varg, vword_flag::vrbit)))
+        {
+            if (!(in_room(obj)))
+            {
+
+            }
+            else
+            {
+                tell("You don't have the " + obj->odesc2() + ".", 1);
+                return false;
+            }
+        }
+        else if (!(vtrnn(varg, vword_flag::vtbit)))
+        {
+            if (!(vtrnn(varg, vword_flag::vcbit)))
+            {
+
+            }
+            else if (!(in_room(obj)))
+            {
+
+            }
+            else
+            {
+                tell("You don't have the " + obj->odesc2() + ".", 1);
+                return false;
+            }
+        }
+        else if (!(in_room(obj)))
+        {
+
+        }
+        else if (trnn(obj, Bits::takebit) && search_list(obj->oid(), here->robjs(), nullptr).first)
+        {
+            if (lit(here))
+            {
+                return do_take(obj);
+            }
+            else
+            {
+                tell("It is too dark in here to see.");
+                return false;
+            }
+        }
+        else if (!(vtrnn(varg, vword_flag::vcbit)))
+        {
+            return true;
+        }
+        else
+        {
+            tell("You can't take the " + obj->odesc2() + ".", 1);
+            return false;
+        }
+    }
+    return true;
+}
+
+
+Nefals fwim(const ObjBits& bit, const ObjList& objs, bool no_care)
+{
+    ObjectP nobj;
+    for (const ObjectP& x : objs)
+    {
+        if (trnn(x, Bits::ovison) && (no_care || trnn(x, Bits::takebit)) && trnn_bits(x, bit))
+        {
+            if (nobj)
+                return nefals;
+            nobj = x;
+        }
+        if (trnn(x, Bits::ovison) && trnn(x, Bits::openbit))
+        {
+            for (const ObjectP& x2 : x->ocontents())
+            {
+                if (trnn(x2, Bits::ovison) && trnn_bits(x2, bit))
+                {
+                    if (nobj)
+                        return nefals;
+                    nobj = x2;
+                }
+            }
+        }
+    }
+    return Nefals(nobj, 0);
+}
+
+// GWIM -- 'get what i mean'.  takes attribute to check, what to check in
+// (adventurer and/or room), and verb.does a 'TAKE' of it if found,
+// returns the object.
+static Nefals gwim(const ObjBits& bits, VargP fword)
+{
+    bool baobj = vtrnn(fword, vword_flag::vabit);
+    bool brobj = vtrnn(fword, vword_flag::vrbit);
+    bool dont_care = !(vtrnn(fword, vword_flag::vcbit));
+    ObjectP aobj;
+    Nefals robj;
+    const AdvP& winner = *::winner;
+    const ObjectP& av = winner->avehicle();
+
+    if (baobj)
+    {
+        aobj = fwim(bits, winner->aobjs(), dont_care).first;
+    }
+
+    if ((aobj || empty(aobj)) && brobj && lit(here))
+    {
+        if (((robj = fwim(bits, here->robjs(), dont_care)).first) &&
+            (!av || av == robj.first || memq(robj.first, av->ocontents()) || trnn(robj.first, Bits::findmebit)))
+        {
+            if (!aobj && take_it(robj.first, fword))
+            {
+                return Nefals(robj.first, 0);
+            }
+        }
+        else if (aobj && robj.first || robj == nefals)
+        {
+            return nefals;
+        }
+        else
+            return Nefals(aobj, 0);
+    }
+    return Nefals(aobj, 0);
+}
+
+// GWIM-SLOT -- 'get what i mean' for one slot of the parse-vector.  takes
+// a slot number, a syntax spec, an action, and the parse-vector.  returns
+// the object, if it won.  seems a lot of pain for so little, eh ? 
+static ObjectP gwim_slot(int fx, const VargP& varg, ParseVec& objs)
+{
+    _ASSERT(fx == 0 || fx == 1);
+    ObjectP obj;
+    if (!gwim_disable)
+    {
+        obj = gwim(varg->vfwim, varg).first;
+        put(objs, fx, obj);
+    }
+    return obj;
+}
+
+
+Nefals fwim(Bits b, const ObjList& objs, bool no_care)
+{
+    ObjBits bs;
+    bs[b] = true;
+    return fwim(bs, objs, no_care);
+}
+
+
+static bool syn_equal(const VargP& varg, const OrphanSlotType& pobj)
+{
+    bool rv = false;
+    if (auto pp = std::get_if<PhraseP>(&pobj))
+    {
+        if (varg->vprep == (*pp)->prep() &&
+            trnn_bits((*pp)->obj(), varg->vbit))
+        {
+            rv = true;
+        }
+    }
+    else if (auto* op = std::get_if<ObjectP>(&pobj))
+    {
+        if (!varg->vprep && trnn_bits(*op, varg->vbit))
+            rv = true;
+    }
+    else if (is_empty(pobj) && (!varg || varg->vbit.none()))
+        rv = true;
+
+    return rv;
+}
+
+static bool orfeo(int slot, const VargP& syn, ParseVec objs)
+{
+    Orphans orph = orphans;
+    bool orfl = orph.oflag();
+    if (!(orfl))
+        return false;
+
+    _ASSERT(slot == 1 || slot == 2);
+    OrphanSlotType orphan;
+    ObjectP the_obj;
+    switch (slot)
+    {
+    case 1:
+        if (orph.oslot1())
+        {
+            orphan = orph.oslot1();
+            the_obj = std::get<ObjectP>(orphan);
+        }
+        break;
+    case 2:
+        orphan = orph.oslot2();
+        // Not quite right here but at least it doesn't
+        // crash anymore.
+        the_obj = std::visit(overload{
+            [](const PhraseP& pp) { return pp->obj(); },
+            [](const ObjectP& op) { return op; },
+            [](auto unused) { return ObjectP(); }
+            }, orphan);
+        break;
+    }
+    // The slot is a one-based index in MDL, so subtract one for C++;
+    return syn_equal(syn, orphan) && put(objs, slot - 1, the_obj);
+}
+
+static bool ortell(const VargP& varg, const ActionP& action, const ObjectP& gwim, OrphanSlotType slot2 = std::monostate())
+{
+    bool rv = false;
+    PrepP prep = varg->vprep;
+    if (prep)
+    {
+        if (gwim)
+        {
+            tell(action->vstr() + " ", 0);
+            tell(gwim->odesc2() + " ", 0);
+        }
+        rv = tell(prfunny(prep), 1, " what?");
+    }
+    else if (auto pp = std::get_if<PhraseP>(&slot2))
+    {
+        tell(action->vstr(), post_crlf, " what ", prfunny((*pp)->prep()), " the ", (*pp)->obj()->odesc2(), "?");
+    }
+    else
+    {
+        tell(action->vstr(), 1, " what?");
+    }
+    return false;
+}
+
+static bool take_it_or_leave_it(const SyntaxP& syn, ParseVec pv)
+{
+    ParseVecVal pv1 = pv[1];
+    ParseVecVal pv2 = pv[2];
+
+    ObjectP obj = std::visit(overload{
+        [](const ObjectP& op) { return op; },
+        [](const PhraseP& pp) { return pp->obj(); },
+        [](auto unused) { return ObjectP(); }
+        }, pv1);
+
+    pv[1] = obj ? obj : ParseVecVal();
+
+    if (obj == bunch_obj)
+    {
+        bunch_syn = syn;
+    }
+    else if (obj)
+    {
+        if (!take_it(obj, syn->syn[0]))
+            return false;
+    }
+
+    obj = std::visit(overload{
+        [](const ObjectP& op) { return op; },
+        [](const PhraseP& pp) { return pp->obj(); },
+        [](auto unused) { return ObjectP(); }
+        }, pv2);
+    if (obj)
+    {
+        return take_it(obj, syn->syn[1]);
+    }
+    return true;
 }
 
 Iterator<ParseContV> lex(SIterator s, SIterator sx)
@@ -202,6 +486,99 @@ Iterator<ParseContV> lex(SIterator s, SIterator sx)
     return rv;
 }
 
+bool syn_match(ParseVec pv)
+{
+    auto& action = std::get<ActionP>(pv[0]);
+    ParseVec objs = rest(pv);
+    ParseVecVal o1 = objs[0];
+    ParseVecVal o2 = objs[1];
+    SyntaxP dforce;
+    SyntaxP drive;
+    Orphans orph = orphans;
+    PrepP prep = orph.oflag() ? orph.oprep() : PrepP();
+
+    for (const SyntaxP& syn : action->vdecl())
+    {
+        auto cond2 = [&]()
+            {
+                if (is_empty(o2) && syn_equal(syn->syn[1], as_ost(o1)))
+                {
+                    put(objs, 1, o1);
+                    o2 = o1;
+                    o1 = ParseVecVal();
+                    return true;
+                }
+                return false;
+            };
+
+        if (syn_equal(syn->syn[0], as_ost(o1)))
+        {
+            if (syn_equal(syn->syn[1], as_ost(o2)))
+            {
+                if (strnn(syn, SyntaxBits::sflip))
+                {
+                    objs[0] = o2;
+                    objs[1] = o1;
+                }
+                // Syntax a winner, try taking objects.
+                return take_it_or_leave_it(syn, put(pv, 0, syn->sfcn));
+            }
+            else if (is_empty(o2))
+            {
+                // No indirect object. Still might be ok.
+                if (strnn(syn, SyntaxBits::sdriver))
+                {
+                    dforce = syn;
+                }
+                else if (!prep || prep == syn->syn[1]->vprep)
+                {
+                    drive = syn; // Last tried if default is no driver.
+                }
+            }
+        }
+        else if (cond2() || is_empty(o1))
+        {
+            if (strnn(syn, SyntaxBits::sdriver))
+                dforce = syn;
+            else if (!prep || prep == syn->syn[0]->vprep)
+                drive = syn;
+        }
+    }
+
+    bool rv;
+    if (drive = dforce ? dforce : drive)
+    {
+        ObjectP gwim;
+        VargP synn;
+        if ((synn = drive->syn[0]) && (is_empty(o1)) && !synn->vbit.none() &&
+            !orfeo(1, synn, objs) &&
+            is_empty((o1 = (gwim = gwim_slot(0, synn, objs)) ? gwim : ParseVecVal())))
+        {
+            orphan(true, action, OrphanSlotType(), synn->vprep, "", as_ost(objs[1]));
+            rv = ortell(synn, action, gwim, as_ost(objs[1]));
+        }
+        else if ((synn = drive->syn[1]) && is_empty(o2) && !synn->vbit.none() &&
+            !orfeo(2, synn, objs) && !gwim_slot(1, synn, objs))
+        {
+            orphan(true, action, (!is_empty(o1)) ? as_ost(o1) : orph.oslot1(), synn->vprep);
+            rv = ortell(synn, action, gwim);
+        }
+        else
+        {
+            take_it_or_leave_it(drive, put(pv, 0, drive->sfcn));
+            rv = true;
+        }
+    }
+    else
+    {
+        tell("I can't make sense out of that.");
+        rv = false;
+    }
+
+    return rv;
+}
+
+
 bool eparse(Iterator<ParseContV> pv, bool vb)
 {
     bool rv;
@@ -299,6 +676,223 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
 
     return rv;
 }
+
+StuffVecP stuff_obj(const ObjectP& obj, const PrepP& prep, PrepVec prepvec, ParseVec pvr, bool vb)
+{
+    StuffVecP stuff;
+    PhraseP pprep;
+    if (prep == plookup("OF", words_pobl))
+    {
+        ParseVecVal& a = back(pvr, 1)[0];
+        if (std::get<ObjectP>(a) == obj)
+        {
+            stuff = std::make_unique<StuffVec>();
+            stuff->iprepvec = prepvec;
+            stuff->iparsevec = pvr;
+            return stuff;
+        }
+        else if (vb)
+        {
+            tell("That doesn't make sense!");
+            return stuff;
+        }
+    }
+
+    if (empty(pvr))
+    {
+        vb || tell("Too many objects specified?");
+        return stuff;
+    }
+    else
+    {
+        pvr[0] = [&]() ->ParseVecVal
+            {
+                if (prep)
+                {
+                    pprep = prepvec[0];
+                    ::prepvec = prepvec = (length(prepvec) < 1) ? top(prepvec) : rest(prepvec);
+                    pprep->prep(prep);
+                    pprep->obj(obj);
+                    return pprep;
+                }
+                else
+                    return obj;
+            }();
+        stuff = std::make_unique<StuffVec>();
+        stuff->iprepvec = prepvec;
+        stuff->iparsevec = rest(pvr);
+        return stuff;
+    }
+}
+
+static ObjectP is_global(const ObjectP& obj, const std::vector<Bits>& gflags)
+{
+    // This is a global object if it can be cast into a GObject,
+    // and it's in the global list.
+    GObjectPtr go = std::dynamic_pointer_cast<GObject>(obj);
+    if (go)
+    {
+        // If there is no name, then just return it.
+        if (!go->gbits().has_value())
+            return go;
+
+        // Otherwise, check to see if it's in the passed list.
+        if (std::find(gflags.begin(), gflags.end(), go->gbits()) != gflags.end())
+            return go;
+    }
+    return ObjectP();
+}
+
+
+// Returns true if all these are true:
+// Object is global and global flag is set, otherwise always true
+// Object is visible
+// Object name matches the obj
+// If adjective is specified, the adjective must match the object as well.
+static bool this_it(const std::string& objname, const ObjectP& obj, const AdjectiveP& adj, Globals global)
+{
+    bool rv = false;
+    // Continue if not searching for globals, or if this is a global object.
+    if ((!global.has_value() || is_global(obj, *global.value())) &&
+        trnn(obj, Bits::ovison) &&
+        memq(objname, obj->onames()))
+    {
+        if (!adj)
+        {
+            rv = true;
+        }
+        else
+        {
+            rv = (bool)memq(adj, obj->oadjs());
+        }
+    }
+    return rv;
+}
+
+static Nefals get_object(const std::string& objnam, AdjectiveP adj)
+{
+    ObjectP obj;
+    ObjectP oobj;
+    ObjectP av = (*winner)->avehicle();
+    bool chomp = false;
+    bool lit = ::lit(here);
+    Nefals rv;
+
+    if (lit && (obj = (rv = search_list(objnam, here->robjs(), adj)).first))
+    {
+        if (av && obj != av && !memq(obj, av->ocontents()) && !trnn(obj, Bits::findmebit))
+        {
+            chomp = true;
+        }
+        else
+        {
+            oobj = obj;
+        }
+    }
+    else if (lit && rv == nefals)
+    {
+        return nefals;
+    }
+
+    if (av)
+    {
+        if (obj = search_list(objnam, av->ocontents(), adj).first)
+        {
+            chomp = false;
+            oobj = obj;
+        }
+        else if (obj)
+        {
+            return nefals;
+        }
+    }
+
+    if (obj = search_list(objnam, (*winner)->aobjs(), adj).first)
+    {
+        if (oobj)
+        {
+            if (!adj)
+            {
+                if (obj->oadjs().empty() == oobj->oadjs().empty())
+                {
+                    return nefals;
+                }
+                else if (obj->oadjs().empty())
+                {
+                    return Nefals(obj, 0);
+                }
+                else
+                    return Nefals(oobj, 0);
+            }
+        }
+        else
+        {
+            return Nefals(obj, 0);
+        }
+    }
+    else if (!empty(obj))
+    {
+        return nefals;
+    }
+    else if (chomp)
+    {
+        return nefals2;
+    }
+    else if (oobj)
+    {
+        return Nefals(oobj, 0);
+    }
+    else if (oobj = search_list(objnam, global_objects(), adj, true, &here->rglobal()).first)
+    {
+        return Nefals(oobj, 0);
+    }
+    else if (adj)
+    {
+        const ObjList& obj_list = plookup(objnam, object_pobl());
+        if (!obj_list.empty() && (obj = obj_list.front()) && (obj->oglobal().has_value() && gtrnn(here, obj->oglobal().value())))
+        {
+            return Nefals(obj, 0);
+        }
+    }
+    return nefals0;
+}
+
+static ObjectP get_last(const ObjList& l)
+{
+    for (const ObjectP& x : l)
+    {
+        if (trnn(x, Bits::ovison))
+            return x;
+    }
+    return ObjectP();
+}
+
+
+static ObjectP get_it_obj()
+{
+    ObjectP li = last_it;
+    const AdvP& player = ::player();
+    ObjectP obj;
+    if (orphans.oslot1() && (obj = orphans.oslot1()) && obj && (in_room(obj, here) || memq(obj, player->aobjs())))
+    {
+        return obj;
+    }
+    else if (in_room(li, here) || memq(li, player->aobjs()))
+    {
+        return li;
+    }
+    else if (obj = get_last(here->robjs()))
+    {
+        return obj;
+    }
+    else if (obj = get_last(player->aobjs()))
+    {
+        return obj;
+    }
+    else
+        return get_object(last_it->oid(), nullptr).first;
+}
+
 
 // Duplicates a MDL return statement from a REPEAT
 #define RETURN(b) { val = b; break; }
@@ -762,136 +1356,6 @@ const Orphans &orphan(bool flag, const ActionP &action, const OrphanSlotType &sl
     return orphans;
 }
 
-std::string prlcstr(const std::string &str)
-{
-    return foostr(str, true, true);
-}
-
-std::string prstr(const std::string &sp)
-{
-    return foostr(sp, false);
-}
-
-std::string prfunny(const WordP &prep)
-{
-    return prstr(prep->w());
-}
-
-bool ortell(const VargP &varg, const ActionP &action, const ObjectP &gwim, OrphanSlotType slot2)
-{
-    bool rv = false;
-    PrepP prep = varg->vprep;
-    if (prep)
-    {
-        if (gwim)
-        {
-            tell(action->vstr() + " ", 0);
-            tell(gwim->odesc2() + " ", 0);
-        }
-        rv = tell(prfunny(prep), 1, " what?");
-    }
-    else if (auto pp = std::get_if<PhraseP>(&slot2))
-    {
-        tell(action->vstr(), post_crlf, " what ", prfunny((*pp)->prep()), " the ", (*pp)->obj()->odesc2(), "?");
-    }
-    else
-    {
-        tell(action->vstr(), 1, " what?");
-    }
-    return false;
-}
-
-StuffVecP stuff_obj(const ObjectP &obj, const PrepP &prep, PrepVec prepvec, ParseVec pvr, bool vb)
-{
-    StuffVecP stuff;
-    PhraseP pprep;
-    if (prep == plookup("OF", words_pobl))
-    {
-        ParseVecVal &a = back(pvr, 1)[0];
-        if (std::get<ObjectP>(a) == obj)
-        {
-            stuff = std::make_unique<StuffVec>();
-            stuff->iprepvec = prepvec;
-            stuff->iparsevec = pvr;
-            return stuff;
-        }
-        else if (vb)
-        {
-            tell("That doesn't make sense!");
-            return stuff;
-        }
-    }
-
-    if (empty(pvr))
-    {
-        vb || tell("Too many objects specified?");
-        return stuff;
-    }
-    else
-    {
-        pvr[0] = [&]() ->ParseVecVal
-        {
-            if (prep)
-            {
-                pprep = prepvec[0];
-                ::prepvec = prepvec = (length(prepvec) < 1) ? top(prepvec) : rest(prepvec);
-                pprep->prep(prep);
-                pprep->obj(obj);
-                return pprep;
-            }
-            else
-                return obj;
-        }();
-        stuff = std::make_unique<StuffVec>();
-        stuff->iprepvec = prepvec;
-        stuff->iparsevec = rest(pvr);
-        return stuff;
-    }
-}
-
-static ObjectP is_global(const ObjectP &obj, const std::vector<Bits> &gflags)
-{
-    // This is a global object if it can be cast into a GObject,
-    // and it's in the global list.
-    GObjectPtr go = std::dynamic_pointer_cast<GObject>(obj);
-    if (go)
-    {
-        // If there is no name, then just return it.
-        if (!go->gbits().has_value())
-            return go;
-
-        // Otherwise, check to see if it's in the passed list.
-        if (std::find(gflags.begin(), gflags.end(), go->gbits()) != gflags.end())
-            return go;
-    }
-    return ObjectP();
-}
-
-// Returns true if all these are true:
-// Object is global and global flag is set, otherwise always true
-// Object is visible
-// Object name matches the obj
-// If adjective is specified, the adjective must match the object as well.
-bool this_it(const std::string &objname, const ObjectP &obj, const AdjectiveP &adj, Globals global)
-{
-    bool rv = false;
-    // Continue if not searching for globals, or if this is a global object.
-    if ((!global.has_value() || is_global(obj, *global.value())) &&
-        trnn(obj, Bits::ovison) &&
-        memq(objname, obj->onames()))
-    {
-        if (!adj)
-        {
-            rv = true;
-        }
-        else
-        {
-            rv = (bool) memq(adj, obj->oadjs());
-        }
-    }
-    return rv;
-}
-
 Nefals search_list(const std::string &objnam, const ObjList &slist, const AdjectiveP &adj, bool first, const Globals &global)
 {
     ObjectP oobj;
@@ -976,502 +1440,6 @@ Nefals search_list(const std::string &objnam, const ObjList &slist, const Adject
     {
         return Nefals(oobj, 0);
     }
-}
-
-Nefals get_object(const std::string &objnam, AdjectiveP adj)
-{
-    ObjectP obj;
-    ObjectP oobj;
-    ObjectP av = (*winner)->avehicle();
-    bool chomp = false;
-    bool lit = ::lit(here);
-    Nefals rv;
-
-    if (lit && (obj = (rv = search_list(objnam, here->robjs(), adj)).first))
-    {
-        if (av && obj != av && !memq(obj, av->ocontents()) && !trnn(obj, Bits::findmebit))
-        {
-            chomp = true;
-        }
-        else
-        {
-            oobj = obj;
-        }
-    }
-    else if (lit && rv == nefals)
-    {
-        return nefals;
-    }
-
-    if (av)
-    {
-        if (obj = search_list(objnam, av->ocontents(), adj).first)
-        {
-            chomp = false;
-            oobj = obj;
-        }
-        else if (obj)
-        {
-            return nefals;
-        }
-    }
-
-    if (obj = search_list(objnam, (*winner)->aobjs(), adj).first)
-    {
-        if (oobj)
-        {
-            if (!adj)
-            {
-                if (obj->oadjs().empty() == oobj->oadjs().empty())
-                {
-                    return nefals;
-                }
-                else if (obj->oadjs().empty())
-                {
-                    return Nefals(obj, 0);
-                }
-                else
-                    return Nefals(oobj, 0);
-            }
-        }
-        else
-        {
-            return Nefals(obj, 0);
-        }
-    }
-    else if (!empty(obj))
-    {
-        return nefals;
-    }
-    else if (chomp)
-    {
-        return nefals2;
-    }
-    else if (oobj)
-    {
-        return Nefals(oobj, 0);
-    }
-    else if (oobj = search_list(objnam, global_objects(), adj, true, &here->rglobal()).first)
-    {
-        return Nefals(oobj, 0);
-    }
-    else if (adj)
-    {
-        const ObjList &obj_list = plookup(objnam, object_pobl());
-        if (!obj_list.empty() && (obj = obj_list.front()) && (obj->oglobal().has_value() && gtrnn(here, obj->oglobal().value())))
-        {
-            return Nefals(obj, 0);
-        }
-    }
-    return nefals0;
-}
-
-ObjectP get_it_obj()
-{
-    ObjectP li = last_it;
-    const AdvP &player = ::player();
-    ObjectP obj;
-    if (orphans.oslot1() && (obj = orphans.oslot1()) && obj && (in_room(obj, here) || memq(obj, player->aobjs())))
-    {
-        return obj;
-    }
-    else if (in_room(li, here) || memq(li, player->aobjs()))
-    {
-        return li;
-    }
-    else if (obj = get_last(here->robjs()))
-    {
-        return obj;
-    }
-    else if (obj = get_last(player->aobjs()))
-    {
-        return obj;
-    }
-    else
-        return get_object(last_it->oid(), nullptr).first;
-}
-
-ObjectP get_last(const ObjList &l)
-{
-    for (const ObjectP &x : l)
-    {
-        if (trnn(x, Bits::ovison))
-            return x;
-    }
-    return ObjectP();
-}
-
-std::string lcify(const std::string &str, size_t len)
-{
-    std::string rv;
-    std::string::const_iterator end = len == std::string::npos ? str.end() : (str.begin() + len);
-    std::transform(str.begin(), end,
-        std::back_inserter(rv), tolower);
-    return rv;
-}
-
-bool syn_match(ParseVec pv)
-{
-    auto &action = std::get<ActionP>(pv[0]);
-    ParseVec objs = rest(pv);
-    ParseVecVal o1 = objs[0];
-    ParseVecVal o2 = objs[1];
-    SyntaxP dforce;
-    SyntaxP drive;
-    Orphans orph = orphans;
-    PrepP prep = orph.oflag() ? orph.oprep() : PrepP();
-
-    for (const SyntaxP &syn : action->vdecl())
-    {
-        auto cond2 = [&]()
-        {
-            if (is_empty(o2) && syn_equal(syn->syn[1], as_ost(o1)))
-            {
-                put(objs, 1, o1);
-                o2 = o1;
-                o1 = ParseVecVal();
-                return true;
-            }
-            return false;
-        };
-
-        if (syn_equal(syn->syn[0], as_ost(o1)))
-        {
-            if (syn_equal(syn->syn[1], as_ost(o2)))
-            {
-				if (strnn(syn, SyntaxBits::sflip))
-				{
-					objs[0] = o2;
-					objs[1] = o1;
-				}
-                // Syntax a winner, try taking objects.
-                return take_it_or_leave_it(syn, put(pv, 0, syn->sfcn));
-            }
-            else if (is_empty(o2))
-            {
-                // No indirect object. Still might be ok.
-                if (strnn(syn, SyntaxBits::sdriver))
-                {
-                    dforce = syn;
-                }
-                else if (!prep || prep == syn->syn[1]->vprep)
-                {
-                    drive = syn; // Last tried if default is no driver.
-                }
-            }
-        }
-        else if (cond2() || is_empty(o1))
-        {
-            if (strnn(syn, SyntaxBits::sdriver))
-                dforce = syn;
-            else if (!prep || prep == syn->syn[0]->vprep)
-                drive = syn;
-        }
-    }
-
-    bool rv;
-    if (drive = dforce ? dforce : drive)
-    {
-        ObjectP gwim;
-        VargP synn;
-        if ((synn = drive->syn[0]) && (is_empty(o1)) && !synn->vbit.none() &&
-            !orfeo(1, synn, objs) &&
-            is_empty((o1 = (gwim = gwim_slot(0, synn, objs)) ? gwim : ParseVecVal())))
-        {
-            orphan(true, action, OrphanSlotType(), synn->vprep, "", as_ost(objs[1]));
-            rv = ortell(synn, action, gwim, as_ost(objs[1]));
-        }
-        else if ((synn = drive->syn[1]) && is_empty(o2) && !synn->vbit.none() &&
-            !orfeo(2, synn, objs) && !gwim_slot(1, synn, objs))
-        {
-            orphan(true, action, (!is_empty(o1)) ? as_ost(o1) : orph.oslot1(), synn->vprep);
-            rv = ortell(synn, action, gwim);
-        }
-        else
-        {
-            take_it_or_leave_it(drive, put(pv, 0, drive->sfcn));
-            rv = true;
-        }
-    }
-    else
-    {
-        tell("I can't make sense out of that.");
-        rv = false;
-    }
-
-    return rv;
-}
-
-bool syn_equal(const VargP &varg, const OrphanSlotType &pobj)
-{
-    bool rv = false;
-    if (auto pp = std::get_if<PhraseP>(&pobj))
-    {
-        if (varg->vprep == (*pp)->prep() &&
-            trnn_bits((*pp)->obj(), varg->vbit))
-        {
-            rv = true;
-        }
-    }
-    else if (auto *op = std::get_if<ObjectP>(&pobj))
-    {
-        if (!varg->vprep && trnn_bits(*op, varg->vbit))
-            rv = true;
-    }
-    else if (is_empty(pobj) && (!varg || varg->vbit.none()))
-        rv = true;
-
-    return rv;
-}
-
-bool take_it_or_leave_it(const SyntaxP &syn, ParseVec pv)
-{
-    ParseVecVal pv1 = pv[1];
-    ParseVecVal pv2 = pv[2];
-
-    ObjectP obj = std::visit(overload{
-        [](const ObjectP& op) { return op; },
-        [](const PhraseP& pp) { return pp->obj(); },
-        [](auto unused) { return ObjectP(); }
-        }, pv1);
-
-    pv[1] = obj ? obj : ParseVecVal();
-
-    if (obj == bunch_obj)
-    {
-        bunch_syn = syn;
-    }
-    else if (obj)
-    {
-        if (!take_it(obj, syn->syn[0]))
-            return false;
-    }
-
-    obj = std::visit(overload{
-        [](const ObjectP& op) { return op; },
-        [](const PhraseP& pp) { return pp->obj(); },
-        [](auto unused) { return ObjectP(); }
-        }, pv2);
-    if (obj)
-    {
-        return take_it(obj, syn->syn[1]);
-    }
-    return true;
-}
-
-// TAKE-IT -- takes object, parse-vector, and syntax bits, tries to perform a TAKE of
-// the object from the room.Its value is more or less ignored.
-bool take_it(const ObjectP &obj, VargP varg)
-{
-    ObjectP to;
-    if (obj->oglobal().has_value())
-    {
-    }
-    else
-    {
-        if (vtrnn(varg, vword_flag::vfbit) && (to = obj->ocan()) && !(trnn(to, Bits::openbit)))
-        {
-            tell("I can't reach the "sv, 1, obj->odesc2(), "."sv);
-            return false;
-        }
-        else if (!(vtrnn(varg, vword_flag::vrbit)))
-        {
-            if (!(in_room(obj)))
-            {
-
-            }
-            else
-            {
-                tell("You don't have the " + obj->odesc2() + ".", 1);
-                return false;
-            }
-        }
-        else if (!(vtrnn(varg, vword_flag::vtbit)))
-        {
-            if (!(vtrnn(varg, vword_flag::vcbit)))
-            {
-
-            }
-            else if (!(in_room(obj)))
-            {
-
-            }
-            else
-            {
-                tell("You don't have the " + obj->odesc2() + ".", 1);
-                return false;
-            }
-        }
-        else if (!(in_room(obj)))
-        {
-
-        }
-        else if (trnn(obj, Bits::takebit) && search_list(obj->oid(), here->robjs(), nullptr).first)
-        {
-            if (lit(here))
-            {
-                return do_take(obj);
-            }
-            else
-            {
-                tell("It is too dark in here to see.");
-                return false;
-            }
-        }
-        else if (!(vtrnn(varg, vword_flag::vcbit)))
-        {
-            return true;
-        }
-        else
-        {
-            tell("You can't take the " + obj->odesc2() + ".", 1);
-            return false;
-        }
-    }
-    return true;
-}
-
-bool do_take(ObjectP obj)
-{
-    ParseVec pv = prsvec;
-    const ParseVecVal sav[] = { pv[0],pv[1], pv[2] };
-
-    pv[0] = find_verb("TAKE");
-    pv[1] = obj;
-    pv[2] = ParseVecVal();
-    bool res = gwim_disable ? false : takefn()(true);
-
-    std::copy(std::begin(sav), std::end(sav), std::begin(pv));
-
-    return res;
-}
-
-bool orfeo(int slot, const VargP &syn, ParseVec objs)
-{
-    Orphans orph = orphans;
-    bool orfl = orph.oflag();
-    if (!(orfl))
-        return false;
-
-    _ASSERT(slot == 1 || slot == 2);
-    OrphanSlotType orphan;
-    ObjectP the_obj;
-    switch (slot)
-    {
-    case 1:
-        if (orph.oslot1())
-        {
-            orphan = orph.oslot1();
-            the_obj = std::get<ObjectP>(orphan);
-        }
-        break;
-    case 2:
-        orphan = orph.oslot2();
-        // Not quite right here but at least it doesn't
-        // crash anymore.
-        the_obj = std::visit(overload{
-            [](const PhraseP& pp) { return pp->obj(); },
-            [](const ObjectP& op) { return op; },
-            [](auto unused) { return ObjectP(); }
-            }, orphan);
-        break;
-    }
-    // The slot is a one-based index in MDL, so subtract one for C++;
-    return syn_equal(syn, orphan) && put(objs, slot-1, the_obj);
-}
-
-// ---------------------------------------------------------------------
-// GWIM & FWIM -- all this idiocy is used when the loser didn't specify
-// part of the command because it was 'obvious' what he meant.GWIM is
-// used to try to fill it in by searching for the right object in the
-// adventurer's possessions and the contents of the room.
-// -------------------------------------------------------------------- - 
-
-// GWIM-SLOT -- 'get what i mean' for one slot of the parse-vector.  takes
-// a slot number, a syntax spec, an action, and the parse-vector.  returns
-// the object, if it won.  seems a lot of pain for so little, eh ? 
-ObjectP gwim_slot(int fx, const VargP &varg, ParseVec &objs)
-{
-    _ASSERT(fx == 0 || fx == 1);
-    ObjectP obj;
-    if (!gwim_disable)
-    {
-        obj = gwim(varg->vfwim, varg).first;
-        put(objs, fx, obj);
-    }
-    return obj;
-}
-
-// GWIM -- 'get what i mean'.  takes attribute to check, what to check in
-// (adventurer and/or room), and verb.does a 'TAKE' of it if found,
-// returns the object.
-Nefals gwim(const ObjBits &bits, VargP fword)
-{
-    bool baobj = vtrnn(fword, vword_flag::vabit);
-    bool brobj = vtrnn(fword, vword_flag::vrbit);
-    bool dont_care = !(vtrnn(fword, vword_flag::vcbit));
-    ObjectP aobj;
-    Nefals robj;
-    const AdvP &winner = *::winner;
-    const ObjectP &av = winner->avehicle();
-
-    if (baobj)
-    {
-        aobj = fwim(bits, winner->aobjs(), dont_care).first;
-    }
-
-    if ((aobj || empty(aobj)) && brobj && lit(here))
-    {
-        if (((robj = fwim(bits, here->robjs(), dont_care)).first) &&
-            (!av || av == robj.first || memq(robj.first, av->ocontents()) || trnn(robj.first, Bits::findmebit)))
-        {
-            if (!aobj && take_it(robj.first, fword))
-            {
-                return Nefals(robj.first, 0);
-            }
-        }
-        else if (aobj && robj.first || robj == nefals)
-        {
-            return nefals;
-        }
-        else
-            return Nefals(aobj, 0);
-    }
-    return Nefals(aobj, 0);
-}
-
-Nefals fwim(Bits b, const ObjList &objs, bool no_care)
-{
-    ObjBits bs;
-    bs[b] = true;
-    return fwim(bs, objs, no_care);
-}
-
-Nefals fwim(const ObjBits &bit, const ObjList &objs, bool no_care)
-{
-    ObjectP nobj;
-    for (const ObjectP &x : objs)
-    {
-        if (trnn(x, Bits::ovison) && (no_care || trnn(x, Bits::takebit)) && trnn_bits(x, bit))
-        {
-            if (nobj)
-                return nefals;
-            nobj = x;
-        }
-        if (trnn(x, Bits::ovison) && trnn(x, Bits::openbit))
-        {
-            for (const ObjectP &x2 : x->ocontents())
-            {
-                if (trnn(x2, Bits::ovison) && trnn_bits(x2, bit))
-                {
-                    if (nobj)
-                        return nefals;
-                    nobj = x2;
-                }
-            }
-        }
-    }
-    return Nefals(nobj, 0);
 }
 
 // Action function for BUNCHing.

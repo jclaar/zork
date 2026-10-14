@@ -7,69 +7,15 @@
 
 // Possible levels of false returns from parser.
 using Nefals = std::pair<ObjectP, int>;
-extern Nefals nefals;
-extern Nefals nefals2;
 inline bool operator==(const Nefals &ne, const ObjectP &obj)
 {
     return ne.first == obj;
 }
 
 extern Iterator<ParseContV> lexv;
-extern bool gwim_disable;
 
-typedef Iterator<PhraseVecV> PrepVec;
-typedef Iterator<ParseVecA> ParseVec;
-extern Iterator<ObjVector> bunuvec;
-extern Iterator<ObjVector> bunch;
-extern std::list<VerbP> bunchers;
-
-// Specialization for ParseVec
-template <typename T>
-ParseVec put(ParseVec a, int index, const T& val)
-{
-    using U = std::decay_t<T>;
-    if constexpr (std::is_same_v<U, std::nullptr_t>)
-    {
-        a[index] = std::monostate();
-    }
-    else if constexpr (std::is_same_v<U, direction> ||
-        std::is_same_v<U, ParseVecVal>)
-    {
-        a[index] = val;
-    }
-    else if constexpr (std::is_same_v<U, ObjectP> ||
-        std::is_same_v<U, VerbP> ||
-        std::is_same_v<U, ActionP> ||
-        std::is_same_v<U, PhraseP>)
-    {
-        if (val)
-            a[index] = val;
-        else
-            a[index] = std::monostate();
-    }
-    else
-    {
-        static_assert(std::is_same_v<U, void>, "Unsupported type passed to put");
-    }
-    return a;
-}
-
-inline void put(Iterator<ObjVector> a, int index, ObjectP o)
-{
-    a[index] = o;
-}
-
-inline Iterator<ParseContV> member(const std::string &s, Iterator<ParseContV> pv)
-{
-    while (pv.cur() != pv.end())
-    {
-        const std::string &s1 = (*pv.cur())->s1;
-        if (s1 == s)
-            break;
-        ++pv;
-    }
-    return pv;
-}
+using PrepVec = Iterator<PhraseVecV>;
+using ParseVec = Iterator<ParseVecA>;
 
 extern ParseVec prsvec;
 extern PrepVec prepvec;
@@ -90,9 +36,9 @@ struct StuffVec
         return !empty(iprepvec) && !empty(iparsevec);
     }
 };
-typedef std::unique_ptr<StuffVec> StuffVecP;
+using StuffVecP = std::unique_ptr<StuffVec>;
 
-typedef std::optional<const std::vector<Bits>*> Globals;
+using Globals = std::optional<const std::vector<Bits>*>;
 
 Iterator<ParseContV> lex(SIterator s, SIterator sx);
 bool eparse(Iterator<ParseContV> pv, bool vb);
@@ -102,32 +48,13 @@ class cwin
 {
 };
 
-typedef std::variant<std::monostate, cwin, ParseVec, bool> SParseVal;
+using SParseVal = std::variant<std::monostate, cwin, ParseVec, bool>;
 SParseVal sparse(Iterator<ParseContV> sv, bool vb);
 Nefals search_list(const std::string &objname, const ObjList &slist, const AdjectiveP &adj, bool first = true, const Globals &global = Globals());
-bool this_it(const std::string &objname, const ObjectP &obj, const AdjectiveP &adj, Globals global);
-Nefals get_object(const std::string &objnam, AdjectiveP adj);
-StuffVecP stuff_obj(const ObjectP &obj, const PrepP &prep, PrepVec prepvec, ParseVec pvr, bool vb);
-ObjectP get_last(const ObjList &l);
-ObjectP get_it_obj();
 
 const Orphans &orphan(bool flag = false, const ActionP &action = nullptr, const OrphanSlotType &slot1 = std::monostate(), const PrepP &prep = PrepP(),
     std::string_view name = "", const OrphanSlotType &slot2 = std::monostate());
-bool ortell(const VargP &varg, const ActionP &action, const ObjectP &gwim, OrphanSlotType slot2 = std::monostate());
-std::string lcify(const std::string &str, size_t len = std::string::npos);
-bool syn_match(ParseVec pv);
-bool syn_equal(const VargP &varg, const OrphanSlotType &pobj);
-bool take_it_or_leave_it(const SyntaxP &syn, ParseVec pv);
-bool take_it(const ObjectP &obj, VargP varg);
-bool orfeo(int slot, const VargP &syn, ParseVec objs);
-ObjectP gwim_slot(int fx, const VargP &varg, ParseVec &objs);
-Nefals gwim(const ObjBits &bits, VargP fword);
 Nefals fwim(Bits b, const ObjList &objs, bool no_care);
-Nefals fwim(const ObjBits &bits, const ObjList &objs, bool no_care);
-bool do_take(ObjectP obj);
-std::string prstr(const std::string &sp);
-std::string prlcstr(const std::string &str);
-std::string prfunny(const WordP &prep);
 
 // Verb functions
 RAPPLIC(bunchem);
