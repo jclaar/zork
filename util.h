@@ -1,9 +1,6 @@
 #pragma once
 
-#include <assert.h>
-#ifdef _MSC_VER
-#include <crtdbg.h>
-#endif
+#include <cassert>
 
 #if !defined(_ASSERT)
 #define _ASSERT assert

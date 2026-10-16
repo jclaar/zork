@@ -6,11 +6,7 @@
 #pragma once
 #define _WIN32_WINNT 0x0601
 
-#include <assert.h>
-
-#ifdef _MSC_VER
-#include <crtdbg.h>
-#endif
+#include <cassert>
 
 #if !defined(_ASSERT)
 #define _ASSERT assert

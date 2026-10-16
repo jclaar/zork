@@ -1,7 +1,6 @@
 #pragma once
 
-#include <limits>
-#include <limits.h>
+#include <climits>
 #include <string>
 #include <bitset>
 #include "defs.h"

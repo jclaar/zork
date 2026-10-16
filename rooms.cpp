@@ -1,5 +1,5 @@
 #include "precomp.h"
-#include <time.h>
+#include <ctime>
 #include <iostream>
 #include <sstream>
 #include <chrono>
