@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <string_view>
+#include <cstdint>
 #include "ZorkException.h"
 #include "globals.h"
 
