@@ -167,7 +167,7 @@ bool geronimo::operator()() const
     return (*winner)->avehicle() == sfind_obj("BARRE") ? jigs_up(over_falls_str) : tell("Wasn't he an Indian?");
 }
 
-bool put_balloon(const ObjectP &ball, std::string_view there, std::string_view str)
+static bool put_balloon(const ObjectP &ball, std::string_view there, std::string_view str)
 {
     if (member("LEDG", here->rid()) || here == find_room("VLBOT"))
     {
@@ -178,7 +178,7 @@ bool put_balloon(const ObjectP &ball, std::string_view there, std::string_view s
     return true;
 }
 
-bool rise_and_shine(const ObjectP &ball)
+static bool rise_and_shine(const ObjectP &ball)
 {
     const AdvP &winner = *::winner;
     bool in = winner->avehicle() == ball;
@@ -258,7 +258,7 @@ bool rise_and_shine(const ObjectP &ball)
     return true;
 }
 
-bool decline_and_fall(const ObjectP &ball)
+static bool decline_and_fall(const ObjectP &ball)
 {
     const AdvP &winner = *::winner;
     bool in = winner->avehicle() == ball;

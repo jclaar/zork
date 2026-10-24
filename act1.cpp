@@ -50,6 +50,22 @@ namespace
             ::tell(*(tell_start + size_t(cnt) - 1));
         }
     }
+
+    bool hack_hack(const ObjectP& obj, std::string_view str, std::string_view obj2 = std::string_view())
+    {
+        if (object_action())
+            return true;
+        if (!obj2.empty())
+        {
+            tell(str, 1, obj->odesc2(), " with a ");
+            tell(obj2, 1, pick_one(ho_hum));
+        }
+        else
+        {
+            tell(str, 1, obj->odesc2(), pick_one(ho_hum));
+        }
+        return true;
+    }
 }
 
 int water_level = 0;
@@ -352,7 +368,7 @@ bool robber::operator()(const HackP &hack) const
     return true;
 }
 
-bool infested(const RoomP& r)
+static bool infested(const RoomP& r)
 {
     const ObjList& villains = ::villains;
     const HackP& dem = get_demon("THIEF");
@@ -630,7 +646,7 @@ bool swinger::operator()() const
     return perform(attacker(), find_verb("ATTAC"), prsi(), prso());
 }
 
-bool thief_in_treasure(const ObjectP &hobj)
+static bool thief_in_treasure(const ObjectP &hobj)
 {
     if (length(here->robjs()) != 2)
     {
@@ -696,7 +712,7 @@ bool tie_up::operator()() const
     return true;
 }
 
-bool torch_off(const ObjectP &t)
+static bool torch_off(const ObjectP &t)
 {
     t->odesc2() = "burned out ivory torch";
     t->odesc1() = "There is a burned out ivory torch here.";
@@ -845,7 +861,7 @@ bool deflater::operator()() const
     return true;
 }
 
-void dput(std::string_view str)
+static void dput(std::string_view str)
 {
     ObjectP prso = ::prso();
     for (const Ex &ex : here->rexits())
@@ -1138,7 +1154,7 @@ bool reader::operator()() const
     return true;
 }
 
-int otval_frob(const ObjList &l)
+static int otval_frob(const ObjList &l)
 {
     int value = 0;
     for (auto &x : l)
@@ -2889,22 +2905,6 @@ bool fill::operator()() const
     else if (prsi() != sfind_obj("WATER"))
     {
         perform(putter(), find_verb("PUT"), prsi(), prso());
-    }
-    return true;
-}
-
-bool hack_hack(const ObjectP &obj, std::string_view str, std::string_view obj2)
-{
-    if (object_action())
-        return true;
-    if (!obj2.empty())
-    {
-        tell(str, 1, obj->odesc2(), " with a ");
-        tell(obj2, 1, pick_one(ho_hum));
-    }
-    else
-    {
-        tell(str, 1, obj->odesc2(), pick_one(ho_hum));
     }
     return true;
 }
