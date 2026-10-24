@@ -25,7 +25,7 @@ namespace
 ObjectP matobj;
 ObjectP timber_tie;
 
-bool go_and_look(RoomP rm)
+static bool go_and_look(RoomP rm)
 {
     bool seen = rtrnn(rm, RoomBit::rseenbit);
     goto_(rm);
@@ -39,7 +39,7 @@ bool climb_down::operator()() const
     return climb_up()(direction::Down);
 }
 
-void cp_corner(int locn, int col, int row)
+static void cp_corner(int locn, int col, int row)
 {
     auto s = (col != 0 && row != 0) ? "??" :
         ((col = cpuvec[size_t(locn) - 1]) == 0) ? "  " :
@@ -48,7 +48,7 @@ void cp_corner(int locn, int col, int row)
     tell(s, no_crlf);
 }
 
-void cp_ortho(int contents)
+static void cp_ortho(int contents)
 {
     auto ss = contents == 0 ? "  " :
         contents == 1 ? "MM" :
@@ -56,7 +56,7 @@ void cp_ortho(int contents)
     tell(ss, no_crlf);
 }
 
-bool cpwhere()
+static bool cpwhere()
 {
     int here = cphere;
     auto &uvec = cpuvec;
@@ -130,7 +130,7 @@ bool maker::operator()() const
     return rv;
 }
 
-void numtell(int num, std::string_view str)
+static void numtell(int num, std::string_view str)
 {
     if (num == 0)
     {
@@ -150,7 +150,12 @@ bool oops::operator()() const
     return tell("You haven't made any spelling mistakes....lately.");
 }
 
-void pcheck()
+static const ObjectP& plid(const ObjectP& obj1 = sfind_obj("PLID1"), const ObjectP& obj2 = sfind_obj("PLID2"))
+{
+    return memq(obj1, here->robjs()) ? obj1 : obj2;
+}
+
+static void pcheck()
 {
     auto &lid = plid();
     auto &mat = sfind_obj("MAT");
@@ -227,7 +232,7 @@ bool pdoor(std::string_view str, const ObjectP &lid, const ObjectP &keyhole)
     return true;
 }
 
-ObjectP pkh(ObjectP keyhole, bool this_)
+static ObjectP pkh(ObjectP keyhole, bool this_ = false)
 {
     ObjectP obj;
     if ((keyhole == (obj = sfind_obj("PKH1")) && !this_) ||
@@ -264,12 +269,7 @@ bool play::operator()() const
     return rv;
 }
 
-const ObjectP &plid(const ObjectP &obj1, const ObjectP &obj2)
-{
-    return memq(obj1, here->robjs()) ? obj1 : obj2;
-}
-
-void plookat(const RoomP &rm)
+static void plookat(const RoomP &rm)
 {
     RoomP here = ::here;
     // go_and_look changes ::here
@@ -367,6 +367,16 @@ bool slider(const ObjectP &obj)
 bool smeller::operator()() const
 {
     return tell("It smells like a ", 1, ((ObjectP)prso())->odesc2(), ".");
+}
+
+ScolWalls get_wall(const RoomP& rm)
+{
+    for (auto& w : scol_walls)
+    {
+        if (find_room(w.rm1) == rm)
+            return w;
+    }
+    return ScolWalls();
 }
 
 bool through::operator()(ObjectP obj) const
@@ -595,16 +605,6 @@ bool enter::operator()() const
     return walk()();
 }
 
-ScolWalls get_wall(const RoomP &rm)
-{
-    for (auto &w : scol_walls)
-    {
-        if (find_room(w.rm1) == rm)
-            return w;
-    }
-    return ScolWalls();
-}
-
 bool pass_the_bucket(const RoomP &r, const ObjectP &b)
 {
     const AdvP &winner = *::winner;
@@ -621,7 +621,7 @@ bool pass_the_bucket(const RoomP &r, const ObjectP &b)
     return true;
 }
 
-bool iceboom()
+static bool iceboom()
 {
     mung_room(here, icemung);
     jigs_up(iceblast);
@@ -709,13 +709,13 @@ bool zgnome_init::operator()() const
     return rv;
 }
 
-int cpnext(int rm, const ObjectP &obj)
+static int cpnext(int rm, const ObjectP &obj)
 {
     auto m = memq(obj, cpwalls);
     return rm + std::get<1>(**m);
 }
 
-bool cpgoto(int fx)
+static bool cpgoto(int fx)
 {
     rtrz(here, RoomBit::rseenbit);
     cpobjs[size_t(cphere) - 1] = here->robjs();
@@ -2282,7 +2282,7 @@ namespace exit_funcs
         return rm;
     }
 
-    RoomP bkleavee_(const RoomP &rm)
+    static RoomP bkleavee_(const RoomP &rm)
     {
         return (held(sfind_obj("BILLS")) || held(sfind_obj("PORTR"))) ? RoomP() : rm;
     }
@@ -2301,15 +2301,6 @@ namespace exit_funcs
         if (rm)
             return rm;
         return std::monostate();
-    }
-
-    bool cpgoto(int fx)
-    {
-        rtrz(here, RoomBit::rseenbit);
-        cpobjs[size_t(cphere) - 1] = here->robjs();
-        cphere = fx;
-        here->robjs() = cpobjs[size_t(fx) - 1];
-        return perform(room_desc(), find_verb("LOOK"));
     }
 
     ExitFuncVal cpexit::operator()() const
