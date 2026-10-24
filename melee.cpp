@@ -180,7 +180,7 @@ bool fighting::operator()(const HackP &dem) const
                     }
                     else if (res == attack_state::unconscious)
                     {
-                        out = 2 + rand() % 3;
+                        out = 2 + ZRand(0, 2);
                         success = true;
                         break;
                     }
@@ -289,7 +289,7 @@ bool pres(const tofmsg &tab, std::string_view a, std::string_view d, std::string
 {
     int l = (int) tab.size();
     // Replace a %D% with the name.
-    std::string s = tab[rand() % l];
+    std::string s = tab[ZRand(0, l - 1)];
     // Replace %D% with d, %A% with a, and %W% with w (if any)
     std::string::size_type pos = s.find("%D%");
     if (pos != std::string::npos)
@@ -390,7 +390,7 @@ std::optional<attack_state> blow(const AdvP &hero, ObjectP villain, const tofmsg
                 att = -2;
             tbl = &def3_res[size_t(att) + 3-1];
         }
-        res = (*tbl)[(rand() % 9)];
+        res = (*tbl)[(ZRand(0, 8))];
 
         if (out.has_value())
         {

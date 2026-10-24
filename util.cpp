@@ -182,7 +182,7 @@ bool prob(int goodluck, int badluck)
 {
     if (badluck == -1)
         badluck = goodluck;
-    int val = rand() % 100;
+    int val = ZRand(0, 99);
     return val < (flags[FlagId::lucky] ? goodluck : badluck);
 }
 

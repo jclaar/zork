@@ -17,7 +17,7 @@ extern bool always_lit;
 template <typename T>
 const typename T::value_type &pick_one(const T &items)
 {
-	size_t idx = rand() % items.size();
+	size_t idx = ZRand(0, items.size() - 1);
 	return items[idx];
 }
 

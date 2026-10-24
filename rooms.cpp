@@ -218,7 +218,6 @@ void save_it(bool strt)
     deaths = 0;
     moves = 0;
     winner = &player();
-    srand((unsigned int)time(NULL));
     start("WHOUS", remarkably_disgusting_code());
 }
 

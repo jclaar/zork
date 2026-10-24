@@ -1,4 +1,5 @@
 #include <numeric>
+#include <random>
 #include "defs.h"
 #include "funcs.h"
 #include "dung.h"
@@ -964,7 +965,7 @@ namespace obj_funcs
         }
         else if (verbq("SPIN"))
         {
-            pnumb = (rand() % 8) + 1;
+            pnumb = ZRand(1, 8);
             tell("The dial spins and comes to a stop pointing at '", post_crlf, nums[pnumb - 1], "'.");
         }
         else
