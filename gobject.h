@@ -1,6 +1,6 @@
 // Generated at 06-24-24 11:28:58
 #pragma once
-const GObjectDefinition gobjects[] = {
+const auto gobjects = std::to_array<GObjectDefinition>({
 {Bits::numbits, { "IT", "THAT", "THIS", "HIM" }, 
     {  }, 
     "random object", 
@@ -194,4 +194,4 @@ const GObjectDefinition gobjects[] = {
     "window", 
     { Bits::ovison} ,
     nullptr},
-};
+});

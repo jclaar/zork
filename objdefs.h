@@ -1,6 +1,6 @@
 // Generated at 06-24-24 11:28:58
 #pragma once
-const ObjectDefinition objects[] = {
+const auto objects = std::to_array<ObjectDefinition>({
 {{ "BUTTO" }, 
     {  }, 
     "", 
@@ -1313,4 +1313,4 @@ const ObjectDefinition objects[] = {
     obj_funcs::palantir(), 
     { }, 
     { OP(ObjectSlots::ksl_otval, 5), OP(ObjectSlots::ksl_ofval, 10), OP(ObjectSlots::ksl_odesco, "On the floor sits a red crystal sphere."), OP(ObjectSlots::ksl_odesc1, "There is red crystal sphere here.") }},
-};
+});
