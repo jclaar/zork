@@ -60,7 +60,7 @@ namespace
 }
 
 // Bunch vector.
-ObjVector bunch_cont()
+static ObjVector bunch_cont()
 {
     ObjVector ov(8, sfind_obj("#####"));
     return ov;
@@ -69,7 +69,7 @@ ObjVector bunuvec_cont;
 Iterator<ObjVector> bunuvec;
 Iterator<ObjVector> bunch;
 
-void init_bunch()
+static void init_bunch()
 {
     bunuvec_cont = bunch_cont();
     bunuvec = Iterator<ObjVector>(bunuvec_cont, bunuvec_cont.end());
@@ -82,7 +82,7 @@ WordsPobl words_pobl;
 PhraseVecV prepvecb;
 PrepVec prepvec;
 
-void init_prepvec()
+static void init_prepvec()
 {
     auto with_prep = find_prep("WITH");
     auto &cretin = sfind_obj("#####");
@@ -854,7 +854,7 @@ namespace
         sadd_action("LISTT", [] (Rarg arg = Rarg()) {
             auto &op = object_pobl();
 			std::set<ObjectP> dups;
-            for (auto o : op)
+            for (const auto &o : op)
             {
                 ObjectP obj = *o.second.begin();
                 if (obj->otval() > 0)

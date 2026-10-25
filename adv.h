@@ -63,7 +63,7 @@ private:
         ar & _astrength;
         ar & bits;
         std::list<std::string> obj_list;
-        for (auto o : _aobjs)
+        for (const auto &o : _aobjs)
         {
             obj_list.push_back(o->oid());
         }
@@ -87,7 +87,7 @@ private:
         ar & bits;
         std::list<std::string> obj_list;
         ar & obj_list;
-        for (auto s : obj_list)
+        for (const auto &s : obj_list)
         {
             _aobjs.push_back(sfind_obj(s));
         }
