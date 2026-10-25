@@ -14,7 +14,7 @@ bool enter_end_game();
 bool eg_infested(const RoomP& r);
 const RoomP& go_e_w(const RoomP& rm, direction dir);
 bool inqstart();
-typedef std::variant<std::monostate, bool, const char*> LookToVal;
+using LookToVal = std::variant<std::monostate, bool, const char*>;
 bool look_to(std::string_view nstr,
     std::string_view sstr = "",
     LookToVal ntrll = LookToVal(),

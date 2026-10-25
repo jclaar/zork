@@ -5,7 +5,7 @@
 template <typename FlagType, size_t sz>
 class Flags : private std::bitset<sz>
 {
-    typedef std::bitset<sz> Base;
+    using Base = std::bitset<sz>;
     Flags(const Base& b) : Base(b)
     {
     }

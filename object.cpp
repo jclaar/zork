@@ -61,7 +61,7 @@ namespace
     }
 
     // List of all global objects.
-	typedef std::vector<GObjectPtr> GObjectArray;
+	using GObjectArray = std::vector<GObjectPtr>;
 	GObjectArray load_gobjects()
 	{
 #include "gobject.h"
@@ -86,7 +86,7 @@ namespace
 #if _MSC_FULL_VER==192227812
 #pragma optimize("", off)
 #endif
-	typedef std::vector<ObjectP> ObjectArray;
+	using ObjectArray = std::vector<ObjectP>;
 	ObjectArray load_objects()
     {
 #include "objdefs.h"

@@ -13,7 +13,7 @@
 #include "strings.h"
 #include "cevent.h"
 
-typedef std::initializer_list<const char*> StringList;
+using StringList = std::initializer_list<const char*>;
 
 enum class ObjectSlots
 {
@@ -63,7 +63,7 @@ private:
     int _val = 0;
     CEventP _ev;
 };
-typedef std::shared_ptr<olint_t> OlintP;
+using OlintP = std::shared_ptr<olint_t>;
 
 class OP
 {
@@ -87,7 +87,7 @@ private:
     PropVal val;
 };
 
-typedef Flags<Bits, numbits> OFlags;
+using OFlags = Flags<Bits, numbits>;
 
 class Object
 {
@@ -206,7 +206,7 @@ inline bool empty(const ObjectP &op)
 ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
 ObjList &global_objects();
 
-typedef std::map<std::string, ObjList, std::less<>> ObjectPobl;
+using ObjectPobl = std::map<std::string, ObjList, std::less<>>;
 const ObjectPobl &object_pobl();
 bool is_obj(const std::string &obj);
 const ObjectP &find_obj(std::string_view name);

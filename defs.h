@@ -32,7 +32,7 @@ enum class ApplyRandomArg
     read_in
 };
 // Defines a functor for an rapplic. The ApplyRandomArg argument is optional.
-typedef std::optional<ApplyRandomArg> Rarg;
+using Rarg = std::optional<ApplyRandomArg>;
 #define RAPPLIC(x) struct x { \
     bool operator()() const; \
     bool operator()(Rarg ra) const { return (*this)(); } \
