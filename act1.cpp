@@ -374,7 +374,7 @@ static bool infested(const RoomP& r)
     const HackP& dem = get_demon("THIEF");
     return flags[FlagId::end_game_flag] && eg_infested(r) ||
         r == dem->hroom() && dem->haction() ||
-        [&villains, &r]() -> bool
+        r && [&villains, &r]() -> bool
     {
         return std::find_if(villains.begin(), villains.end(), [&r](const ObjectP& v)
             {
