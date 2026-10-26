@@ -195,7 +195,7 @@ public:
     GObject(Bits gbits, const StringList &syns, const StringList &adj = {},
         const char * = "", const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr,
         const std::initializer_list<const char*> &contents = {},
-        const std::initializer_list<OP> &props = { OP(ObjectSlots::ksl_oglobal, OP::PropVal(0)) });
+        const std::initializer_list<OP> &props = { OP(ObjectSlots::ksl_oglobal, 0) });
 
     const std::optional<Bits> &gbits() const { return _gbits; }
 
