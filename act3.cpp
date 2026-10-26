@@ -206,7 +206,7 @@ static void pcheck()
     }
 }
 
-bool pdoor(std::string_view str, const ObjectP &lid, const ObjectP &keyhole)
+static bool pdoor(std::string_view str, const ObjectP &lid, const ObjectP &keyhole)
 {
     if (flags[FlagId::plook])
         return flags[FlagId::plook] = false;
@@ -291,7 +291,7 @@ bool put_under::operator()() const
     return true;
 }
 
-bool rope_away(const ObjectP &rope, const RoomP &rm)
+static bool rope_away(const ObjectP &rope, const RoomP &rm)
 {
     tro(rope, Bits::climbbit, Bits::ndescbit );
     if (!rope->oroom())
@@ -302,7 +302,7 @@ bool rope_away(const ObjectP &rope, const RoomP &rm)
     return true;
 }
 
-bool scol_obj(const ObjectP &obj, int cint, const RoomP &rm)
+static bool scol_obj(const ObjectP &obj, int cint, const RoomP &rm)
 {
     clock_int(sclin, cint);
     remove_object(obj);
@@ -319,7 +319,7 @@ bool scol_obj(const ObjectP &obj, int cint, const RoomP &rm)
     return true;
 }
 
-bool scol_through(int cint, const RoomP &rm)
+static bool scol_through(int cint, const RoomP &rm)
 {
     clock_int(sclin, cint);
     goto_(rm);
@@ -342,7 +342,7 @@ bool sender::operator()() const
     return true;
 }
 
-bool slider(const ObjectP &obj)
+static bool slider(const ObjectP &obj)
 {
     if (trnn(obj, Bits::takebit))
     {
@@ -369,7 +369,7 @@ bool smeller::operator()() const
     return tell("It smells like a ", 1, ((ObjectP)prso())->odesc2(), ".");
 }
 
-ScolWalls get_wall(const RoomP& rm)
+static ScolWalls get_wall(const RoomP& rm)
 {
     for (auto& w : scol_walls)
     {
@@ -605,7 +605,7 @@ bool enter::operator()() const
     return walk()();
 }
 
-bool pass_the_bucket(const RoomP &r, const ObjectP &b)
+static bool pass_the_bucket(const RoomP &r, const ObjectP &b)
 {
     const AdvP &winner = *::winner;
     ParseVecVal oldprsvec1 = prsvec[1];
@@ -628,7 +628,7 @@ static bool iceboom()
     return true;
 }
 
-bool held(const ObjectP &obj)
+static bool held(const ObjectP &obj)
 {
     const ObjectP &can = obj->ocan();
     const AdvP &winner = *::winner;
@@ -651,7 +651,7 @@ bool knock::operator()() const
     return true;
 }
 
-bool bad_egg(const ObjectP &begg)
+static bool bad_egg(const ObjectP &begg)
 {
     const ObjectP &egg = sfind_obj("EGG");
     auto& bcana = sfind_obj("BCANA");

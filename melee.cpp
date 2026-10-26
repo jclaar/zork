@@ -17,7 +17,7 @@ namespace
     const int cure_wait = 30;
 }
 
-int fight_strength(const AdvP &hero, bool adjust)
+static int fight_strength(const AdvP &hero, bool adjust = true)
 {
     int s, smax = strength_max, smin = strength_min;
     int pct = hero->ascore() * 100 / score_max();
@@ -27,7 +27,7 @@ int fight_strength(const AdvP &hero, bool adjust)
     return adjust ? (s + hero->astrength()) : s;
 }
 
-int villain_strength(const ObjectP &villain)
+static int villain_strength(const ObjectP &villain)
 {
     int od = villain->ostrength();
     if (od > 0)
@@ -285,7 +285,7 @@ bool diagnose::operator()() const
     return true;
 }
 
-bool pres(const tofmsg &tab, std::string_view a, std::string_view d, std::string_view w)
+static bool pres(const tofmsg &tab, std::string_view a, std::string_view d, std::string_view w)
 {
     int l = (int) tab.size();
     // Replace a %D% with the name.

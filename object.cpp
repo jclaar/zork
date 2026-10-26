@@ -141,72 +141,53 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
 
     for (const OP &obj_prop : props)
     {
+        using enum ObjectSlots;
         switch (obj_prop.slot())
         {
-        case ObjectSlots::ksl_oread:
-        {
+        case ksl_oread:
             _oread = std::get<std::string>(obj_prop.value());
             break;
-        }
-        case ObjectSlots::ksl_odesco:
-        {
+        case ksl_odesco:
             _odesco = std::get<std::string>(obj_prop.value());
             break;
-        }
-        case ObjectSlots::ksl_odesc1:
-        {
+        case ksl_odesc1:
             _odesc1 = std::get<std::string>(obj_prop.value());
             break;
-        }
-        case ObjectSlots::ksl_otval:
-        {
+        case ksl_otval:
             _otval = std::get<int>(obj_prop.value());
             break;
-        }
-        case ObjectSlots::ksl_ofval:
-        {
+        case ksl_ofval:
             _ofval = std::get<int>(obj_prop.value());
             break;
-        }
-        case ObjectSlots::ksl_olint:
-        {
+        case ksl_olint:
             _olint = std::make_shared<olint_t>(std::get<olint_t>(obj_prop.value()));
             clock_disable(clock_int(_olint->ev(), _olint->ev()->ctick()));
             break;
-        }
-        case ObjectSlots::ksl_ostrength:
-        {
+        case ksl_ostrength:
             _ostrength = std::get<int>(obj_prop.value());
             break;
-        }
-        case ObjectSlots::ksl_osize:
-        {
+        case ksl_osize:
             _osize = std::get<int>(obj_prop.value());
             break;
-        }
-        case ObjectSlots::ksl_omatch:
-        {
+        case ksl_omatch:
             _omatch = std::get<int>(obj_prop.value());
             break;
-        }
-        case ObjectSlots::ksl_ocapac:
-        {
+        case ksl_ocapac:
             _ocapac = std::get<int>(obj_prop.value());
             break;
-        }
-        case ObjectSlots::ksl_oglobal:
-            _oglobal = (Bits) std::get<int>(obj_prop.value());
+        case ksl_oglobal:
+            _oglobal = static_cast<Bits>(std::get<int>(obj_prop.value()));
             break;
-        case ObjectSlots::ksl_oactor:
-            _oactor = (e_oactor)std::get<int>(obj_prop.value());
+        case ksl_oactor:
+            _oactor = static_cast<e_oactor>(std::get<int>(obj_prop.value()));
             break;
-        case ObjectSlots::ksl_ovtype:
+        case ksl_ovtype:
             _ovtype = std::get<RoomBit>(obj_prop.value());
             break;
-        case ObjectSlots::ksl_ofmsgs:
+        case ksl_ofmsgs:
             _melee_func = std::get<OP::melee_func>(obj_prop.value());
             break;
-        case ObjectSlots::ksl_obverb:
+        case ksl_obverb:
             // Never used? Just ignore.
             break;
         default:
@@ -437,5 +418,6 @@ const ObjectP &sfind_obj(std::string_view name)
 {
     return find_obj(name);
 }
+
 
 

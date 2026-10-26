@@ -1,7 +1,7 @@
 #pragma once
 
 #include <limits>
-#include <limits.h>
+#include <climits>
 #include <string>
 #include <array>
 #include <bitset>
