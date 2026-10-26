@@ -65,7 +65,7 @@ add_executable(zork
 	funcs.h funcs.cpp
 	globals.h globals.cpp
 	gobject.h 
-	info.h info.cpp
+	info.h 
 	makstr.h makstr.cpp
 	mdlfun.cpp
 	melee.h melee.cpp
