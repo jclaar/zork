@@ -385,12 +385,13 @@ static bool infested(const RoomP& r)
 
 static bool infested(const ExitType& ex)
 {
-    return std::visit(overload{
-            [&](const CExitPtr& cep) { return infested(cep->cxroom()); },
-                        [&](const DoorExitPtr& dep) { return infested(get_door_room(here, dep)); },
-                        [&](const std::string& sp) { return infested(find_room(sp)); },
-                        [](auto p) { return false; }
+    RoomP rm = std::visit(overload{
+            [&](const CExitPtr& cep) { return cep->cxroom(); },
+                        [&](const DoorExitPtr& dep) { return get_door_room(here, dep); },
+                        [&](const std::string& sp) { return find_room(sp); },
+                        [](auto p) { return RoomP(); }
         }, ex);
+    return infested(rm);
 }
 
 bool sword_glow::operator()(const HackP &dem) const
