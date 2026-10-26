@@ -110,5 +110,5 @@ inline void atro(const AdvP &adv, AdvBits b)
     adv->flags()[b] = 1;
 }
 
-
+const AdvP& player();
 

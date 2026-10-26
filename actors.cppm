@@ -4,6 +4,21 @@ module;
 #include "adv.h"
 #include "util.h"
 
+namespace
+{
+    AdvArray actor_list;
+}
+
+AdvArray& actors()
+{
+    return actor_list;
+}
+
+const AdvP& player()
+{
+    return actors()[std::to_underlying(e_oactor::player)];
+}
+
 export module ZActors:Impl;
 export import :Iface;
 import ZTell;
@@ -188,23 +203,9 @@ namespace actor_funcs
     }
 }
 
-namespace
-{
-    AdvArray actor_list;
-}
-
-export AdvArray& actors()
-{
-    return actor_list;
-}
-
 export void add_actor(e_oactor actor_name, const RoomP& room,
     const ObjectP& obj, rapplic action, int strength)
 {
     actor_list[std::to_underlying(actor_name)] = std::make_unique<Adv>(room, obj, action, strength);
 }
 
-const AdvP& player() 
-{ 
-    return actors()[std::to_underlying(e_oactor::player)]; 
-}

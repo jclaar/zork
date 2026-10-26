@@ -120,16 +120,6 @@ export bool in_room(const ObjectP& obj, const RoomP& here = ::here)
     return found;
 }
 
-export bool hackable(const ObjectP& obj, const RoomP& rm)
-{
-    bool h = false;
-    const AdvP& winner = *::winner;
-    const ObjectP& av = winner->avehicle();
-    const ObjList& ol = av ? av->ocontents() : rm->robjs();
-    h = search_list(obj->oid(), ol, AdjectiveP()).first != ObjectP();
-    return h;
-}
-
 
 export bool lfcn(const ObjList& l)
 {

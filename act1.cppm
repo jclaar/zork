@@ -185,6 +185,17 @@ namespace
     }
 }
 
+static bool hackable(const ObjectP& obj, const RoomP& rm)
+{
+    bool h = false;
+    const AdvP& winner = *::winner;
+    const ObjectP& av = winner->avehicle();
+    const ObjList& ol = av ? av->ocontents() : rm->robjs();
+    h = search_list(obj->oid(), ol, AdjectiveP()).first != ObjectP();
+    return h;
+}
+
+
 export int water_level = 0;
 export ObjectP binf;
 

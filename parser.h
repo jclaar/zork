@@ -40,8 +40,8 @@ using StuffVecP = std::unique_ptr<StuffVec>;
 
 using Globals = std::optional<const std::vector<Bits>*>;
 
-Iterator<ParseContV> lex(SIterator s, SIterator sx);
-bool eparse(Iterator<ParseContV> pv, bool vb);
+//Iterator<ParseContV> lex(SIterator s, SIterator sx);
+//bool eparse(Iterator<ParseContV> pv, bool vb);
 
 // Generic class to return WIN from parse.
 class cwin
@@ -49,13 +49,9 @@ class cwin
 };
 
 using SParseVal = std::variant<std::monostate, cwin, ParseVec, bool>;
-SParseVal sparse(Iterator<ParseContV> sv, bool vb);
-Nefals search_list(const std::string &objname, const ObjList &slist, const AdjectiveP &adj, bool first = true, const Globals &global = Globals());
+//SParseVal sparse(Iterator<ParseContV> sv, bool vb);
+//Nefals search_list(const std::string &objname, const ObjList &slist, const AdjectiveP &adj, bool first = true, const Globals &global = Globals());
 
-const Orphans &orphan(bool flag = false, const ActionP &action = nullptr, const OrphanSlotType &slot1 = std::monostate(), const PrepP &prep = PrepP(),
-    std::string_view name = "", const OrphanSlotType &slot2 = std::monostate());
-Nefals fwim(Bits b, const ObjList &objs, bool no_care);
+//Nefals fwim(Bits b, const ObjList &objs, bool no_care);
 
-// Verb functions
-RAPPLIC(bunchem);
 
