@@ -58,7 +58,6 @@ add_executable(zork
 	act4.h act4.cpp
 	adv.h adv.cpp
 	cevent.h cevent.cpp
-	
 	defs.h defs.cpp
 	dung.h dung.cpp
 	FlagSupport.h
