@@ -91,28 +91,30 @@ target_link_libraries(zork Threads::Threads)
 endif()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+		set(CPACK_PACKAGE_NAME "Zork++")
+		set(CPACK_PACKAGE_VERSION "${CMAKE_PROJECT_VERSION}")
+		set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Zork from MIT 1981")
+		set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+
 	if (APPLE)
-		add_custom_command(TARGET zork 
-			POST_BUILD
-			COMMAND hdiutil create -volname "Zork" -srcfolder "${CMAKE_CURRENT_BINARY_DIR}/zork" -ov -format UDZO "Zork_mac_${CMAKE_PROJECT_VERSION}.dmg"
-		)
+		set(CPACK_GENERATOR "DragNDrop")
+		set(CPACK_SYSTEM_NAME "macOS")
+
+		set(CPACK_DMG_VOLUME_NAME "Zork")
+		set(CPACK_DMG_FORMAT "UDZO")
+		set(CPACK_DMG_APPLICATIONS_SYMLINK ON)
 	elseif(UNIX)
-	    add_custom_command(TARGET zork
-		    POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E tar "zcfv" "zork_linux_${CMAKE_PROJECT_VERSION}.gz" "zork"
-			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-			DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/zork"
-			COMMENT "Creating archive file for release."
-		)
+	    set(CPACK_GENERATOR "TGZ")
 	else()
 	    target_compile_definitions(zork PRIVATE _WIN32_WINNT=0x0601)
-	    add_custom_command(TARGET zork
-		    POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E tar "cfv" "zork_win64_${CMAKE_PROJECT_VERSION}.zip" --format=zip "zork.exe"
-			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-			DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/zork.exe"
-			COMMENT "Creating archive file for release."
-		)
+		set(CPACK_BINARY_NSIS OFF)
+		set(CPACK_GENERATOR "ZIP")
 	endif()
+
+	set(CPACK_PACKAGE_FILE_NAME "Zork_${CPACK_SYSTEM_NAME}_${CMAKE_PROJECT_VERSION}")
+	install(TARGETS zork DESTINATION .)
+
+    include(CPack)
+
 endif()
 
