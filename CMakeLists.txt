@@ -68,7 +68,7 @@ add_executable(zork
 	makstr.h makstr.cpp
 	mdlfun.cpp
 	melee.h melee.cpp
-	memq.h memq.cpp
+	memq.h 
 	objdefs.h
 	object.h object.cpp
 	objfns.h objser.h
