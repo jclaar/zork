@@ -1,6 +1,5 @@
 #pragma once
 #include <utility>
-#include <boost/serialization/serialization.hpp>
 
 template <typename FlagType, size_t sz>
 class Flags : private std::bitset<sz>
@@ -27,7 +26,6 @@ public:
         return *this;
     }
 
-    friend class boost::serialization::access;
     template <class archive>
     void serialize(archive& ar, const unsigned int version)
     {
