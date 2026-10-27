@@ -1,120 +1,125 @@
-cmake_minimum_required( VERSION 3.30 )
+cmake_minimum_required(VERSION 3.30)
 
-cmake_policy( VERSION 3.15 )
-cmake_policy(SET CMP0091 NEW)
+project(zork VERSION 1.2.0 LANGUAGES CXX)
 
-if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.30")
-cmake_policy(SET CMP0167 NEW)
-endif()
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-project( zork VERSION 1.2.0 )
-
-set( CMAKE_CXX_STANDARD 23 )
-
-if (WIN32)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-set(Boost_USE_STATIC_RUNTIME ON)
-add_compile_definitions(BOOST_ALL_NO_LIB)
-add_compile_definitions(WIN32_LEAN_AND_MEAN)
-set(NTDLL ntdll.lib)
+if(WIN32)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set(Boost_USE_STATIC_RUNTIME ON)
+    add_compile_definitions(BOOST_ALL_NO_LIB WIN32_LEAN_AND_MEAN)
 endif()
 
 set(Boost_USE_STATIC_LIBS ON)
-# Boost changed system to a header-only library in version 1.90.0, so only require it for older versions.
+
+# Resolve Boost version first so we can require the correct components per version.
 find_package(Boost 1.74.0 REQUIRED)
-set(Boost_REQUIRED_COMPONENTS filesystem serialization)
-if (${Boost_VERSION} VERSION_LESS "1.89.0")
-	list(APPEND Boost_REQUIRED_COMPONENTS system)
+
+set(_boost_components filesystem serialization)
+# Boost::system is a library prior to v1.90.
+if(Boost_VERSION_STRING VERSION_LESS "1.89.0")
+    list(APPEND _boost_components system)
 endif()
-if (${Boost_VERSION} VERSION_GREATER_EQUAL "1.81.0")
-	list(APPEND Boost_REQUIRED_COMPONENTS process)
-endif()
-find_package(Boost 1.74.0 REQUIRED COMPONENTS ${Boost_REQUIRED_COMPONENTS})
-if(LINUX)
-find_package(Threads REQUIRED)
+# Boost::process v2 was added in 1.81.0.
+if(Boost_VERSION_STRING VERSION_GREATER_EQUAL "1.81.0")
+    list(APPEND _boost_components process)
 endif()
 
-# Make sure we have at least gcc-11.
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "11")
-        message(FATAL_ERROR "Must use at least gcc-11.")
-    endif()
+find_package(Boost 1.74.0 REQUIRED COMPONENTS ${_boost_components})
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    find_package(Threads REQUIRED)
 endif()
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-	add_compile_options(-Wno-parentheses)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14")
+    message(FATAL_ERROR "Must use at least GCC 14.")
 endif()
 
-# Don't give warnings on Win32 Visual Studio builds.
-add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-add_compile_definitions(BOOST_PROCESS_VERSION=2)
-
-include_directories(${Boost_INCLUDE_DIRS})
-link_directories(${Boost_LIBRARY_DIRS})
 add_executable(zork
-	act1.h act1.cpp
-	act2.h act2.cpp
-	act3.h act3.cpp
-	act4.h act4.cpp
-	adv.h adv.cpp
-	cevent.h cevent.cpp
-	defs.h defs.cpp
-	dung.h dung.cpp
-	FlagSupport.h
-	funcs.h funcs.cpp
-	globals.h globals.cpp
-	gobject.h 
-	info.h 
-	makstr.h makstr.cpp
-	mdlfun.cpp
-	melee.h melee.cpp
-	memq.h 
-	objdefs.h
-	object.h object.cpp
-	objfns.h objser.h
-	parser.h parser.cpp
-	room.h room.cpp
-	roomdefs.h
-	roomfns.h roomfns.cpp
-	rooms.h rooms.cpp
-	sr.h sr.cpp
-	strings.h strings.cpp
-	util.h util.cpp
-	version.h
-	ZorkException.h
-	zstring.h zstring.cpp
+    act1.h act1.cpp
+    act2.h act2.cpp
+    act3.h act3.cpp
+    act4.h act4.cpp
+    adv.h adv.cpp
+    cevent.h cevent.cpp
+    defs.h defs.cpp
+    dung.h dung.cpp
+    FlagSupport.h
+    funcs.h funcs.cpp
+    globals.h globals.cpp
+    gobject.h
+    info.h
+    makstr.h makstr.cpp
+    mdlfun.cpp
+    melee.h melee.cpp
+    memq.h
+    objdefs.h
+    object.h object.cpp
+    objfns.h objser.h
+    parser.h parser.cpp
+    room.h room.cpp
+    roomdefs.h
+    roomfns.h roomfns.cpp
+    rooms.h rooms.cpp
+    sr.h sr.cpp
+    strings.h strings.cpp
+    util.h util.cpp
+    version.h
+    ZorkException.h
+    zstring.h zstring.cpp
 )
 
-target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
-if (LINUX)
-target_link_libraries(zork Threads::Threads)
+target_compile_features(zork PRIVATE cxx_std_23)
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    target_compile_options(zork PRIVATE -Wno-parentheses)
 endif()
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-		set(CPACK_PACKAGE_NAME "Zork++")
-		set(CPACK_PACKAGE_VERSION "${CMAKE_PROJECT_VERSION}")
-		set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Zork from MIT 1981")
-		set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+target_compile_definitions(zork PRIVATE
+    _CRT_SECURE_NO_WARNINGS
+    BOOST_PROCESS_VERSION=2
+)
 
-	if (APPLE)
-		set(CPACK_GENERATOR "DragNDrop")
-		set(CPACK_SYSTEM_NAME "macOS")
-
-		set(CPACK_DMG_VOLUME_NAME "Zork")
-		set(CPACK_DMG_FORMAT "UDZO")
-		set(CPACK_DMG_APPLICATIONS_SYMLINK ON)
-	elseif(UNIX)
-	    set(CPACK_GENERATOR "TGZ")
-	else()
-	    target_compile_definitions(zork PRIVATE _WIN32_WINNT=0x0601)
-		set(CPACK_BINARY_NSIS OFF)
-		set(CPACK_GENERATOR "ZIP")
-	endif()
-
-	set(CPACK_PACKAGE_FILE_NAME "Zork_${CPACK_SYSTEM_NAME}_${CMAKE_PROJECT_VERSION}")
-	install(TARGETS zork DESTINATION .)
-
-    include(CPack)
-
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    #target_compile_options(zork PRIVATE -Wno-parentheses)
 endif()
 
+target_include_directories(zork PRIVATE
+    ${Boost_INCLUDE_DIRS}
+)
+
+target_link_libraries(zork PRIVATE
+    ${Boost_LIBRARIES}
+)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_link_libraries(zork PRIVATE Threads::Threads)
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CPACK_PACKAGE_NAME "Zork++")
+    set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Zork from MIT 1981")
+    set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+
+    if(APPLE)
+        set(CPACK_GENERATOR "DragNDrop")
+        set(CPACK_SYSTEM_NAME "macOS")
+        set(CPACK_DMG_VOLUME_NAME "Zork")
+        set(CPACK_DMG_FORMAT "UDZO")
+        set(CPACK_DMG_APPLICATIONS_SYMLINK ON)
+    elseif(UNIX)
+        set(CPACK_GENERATOR "TGZ")
+    else()
+        target_compile_definitions(zork PRIVATE _WIN32_WINNT=0x0601)
+        set(CPACK_BINARY_NSIS OFF)
+        set(CPACK_GENERATOR "ZIP")
+    endif()
+
+    set(CPACK_PACKAGE_FILE_NAME "Zork_${CPACK_SYSTEM_NAME}_${PROJECT_VERSION}")
+    install(TARGETS zork DESTINATION .)
+endif()
+
+include(CPack)
