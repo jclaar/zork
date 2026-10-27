@@ -74,17 +74,13 @@ add_executable(zork
 target_compile_features(zork PRIVATE cxx_std_23)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    target_compile_options(zork PRIVATE -Wno-parentheses)
+    #target_compile_options(zork PRIVATE -Wno-parentheses)
 endif()
 
 target_compile_definitions(zork PRIVATE
     _CRT_SECURE_NO_WARNINGS
     BOOST_PROCESS_VERSION=2
 )
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    #target_compile_options(zork PRIVATE -Wno-parentheses)
-endif()
 
 target_include_directories(zork PRIVATE
     ${Boost_INCLUDE_DIRS}

@@ -509,7 +509,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
                         RETURN(false);
                     }
                 }
-                else if (os = stuff_obj(obj.first, prep, prepvec, pvr, vb))  // 228
+                else if ((os = stuff_obj(obj.first, prep, prepvec, pvr, vb)))  // 228
                 {
                     prepvec = os->iprepvec;
                     pvr = os->iparsevec;
@@ -1004,7 +1004,7 @@ Nefals get_object(const std::string &objnam, AdjectiveP adj)
 
     if (av)
     {
-        if (obj = search_list(objnam, av->ocontents(), adj).first)
+        if ((obj = search_list(objnam, av->ocontents(), adj).first))
         {
             chomp = false;
             oobj = obj;
@@ -1015,7 +1015,7 @@ Nefals get_object(const std::string &objnam, AdjectiveP adj)
         }
     }
 
-    if (obj = search_list(objnam, (*winner)->aobjs(), adj).first)
+    if ((obj = search_list(objnam, (*winner)->aobjs(), adj).first))
     {
         if (oobj)
         {
@@ -1050,7 +1050,7 @@ Nefals get_object(const std::string &objnam, AdjectiveP adj)
     {
         return Nefals(oobj, 0);
     }
-    else if (oobj = search_list(objnam, global_objects(), adj, true, &here->rglobal()).first)
+    else if ((oobj = search_list(objnam, global_objects(), adj, true, &here->rglobal()).first))
     {
         return Nefals(oobj, 0);
     }
@@ -1078,11 +1078,11 @@ ObjectP get_it_obj()
     {
         return li;
     }
-    else if (obj = get_last(here->robjs()))
+    else if ((obj = get_last(here->robjs())))
     {
         return obj;
     }
-    else if (obj = get_last(player->aobjs()))
+    else if ((obj = get_last(player->aobjs())))
     {
         return obj;
     }
@@ -1169,7 +1169,7 @@ bool syn_match(ParseVec pv)
     }
 
     bool rv;
-    if (drive = dforce ? dforce : drive)
+    if ((drive = dforce ? dforce : drive))
     {
         ObjectP gwim;
         VargP synn;

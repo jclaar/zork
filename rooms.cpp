@@ -564,7 +564,7 @@ void rdcom(Iterator<ParseContV> ivec)
         RoomP here = ::here;
         inbuf = ::inbuf;
         bool lit = ::lit(here);
-        if (pc = parse_cont)
+        if ((pc = parse_cont))
         {
             // NOP
         }
@@ -606,7 +606,7 @@ void rdcom(Iterator<ParseContV> ivec)
                     eparse(rv, false) &&
                     std::get_if<VerbP>(&(cv = (prsvec)[0])));
             };
-            if (flags[FlagId::parse_won] = pfn())   // 728
+            if ((flags[FlagId::parse_won] = pfn()))   // 728
             {
                 no_tell = false;
                 if ((*winner)->aaction())
@@ -1439,7 +1439,7 @@ bool putter::operator()(bool objact) const
             return false;
         }
     }
-    else if (ocan = crock->ocan())
+    else if ((ocan = crock->ocan()))
     {
         score_obj(crock);
         take_object(crock);
@@ -1561,8 +1561,9 @@ bool opener::operator()() const
             {
                 tell("Opened.");
             }
-            else if (flags[FlagId::tell_flag] = true) // Always true -- this is intentional.
+            else
             {
+                flags[FlagId::tell_flag] = true;
                 tell("Opening the ", 0, obj->odesc2(), " reveals ");
                 print_contents(obj->ocontents());
                 princ('.');

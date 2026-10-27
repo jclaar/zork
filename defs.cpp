@@ -45,9 +45,9 @@ bool see_inside(const ObjectP &op)
 
 bool apply_object(const ObjectP &op)
 {
-    bool rv;
     auto &fn = op->oaction();
-    if (rv = (fn != nullptr))
+    bool rv = fn != nullptr;
+    if (rv)
         rv = fn(Rarg());
     return rv;
 }

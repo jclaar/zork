@@ -105,7 +105,7 @@ namespace
                 else if (!(o = plookup(str, object_obl)).empty())
                 {
                     ObjectP obj;
-                    if (obj = search_list(str, inqobjs, adj).first)
+                    if ((obj = search_list(str, inqobjs, adj).first))
                     {
                         const ObjectP* qo = std::get_if<ObjectP>(&onecorr);
                         return qo && *qo == obj;
@@ -267,7 +267,7 @@ namespace
     {
         bool eastq = rm->rid()[3] == 'E';
         bool m1q, mwin;
-        mwin = (m1q = (mdir + eastq ? 0 : 180) == 180) ? flags[FlagId::mr1] : flags[FlagId::mr2];
+        mwin = (m1q = (mdir + (eastq ? 0 : 180)) == 180) ? flags[FlagId::mr1] : flags[FlagId::mr2];
         tell("You are in a narrow room, whose ", 0, eastq ? "west" : "east", " wall is a large ");
         tell(mwin ? "mirror." : "wooden panel\nwhich once contained a mirror.");
         m1q&& flags[FlagId::mirror_open] && tell(mwin ? miropen : panopen);
@@ -411,7 +411,7 @@ bool answer::operator()() const
     if (m && here == sfind_room("RIDDL") && !flags[FlagId::riddle_flag])
     {
         Iterator<ParseContV> nv;
-        if (nv = member("", rest(m)))
+        if ((nv = member("", rest(m))))
         {
             int len = length(nv);
             if (len > 1 && !nv[1]->s1.empty())
@@ -750,7 +750,7 @@ static std::optional<int> mirror_here(RoomP rm)
     {
         // Returns empty
     }
-    else if (rv = mirror_dir(direction::North, rm))
+    else if ((rv = mirror_dir(direction::North, rm)))
     {
 
     }
@@ -1146,7 +1146,7 @@ namespace obj_funcs
             }
             else if (prso == sfind_obj("OAKND"))
             {
-                if (rm = mirns())
+                if ((rm = mirns()))
                     mirmove(mdir == 0, rm);
                 else
                 {
@@ -1547,7 +1547,7 @@ namespace room_funcs
     bool mrdf::operator()() const
     {
         bool rv;
-        if (rv = verbq("LOOK"))
+        if ((rv = verbq("LOOK")))
         {
             look_to("FDOOR", "MRG", LookToVal(), true);
         }
@@ -1660,7 +1660,7 @@ namespace room_funcs
     bool tomb_function::operator()() const
     {
         bool rv;
-        if (rv = verbq("LOOK"))
+        if ((rv = verbq("LOOK")))
         {
             tell(tomb_desc1, long_tell1, dpr(sfind_obj("TOMB")), tomb_desc2);
         }
@@ -1720,7 +1720,7 @@ namespace exit_funcs
         {
             if (dir.index() != 2 || (mdir + 180) % 360 == std::get<2>(dir))
             {
-                if (rm = mirns(mdir != 0, true))
+                if ((rm = mirns(mdir != 0, true)))
                 {
                     tell("As you leave, the door swings shut.");
                     flags[FlagId::wood_open] = false;

@@ -185,8 +185,8 @@ static bool rise_and_shine(const ObjectP &ball)
     RoomP bl = bloc;
 
     clock_int(bint, 3);
-    const char *m;
-    if (m = member("VAIR", bl->rid()))
+    const char *m = member("VAIR", bl->rid());
+    if (m)
     {
         if (rest(m, 4) == "4"sv)
         {
@@ -228,7 +228,7 @@ static bool rise_and_shine(const ObjectP &ball)
             }
         }
     }
-    else if (m = member("LEDG", bl->rid()))
+    else if ((m = member("LEDG", bl->rid())))
     {
         char s[6] = { 0 };
         substruc("VAIR", 0, 4, s);
@@ -264,8 +264,8 @@ static bool decline_and_fall(const ObjectP &ball)
     bool in = winner->avehicle() == ball;
     RoomP bl = bloc;
     clock_int(bint, 3);
-    const char *m;
-    if (m = member("VAIR", bl->rid()))
+    const char *m = member("VAIR", bl->rid());
+    if (m)
     {
         if (rest(m, 4) == std::string("1"))
         {
@@ -871,8 +871,8 @@ namespace obj_funcs
     bool sand_function::operator()() const
     {
         int cnt;
-        bool rv;
-        if (rv = verbq("DIG"))
+        bool rv = verbq("DIG");
+        if (rv)
         {
             beach_dig = cnt = beach_dig + 1;
             const ObjectP& s = sfind_obj("STATU");
@@ -972,8 +972,8 @@ namespace obj_funcs
     {
         const ObjectP &iboat = sfind_obj("IBOAT");
         const ObjectP &rboat = sfind_obj("RBOAT");
-        bool rv;
-        if (rv = verbq("INFLA"))
+        bool rv = verbq("INFLA");
+        if (rv)
         {
             ObjectP prsi;
             if (!memq(iboat, here->robjs()))
@@ -1181,8 +1181,8 @@ namespace room_funcs
 
     bool ledge_function::operator()() const
     {
-        bool rv;
-        if (rv = verbq("LOOK"))
+        bool rv = verbq("LOOK");
+        if (rv)
         {
             tell("You are on a wide ledge high into the volcano.  The rim of the\n"
                 "volcano is about 200 feet above and there is a precipitous drop below\n"
@@ -1194,8 +1194,8 @@ namespace room_funcs
 
     bool safe_room::operator()() const
     {
-        bool rv;
-        if (rv = verbq("LOOK"))
+        bool rv = verbq("LOOK");
+        if (rv)
         {
             tell("You are in a dusty old room which is virtually featureless, except\n"
                 "for an exit on the north side.", long_tell1,
@@ -1210,8 +1210,8 @@ namespace room_funcs
 
     bool machine_room::operator()() const
     {
-        bool rv;
-        if (rv = verbq("LOOK"))
+        bool rv = verbq("LOOK");
+        if (rv)
         {
             tell(machine_desc, long_tell1, trnn(sfind_obj("MACHI"), Bits::openbit) ? "open." : "closed.");
         }

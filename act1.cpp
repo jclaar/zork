@@ -87,7 +87,7 @@ bool robber::operator()(const HackP &hack) const
     bool once = false;
     while (1)
     {
-        if (hereq = hobj->oroom())
+        if ((hereq = hobj->oroom()))
         {
             rm = hereq;
         }
@@ -311,7 +311,7 @@ bool robber::operator()(const HackP &hack) const
             }
         }
 
-        if (once = !once)
+        if ((once = !once))
         {
             RoomList rooms = hack->hrooms();
             while (1)
@@ -768,7 +768,7 @@ bool burner::operator()() const
     if (flaming(prsi()))
     {
         ObjectP prso = ::prso();
-        if (rv = object_action())
+        if ((rv = object_action()))
         {
 
         }
@@ -1017,7 +1017,7 @@ bool eat::operator()() const
             remove_object(prsoo);
         }
     }
-    else if (drink = trnn(prsoo, Bits::drinkbit))
+    else if ((drink = trnn(prsoo, Bits::drinkbit)))
     {
         if (prsoo->oglobal().has_value() || (nobj = prsoo->ocan()) && memq(nobj, aobjs) && trnn(nobj, Bits::openbit))
         {
@@ -1245,7 +1245,7 @@ namespace room_funcs
         if (hack->haction() && verbq("GO-IN"))
         {
             rv = true;
-            if (flg = (hobj->oroom() != here))
+            if ((flg = (hobj->oroom() != here)))
             {
                 tell("You hear a scream of anguish as you violate the robber's hideaway.\n"
                     "Using passages unknown to you, he rushes to its defense.");
@@ -1269,8 +1269,8 @@ namespace room_funcs
 
     bool glacier_room::operator()() const
     {
-        bool rv;
-        if (rv = verbq("LOOK"))
+        bool rv = verbq("LOOK");
+        if (rv)
         {
             tell(gladesc, long_tell1);
             if (flags[FlagId::glacier_flag])
@@ -1288,8 +1288,8 @@ namespace room_funcs
 
     bool mirror_room::operator()() const
     {
-        bool rv;
-        if (rv = verbq("LOOK"))
+        bool rv = verbq("LOOK");
+        if (rv)
         {
             tell(mirr_desc, long_tell1);
             if (flags[FlagId::mirror_mung])
@@ -1326,8 +1326,8 @@ namespace room_funcs
 
     bool dam_room::operator()() const
     {
-        bool rv;
-        if (rv = verbq("LOOK"))
+        bool rv = verbq("LOOK");
+        if (rv)
         {
             tell(dam_desc, long_tell1);
             if (flags[FlagId::low_tide])
@@ -1563,8 +1563,8 @@ namespace room_funcs
 
     bool clearing::operator()() const
     {
-        bool rv;
-        if (rv = verbq("LOOK"))
+        bool rv = verbq("LOOK");
+        if (rv)
         {
             const ObjectP &grate = sfind_obj("GRATE");
             tell("You are in a clearing, with a forest surrounding you on the west\nand south.");

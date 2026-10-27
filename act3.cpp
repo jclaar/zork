@@ -1987,8 +1987,8 @@ namespace room_funcs
 {
     bool cpout_room::operator()() const
     {
-        bool rv;
-        if (rv = verbq("LOOK"))
+        bool rv = verbq("LOOK");
+        if (rv)
         {
             //tell("You are in a room with an exit to the north and a " +
             //    std::string(flags[FlagId::cpout] ? "passage" : "metal door") + " to the east.", 1);
@@ -1999,8 +1999,8 @@ namespace room_funcs
 
     bool sledg_room::operator()() const
     {
-        bool rv;
-        if (rv = verbq("GO-IN"))
+        bool rv = verbq("GO-IN");
+        if (rv)
         {
             flags[FlagId::slide_solve] = true;
             clock_disable(sldin);
@@ -2050,8 +2050,8 @@ namespace room_funcs
 
     bool slide_room::operator()() const
     {
-        bool rv;
-        if (rv = verbq("LOOK"))
+        bool rv = verbq("LOOK");
+        if (rv)
         {
             tell(slide_desc);
             if (timber_tie)
@@ -2065,8 +2065,8 @@ namespace room_funcs
 
     bool bkbox_room::operator()() const
     {
-        bool rv;
-        if (rv = verbq("GO-IN"))
+        bool rv = verbq("GO-IN");
+        if (rv)
         {
             auto dir_room = memq(fromdir, scol_rooms);
             if (!dir_room)
@@ -2078,8 +2078,8 @@ namespace room_funcs
 
     bool teller_room::operator()() const
     {
-        bool rv;
-        if (rv = verbq("LOOK"))
+        bool rv = verbq("LOOK");
+        if (rv)
         {
             tell(teller_desc, 1, here == sfind_room("BKTW") ? "west" : "east", " side of room, above an open door, is a sign reading\n\n"
                 "		BANK PERSONNEL ONLY\n");
