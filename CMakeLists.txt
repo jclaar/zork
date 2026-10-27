@@ -90,10 +90,6 @@ target_link_libraries(zork PRIVATE
     ${Boost_LIBRARIES}
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_link_libraries(zork PRIVATE Threads::Threads)
-endif()
-
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CPACK_PACKAGE_NAME "Zork++")
     set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
