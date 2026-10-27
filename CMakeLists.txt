@@ -29,10 +29,6 @@ endif()
 
 find_package(Boost 1.74.0 REQUIRED COMPONENTS ${_boost_components})
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    find_package(Threads REQUIRED)
-endif()
-
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14")
     message(FATAL_ERROR "Must use at least GCC 14.")
 endif()
@@ -72,10 +68,6 @@ add_executable(zork
 )
 
 target_compile_features(zork PRIVATE cxx_std_23)
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    #target_compile_options(zork PRIVATE -Wno-parentheses)
-endif()
 
 target_compile_definitions(zork PRIVATE
     _CRT_SECURE_NO_WARNINGS
