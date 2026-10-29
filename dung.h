@@ -75,7 +75,7 @@ class hack
 {
 public:
     hack(hackfn ha, const ObjList &ho, const RoomList &hr, const RoomP &rm, const ObjectP &obj) :
-        _haction(ha), _room(rm), _hobj(obj), _hobjs_ob(ho), _hrooms(hr), _hflag(false)
+        _haction(ha), _hroom(rm), _hobj(obj), _hobjs_ob(ho), _hrooms(hr), _hflag(false)
     {
     }
 
@@ -90,14 +90,11 @@ public:
         return *this;
     }
 
-    hackfn haction() const { return _haction; }
-    void haction(hackfn fn) { _haction = fn; }
+    PROP(haction);
+    PROP(hflag);
+    PROP(hroom);
 
-    bool hflag() const { return _hflag; }
-    void hflag(bool flg) { _hflag = flg; }
     const ObjectP &hobj() const { return _hobj; }
-    const RoomP &hroom() { return _room; }
-    void hroom(const RoomP &rm) { _room = rm; }
     const RoomList &hrooms() const { return _hrooms; }
     RoomList &hrooms() { return _hrooms; }
 
@@ -134,7 +131,7 @@ private:
     EventList _hobjs_ev;
     ObjList _hobjs_ob;
     RoomList _hrooms;
-    RoomP _room;
+    RoomP _hroom;
     ObjectP _hobj;
     bool _hflag = false;
 
@@ -144,7 +141,7 @@ private:
         _hobjs_ob = s._hobjs_ob;
         _hobjs_ev = s._hobjs_ev;
         _hrooms = s._hrooms;
-        _room = s._room;
+        _hroom = s._hroom;
         _hobj = s._hobj;
         _hflag = s._hflag;
     }
@@ -194,10 +191,10 @@ using namespace std::string_view_literals;
 
 constexpr std::array scol_walls =
 {
-    ScolWalls{ "BKVW"sv, "WEAST"sv, "BKVE"sv },
-    ScolWalls{ "BKVE"sv, "WWEST"sv, "BKVW"sv },
-    ScolWalls{ "BKTWI"sv, "WSOUT"sv, "BKVAU"sv },
-    ScolWalls{ "BKVAU"sv, "WNORT"sv, "BKTWI"sv }
+    ScolWalls{ "BKVW", "WEAST", "BKVE" },
+    ScolWalls{ "BKVE", "WWEST", "BKVW" },
+    ScolWalls{ "BKTWI", "WSOUT", "BKVAU" },
+    ScolWalls{ "BKVAU", "WNORT", "BKTWI" }
 };
 
 constexpr std::array scol_rooms =

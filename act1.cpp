@@ -142,7 +142,7 @@ bool robber::operator()(const HackP &hack) const
                         tell("Someone carrying a large bag is casually leaning against one of the\n"
                             "walls here.  He does not speak, but it is clear from his aspect that\n"
                             "the bag will be taken only over his dead body.", long_tell1);
-                        hack->hflag(true);
+                        hack->hflag() = true;
                         return true;
                     }
                 }
@@ -186,7 +186,7 @@ bool robber::operator()(const HackP &hack) const
                         }
                         hack->hobjs(hh = rob_room(rm, hh, 100));
                         hack->hobjs(hh = rob_adv(win, hh));
-                        hack->hflag(true);
+                        hack->hflag() = true;
                         if (objt != hh && !hereq)
                         {
                             tell("A seedy-looking individual with a large bag just wandered through\n"
@@ -326,8 +326,8 @@ bool robber::operator()(const HackP &hack) const
                     continue;
                 // Convenient function to be able to jump to where the thief will be.
                 //std::cerr << "Next room: " << rooms.front()->rid() << std::endl;
-                hack->hroom(rm);
-                hack->hflag(false);
+                hack->hroom() = rm;
+                hack->hflag() = false;
                 hack->hrooms() = rooms;
                 seenq = rtrnn(rm, RoomBit::rseenbit);
 #if _DEBUG
@@ -436,7 +436,7 @@ bool sword_glow::operator()(const HackP &dem) const
     }
     else
     {
-        dem->haction(nullptr);
+        dem->haction() = nullptr;
     }
     return false;
 }
@@ -1252,7 +1252,7 @@ namespace room_funcs
                 if (hobj->oroom())
                     remove_object(hobj);
                 tro(hobj, Bits::fightbit);
-                hack->hroom(here);
+                hack->hroom() = here;
                 auto tl = memq(here, rooms);
 
                 hack->hrooms() = !tl.has_value() ? rooms : RoomList(*tl, rooms.cend());
@@ -1809,7 +1809,7 @@ namespace obj_funcs
                     }
                 }
             }
-            dem->haction(nullptr);
+            dem->haction() = nullptr;
         }
         else if (verbq("1ST?"))
         {
@@ -1817,7 +1817,7 @@ namespace obj_funcs
         }
         else if (verbq("OUT!"))
         {
-            dem->haction(nullptr);
+            dem->haction() = nullptr;
             trz(sfind_obj("STILL"), Bits::ovison);
             t->odesc1() = robber_u_desc;
         }
@@ -1833,7 +1833,7 @@ namespace obj_funcs
                 tell("The robber revives, briefly feigning continued unconsciousness, and\n"
                     "when he sees his moment, scrambles away from you.");
             }
-            dem->haction(robber());
+            dem->haction() = robber();
             t->odesc1() = robber_c_desc;
             tro(sfind_obj("STILL"), Bits::ovison);
         }
@@ -1865,7 +1865,7 @@ namespace obj_funcs
             if (t->ostrength() < 0)
             {
                 t->ostrength() = -t->ostrength();
-                dem->haction(robber());
+                dem->haction() = robber();
                 tro(sfind_obj("STILL"), Bits::ovison);
                 t->odesc1() = robber_c_desc;
                 tell("Your proposed victim suddenly recovers consciousness.");
@@ -2447,7 +2447,7 @@ namespace obj_funcs
         const AdvP &winner = *::winner;
         if (verbq("TAKE") && winner == player())
         {
-            sword_demon->haction(sword_glow());
+            sword_demon->haction() = sword_glow();
         }
         return false;
     }
