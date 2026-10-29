@@ -4,6 +4,7 @@
 #include <ostream>
 #include <string_view>
 #include <random>
+#include <cassert>
 #include "ZorkException.h"
 
 #if !defined(_ASSERT)

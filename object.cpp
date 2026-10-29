@@ -1,7 +1,6 @@
 #include <algorithm>
 #include "object.h"
 #include "globals.h"
-#include "funcs.h"
 #include "cevent.h"
 #include "util.h"
 #include "objfns.h"
@@ -10,7 +9,7 @@
 #include "adv.h"
 #include "makstr.h"
 #include "dung.h"
-#include "ZorkException.h"
+
 struct ObjectDefinition {
     StringList syns;
     StringList adj;
@@ -163,15 +162,6 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
 
     for (const OP &obj_prop : props)
     {
-        auto assign_str = [](const OP& op)
-            {
-                return std::get<std::string>(op.value());
-            };
-        auto assign_int = [](const OP& op)
-            {
-                return std::get<int>(op.value());
-            };
-
         using enum ObjectSlots;
         switch (obj_prop.slot())
         {
@@ -188,7 +178,7 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
             assign(_otval, obj_prop);
             break;
         case ksl_ofval:
-            _ofval = assign_int(obj_prop);
+            assign(_ofval, obj_prop);
             break;
         case ksl_olint:
             _olint = std::make_shared<olint_t>(std::get<olint_t>(obj_prop.value()));

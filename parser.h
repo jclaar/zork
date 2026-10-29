@@ -202,7 +202,6 @@ Nefals gwim(const Flags<Bits, numbits> &bits, VargP fword);
 Nefals fwim(Bits b, const ObjList &objs, bool no_care);
 Nefals fwim(const Flags<Bits, numbits> &bits, const ObjList &objs, bool no_care);
 bool do_take(ObjectP obj);
-std::string foostr(std::string nam, bool first = true, bool lc = false);
 std::string prstr(const std::string &sp);
 std::string prlcstr(const std::string &str);
 std::string prfunny(const WordP &prep);
