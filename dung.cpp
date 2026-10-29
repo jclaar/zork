@@ -16,7 +16,6 @@
 #include "melee.h"
 #include "adv.h"
 #include "parser.h"
-#include "ZorkException.h"
 #include "roomfns.h"
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
@@ -179,7 +178,7 @@ namespace {
     template <typename List, typename Fn, typename...Args>
     List build_tlist(Fn f, Args...a)
     {
-        List rv;
+        auto rv = List();
         std::tuple all(a...);
         std::apply([&](auto&&...args) { (rv.push_back(f(args)),...); }, all);
         return rv;
