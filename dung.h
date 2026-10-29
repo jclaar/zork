@@ -31,9 +31,6 @@ extern HackP fight_demon;
 extern HackP clocker;
 extern VerbP buncher;
 using ASSpan = std::span<const attack_state>;
-extern const std::vector<ASSpan> def1_res;
-extern const std::vector<ASSpan> def2_res;
-extern const std::vector<ASSpan> def3_res;
 extern int cyclowrath;
 extern std::vector<VerbP> robot_actions;
 extern std::vector<VerbP> master_actions;
@@ -357,3 +354,52 @@ void add_buzz(T first, Args... args)
     add_buzz(first);
     add_buzz(args...);
 }
+
+// Attacking things...
+namespace {
+    constexpr std::array def1 = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::unconscious, attack_state::unconscious,
+        attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed };
+    constexpr std::array def2a = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound,
+        attack_state::unconscious };
+    constexpr std::array def2b = { attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::unconscious,
+        attack_state::killed, attack_state::killed, attack_state::killed };
+    constexpr std::array def3a = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound };
+    constexpr std::array def3b = { attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound };
+    constexpr std::array def3c = { attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound };
+}
+
+constexpr std::array def1_res = {
+    ASSpan({ std::begin(def1), std::end(def1) }),
+    ASSpan({ std::begin(def1) + 1, std::end(def1) }),
+    ASSpan({ std::begin(def1) + 2, std::end(def1) })
+};
+constexpr std::array def2_res = {
+    ASSpan({ std::begin(def2a), std::end(def2a) }),
+    ASSpan({ std::begin(def2b), std::end(def2b) }),
+    ASSpan({ std::begin(def2b) + 1, std::end(def2b) }),
+    ASSpan({ std::begin(def2b) + 2, std::end(def2b) })
+};
+const std::array def3_res = {
+    ASSpan({ std::begin(def3a), std::end(def3a) }),
+    ASSpan({ std::begin(def3a) + 1, std::end(def3a) }),
+    ASSpan({ std::begin(def3b), std::end(def3b) }),
+    ASSpan({ std::begin(def3b) + 1, std::end(def3b) }),
+    ASSpan({ std::begin(def3c), std::end(def3c) })
+};
+
