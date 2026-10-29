@@ -118,10 +118,16 @@ bool tell(std::string_view s, uint32_t flags)
     return tell(s, flags, std::monostate());
 }
 
-int ZRand(int min, int max)
+std::default_random_engine& get_random_engine()
 {
     static std::random_device rd;  // Non-deterministic seed source
-    static std::mt19937 gen(rd());  // Mersenne Twister engine
+    static std::default_random_engine gen(rd());  // Mersenne Twister engine
+
+    return gen;
+}
+
+int ZRand(int min, int max)
+{
     std::uniform_int_distribution<int> dist(min, max);
-    return dist(gen);
+    return dist(get_random_engine());
 }

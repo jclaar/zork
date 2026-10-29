@@ -3,9 +3,8 @@
 
 #include <ostream>
 #include <string_view>
-#include <cassert>
+#include <random>
 #include "ZorkException.h"
-#include "globals.h"
 
 #if !defined(_ASSERT)
 #define _ASSERT assert
@@ -323,5 +322,7 @@ typename T::mapped_type plookup(std::string_view a, const T &l)
 
 // Random number generator. Returns a random number in the range [min, max].
 int ZRand(int min, int max);
+// Gets the random engine if needed for other purposes.
+std::default_random_engine& get_random_engine();
 
 #endif

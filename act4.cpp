@@ -1,5 +1,4 @@
 #include <numeric>
-#include <random>
 #include "defs.h"
 #include "funcs.h"
 #include "dung.h"
@@ -229,9 +228,7 @@ namespace
         // selection. To make it simpler, this just copies
         // the from list to the to list, does a shuffle, and
         // returns the required number of elements.
-        std::random_device rd;
-        std::mt19937 g(rd());
-        std::shuffle(from.begin(), from.end(), g);
+        std::shuffle(from.begin(), from.end(), get_random_engine());
         std::copy(from.begin(), from.begin() + to.size(), to.begin());
     }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "object.h"
+#include "globals.h"
 
 typedef std::variant<int, std::vector<Bits>> RPValue;
 typedef std::tuple<ObjectSlots, RPValue> RP;

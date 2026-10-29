@@ -24,7 +24,7 @@ std::list<VerbP> bunchers;
 // Takes an input string and lowercases it.
 // first implies that the first letter will remain the same (if it's uppercase)
 // If lc is false, the string will be unchanged.
-std::string foostr(std::string nam, bool first, bool lc)
+static std::string foostr(std::string nam, bool first, bool lc)
 {
     auto start_iter = nam.begin();
     if (!lc && first)
