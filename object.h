@@ -125,10 +125,10 @@ public:
     const std::string &oid() const { return synonyms[0]; }
 	const std::vector<std::string> &onames() const { return synonyms; }
     const std::vector<std::string> &oadjs() const { return adjec; }
-    const tofmsgs *ofmsgs() const;
-	const std::string &oread() const;
+    const tofmsgs* ofmsgs() const { return _melee_func; }
+    const std::string& oread() const { return _oread; }
     const std::string &odesco() const { return _odesco; }
-    int ocapac() const;
+    int ocapac() const { return _ocapac; }
     PROP(ocontents);
     PROP(odesc1);
     PROP(odesc2);
@@ -149,7 +149,7 @@ public:
     const rapplic &oaction() const { return objfn; }
     const RoomP &oroom() const { return _oroom; }
     Object& oroom(const RoomP& r) { _oroom = r; return *this; }
-    RoomBit ovtype() const;
+    RoomBit ovtype() const { return _ovtype; }
 
     void restore(const Object &o);
 

@@ -229,16 +229,6 @@ const AdvP *Object::oactor() const
     return actor;
 }
 
-RoomBit Object::ovtype() const
-{
-    return _ovtype;
-}
-
-int Object::ocapac() const
-{
-    return _ocapac;
-}
-
 void Object::restore(const Object &o)
 {
     _ocan = o._ocan;
@@ -254,16 +244,6 @@ void Object::restore(const Object &o)
     _odesc1 = o._odesc1;
 }
 
-
-const tofmsgs *Object::ofmsgs() const
-{
-    return _melee_func;
-}
-
-const std::string &Object::oread() const
-{
-    return _oread;
-}
 
 GObject::GObject(Bits g_bits, const StringList &syns, const StringList &adj,
     const char *desc, const std::initializer_list<Bits> &_bits, rapplic obj_fun,
