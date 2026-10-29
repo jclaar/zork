@@ -32,7 +32,7 @@ struct GObjectDefinition {
     std::initializer_list<OP> props;
 };
 
-ObjList &global_objects()
+ObjList& global_objects()
 {
     static ObjList gl;
     return gl;
@@ -40,43 +40,43 @@ ObjList &global_objects()
 
 namespace
 {
-    ObjectPobl &Objects()
+    ObjectPobl& Objects()
     {
         static ObjectPobl obj;
         return obj;
     }
 
-    ObjectP make_obj(const StringList &syns, const StringList &adj, const char *desc,
-        const std::initializer_list<Bits> &bits, rapplic obj_fun = nullptr, const std::initializer_list<const char*> &contents = {},
-        const std::initializer_list<OP> &props = {})
+    ObjectP make_obj(const StringList& syns, const StringList& adj, const char* desc,
+        const std::initializer_list<Bits>& bits, rapplic obj_fun = nullptr, const std::initializer_list<const char*>& contents = {},
+        const std::initializer_list<OP>& props = {})
     {
         return std::make_shared<Object>(syns, adj, desc, bits, obj_fun, contents, props);
     }
 
-    GObjectPtr make_gobj(Bits gbits, const StringList &syns, const StringList &adj, const char *desc,
-        const std::initializer_list<Bits> &bits, rapplic obj_fun = nullptr, const std::initializer_list<const char *> &contents = {},
-        const std::initializer_list<OP> &props = {})
+    GObjectPtr make_gobj(Bits gbits, const StringList& syns, const StringList& adj, const char* desc,
+        const std::initializer_list<Bits>& bits, rapplic obj_fun = nullptr, const std::initializer_list<const char*>& contents = {},
+        const std::initializer_list<OP>& props = {})
     {
         return std::make_shared<GObject>(gbits, syns, adj, desc, bits, obj_fun, contents, props);
     }
 
     // List of all global objects.
-	using GObjectArray = std::vector<GObjectPtr>;
-	GObjectArray load_gobjects()
-	{
-#include "gobject.h"
-		GObjectArray o;
-        o.reserve(std::distance(std::begin(gobjects), std::end(gobjects)));
-		std::transform(std::begin(gobjects), std::end(gobjects), std::back_inserter(o), [](const GObjectDefinition &od)
-		{
-			return make_gobj(od.gbits, od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
-		});
-		return o;
-	}
-
-	GObjectArray &get_gobjects()
+    using GObjectArray = std::vector<GObjectPtr>;
+    GObjectArray load_gobjects()
     {
-		static GObjectArray objs = load_gobjects();
+#include "gobject.h"
+        GObjectArray o;
+        o.reserve(std::distance(std::begin(gobjects), std::end(gobjects)));
+        std::transform(std::begin(gobjects), std::end(gobjects), std::back_inserter(o), [](const GObjectDefinition& od)
+            {
+                return make_gobj(od.gbits, od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
+            });
+        return o;
+    }
+
+    GObjectArray& get_gobjects()
+    {
+        static GObjectArray objs = load_gobjects();
         return objs;
     }
     // List of all objects
@@ -86,16 +86,16 @@ namespace
 #if _MSC_FULL_VER==192227812
 #pragma optimize("", off)
 #endif
-	using ObjectArray = std::vector<ObjectP>;
-	ObjectArray load_objects()
+    using ObjectArray = std::vector<ObjectP>;
+    ObjectArray load_objects()
     {
 #include "objdefs.h"
-		ObjectArray o;
+        ObjectArray o;
         o.reserve(std::distance(std::begin(objects), std::end(objects)));
-        std::transform(std::begin(objects), std::end(objects), std::back_inserter(o), [](const ObjectDefinition &od)
-        {
-            return make_obj(od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
-        });
+        std::transform(std::begin(objects), std::end(objects), std::back_inserter(o), [](const ObjectDefinition& od)
+            {
+                return make_obj(od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
+            });
 
         return o;
     }
@@ -103,15 +103,37 @@ namespace
 #pragma optimize("", on)
 #endif
 
-	ObjectArray &get_objects()
+    ObjectArray& get_objects()
     {
         static ObjectArray objs = load_objects();
-		return objs;
+        return objs;
     }
 }
 
 // last_it must be defined after Objects.
 ObjectP last_it;
+
+template <typename T>
+void assign(T& val, const OP& op)
+{
+    val = std::get<T>(op.value());
+}
+
+template <typename Cast>
+void assign_cast(Cast& val, const OP& op)
+{
+    int ival;
+    assign(ival, op);
+    val = static_cast<Cast>(ival);
+}
+
+template <typename Cast>
+void assign_cast(std::optional<Cast>& val, const OP& op)
+{
+    int ival;
+    assign(ival, op);
+    val = static_cast<Cast>(ival);
+}
 
 Object::Object(const std::initializer_list<const char *> &syns, const std::initializer_list<const char *> &adj, const char *description,
     const std::initializer_list<Bits> &bits, rapplic objfun, const StringList &cntnts, 
@@ -141,51 +163,60 @@ Object::Object(const std::initializer_list<const char *> &syns, const std::initi
 
     for (const OP &obj_prop : props)
     {
+        auto assign_str = [](const OP& op)
+            {
+                return std::get<std::string>(op.value());
+            };
+        auto assign_int = [](const OP& op)
+            {
+                return std::get<int>(op.value());
+            };
+
         using enum ObjectSlots;
         switch (obj_prop.slot())
         {
         case ksl_oread:
-            _oread = std::get<std::string>(obj_prop.value());
+            assign(_oread, obj_prop);
             break;
         case ksl_odesco:
-            _odesco = std::get<std::string>(obj_prop.value());
+            assign(_odesco, obj_prop);
             break;
         case ksl_odesc1:
-            _odesc1 = std::get<std::string>(obj_prop.value());
+            assign(_odesc1, obj_prop);
             break;
         case ksl_otval:
-            _otval = std::get<int>(obj_prop.value());
+            assign(_otval, obj_prop);
             break;
         case ksl_ofval:
-            _ofval = std::get<int>(obj_prop.value());
+            _ofval = assign_int(obj_prop);
             break;
         case ksl_olint:
             _olint = std::make_shared<olint_t>(std::get<olint_t>(obj_prop.value()));
             clock_disable(clock_int(_olint->ev(), _olint->ev()->ctick()));
             break;
         case ksl_ostrength:
-            _ostrength = std::get<int>(obj_prop.value());
+            assign(_ostrength, obj_prop);
             break;
         case ksl_osize:
-            _osize = std::get<int>(obj_prop.value());
+            assign(_osize, obj_prop);
             break;
         case ksl_omatch:
-            _omatch = std::get<int>(obj_prop.value());
+            assign(_omatch, obj_prop);
             break;
         case ksl_ocapac:
-            _ocapac = std::get<int>(obj_prop.value());
+            assign(_ocapac, obj_prop);
             break;
         case ksl_oglobal:
-            _oglobal = static_cast<Bits>(std::get<int>(obj_prop.value()));
+            assign_cast(_oglobal, obj_prop);
             break;
         case ksl_oactor:
-            _oactor = static_cast<e_oactor>(std::get<int>(obj_prop.value()));
+            assign_cast(_oactor, obj_prop);
             break;
         case ksl_ovtype:
-            _ovtype = std::get<RoomBit>(obj_prop.value());
+            assign(_ovtype, obj_prop);
             break;
         case ksl_ofmsgs:
-            _melee_func = std::get<OP::melee_func>(obj_prop.value());
+            assign(_melee_func, obj_prop);
             break;
         case ksl_obverb:
             // Never used? Just ignore.
