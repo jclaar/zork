@@ -1,6 +1,5 @@
 #pragma once
 #include <array>
-#include <string>
 #include <string_view>
 using namespace std::string_view_literals;
 constexpr std::string_view  msg_string = R"~(Muddle 105 Version/Please report strange occurrences.)~";

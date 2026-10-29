@@ -64,7 +64,13 @@ add_executable(zork
     util.h util.cpp
     version.h
     ZorkException.h
-    zstring.h zstring.cpp
+    zstring.h 
+)
+
+target_precompile_headers(zork PRIVATE
+    <vector>
+    <array>
+    "defs.h"
 )
 
 target_compile_features(zork PRIVATE cxx_std_23)

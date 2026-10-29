@@ -1,14 +1,11 @@
 #include <algorithm>
-#include "act1.h"
-#include "act2.h"
-#include "act3.h"
-#include "act4.h"
 #include "cevent.h"
-#include "melee.h"
 #include "objfns.h"
+#include "act1.h"
+#include "act3.h"
 #include "roomfns.h"
-#include "ZorkException.h"
-#include <tuple>
+#include "act2.h"
+#include "act4.h"
 
 CEventP sphere_clock;
 

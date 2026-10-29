@@ -1,5 +1,6 @@
 #pragma once
 #include <utility>
+#include <bitset>
 
 template <typename FlagType, size_t sz>
 class Flags : private std::bitset<sz>

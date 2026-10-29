@@ -6,7 +6,6 @@
 #include <string>
 #include "defs.h"
 #include "makstr.h"
-#include "room.h"
 #include "funcs.h"
 #include "melee.h"
 

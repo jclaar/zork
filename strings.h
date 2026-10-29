@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-typedef std::vector<const char *> tofmsg;
-typedef std::vector<tofmsg> tofmsgs;
+using tofmsg = std::vector<const char *>;
+using tofmsgs = std::vector<tofmsg>;
 
 extern const tofmsgs cyclops_melee;
 extern const tofmsgs knife_melee;

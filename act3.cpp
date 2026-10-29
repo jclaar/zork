@@ -1,18 +1,16 @@
-#include <numeric>
 #include <algorithm>
+#include <numeric>
 #include "act1.h"
 #include "act2.h"
 #include "act3.h"
-#include "util.h"
-#include "objfns.h"
-#include "funcs.h"
-#include "parser.h"
-#include "makstr.h"
-#include "zstring.h"
-#include "cevent.h"
 #include "adv.h"
+#include "cevent.h"
+#include "funcs.h"
 #include "memq.h"
+#include "objfns.h"
 #include "roomfns.h"
+#include "util.h"
+#include "zstring.h"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
