@@ -1,7 +1,6 @@
 #pragma once
 
 #include "defs.h"
-#include <memory>
 #include <array>
 #include <utility>
 #include <boost/serialization/access.hpp>

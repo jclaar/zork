@@ -211,11 +211,11 @@ bool yes_no(bool no_is_bad)
     bool rv;
     if (no_is_bad)
     {
-        rv = inbuf.find_first_of("NnfF") == std::string::npos;
+        rv = inbuf.find_first_of("NnfF"sv) == std::string::npos;
     }
     else
     {
-        rv = inbuf.find_first_of("YyTt") != std::string::npos;
+        rv = inbuf.find_first_of("YyTt"sv) != std::string::npos;
     }
     return rv;
 }

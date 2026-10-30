@@ -4,6 +4,7 @@
 #include <boost/process.hpp>
 #include <boost/dll.hpp>
 #include <string>
+#include <iostream>
 #include "funcs.h"
 #include "dung.h"
 #include "rooms.h"

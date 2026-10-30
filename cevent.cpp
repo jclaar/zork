@@ -1,4 +1,3 @@
-#include <algorithm>
 #include "cevent.h"
 #include "objfns.h"
 #include "act1.h"
@@ -11,7 +10,7 @@ CEventP sphere_clock;
 
 namespace
 {
-    CEventP mke(int tick, rapplic action, bool flag, const char *id, bool death)
+    CEventP mke(int tick, rapplic action, bool flag, std::string_view id, bool death)
     {
         return std::make_shared<CEvent>(tick, action, flag, id, death);
     }

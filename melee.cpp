@@ -6,7 +6,6 @@
 #include "parser.h"
 #include "makstr.h"
 #include "cevent.h"
-#include "ZorkException.h"
 #include "memq.h"
 #include "act1.h"
 
