@@ -33,7 +33,9 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_L
     message(FATAL_ERROR "Must use at least GCC 14.")
 endif()
 
-add_executable(zork
+add_executable(zork)
+
+target_sources(zork PRIVATE
     act1.h act1.cpp
     act2.h act2.cpp
     act3.h act3.cpp
