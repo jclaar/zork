@@ -12,6 +12,12 @@
 template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
 template<class... Ts> overload(Ts...)->overload<Ts...>;
 
+// For template functions that require size.
+template <typename T>
+concept HasSize = requires(T const& t) {
+    { t.size() } -> std::same_as<std::size_t>;
+};
+
 // Handy macro to define a property using the deducing this support in C++23.
 #define PROP(p) auto && p(this auto && self) noexcept \
  { \
@@ -26,7 +32,7 @@ enum class ApplyRandomArg
     read_in
 };
 // Defines a functor for an rapplic. The ApplyRandomArg argument is optional.
-typedef std::optional<ApplyRandomArg> Rarg;
+using Rarg = std::optional<ApplyRandomArg>;
 #define RAPPLIC(x) struct x { \
     bool operator()() const; \
     bool operator()(Rarg ra) const { return (*this)(); } \
@@ -170,19 +176,19 @@ using ObjectP = std::shared_ptr<Object>;
 using ObjList = std::list<ObjectP>;
 using ObjVector = std::vector<ObjectP>;
 class GObject;
-typedef std::shared_ptr<GObject> GObjectPtr;
+using GObjectPtr = std::shared_ptr<GObject>;
 class Room;
 using RoomP = std::shared_ptr<Room>;
 using RoomList = std::list<RoomP>;
 class CEvent;
-typedef std::shared_ptr<CEvent> CEventP;
-typedef std::list<CEventP> EventList;
+using CEventP = std::shared_ptr<CEvent>;
+using EventList = std::list<CEventP>;
 class Adv;
-typedef std::unique_ptr<Adv> AdvP;
-typedef std::array <AdvP, std::to_underlying(e_oactor::none)> AdvArray;
+using AdvP = std::unique_ptr<Adv>;
+using AdvArray = std::array<AdvP, std::to_underlying(e_oactor::none)>;
 
 class hack;
-typedef std::shared_ptr<hack> HackP;
+using HackP = std::shared_ptr<hack>;
 
 template <typename T0, typename... Ts>
 bool is_empty(const std::variant<T0, Ts...> &v)
@@ -227,7 +233,7 @@ public:
     prep_t(std::string_view s) : word(s) {}
 };
 
-typedef std::shared_ptr<prep_t> PrepP;
+using PrepP = std::shared_ptr<prep_t>;
 
 class buzz : public word
 {
@@ -244,7 +250,7 @@ using AdjectiveP = std::shared_ptr<adjective>;
 inline bool operator==(const AdjectiveP& a, const std::string& s) { return a->w() == s; }
 inline bool operator==(const std::string& s, const AdjectiveP& a) { return a == s; }
 
-typedef std::shared_ptr<word> WordP;
+using WordP = std::shared_ptr<word>;
 
 
 struct _varg
@@ -254,7 +260,7 @@ struct _varg
     PrepP vprep; // preposition that must precede(?) object
     Flags<vword_flag, numvbits> vword;
 };
-typedef std::shared_ptr<_varg> VargP;
+using VargP = std::shared_ptr<_varg>;
 
 
 struct verb : public word
@@ -268,7 +274,7 @@ public:
 private:
     rapplic _vfcn;
 };
-typedef std::shared_ptr<verb> VerbP;
+using VerbP = std::shared_ptr<verb>;
 
 // Flags for syntax
 enum class SyntaxBits
@@ -284,9 +290,9 @@ struct syntax
     VerbP sfcn;
     Flags<SyntaxBits, std::to_underlying(SyntaxBits::snumflags)> sflags;
 };
-typedef std::shared_ptr<syntax> SyntaxP;
+using SyntaxP = std::shared_ptr<syntax>;
 
-typedef std::vector<SyntaxP> vspec;
+using vspec = std::vector<SyntaxP>;
 
 struct Action
 {
@@ -306,7 +312,7 @@ public:
     const vspec &vdecl() const { return vdecl_; }
     const std::string &vstr() const { return vstr_; }
 };
-typedef std::shared_ptr<Action> ActionP;
+using ActionP = std::shared_ptr<Action>;
 
 class phrase
 {
@@ -322,11 +328,11 @@ private:
     WordP _pprep;
     ObjectP _pobj;
 };
-typedef std::shared_ptr<phrase> PhraseP;
-typedef std::vector<PhraseP> PhraseVecV;
+using PhraseP = std::shared_ptr<phrase>;
+using PhraseVecV = std::vector<PhraseP>;
 PhraseP make_phrase(const WordP &p, const ObjectP &op);
 
-typedef std::variant<std::string_view, ObjectP, ActionP> QuestionValue;
+using QuestionValue = std::variant<std::string_view, ObjectP, ActionP>;
 
 struct question
 {
@@ -343,7 +349,7 @@ private:
     std::string _qstr;
     std::vector<QuestionValue> _qans;
 };
-typedef std::shared_ptr<question> QuestionP;
+using QuestionP = std::shared_ptr<question>;
 
 inline bool vtrnn(const VargP &va, vword_flag bit)
 {
@@ -351,7 +357,7 @@ inline bool vtrnn(const VargP &va, vword_flag bit)
 }
 
 // ORPHANS -- mysterious vector of orphan data
-typedef std::variant<std::monostate, ObjectP, PhraseP> OrphanSlotType;
+using OrphanSlotType = std::variant<std::monostate, ObjectP, PhraseP>;
 class Orphans
 {
 public:
@@ -420,6 +426,7 @@ bool gtrnn(const RoomP &, Bits);
 void rtrc(const RoomP &p, RoomBit b);
 
 template <typename T>
+requires HasSize<T>
 int length(const T& c)
 {
     return (int) c.size();

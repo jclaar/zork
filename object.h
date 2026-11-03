@@ -13,7 +13,7 @@
 #include "strings.h"
 #include "cevent.h"
 
-typedef std::initializer_list<const char*> StringList;
+using StringList = std::initializer_list<const char*>;
 
 enum class ObjectSlots
 {
@@ -63,23 +63,41 @@ private:
     int _val = 0;
     CEventP _ev;
 };
-typedef std::shared_ptr<olint_t> OlintP;
+using OlintP = std::shared_ptr<olint_t>;
 
 class OP
 {
+    template<class... T>
+    struct always_false : std::false_type {};
 public:
     using melee_func = const tofmsgs*;
     using PropVal = std::variant<int, std::string, melee_func, olint_t, RoomBit>;
-    OP(ObjectSlots os, const PropVal &v) : sl(os), val(v) {}
-    explicit OP(ObjectSlots os, int i) : sl(os), val(i) {}
-    explicit OP(ObjectSlots os, RoomBit b) : sl(os), val(b) {}
-    explicit OP(ObjectSlots os, e_oactor actor) : sl(os), val(std::to_underlying(actor)) {}
-    explicit OP(ObjectSlots os, std::string_view v) : sl(os), val(std::string(v)) {}
-    explicit OP(ObjectSlots os, const char* p) : sl(os)
+
+    template <typename Arg>
+    explicit OP(ObjectSlots os, Arg&& v) : sl(os)
     {
-        if (p)
-            val = p;
+		using T = std::decay_t<decltype(v)>;
+		if constexpr (std::is_same_v<T, int> || std::is_same_v<T, std::string> || std::is_same_v<T, melee_func> || std::is_same_v<T, olint_t> || std::is_same_v<T, RoomBit>) {
+			val = std::forward<Arg>(v);
+		}
+		else if constexpr (std::is_same_v<T, std::string_view>) {
+			val = std::string(v);
+		}
+		else if constexpr (std::is_same_v<T, const char*>) {
+            if (v)
+				val = std::string(v);
+		}
+        else if constexpr(std::is_same_v<T, e_oactor>) {
+            val = std::to_underlying(v);
+        }
+		else if constexpr (std::is_same_v<T, std::nullptr_t>) {
+			// Just leave it empty
+		}
+		else {
+			static_assert(always_false<T>::value, "Unsupported type for PropVal");
+		}
     }
+
     ObjectSlots slot() const { return sl; }
     const PropVal &value() const { return val; }
 private:
@@ -175,7 +193,7 @@ public:
     GObject(Bits gbits, const StringList &syns, const StringList &adj = {},
         const char * = "", const std::initializer_list<Bits> &bits = {}, rapplic obj_fun = nullptr,
         const std::initializer_list<const char*> &contents = {},
-        const std::initializer_list<OP> &props = { OP(ObjectSlots::ksl_oglobal, OP::PropVal(0)) });
+        const std::initializer_list<OP> &props = { OP(ObjectSlots::ksl_oglobal, 0) });
 
     const std::optional<Bits> &gbits() const { return _gbits; }
 
@@ -204,7 +222,7 @@ inline bool empty(const ObjectP &op)
 ObjectP get_obj(std::string_view name, ObjectP init_val = nullptr);
 ObjList &global_objects();
 
-typedef std::map<std::string, ObjList, std::less<>> ObjectPobl;
+using ObjectPobl = std::map<std::string, ObjList, std::less<>>;
 const ObjectPobl &object_pobl();
 bool is_obj(const std::string &obj);
 const ObjectP &find_obj(std::string_view name);

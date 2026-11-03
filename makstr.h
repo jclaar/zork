@@ -37,8 +37,8 @@ class try_ {}; // Added underscore to avoid using "try" keyword
 class take {};
 class driver {};
 class flip {};
-typedef std::variant<std::monostate, int, reach, robjs, aobjs, no_take, have, try_, take, Bits, std::list<Bits>> ALType;
-typedef std::list<ALType> AL;
+using ALType = std::variant<std::monostate, int, reach, robjs, aobjs, no_take, have, try_, take, Bits, std::list<Bits>>;
+using AL = std::list<ALType>;
 class AVSyntax : private std::tuple<std::string_view, rapplic>
 {
 public:
@@ -47,9 +47,9 @@ public:
     std::string_view verb() const { return std::get<0>(*this); }
     rapplic fn() const { return std::get<1>(*this); }
 };
-typedef std::variant<const char *, obj, nrobj, AL, AVSyntax, driver, flip> ParseItem;
-typedef std::vector<ParseItem> AnyV;
-typedef std::vector<AnyV> ActionVec;
+using ParseItem = std::variant<const char *, obj, nrobj, AL, AVSyntax, driver, flip>;
+using AnyV = std::vector<ParseItem>;
+using ActionVec = std::vector<AnyV>;
 void oneadd_action(const char *str1, const char *str2, rapplic atm);
 void onenradd_action(const char *str1, const char *str2, rapplic atm);
 void add_action(const char *nam, const char *str, const ActionVec &decl);

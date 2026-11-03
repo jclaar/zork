@@ -153,7 +153,7 @@ private:
     }
 };
 
-typedef std::shared_ptr<hack> HackP;
+using HackP = std::shared_ptr<hack>;
 
 // Puzzle room
 struct CpExit
@@ -215,10 +215,10 @@ extern const ObjList villains;
 extern ObjList oppv;
 extern std::vector<int> villain_probs;
 
-typedef std::tuple<ObjectP, ObjectP, int> BestWeapons;
+using BestWeapons = std::tuple<ObjectP, ObjectP, int>;
 bool operator==(const ObjectP& villain, const BestWeapons& bw);
 inline bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
-typedef std::array<BestWeapons, 2> BestWeaponsList;
+using BestWeaponsList = std::array<BestWeapons, 2>;
 extern const BestWeaponsList best_weapons;
 
 // Parse vector is defined in parser.mud. It is a 3-element vector,
@@ -226,9 +226,9 @@ extern const BestWeaponsList best_weapons;
 // 0: ActionP or VerbP
 // 1: ObjectP or direction
 // 2: ObjectP or nothing
-typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction> ParseVecVal;
-typedef std::array<ParseVecVal, 3> ParseVecA;
-typedef std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction, WordP, std::string, ObjList> ParseAval;
+using ParseVecVal = std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction>;
+using ParseVecA = std::array<ParseVecVal, 3>;
+using ParseAval = std::variant<std::monostate, ActionP, VerbP, ObjectP, PhraseP, direction, WordP, std::string, ObjList>;
 
 inline ParseVecVal as_pvv(const ParseAval &pv)
 {

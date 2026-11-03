@@ -326,4 +326,7 @@ typename T::mapped_type plookup(std::string_view a, const T &l)
     return iter == l.end() ? typename T::mapped_type() : iter->second;
 }
 
+// Random number generator. Returns a random number in the range [min, max].
+int ZRand(int min, int max);
+
 #endif

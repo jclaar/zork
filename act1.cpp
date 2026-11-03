@@ -50,6 +50,22 @@ namespace
             ::tell(*(tell_start + size_t(cnt) - 1));
         }
     }
+
+    bool hack_hack(const ObjectP& obj, std::string_view str, std::string_view obj2 = std::string_view())
+    {
+        if (object_action())
+            return true;
+        if (!obj2.empty())
+        {
+            tell(str, 1, obj->odesc2(), " with a ");
+            tell(obj2, 1, pick_one(ho_hum));
+        }
+        else
+        {
+            tell(str, 1, obj->odesc2(), pick_one(ho_hum));
+        }
+        return true;
+    }
 }
 
 int water_level = 0;
@@ -352,13 +368,13 @@ bool robber::operator()(const HackP &hack) const
     return true;
 }
 
-bool infested(const RoomP& r)
+static bool infested(const RoomP& r)
 {
     const ObjList& villains = ::villains;
     const HackP& dem = get_demon("THIEF");
     return flags[FlagId::end_game_flag] && eg_infested(r) ||
         r == dem->hroom() && dem->haction() ||
-        [&villains, &r]() -> bool
+        r && [&villains, &r]() -> bool
     {
         return std::find_if(villains.begin(), villains.end(), [&r](const ObjectP& v)
             {
@@ -369,12 +385,13 @@ bool infested(const RoomP& r)
 
 static bool infested(const ExitType& ex)
 {
-    return std::visit(overload{
-            [&](const CExitPtr& cep) { return infested(cep->cxroom()); },
-                        [&](const DoorExitPtr& dep) { return infested(get_door_room(here, dep)); },
-                        [&](const std::string& sp) { return infested(find_room(sp)); },
-                        [](auto p) { return false; }
+    RoomP rm = std::visit(overload{
+            [&](const CExitPtr& cep) { return cep->cxroom(); },
+                        [&](const DoorExitPtr& dep) { return get_door_room(here, dep); },
+                        [&](const std::string& sp) { return find_room(sp); },
+                        [](auto p) { return RoomP(); }
         }, ex);
+    return infested(rm);
 }
 
 bool sword_glow::operator()(const HackP &dem) const
@@ -630,7 +647,7 @@ bool swinger::operator()() const
     return perform(attacker(), find_verb("ATTAC"), prsi(), prso());
 }
 
-bool thief_in_treasure(const ObjectP &hobj)
+static bool thief_in_treasure(const ObjectP &hobj)
 {
     if (length(here->robjs()) != 2)
     {
@@ -696,7 +713,7 @@ bool tie_up::operator()() const
     return true;
 }
 
-bool torch_off(const ObjectP &t)
+static bool torch_off(const ObjectP &t)
 {
     t->odesc2() = "burned out ivory torch";
     t->odesc1() = "There is a burned out ivory torch here.";
@@ -845,7 +862,7 @@ bool deflater::operator()() const
     return true;
 }
 
-void dput(std::string_view str)
+static void dput(std::string_view str)
 {
     ObjectP prso = ::prso();
     for (const Ex &ex : here->rexits())
@@ -1138,7 +1155,7 @@ bool reader::operator()() const
     return true;
 }
 
-int otval_frob(const ObjList &l)
+static int otval_frob(const ObjList &l)
 {
     int value = 0;
     for (auto &x : l)
@@ -1199,7 +1216,7 @@ namespace exit_funcs
     ExitFuncVal carousel_out::operator()() const
     {
         _ASSERT(here->rexits().size() >= 8);
-        const Ex &cx = here->rexits()[rand() % 8];
+        const Ex &cx = here->rexits()[ZRand(0, 7)];
         return std::get<CExitPtr>(std::get<1>(cx))->cxroom();
     }
 
@@ -2889,22 +2906,6 @@ bool fill::operator()() const
     else if (prsi() != sfind_obj("WATER"))
     {
         perform(putter(), find_verb("PUT"), prsi(), prso());
-    }
-    return true;
-}
-
-bool hack_hack(const ObjectP &obj, std::string_view str, std::string_view obj2)
-{
-    if (object_action())
-        return true;
-    if (!obj2.empty())
-    {
-        tell(str, 1, obj->odesc2(), " with a ");
-        tell(obj2, 1, pick_one(ho_hum));
-    }
-    else
-    {
-        tell(str, 1, obj->odesc2(), pick_one(ho_hum));
     }
     return true;
 }

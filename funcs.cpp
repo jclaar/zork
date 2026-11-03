@@ -12,7 +12,7 @@
 class TtyBuff : public std::basic_stringbuf<char, std::char_traits<char>>
 {
 public:
-	TtyBuff() : gen(std::random_device{}()), dist(50, 200) {}
+	TtyBuff() {}
 
     bool IsTerminal() const { return term_sim; }
     void SetTerminal(bool on) { term_sim = on; }
@@ -27,7 +27,7 @@ protected:
         if (term_sim)
         {
             // If in terminal mode, pause for a little bit to simulate memory/disk access, etc.
-            std::this_thread::sleep_for(std::chrono::milliseconds(dist(gen)));
+            std::this_thread::sleep_for(std::chrono::milliseconds(ZRand(50, 200)));
         }
         while ((c = this->sbumpc()) != (char) traits_type::eof())
         {
@@ -49,8 +49,6 @@ protected:
     }
 
 private:
-    std::mt19937 gen;                               // random engine
-    std::uniform_int_distribution<int> dist;        // distribution
     bool term_sim = false;
 };
 
@@ -119,4 +117,12 @@ bool tell(std::string_view s, uint32_t flags)
 {
     //return ctellt(s, flags);
     return tell(s, flags, std::monostate());
+}
+
+int ZRand(int min, int max)
+{
+    static std::random_device rd;  // Non-deterministic seed source
+    static std::mt19937 gen(rd());  // Mersenne Twister engine
+    std::uniform_int_distribution<int> dist(min, max);
+    return dist(gen);
 }

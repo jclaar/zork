@@ -6,7 +6,7 @@
 #include "funcs.h"
 
 // Possible levels of false returns from parser.
-typedef std::pair<ObjectP, int> Nefals;
+using Nefals = std::pair<ObjectP, int>;
 extern Nefals nefals;
 extern Nefals nefals2;
 inline bool operator==(const Nefals &ne, const ObjectP &obj)
@@ -17,8 +17,8 @@ inline bool operator==(const Nefals &ne, const ObjectP &obj)
 extern Iterator<ParseContV> lexv;
 extern bool gwim_disable;
 
-typedef Iterator<PhraseVecV> PrepVec;
-typedef Iterator<ParseVecA> ParseVec;
+using PrepVec = Iterator<PhraseVecV>;
+using ParseVec = Iterator<ParseVecA>;
 extern Iterator<ObjVector> bunuvec;
 extern Iterator<ObjVector> bunch;
 extern std::list<VerbP> bunchers;
@@ -167,9 +167,9 @@ struct StuffVec
         return !empty(iprepvec) && !empty(iparsevec);
     }
 };
-typedef std::unique_ptr<StuffVec> StuffVecP;
+using StuffVecP = std::unique_ptr<StuffVec>;
 
-typedef std::optional<const std::vector<Bits>*> Globals;
+using Globals = std::optional<const std::vector<Bits>*>;
 
 Iterator<ParseContV> lex(SIterator s, SIterator sx = SIterator());
 bool eparse(Iterator<ParseContV> pv, bool vb);
@@ -179,7 +179,7 @@ class cwin
 {
 };
 
-typedef std::variant<std::monostate, cwin, ParseVec, bool> SParseVal;
+using SParseVal = std::variant<std::monostate, cwin, ParseVec, bool>;
 SParseVal sparse(Iterator<ParseContV> sv, bool vb);
 Nefals search_list(const std::string &objname, const ObjList &slist, const AdjectiveP &adj, bool first = true, const Globals &global = Globals());
 bool this_it(const std::string &objname, const ObjectP &obj, const AdjectiveP &adj, Globals global);
