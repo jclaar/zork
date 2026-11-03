@@ -1,11 +1,13 @@
 #pragma once
 
-#include <limits>
 #include <climits>
 #include <string>
 #include <array>
-#include <bitset>
 #include "defs.h"
+#include <string_view>
+#include <tuple>
+#include <utility>
+#include "FlagSupport.h"
 
 int score_max();
 void inc_score_max(int inc);

@@ -3,6 +3,11 @@
 #include <string>
 #include <tuple>
 #include "defs.h"
+#include <initializer_list>
+#include <list>
+#include <string_view>
+#include <variant>
+#include <vector>
 
 enum class SpeechType
 {
