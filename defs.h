@@ -119,6 +119,7 @@ enum class Bits
     numbits
 };
 constexpr size_t numbits = std::to_underlying(Bits::numbits);
+using BitFlags = Flags<Bits, numbits>;
 
 enum class RoomBit
 {
@@ -248,8 +249,8 @@ typedef std::shared_ptr<word> WordP;
 
 struct _varg
 {
-    Flags<Bits, numbits> vbit;   // acceptable object characteristics (default any)
-    Flags<Bits, numbits> vfwim;  // spec for fwimming
+    BitFlags vbit;   // acceptable object characteristics (default any)
+    BitFlags vfwim;  // spec for fwimming
     PrepP vprep; // preposition that must precede(?) object
     Flags<vword_flag, numvbits> vword;
 };
@@ -411,7 +412,7 @@ bool apply_random(hackfn fcn, const HackP &demon);
 // oflags, rflags testers and setter
 
 // Check status of specific bit in object or room.
-bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check);
+bool trnn_bits(const ObjectP& op, const BitFlags& bits_to_check);
 void trc(const ObjectP &op, Bits b);
 bool strnn(const SyntaxP &syn, SyntaxBits b);
 bool gtrnn(const RoomP &, Bits);

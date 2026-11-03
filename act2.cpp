@@ -1,3 +1,9 @@
+#include <crtdbg.h>
+#include <iterator>
+#include <string>
+#include <string_view>
+#include <tuple>
+#include <variant>
 #include "act1.h"
 #include "act2.h"
 #include "cevent.h"
@@ -13,6 +19,9 @@
 #include "makstr.h"
 #include "memq.h"
 #include "roomfns.h"
+#include "globals.h"
+#include "object.h"
+#include "room.h"
 
 using namespace std::string_view_literals;
 

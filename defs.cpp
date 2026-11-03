@@ -52,7 +52,7 @@ bool apply_object(const ObjectP &op)
     return rv;
 }
 
-bool trnn_bits(const ObjectP& op, const Flags<Bits, numbits>& bits_to_check)
+bool trnn_bits(const ObjectP& op, const BitFlags& bits_to_check)
 {
     return (op->oflags() & bits_to_check).any();
 }

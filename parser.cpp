@@ -1403,7 +1403,7 @@ ObjectP gwim_slot(int fx, const VargP &varg, ParseVec &objs)
 // GWIM -- 'get what i mean'.  takes attribute to check, what to check in
 // (adventurer and/or room), and verb.does a 'TAKE' of it if found,
 // returns the object.
-Nefals gwim(const Flags<Bits, numbits> &bits, VargP fword)
+Nefals gwim(const BitFlags &bits, VargP fword)
 {
     bool baobj = vtrnn(fword, vword_flag::vabit);
     bool brobj = vtrnn(fword, vword_flag::vrbit);
@@ -1440,12 +1440,12 @@ Nefals gwim(const Flags<Bits, numbits> &bits, VargP fword)
 
 Nefals fwim(Bits b, const ObjList &objs, bool no_care)
 {
-    Flags<Bits, numbits> bs;
+    BitFlags bs;
     bs[b] = true;
     return fwim(bs, objs, no_care);
 }
 
-Nefals fwim(const Flags<Bits, numbits> &bit, const ObjList &objs, bool no_care)
+Nefals fwim(const BitFlags &bit, const ObjList &objs, bool no_care)
 {
     ObjectP nobj;
     for (const ObjectP &x : objs)
