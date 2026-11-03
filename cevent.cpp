@@ -1,14 +1,15 @@
-#include <algorithm>
+#include <memory>
+#include <string_view>
 #include "act1.h"
 #include "act2.h"
 #include "act3.h"
 #include "act4.h"
+#include "defs.h"
 #include "cevent.h"
 #include "melee.h"
 #include "objfns.h"
 #include "roomfns.h"
-#include "ZorkException.h"
-#include <tuple>
+#include "rooms.h"
 
 CEventP sphere_clock;
 

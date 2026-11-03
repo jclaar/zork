@@ -1,8 +1,20 @@
+#include <array>
+#include <cctype>
+#include <functional>
+#include <iterator>
+#include <list>
+#include <memory>
+#include <string>
+#include <utility>
+#include <algorithm>
 #include <map>
 #include <set>
+#include <tuple>
+#include <vector>
 #ifdef _DEBUG
 #include <iostream>
 #endif
+#include "defs.h"
 #include "dung.h"
 #include "memq.h"
 #include "funcs.h"
@@ -16,8 +28,9 @@
 #include "melee.h"
 #include "adv.h"
 #include "parser.h"
-#include "ZorkException.h"
 #include "roomfns.h"
+#include "globals.h"
+#include "makstr.h"
 
 bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {
