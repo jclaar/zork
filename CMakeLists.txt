@@ -85,6 +85,10 @@ add_executable(zork
 	zstring.h zstring.cpp
 )
 
+if (WIN32)
+target_compile_definitions(zork PRIVATE _WIN32_WINNT=0x0a00)
+endif()
+
 target_link_libraries(zork ${Boost_LIBRARIES} ${NTDLL} ${CMAKE_DL_LIBS})
 if (LINUX)
 target_link_libraries(zork Threads::Threads)
@@ -105,7 +109,6 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
 			COMMENT "Creating archive file for release."
 		)
 	else()
-	    target_compile_definitions(zork PRIVATE _WIN32_WINNT=0x0601)
 	    add_custom_command(TARGET zork
 		    POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E tar "cfv" "zork_win64_${CMAKE_PROJECT_VERSION}.zip" --format=zip "zork.exe"
