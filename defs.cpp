@@ -1,9 +1,9 @@
 #include <algorithm>
-#include <sstream>
+#include <memory>
 #include "defs.h"
-#include "ZorkException.h"
 #include "object.h"
-#include "dung.h"
+#include "room.h"
+#include "funcs.h"
 
 int no_tell = 0;
 int eg_score = 0;
