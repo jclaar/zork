@@ -14,6 +14,23 @@
 #include "cevent.h"
 #include "memq.h"
 #include "roomfns.h"
+#include <algorithm>
+#include <array>
+#include <cctype>
+#include <cmath>
+#include <iterator>
+#include <list>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <tuple>
+#include <variant>
+#include <vector>
+#include "defs.h"
+#include "dung.h"
+#include "globals.h"
+#include "room.h"
 
 namespace
 {

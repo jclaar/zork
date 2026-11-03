@@ -13,6 +13,20 @@
 #include "adv.h"
 #include "memq.h"
 #include "roomfns.h"
+#include <cmath>
+#include <cstdlib>
+#include <iterator>
+#include <string>
+#include <string_view>
+#include <tuple>
+#include <variant>
+#include "defs.h"
+#include "dung.h"
+#include "globals.h"
+#include "object.h"
+#include "room.h"
+#include "rooms.h"
+#include "ZorkException.h"
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include "object.h"
 
 typedef std::variant<int, std::vector<Bits>> RPValue;

@@ -1,6 +1,8 @@
 #pragma once
+#include <vector>
 #include "defs.h"
-#include "parser.h"
+#include "funcs.h"
+#include "rooms.h"
 
 extern std::vector<QuestionP> qvec;
 

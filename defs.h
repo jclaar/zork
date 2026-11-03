@@ -1,12 +1,17 @@
 #pragma once
 
-#include <algorithm>
 #include <functional>
 #include <variant>
 #include <list>
 #include <memory>
-#include <bitset>
 #include "FlagSupport.h"
+#include <array>
+#include <concepts>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 // For variant stuff.
 template<class... Ts> struct overload : Ts... { using Ts::operator()...; };

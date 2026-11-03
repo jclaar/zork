@@ -9,6 +9,17 @@
 #include "rooms.h"
 #include "adv.h"
 #include "memq.h"
+#include <algorithm>
+#include <array>
+#include <cctype>
+#include <iterator>
+#include <list>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <variant>
+#include <vector>
 
 const char *brks = "\"' 	:.,?!\n";
 Orphans orphans;

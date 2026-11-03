@@ -12,6 +12,23 @@
 #include "act4.h"
 #include "objfns.h"
 #include "roomfns.h"
+#include <crtdbg.h>
+#include <algorithm>
+#include <array>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <tuple>
+#include <variant>
+#include <vector>
+#include "cevent.h"
+#include "globals.h"
+#include "makstr.h"
+#include "object.h"
+#include "parser.h"
+#include "room.h"
+#include "rooms.h"
 
 std::vector<QuestionP> qvec;
 int mdir = 270;

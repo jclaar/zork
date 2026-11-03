@@ -1,4 +1,8 @@
 #include "memq.h"
+#include <variant>
+#include "defs.h"
+#include "funcs.h"
+#include "parser.h"
 
 bool memq(const ObjectP &op, Iterator<ObjVector> ol)
 {

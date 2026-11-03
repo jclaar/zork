@@ -1,9 +1,10 @@
 #pragma once
 
 #include "defs.h"
-#include <memory>
 #include <array>
 #include <utility>
+#include <string_view>
+#include <string>
 #include <boost/serialization/access.hpp>
 
 // CEVENT structure
