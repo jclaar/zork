@@ -190,9 +190,9 @@ bool perform(rapplic fcn, const VerbP &vb, const ObjectP &obj1, const ObjectP &o
 {
     ParseVec& pv = prsvec;
     // Save old parse vector.
-    auto oldpv0 = pv[0];
-    auto oldpv1 = pv[1];
-    auto oldpv2 = pv[2];
+    ParseVecVal oldpv0 = pv[0];
+    ParseVecVal oldpv1 = pv[1];
+    ParseVecVal oldpv2 = pv[2];
     pv[0] = vb;
     pv[1] = obj1 ? obj1 : ParseVecVal();
     pv[2] = obj2 ? obj2 : ParseVecVal();

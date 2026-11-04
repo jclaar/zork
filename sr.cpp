@@ -200,7 +200,7 @@ void restore_puzzle(archive &ia)
     for (; src_iter != cpo.cend(); ++src_iter, ++dest_iter)
     {
         dest_iter->clear();
-        for (auto s : *src_iter)
+        for (auto &s : *src_iter)
         {
             ObjectP o = sfind_obj(s->oid());
             _ASSERT(o);
@@ -212,7 +212,7 @@ void restore_puzzle(archive &ia)
 
     ObjList robjs, robjs2;
     ia & robjs;
-    for (auto o : robjs)
+    for (auto &o : robjs)
     {
         ObjectP rest_obj = sfind_obj(o->oid());
         robjs2.push_back(rest_obj);
@@ -223,7 +223,6 @@ void restore_puzzle(archive &ia)
 
 bool save_game(const std::string &f)
 {
-    auto h = robber_demon;
     std::ofstream sf(f);
     if (sf)
     {
