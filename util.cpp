@@ -207,17 +207,11 @@ bool perform(rapplic fcn, const VerbP &vb, const ObjectP &obj1, const ObjectP &o
 
 bool yes_no(bool no_is_bad)
 {
-    std::string inbuf = readst("");
-    bool rv;
-    if (no_is_bad)
-    {
-        rv = inbuf.find_first_of("NnfF"sv) == std::string::npos;
-    }
-    else
-    {
-        rv = inbuf.find_first_of("YyTt"sv) != std::string::npos;
-    }
-    return rv;
+    const std::string inbuf = readst("");
+
+    return no_is_bad
+        ? inbuf.find_first_of("NnfF"sv) == std::string::npos
+        : inbuf.find_first_of("YyTt"sv) != std::string::npos;
 }
 
 ObjList rob_adv(const AdvP &win, ObjList newlist)

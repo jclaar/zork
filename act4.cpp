@@ -1464,13 +1464,11 @@ namespace room_funcs
 
     bool parapet::operator()() const
     {
-        bool rv = false;
         if (verbq("LOOK"))
         {
-            rv = true;
-            tell(parapet_desc + std::string(nums[pnumb - 1]) + "'.", long_tell1);
+			return tell(parapet_desc, long_tell1, nums[pnumb - 1], "'.");
         }
-        return rv;
+        return false;
     }
 
     bool ncorr_room::operator()() const
