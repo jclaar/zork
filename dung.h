@@ -121,14 +121,14 @@ public:
         _hobjs_ev = el;
     }
 
-    void hobjs_add(const CEventP &ev)
+    template <typename T>
+        requires (std::same_as<T, CEventP> || std::same_as<T, ObjectP>)
+    void hobjs_add(const T &obj)
     {
-        _hobjs_ev.push_front(ev);
-    }
-
-    void hobjs_add(const ObjectP &ob)
-    {
-        _hobjs_ob.push_front(ob);
+        if constexpr (std::same_as<T, CEventP>)
+            _hobjs_ev.push_front(obj);
+        else
+            _hobjs_ob.push_front(obj);
     }
 
 private:
