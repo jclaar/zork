@@ -109,6 +109,7 @@ class Iterator
 {
 public:
     using iterator = typename T::iterator;
+	using const_iterator = typename T::const_iterator;
     using value_type = typename T::value_type;
 
     Iterator() : c(nullptr) {}
@@ -157,39 +158,27 @@ public:
         return std::distance(p, c->end());
     }
 
-    const T *cont() const
-    {
-        return c;
-    }
-
-    T *cont() 
-    {
-        return c;
-    }
+    template <typename Self>
+	auto cont(this Self&& s)
+	{
+        return s.c;
+	}
 
     iterator begin()
     {
         return c->begin();
     }
 
-    iterator cur()
-    {
-        return p;
-    }
+    template <typename Self>
+	auto&& cur(this Self&& s)
+	{
+		return std::forward<Self>(s).p;
+	}
 
-    iterator cur() const
+    template <typename Self>
+    auto end(this Self&& s)
     {
-        return p;
-    }
-
-    iterator end()
-    {
-        return c->end();
-    }
-
-    iterator end() const
-    {
-        return c->end();
+        return std::forward<Self>(s).c->end();
     }
 
     void advance(int offset)
