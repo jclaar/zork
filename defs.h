@@ -266,8 +266,7 @@ struct verb : public word
 public:
     verb(std::string_view w, rapplic vf = nullptr) : word(w), _vfcn(vf) {}
     
-    const rapplic &vfcn() const { return _vfcn; }
-    void set_vfcn(const rapplic &fn) { _vfcn = fn; }
+    PROP(vfcn);
 
 private:
     rapplic _vfcn;
@@ -295,9 +294,9 @@ using vspec = std::vector<SyntaxP>;
 struct Action
 {
 private:
-    std::string vname_;
-    vspec vdecl_;
-    std::string vstr_;
+    const std::string vname_;
+    const vspec vdecl_;
+    const std::string vstr_;
 
 public:
     Action(std::string_view vn, const vspec &vd, std::string_view vs) :
@@ -315,16 +314,13 @@ using ActionP = std::shared_ptr<Action>;
 class phrase
 {
 public:
-    phrase(const WordP &p, const ObjectP &op) : _pprep(p), _pobj(op) {}
+    phrase(const WordP &p, const ObjectP &op) : _prep(p), _obj(op) {}
 
-    const WordP &prep() const { return _pprep; }
-    void prep(const WordP &p) { _pprep = p; }
-
-    const ObjectP &obj() const { return _pobj; }
-    void obj(const ObjectP &p) { _pobj = p; }
+	PROP(prep);
+    PROP(obj);
 private:
-    WordP _pprep;
-    ObjectP _pobj;
+    WordP _prep;
+    ObjectP _obj;
 };
 using PhraseP = std::shared_ptr<phrase>;
 using PhraseVecV = std::vector<PhraseP>;
@@ -344,8 +340,8 @@ public:
     const std::vector<QuestionValue> &qans() const { return _qans; }
 
 private:
-    std::string _qstr;
-    std::vector<QuestionValue> _qans;
+    const std::string _qstr;
+    const std::vector<QuestionValue> _qans;
 };
 using QuestionP = std::shared_ptr<question>;
 
@@ -364,17 +360,12 @@ public:
     {
     }
 
-    bool oflag() const { return _oflag; }
-    void oflag(bool f) { _oflag = f; }
+    PROP(oflag);
+    PROP(overb);
+    PROP(oprep);
+    PROP(oname);
+    PROP(oslot2);
 
-    const ActionP &overb() const { return _overb; }
-    void overb(const ActionP &p) { _overb = p; }
-
-    const PrepP &oprep() const { return _oprep; }
-    void oprep(const PrepP &prep) { _oprep = prep; }
-
-    const std::string &oname() const { return _oname; }
-    void oname(std::string_view name) { _oname = name; }
 
     const ObjectP &oslot1() const { return _oslot1; }
     void oslot1(const OrphanSlotType &a) {
@@ -385,9 +376,6 @@ public:
             [&](auto p) { _oslot1.reset(); }
             }, a);
     }
-
-    const OrphanSlotType &oslot2() const { return _oslot2; }
-    void oslot2(const OrphanSlotType &a) { _oslot2 = a; }
 
 private:
     bool _oflag;

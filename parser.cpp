@@ -376,7 +376,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
         direction *dp;
         if (!action && (ap = std::get_if<ActionP>(&(aval = plookup(x, actions)))) && *ap) // 156
         {
-            orph.overb(nullptr);
+            orph.overb() = nullptr;
             action = *ap;
             cont_proc = false;
         }
@@ -700,8 +700,8 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
                 obj.first = *op;
             else
                 obj.first = std::get<PhraseP>(pv[1])->obj();
-            (pprep = prepvec[0])->prep(nprep);
-            pprep->obj(obj.first);
+            (pprep = prepvec[0])->prep() = nprep;
+            pprep->obj() = obj.first;
             ::prepvec = prepvec = (length(prepvec) == 1) ? top(prepvec) : rest(prepvec);
 
             if (orph.oslot1())
@@ -721,8 +721,8 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
             {
                 pprep = prepvec[0];
                 ::prepvec = prepvec = (length(prepvec) < 1 ? top(prepvec) : rest(prepvec));
-                pprep->prep(prep);
-                pprep->obj(obj.first);
+                pprep->prep() = prep;
+                pprep->obj() = obj.first;
                 put(back(pvr), 0, pprep);
             }
             else
@@ -746,17 +746,17 @@ const Orphans &orphan(bool flag, const ActionP &action, const OrphanSlotType &sl
 {
     if (flag)
     {
-        orphans.oslot2(slot2);
-        orphans.oname(name);
-        orphans.oprep(prep);
+        orphans.oslot2() = slot2;
+        orphans.oname() = name;
+        orphans.oprep() = prep;
         orphans.oslot1(slot1);
-        orphans.overb(action);
-        orphans.oflag(flag);
+        orphans.overb() = action;
+        orphans.oflag() = flag;
     }
     else
     {
         prepvec = top(prepvec);
-        orphans.oflag(false);
+        orphans.oflag() = false;
     }
     return orphans;
 }
@@ -834,8 +834,8 @@ StuffVecP stuff_obj(const ObjectP &obj, const PrepP &prep, PrepVec prepvec, Pars
             {
                 pprep = prepvec[0];
                 ::prepvec = prepvec = (length(prepvec) < 1) ? top(prepvec) : rest(prepvec);
-                pprep->prep(prep);
-                pprep->obj(obj);
+                pprep->prep() = prep;
+                pprep->obj() = obj;
                 return pprep;
             }
             else
