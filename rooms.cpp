@@ -496,7 +496,7 @@ void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &winobj, SI
         }
         else if (tobj && !(length(cont) == 1 && cont.front() == sfind_obj("#####")))
         {
-            tell(std::string(indent), 0);
+            tell(to_string(indent), 0);
             tell("The " + obj->odesc2() + (also ? " also contains:" : " contains:"));
         }
 
@@ -512,7 +512,7 @@ void print_cont(const ObjectP &obj, const ObjectP &av, const ObjectP &winobj, SI
                     describable(y) &&
                     !empty(y->odesc2()))
                 {
-                    tell(std::string(indent) + " A " + y->odesc2(), post_crlf);
+                    tell(to_string(indent) + " A " + y->odesc2(), post_crlf);
                 }
                 if (see_inside(y))
                     print_cont(y, av, winobj, back(indent));

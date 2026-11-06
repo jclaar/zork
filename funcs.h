@@ -215,16 +215,16 @@ private:
     //friend bool operator!=(const Iterator<T> &a, const Iterator<T> &b);
 };
 
-class SIterator : public Iterator<std::string>
+using SIterator = Iterator<std::string>;
+inline std::string to_string(SIterator s)
 {
-public:
-    using Iterator<std::string>::Iterator;
+	return std::string(s.cur(), s.end());
+}
 
-    operator std::string() const
-    {
-        return std::string(cur(), end());
-    }
-};
+inline std::string_view to_string_view(SIterator s)
+{
+	return std::string_view(s.cur(), s.end());
+}
 
 template <typename T>
 inline bool operator!=(const Iterator<T> &a, const Iterator<T> &b)
@@ -235,17 +235,12 @@ inline bool operator!=(const Iterator<T> &a, const Iterator<T> &b)
 
 inline bool operator==(const SIterator &a, const char *b)
 {
-    return std::string(a.cur(), a.end()) == b;
+    return to_string_view(a) == b;
 }
 
 inline bool operator!= (const SIterator &a, const SIterator &b)
 {
     return !(a == b);
-}
-
-inline bool operator!=(const SIterator &a, const char *b)
-{
-    return std::string(a.cur(), a.end()) != b;
 }
 
 template <typename T>

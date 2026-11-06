@@ -64,7 +64,7 @@ namespace
                 break;
             std::string a;
             WordP w;
-            if (!(a = ans[0]->s1).empty() &&
+            if (!(a = to_string(ans[0]->s1)).empty() &&
                 (w = plookup(a, words)) &&
                 std::dynamic_pointer_cast<buzz>(w))
             {
@@ -77,7 +77,7 @@ namespace
         bool rv = false;
         if (std::holds_alternative<std::string_view>(onecorr))
         {
-            return member(ans[0]->s1, correct);
+            return member(to_string(ans[0]->s1), correct);
         }
         else
         {
@@ -87,7 +87,7 @@ namespace
             {
                 ObjList o;
                 std::string str;
-                if ((str = lv[0]->s1).empty())
+                if ((str = to_string(lv[0]->s1)).empty())
                 {
                     rv = false;
                     break;
@@ -185,11 +185,11 @@ namespace
         {
             tell("Incantations are useless once you have gotten this far.");
         }
-        else if (length(lv) < 2 || (w1 = lv[0]->s1).empty())
+        else if (length(lv) < 2 || (w1 = to_string(lv[0]->s1)).empty())
         {
             tell("That incantation seems to have been a failure.");
         }
-        else if ((w2 = lv[1]->s1).empty())
+        else if ((w2 = to_string(lv[1]->s1)).empty())
         {
             if (!spell_flag.empty() && w1 != spell_flag)
             {
@@ -326,7 +326,7 @@ std::string pw(SIterator unm, SIterator key)
         };
     fn2(su, ku, str);
 
-    return str;
+    return to_string(str);
 }
 
 bool eg_infested(const RoomP &r)

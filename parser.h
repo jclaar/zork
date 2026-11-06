@@ -88,7 +88,7 @@ inline Iterator<ParseContV> member(const std::string &s, Iterator<ParseContV> pv
 {
     while (pv.cur() != pv.end())
     {
-        const std::string &s1 = (*pv.cur())->s1;
+        const std::string &s1 = to_string((*pv.cur())->s1);
         if (s1 == s)
             break;
         ++pv;

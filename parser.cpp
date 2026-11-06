@@ -209,7 +209,7 @@ bool eparse(Iterator<ParseContV> pv, bool vb)
     int len;
     ParseVecVal obj;
     trz(bobj, Bits::climbbit, Bits::tiebit, Bits::staggered );
-    std::string str = pv[0]->s1;
+    std::string str = to_string(pv[0]->s1);
     if (str == "AGAIN")
     {
         swap_em();
@@ -338,7 +338,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
     Iterator<ParseContV> vv = sv;
     while (1)
     {
-        std::string y = vv[0]->s1;              // 144
+        std::string y = to_string(vv[0]->s1);              // 144
 
         if (empty(y))
         {
@@ -550,7 +550,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
                                 {
                                     tell(lcify(adj->w()) + " ", 0);
                                 }
-                                tell(lcify(vv[0]->s2, vv[0]->i1), 0);
+                                tell(lcify(to_string(vv[0]->s2), vv[0]->i1), 0);
                             }
                             tell(" here.");
                             orphan();
@@ -582,7 +582,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
                     if (!vb)
                     {
                         tell("Which ", 0);
-                        tell(lcify(vv[0]->s2, vv[0]->i1), 0); // Check this
+                        tell(lcify(to_string(vv[0]->s2), vv[0]->i1), 0); // Check this
                         if (the_action)
                         {
                             tell(" should I " + prlcstr(the_action->vstr()) + "?", 1);
@@ -610,7 +610,7 @@ SParseVal sparse(Iterator<ParseContV> sv, bool vb)
                     unknown = vv;
                     unknown_lexv = sv;
                     tell("I don't know the word '", 0);
-                    tell(lcify(vv[0]->s2, vv[0]->i1) + "'.");
+                    tell(lcify(to_string(vv[0]->s2), vv[0]->i1) + "'.");
                 }
             }
             RETURN(false);
