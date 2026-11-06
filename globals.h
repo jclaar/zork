@@ -87,9 +87,8 @@ enum class FlagId
     safe_flag,
     num_flag_bits
 };
-constexpr size_t num_flag_bits = std::to_underlying(FlagId::num_flag_bits);
 
-using FlagBits = Flags<FlagId, num_flag_bits>;
+using FlagBits = Flags<FlagId, std::to_underlying(FlagId::num_flag_bits)>;
 
 // Puzzle room
 extern int cphere;
