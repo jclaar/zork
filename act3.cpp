@@ -18,6 +18,15 @@ using namespace std::string_view_literals;
 namespace
 {
     const char *through_desc = "You feel somewhat disoriented as you pass through...";
+
+    using cpwall_val = std::tuple<std::string_view, int>;
+
+    constexpr std::array cpwalls = {
+                cpwall_val("CPSWL", 8),
+                cpwall_val("CPNWL", -8),
+                cpwall_val("CPEWL", 1),
+                cpwall_val("CPWWL", -1)
+    };
 }
 
 ObjectP matobj;

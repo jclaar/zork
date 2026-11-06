@@ -95,14 +95,6 @@ extern int cphere;
 using PuzzleContents = std::array<ObjList, 64>;
 extern PuzzleContents cpobjs;
 extern std::array<int, 64> cpuvec;
-using cpwall_val = std::tuple<std::string_view, int>;
-
-constexpr std::array cpwalls = {
-            cpwall_val("CPSWL", 8),
-            cpwall_val("CPNWL", -8),
-            cpwall_val("CPEWL", 1),
-            cpwall_val("CPWWL", -1)
-};
 extern FlagBits flags;
 
 int load_max();
