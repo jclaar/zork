@@ -48,19 +48,6 @@ extern const ObjList nobjs;
 extern const ObjList pobjs;
 extern std::array<ObjList, 8> cells;
 
-using NumObjs = std::pair<std::string_view, int>;
-constexpr std::array numobjs =
-{
-    NumObjs{"ONE", 1},
-    NumObjs{"TWO", 2},
-    NumObjs{"THREE", 3},
-    NumObjs{"FOUR", 4},
-    NumObjs{"FIVE", 5},
-    NumObjs{"SIX", 6},
-    NumObjs{"SEVEN", 7},
-    NumObjs{"EIGHT", 8}
-};
-
 // Direction vector for mirror
 using DVPair = std::pair<direction, int>;
 inline bool operator==(const DVPair& dp, direction d) { return std::get<0>(dp) == d; }

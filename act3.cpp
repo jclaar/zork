@@ -709,7 +709,7 @@ bool zgnome_init::operator()() const
 
 static int cpnext(int rm, const ObjectP &obj)
 {
-    auto m = memq(obj, cpwalls);
+    auto m = memq(obj, cpwalls, [](const auto& wall, const auto& o) { return std::get<0>(wall) == o->oid(); });
     return rm + std::get<1>(**m);
 }
 

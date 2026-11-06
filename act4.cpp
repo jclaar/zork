@@ -1006,10 +1006,22 @@ namespace obj_funcs
         {
             if (ObjectP prsio = prsi(); !empty(prsio))
             {
-                auto n = memq(prsio, numobjs);
+                constexpr std::array numobjs =
+                {
+                    "ONE",
+                    "TWO",
+                    "THREE",
+                    "FOUR",
+                    "FIVE",
+                    "SIX",
+                    "SEVEN",
+                    "EIGHT",
+                };
+
+                auto n = memq(prsio, numobjs, [](const auto& list_obj, const auto& obj) { return obj->oid() == list_obj; });
                 if (n)
                 {
-                    pnumb = (*n)->second;
+                    pnumb = std::distance(numobjs.begin(), n.value()) + 1;
                     tell("The dial now points to '", post_crlf, nums[pnumb - 1], "'.");
                 }
                 else

@@ -9,10 +9,14 @@
 template <typename Container>
 using MemqRet = std::optional<typename Container::const_iterator>;
 
-template <typename T, typename Container>
-MemqRet<Container> memq(const T& i, const Container& c)
+template <typename T, typename Container, typename Pred = std::equal_to<>>
+MemqRet<Container> memq(const T& i, const Container& c, Pred pred = {})
 {
-    typename Container::const_iterator iter = std::find(std::begin(c), std::end(c), i);
+    const auto iter = std::find_if(
+        std::begin(c),
+        std::end(c),
+        [&i, &pred](const auto& value) { return pred(value, i); });
+
     return iter == std::end(c) ? std::nullopt : MemqRet<Container>(iter);
 }
 
