@@ -42,9 +42,6 @@ extern RoomP bloc;
 extern const RoomP startroom;
 extern const RoomP &northend;
 extern const RoomP &southend;
-extern const ObjList cobjs;
-extern const ObjList nobjs;
-extern const ObjList pobjs;
 extern std::array<ObjList, 8> cells;
 
 // Direction vector for mirror

@@ -41,6 +41,41 @@ namespace
     const std::string_view mrestr("   E");
     const std::string_view mrwstr("MBRW");
 
+    // Cell objects.
+    ObjList &cobjs()
+	{
+        static ObjList co = []
+            {
+                ObjList cobjs;
+				cobjs.push_back(sfind_obj("CDOOR"));
+				cobjs.push_back(sfind_obj("ODOOR"));
+                return cobjs;
+            }();
+		return co;
+	}
+
+    ObjList& nobjs()
+    {
+		static ObjList no = []
+			{
+				ObjList nobjs;
+				nobjs.push_back(sfind_obj("MDOOR"));
+				nobjs.push_back(sfind_obj("ODOOR"));
+				return nobjs;
+			}();
+		return no;
+    }
+
+    ObjList& pobjs()
+    {
+		static ObjList po = []
+			{
+				ObjList pobjs;
+				pobjs.push_back(sfind_obj("LDOOR"));
+				return pobjs;
+			}();
+		return po;
+    }
     
     bool member(const std::string& s1, const std::vector<QuestionValue>& qv)
     {
@@ -119,7 +154,7 @@ namespace
     ObjList movies(const RoomP& rm)
     {
         ObjList list;
-        const ObjList& co = cobjs;
+        const ObjList& co = cobjs();
         for (const ObjectP& o : rm->robjs())
         {
             if (!memq(o, co))
@@ -463,15 +498,15 @@ static void cell_move()
         const RoomP& ncell = sfind_room("NCELL");
         const RoomP& pcell = sfind_room("PCELL");
         const ObjList &po = cells[old-1] = movies(cell);
-        stuff(cell, cells[new_ - 1], cobjs);
+        stuff(cell, cells[new_ - 1], cobjs());
         cells[new_-1].clear();
         if (old == 4)
         {
-            stuff(ncell, po, nobjs);
+            stuff(ncell, po, nobjs());
         }
         else
         {
-            stuff(pcell, po, pobjs);
+            stuff(pcell, po, pobjs());
         }
         if (new_ == 4)
             tro(d, Bits::ovison);

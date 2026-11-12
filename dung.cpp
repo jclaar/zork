@@ -151,9 +151,6 @@ namespace {
     }
 }
 
-const ObjList cobjs = build_olist("CDOOR", "ODOOR");
-const ObjList nobjs = build_olist("MDOOR", "ODOOR");
-const ObjList pobjs = build_olist("LDOOR");
 const ObjList villains = build_olist("TROLL", "THIEF", "CYCLO");
 ObjList oppv(villains.size());
 std::vector<int> villain_probs(villains.size());
