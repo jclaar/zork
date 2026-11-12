@@ -4,19 +4,18 @@
 #include <iostream>
 #endif
 #include "dung.h"
-#include "memq.h"
-#include "funcs.h"
-#include "object.h"
-#include "rooms.h"
 #include "room.h"
+#include "adv.h"
+#include "makstr.h"
+#include "rooms.h"
 #include "act1.h"
 #include "act2.h"
 #include "act3.h"
 #include "act4.h"
 #include "melee.h"
-#include "adv.h"
-#include "parser.h"
 #include "roomfns.h"
+#include "parser.h"
+#include "memq.h"
 
 namespace
 {
@@ -126,11 +125,9 @@ ObjList oppv(villains.size());
 std::vector<int> villain_probs(villains.size());
 
 ObjList inqobjs;
-const RoomP &northend = get_room("MRD");
 RoomP mloc = get_room("MRB");
 const RoomP startroom = mloc;
 RoomP bloc = get_room("VLBOT");
-const RoomP &southend = get_room("MRA");
 VerbP buncher;
 ObjectP bunch_obj = get_obj("*BUN*");
 GObjectPtr it_object;

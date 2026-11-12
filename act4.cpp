@@ -38,6 +38,18 @@ namespace
     Iterator<decltype(nqvecb)> nqvec(nqvecb);
     std::string spell_flag;
 
+    const RoomP& northend()
+    {
+		static const RoomP& rm = get_room("MRD");
+		return rm;
+    }
+
+    const RoomP& southend()
+    {
+		static const RoomP& rm = get_room("MRA");
+		return rm;
+    }
+
     const std::string_view mrestr("   E");
     const std::string_view mrwstr("MBRW");
 
@@ -719,7 +731,7 @@ static RoomP mirns(bool northq = (mdir < 180), bool exitq = false)
     const RoomP &mloc = ::mloc;
     const std::vector<Ex> &rex = mloc->rexits();
     if (!exitq &&
-        ((northq && mloc == northend) || (!northq && mloc == southend)))
+        ((northq && mloc == northend()) || (!northq && mloc == southend())))
     {
         // Do nothing
     }

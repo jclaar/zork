@@ -27,8 +27,6 @@ extern std::vector<VerbP> robot_actions;
 extern std::vector<VerbP> master_actions;
 extern RoomP bloc;
 extern const RoomP startroom;
-extern const RoomP &northend;
-extern const RoomP &southend;
 extern std::array<ObjList, 8> cells;
 
 // Direction vector for mirror
