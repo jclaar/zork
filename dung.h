@@ -2,12 +2,10 @@
 #include <map>
 #include <vector>
 #include <array>
-#include <span>
 #include <string>
 #include "defs.h"
 #include "makstr.h"
 #include "funcs.h"
-#include "melee.h"
 #include <memory>
 #include <string_view>
 #include <tuple>
@@ -22,8 +20,6 @@ using ActionsPobl = std::map<std::string, ActionP, std::less<>>;
 extern WordsPobl words_pobl;
 extern DirectionsPobl directions_pobl;
 extern ActionsPobl actions_pobl;
-extern const ObjList small_papers;
-extern const ObjList palobjs;
 extern ObjList inqobjs;
 extern ObjectP bunch_obj;
 extern SIterator indentstr;

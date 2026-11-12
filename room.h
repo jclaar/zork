@@ -222,3 +222,9 @@ inline bool operator==(const Ex& exit, const RoomP& p)
     return p == exit;
 }
 
+template <typename...Args>
+RoomList build_rlist(Args...a)
+{
+    using namespace std::placeholders;
+    return build_tlist<RoomList>(std::bind(get_room, _1, nullptr), a...);
+}

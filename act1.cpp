@@ -9,6 +9,7 @@
 #include "util.h"
 #include "objfns.h"
 #include "roomfns.h"
+#include "melee.h"
 
 namespace
 {

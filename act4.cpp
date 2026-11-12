@@ -44,36 +44,19 @@ namespace
     // Cell objects.
     ObjList &cobjs()
 	{
-        static ObjList co = []
-            {
-                ObjList cobjs;
-				cobjs.push_back(sfind_obj("CDOOR"));
-				cobjs.push_back(sfind_obj("ODOOR"));
-                return cobjs;
-            }();
+		static ObjList co = build_olist("CDOOR", "ODOOR");
 		return co;
 	}
 
     ObjList& nobjs()
     {
-		static ObjList no = []
-			{
-				ObjList nobjs;
-				nobjs.push_back(sfind_obj("MDOOR"));
-				nobjs.push_back(sfind_obj("ODOOR"));
-				return nobjs;
-			}();
+		static ObjList no = build_olist("MDOOR", "ODOOR");
 		return no;
     }
 
     ObjList& pobjs()
     {
-		static ObjList po = []
-			{
-				ObjList pobjs;
-				pobjs.push_back(sfind_obj("LDOOR"));
-				return pobjs;
-			}();
+		static ObjList po = build_olist("LDOOR");
 		return po;
     }
     

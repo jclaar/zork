@@ -1,3 +1,4 @@
+#include <span>
 #include "melee.h"
 #include "adv.h"
 #include "util.h"

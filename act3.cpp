@@ -17,7 +17,19 @@ using namespace std::string_view_literals;
 
 namespace
 {
-    const char *through_desc = "You feel somewhat disoriented as you pass through...";
+    const char* through_desc = "You feel somewhat disoriented as you pass through...";
+
+    const ObjList& palobjs()
+    {
+        static const ObjList po = build_olist("SCREW", "KEYS", "STICK", "PKEY");
+        return po;
+    }
+
+    const ObjList& small_papers()
+    {
+        static const ObjList sp = build_olist("BLABE", "LABEL", "CARD", "WARNI", "PAPER", "GUIDE");
+        return sp;
+    }
 
     using cpwall_val = std::tuple<std::string_view, int>;
 
@@ -218,7 +230,7 @@ static void pcheck()
 {
     auto &lid = plid();
     auto &mat = sfind_obj("MAT");
-    const ObjList &objs = palobjs;
+    const ObjList &objs = palobjs();
     if (is_empty(prsvec[1]))
         return;
     flags[FlagId::plook] = false;
@@ -1609,7 +1621,7 @@ namespace obj_funcs
                 {
                     tell("The keyhole is blocked.");
                 }
-                else if (memq(prso(), palobjs))
+                else if (memq(prso(), palobjs()))
                 {
                     if (!empty((kh = pkh(prsi()))->ocontents()))
                     {
@@ -1706,7 +1718,7 @@ namespace obj_funcs
                 tell("It can't be locked with that.");
             }
         }
-        else if (verbq("PTUND") && memq(prso(), small_papers))
+        else if (verbq("PTUND") && memq(prso(), small_papers()))
         {
             tell("The paper is very small and vanishes under the door.");
             remove_object(prso());

@@ -1,5 +1,6 @@
 #include "cevent.h"
 #include "objfns.h"
+#include "melee.h"
 #include "act1.h"
 #include "act3.h"
 #include "roomfns.h"

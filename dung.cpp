@@ -126,36 +126,10 @@ int cyclowrath = 0;
 // Cells for endgame
 std::array<ObjList, 8> cells;
 
-namespace {
-    template <typename List, typename Fn, typename...Args>
-    List build_tlist(Fn f, Args...a)
-    {
-        auto rv = List();
-        std::tuple all(a...);
-        std::apply([&](auto&&...args) { (rv.push_back(f(args)),...); }, all);
-        return rv;
-    }
-
-    template <typename...Args>
-    ObjList build_olist(Args...a)
-    {
-        using namespace std::placeholders;
-        return build_tlist<ObjList>(std::bind(get_obj, _1, nullptr), a...);
-    }
-
-    template <typename...Args>
-    RoomList build_rlist(Args...a)
-    {
-        using namespace std::placeholders;
-        return build_tlist<RoomList>(std::bind(get_room, _1, nullptr), a...);
-    }
-}
-
 const ObjList villains = build_olist("TROLL", "THIEF", "CYCLO");
 ObjList oppv(villains.size());
 std::vector<int> villain_probs(villains.size());
-const ObjList small_papers = build_olist("BLABE", "LABEL", "CARD", "WARNI", "PAPER", "GUIDE");
-const ObjList palobjs = build_olist("SCREW", "KEYS", "STICK", "PKEY");
+
 ObjList inqobjs;
 const RoomP &northend = get_room("MRD");
 RoomP mloc = get_room("MRB");

@@ -418,6 +418,15 @@ int length(const T& c)
     return (int) c.size();
 }
 
+template <typename List, typename Fn, typename...Args>
+List build_tlist(Fn f, Args...a)
+{
+    auto rv = List();
+    std::tuple all(a...);
+    std::apply([&](auto&&...args) { (rv.push_back(f(args)), ...); }, all);
+    return rv;
+}
+
 
 bool flaming(const ObjectP &obj);
 

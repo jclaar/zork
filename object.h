@@ -277,3 +277,10 @@ inline bool openable(const ObjectP& op)
     return trnn(op, Bits::doorbit, Bits::contbit);
 }
 
+template <typename...Args>
+ObjList build_olist(Args...a)
+{
+    using namespace std::placeholders;
+    return build_tlist<ObjList>(std::bind(get_obj, _1, nullptr), a...);
+}
+
