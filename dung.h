@@ -132,12 +132,6 @@ extern const ObjList villains;
 extern ObjList oppv;
 extern std::vector<int> villain_probs;
 
-using BestWeapons = std::tuple<ObjectP, ObjectP, int>;
-bool operator==(const ObjectP& villain, const BestWeapons& bw);
-inline bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
-using BestWeaponsList = std::array<BestWeapons, 2>;
-extern const BestWeaponsList best_weapons;
-
 // Parse vector is defined in parser.mud. It is a 3-element vector,
 // containing various items:
 // 0: ActionP or VerbP

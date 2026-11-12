@@ -63,7 +63,27 @@ namespace
         ASSpan({ std::begin(def3b) + 1, std::end(def3b) }),
         ASSpan({ std::begin(def3c), std::end(def3c) })
     };
+
+    using BestWeapons = std::tuple<ObjectP, ObjectP, int>;
+
+    using BestWeaponsList = std::array<BestWeapons, 2>;
+
+    const BestWeaponsList &best_weapons() 
+    {
+        static const BestWeaponsList bw = {
+            BestWeapons(get_obj("TROLL"), get_obj("SWORD"), 1),
+            BestWeapons(get_obj("THIEF"), get_obj("KNIFE"), 1)
+        };
+        return bw;
+    };
+
 }
+
+bool operator==(const ObjectP& villain, const BestWeapons& bw)
+{
+    return villain == std::get<0>(bw);
+}
+bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
 
 static int fight_strength(const AdvP &hero, bool adjust = true)
 {
@@ -88,7 +108,7 @@ static int villain_strength(const ObjectP &villain)
         if (auto prsi = ::prsi())
         {
             trnn(prsi, Bits::weaponbit);
-            auto wv = memq(villain, best_weapons);
+            auto wv = memq(villain, best_weapons());
             if (wv)
             {
                 auto &[v, weapon, val] = *(*wv);
