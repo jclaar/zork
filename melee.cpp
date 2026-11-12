@@ -19,31 +19,32 @@ namespace
     // Attacking things...
     using ASSpan = std::span<const attack_state>;
 
-    constexpr std::array def1 = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::unconscious, attack_state::unconscious,
-        attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed };
-    constexpr std::array def2a = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound,
-        attack_state::unconscious };
-    constexpr std::array def2b = { attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
-        attack_state::unconscious,
-        attack_state::killed, attack_state::killed, attack_state::killed };
-    constexpr std::array def3a = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound,
-        attack_state::serious_wound, attack_state::serious_wound };
-    constexpr std::array def3b = { attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
-        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound };
-    constexpr std::array def3c = { attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
-        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound };
+    using enum attack_state;
+    constexpr std::array def1 = { missed, missed, missed, missed,
+        stagger, stagger,
+        unconscious, unconscious,
+        killed, killed, killed, killed, killed };
+    constexpr std::array def2a = { missed, missed, missed, missed, missed,
+        stagger, stagger,
+        light_wound, light_wound,
+        unconscious };
+    constexpr std::array def2b = { missed, missed, missed,
+        stagger, stagger,
+        light_wound, light_wound, light_wound,
+        unconscious,
+        killed, killed, killed };
+    constexpr std::array def3a = { missed, missed, missed, missed, missed,
+        stagger, stagger,
+        light_wound, light_wound,
+        serious_wound, serious_wound };
+    constexpr std::array def3b = { missed, missed, missed,
+        stagger, stagger,
+        light_wound, light_wound, light_wound,
+        serious_wound, serious_wound, serious_wound };
+    constexpr std::array def3c = { missed,
+        stagger, stagger,
+        light_wound, light_wound, light_wound, light_wound,
+        serious_wound, serious_wound, serious_wound };
 
     constexpr std::array def1_res = {
         ASSpan({ std::begin(def1), std::end(def1) }),
@@ -79,11 +80,14 @@ namespace
 
 }
 
-bool operator==(const ObjectP& villain, const BestWeapons& bw)
+static inline bool operator==(const ObjectP& villain, const BestWeapons& bw)
 {
     return villain == std::get<0>(bw);
 }
-bool operator==(const BestWeapons& bw, const ObjectP& villain) { return villain == bw; }
+static inline bool operator==(const BestWeapons& bw, const ObjectP& villain)
+{ 
+    return villain == bw; 
+}
 
 static int fight_strength(const AdvP &hero, bool adjust = true)
 {
