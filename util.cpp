@@ -5,6 +5,8 @@
 #include "dung.h"
 #include "memq.h"
 
+using namespace std::string_view_literals;
+
 bool always_lit = false;
 
 const HackP &get_demon(const char *id)

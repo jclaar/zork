@@ -35,7 +35,6 @@ extern HackP sword_demon;
 extern HackP fight_demon;
 extern HackP clocker;
 extern VerbP buncher;
-using ASSpan = std::span<const attack_state>;
 extern int cyclowrath;
 extern std::vector<VerbP> robot_actions;
 extern std::vector<VerbP> master_actions;
@@ -141,61 +140,9 @@ private:
 
 using HackP = std::shared_ptr<hack>;
 
-// Puzzle room
-struct CpExit
-{
-    direction dir;
-    int offset;
-    constexpr CpExit(direction d, int o) : dir(d), offset(o) {}
-};
-inline bool operator==(const CpExit& cp, direction d) { return cp.dir == d; }
-inline bool operator==(direction d, const CpExit& cp) { return cp == d; }
-constexpr std::array cpexits = {
-    CpExit(direction::North, -8),
-    CpExit(direction::South, 8),
-    CpExit(direction::East, 1),
-    CpExit(direction::West, -1),
-    CpExit(direction::Ne, -7),
-    CpExit(direction::Nw, -9),
-    CpExit(direction::Se, 9),
-    CpExit(direction::Sw, 7),
-};
-
 // Bank puzzle
 extern RoomP scol_room;
 extern RoomP scol_active;
-struct ScolRooms
-{
-    direction dir;
-    const char *rm;
-};
-inline bool operator==(direction d, const ScolRooms& sr) { return sr.dir == d; }
-inline bool operator==(const ScolRooms& sr, direction d) { return d == sr; }
-
-struct ScolWalls
-{
-    std::string_view rm1;
-    std::string_view obj;
-    std::string_view rm2;
-};
-
-using namespace std::string_view_literals;
-
-constexpr std::array scol_walls =
-{
-    ScolWalls{ "BKVW", "WEAST", "BKVE" },
-    ScolWalls{ "BKVE", "WWEST", "BKVW" },
-    ScolWalls{ "BKTWI", "WSOUT", "BKVAU" },
-    ScolWalls{ "BKVAU", "WNORT", "BKTWI" }
-};
-
-constexpr std::array scol_rooms =
-{
-    ScolRooms{direction::East, "BKVE"},
-    ScolRooms{direction::West, "BKVW"},
-    ScolRooms{direction::North, "BKTWI"},
-    ScolRooms{direction::South, "BKVAU"}
-};
 
 extern const ObjList villains;
 extern ObjList oppv;
@@ -343,52 +290,4 @@ void add_buzz(T first, Args... args)
     add_buzz(first);
     add_buzz(args...);
 }
-
-// Attacking things...
-namespace {
-    constexpr std::array def1 = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::unconscious, attack_state::unconscious,
-        attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed };
-    constexpr std::array def2a = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound,
-        attack_state::unconscious };
-    constexpr std::array def2b = { attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
-        attack_state::unconscious,
-        attack_state::killed, attack_state::killed, attack_state::killed };
-    constexpr std::array def3a = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound,
-        attack_state::serious_wound, attack_state::serious_wound };
-    constexpr std::array def3b = { attack_state::missed, attack_state::missed, attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
-        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound };
-    constexpr std::array def3c = { attack_state::missed,
-        attack_state::stagger, attack_state::stagger,
-        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
-        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound };
-}
-
-constexpr std::array def1_res = {
-    ASSpan({ std::begin(def1), std::end(def1) }),
-    ASSpan({ std::begin(def1) + 1, std::end(def1) }),
-    ASSpan({ std::begin(def1) + 2, std::end(def1) })
-};
-constexpr std::array def2_res = {
-    ASSpan({ std::begin(def2a), std::end(def2a) }),
-    ASSpan({ std::begin(def2b), std::end(def2b) }),
-    ASSpan({ std::begin(def2b) + 1, std::end(def2b) }),
-    ASSpan({ std::begin(def2b) + 2, std::end(def2b) })
-};
-const std::array def3_res = {
-    ASSpan({ std::begin(def3a), std::end(def3a) }),
-    ASSpan({ std::begin(def3a) + 1, std::end(def3a) }),
-    ASSpan({ std::begin(def3b), std::end(def3b) }),
-    ASSpan({ std::begin(def3b) + 1, std::end(def3b) }),
-    ASSpan({ std::begin(def3c), std::end(def3c) })
-};
 

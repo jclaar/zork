@@ -14,6 +14,54 @@ namespace
     const int strength_min = 2;
     const int strength_max = 7;
     const int cure_wait = 30;
+
+    // Attacking things...
+    using ASSpan = std::span<const attack_state>;
+
+    constexpr std::array def1 = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::unconscious, attack_state::unconscious,
+        attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed, attack_state::killed };
+    constexpr std::array def2a = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound,
+        attack_state::unconscious };
+    constexpr std::array def2b = { attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::unconscious,
+        attack_state::killed, attack_state::killed, attack_state::killed };
+    constexpr std::array def3a = { attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound };
+    constexpr std::array def3b = { attack_state::missed, attack_state::missed, attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound };
+    constexpr std::array def3c = { attack_state::missed,
+        attack_state::stagger, attack_state::stagger,
+        attack_state::light_wound, attack_state::light_wound, attack_state::light_wound, attack_state::light_wound,
+        attack_state::serious_wound, attack_state::serious_wound, attack_state::serious_wound };
+
+    constexpr std::array def1_res = {
+        ASSpan({ std::begin(def1), std::end(def1) }),
+        ASSpan({ std::begin(def1) + 1, std::end(def1) }),
+        ASSpan({ std::begin(def1) + 2, std::end(def1) })
+    };
+    constexpr std::array def2_res = {
+        ASSpan({ std::begin(def2a), std::end(def2a) }),
+        ASSpan({ std::begin(def2b), std::end(def2b) }),
+        ASSpan({ std::begin(def2b) + 1, std::end(def2b) }),
+        ASSpan({ std::begin(def2b) + 2, std::end(def2b) })
+    };
+    constexpr std::array def3_res = {
+        ASSpan({ std::begin(def3a), std::end(def3a) }),
+        ASSpan({ std::begin(def3a) + 1, std::end(def3a) }),
+        ASSpan({ std::begin(def3b), std::end(def3b) }),
+        ASSpan({ std::begin(def3b) + 1, std::end(def3b) }),
+        ASSpan({ std::begin(def3c), std::end(def3c) })
+    };
 }
 
 static int fight_strength(const AdvP &hero, bool adjust = true)

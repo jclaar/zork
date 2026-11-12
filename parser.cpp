@@ -10,6 +10,8 @@
 #include "adv.h"
 #include "memq.h"
 
+using namespace std::string_view_literals;
+
 const char *brks = "\"' 	:.,?!\n";
 Orphans orphans;
 Nefals nefals0;

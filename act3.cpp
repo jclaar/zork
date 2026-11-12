@@ -27,6 +27,58 @@ namespace
                 cpwall_val("CPEWL", 1),
                 cpwall_val("CPWWL", -1)
     };
+
+    // Puzzle room
+    struct CpExit
+    {
+        direction dir;
+        int offset;
+        constexpr CpExit(direction d, int o) : dir(d), offset(o) {}
+    };
+    //inline bool operator==(const CpExit& cp, direction d) { return cp.dir == d; }
+    //inline bool operator==(direction d, const CpExit& cp) { return cp == d; }
+    constexpr std::array cpexits = {
+        CpExit(direction::North, -8),
+        CpExit(direction::South, 8),
+        CpExit(direction::East, 1),
+        CpExit(direction::West, -1),
+        CpExit(direction::Ne, -7),
+        CpExit(direction::Nw, -9),
+        CpExit(direction::Se, 9),
+        CpExit(direction::Sw, 7),
+    };
+
+    struct ScolRooms
+    {
+        direction dir;
+        const char* rm;
+    };
+    inline bool operator==(direction d, const ScolRooms& sr) { return sr.dir == d; }
+    inline bool operator==(const ScolRooms& sr, direction d) { return d == sr; }
+
+    struct ScolWalls
+    {
+        std::string_view rm1;
+        std::string_view obj;
+        std::string_view rm2;
+    };
+
+    constexpr std::array scol_walls =
+    {
+        ScolWalls{ "BKVW", "WEAST", "BKVE" },
+        ScolWalls{ "BKVE", "WWEST", "BKVW" },
+        ScolWalls{ "BKTWI", "WSOUT", "BKVAU" },
+        ScolWalls{ "BKVAU", "WNORT", "BKTWI" }
+    };
+
+    constexpr std::array scol_rooms =
+    {
+        ScolRooms{ direction::East, "BKVE" },
+        ScolRooms{ direction::West, "BKVW" },
+        ScolRooms{ direction::North, "BKTWI" },
+        ScolRooms{ direction::South, "BKVAU" }
+    };
+
 }
 
 ObjectP matobj;
@@ -2351,7 +2403,7 @@ namespace exit_funcs
             return rv;
         }
 
-        auto m = memq(dir, cpexits);
+        auto m = memq(dir, cpexits, [](const CpExit &cp, direction d) { return cp.dir == d; });
         _ASSERT(m);
         fx = (*m)->offset;
 
