@@ -1,14 +1,17 @@
 // mdlfun.cpp : Defines the entry point for the console application.
 //
 
-#include <boost/process.hpp>
-#include <boost/dll.hpp>
 #include <string>
 #include <iostream>
 #include "funcs.h"
 #include "dung.h"
 #include "rooms.h"
 #include "version.h"
+#include <boost/asio/io_context.hpp>
+#include <boost/dll/runtime_symbol_info.hpp>
+#include <boost/process/v2/process.hpp>
+#include <boost/version.hpp>
+#include <string_view>
 
 std::string pw(SIterator unm, SIterator key);
 std::string username();

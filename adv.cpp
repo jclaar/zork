@@ -1,4 +1,7 @@
 #include "adv.h"
+#include <memory>
+#include <utility>
+#include "defs.h"
 
 namespace
 {

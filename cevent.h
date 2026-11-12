@@ -3,6 +3,8 @@
 #include "defs.h"
 #include <array>
 #include <utility>
+#include <string_view>
+#include <string>
 #include <boost/serialization/access.hpp>
 
 // CEVENT structure

@@ -1,11 +1,16 @@
-#include "cevent.h"
-#include "objfns.h"
-#include "melee.h"
+#include <memory>
+#include <string_view>
 #include "act1.h"
 #include "act3.h"
 #include "roomfns.h"
 #include "act2.h"
 #include "act4.h"
+#include "defs.h"
+#include "cevent.h"
+#include "melee.h"
+#include "objfns.h"
+#include "roomfns.h"
+#include "rooms.h"
 
 CEventP sphere_clock;
 

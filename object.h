@@ -105,8 +105,6 @@ private:
     PropVal val;
 };
 
-using OFlags = Flags<Bits, numbits>;
-
 class Object
 {
 public:
@@ -177,7 +175,7 @@ protected:
     int _ostrength = 0;
     ObjectP _ocan; // What contains this object.
     RoomP _oroom;  // What room it's in.
-    OFlags _oflags;
+    BitFlags _oflags;
     rapplic objfn;
     OlintP _olint;
     VerbP _obverb;

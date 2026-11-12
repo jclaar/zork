@@ -1,10 +1,22 @@
-#include <array>
 #include "act4.h"
 #include "rooms.h"
 #include "dung.h"
 #include "makstr.h"
-#include "parser.h"
 #include "ZorkException.h"
+#include <crtdbg.h>
+#include <algorithm>
+#include <functional>
+#include <initializer_list>
+#include <iterator>
+#include <list>
+#include <map>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <variant>
+#include "defs.h"
+#include "FlagSupport.h"
 
 namespace
 {

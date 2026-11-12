@@ -10,6 +10,17 @@
 #include "memq.h"
 #include "act1.h"
 
+#include <algorithm>
+#include <iterator>
+#include <list>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <utility>
+#include "defs.h"
+#include "funcs.h"
+#include "object.h"
+#include "strings.h"
 namespace
 {
     const int strength_min = 2;

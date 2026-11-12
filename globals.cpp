@@ -1,5 +1,8 @@
 #include "globals.h"
 #include "object.h"
+#include <string>
+#include <tuple>
+#include "defs.h"
 
 std::string inbuf;
 std::string inbuf1;

@@ -2,14 +2,24 @@
 #include "object.h"
 #include "globals.h"
 #include "cevent.h"
-#include "util.h"
-#include "objfns.h"
 #include "strings.h"
-#include "zstring.h"
 #include "adv.h"
 #include "makstr.h"
 #include "dung.h"
+#include "objfns.h"
+#include "zstring.h"
 
+#include <initializer_list>
+#include <iterator>
+#include <list>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <variant>
+#include <vector>
+#include "defs.h"
+#include "rooms.h"
 struct ObjectDefinition {
     StringList syns;
     StringList adj;

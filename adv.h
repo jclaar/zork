@@ -2,6 +2,11 @@
 #include <utility>
 #include <boost/serialization/split_member.hpp>
 #include "room.h"
+#include <list>
+#include <string>
+#include "defs.h"
+#include "FlagSupport.h"
+#include "object.h"
 
 enum class AdvBits
 {

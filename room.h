@@ -1,7 +1,21 @@
 #pragma once
 
+#include <algorithm>
 #include "object.h"
 #include "globals.h"
+#include <boost/serialization/split_member.hpp>
+#include <initializer_list>
+#include <iterator>
+#include <list>
+#include <map>
+#include <memory>
+#include <string>
+#include <string_view>
+#include <tuple>
+#include <type_traits>
+#include <variant>
+#include <vector>
+#include "defs.h"
 
 typedef std::variant<int, std::vector<Bits>> RPValue;
 typedef std::tuple<ObjectSlots, RPValue> RP;

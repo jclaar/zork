@@ -6,6 +6,17 @@
 #include <random>
 #include <cassert>
 #include "ZorkException.h"
+#ifdef _MSC_VER
+#include <crtdbg.h>
+#else
+#include <assert.h>
+#endif
+#include <algorithm>
+#include <cstdint>
+#include <iterator>
+#include <string>
+#include <variant>
+#include "defs.h"
 
 #if !defined(_ASSERT)
 #define _ASSERT assert

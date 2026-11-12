@@ -1,6 +1,7 @@
 #pragma once
 #include <utility>
 #include <bitset>
+#include <boost/serialization/serialization.hpp>
 
 template <typename FlagType, size_t sz>
 class Flags : private std::bitset<sz>

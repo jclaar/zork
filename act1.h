@@ -1,4 +1,5 @@
 #pragma once
+#include <string_view>
 #include "defs.h"
 
 extern int water_level;

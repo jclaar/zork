@@ -6,6 +6,14 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
+#include <crtdbg.h>
+#include <algorithm>
+#include <cctype>
+#include <cstdint>
+#include <streambuf>
+#include <string>
+#include <string_view>
+#include <variant>
 
 // Output stream, supporting scripting.
 class TtyBuff : public std::basic_stringbuf<char, std::char_traits<char>>

@@ -1,8 +1,20 @@
+#include <array>
+#include <cctype>
+#include <functional>
+#include <iterator>
+#include <list>
+#include <memory>
+#include <string>
+#include <utility>
+#include <algorithm>
 #include <map>
 #include <set>
+#include <tuple>
+#include <vector>
 #ifdef _DEBUG
 #include <iostream>
 #endif
+#include "defs.h"
 #include "dung.h"
 #include "room.h"
 #include "adv.h"
