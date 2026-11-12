@@ -1,6 +1,5 @@
 #include <array>
 #include <cctype>
-#include <functional>
 #include <iterator>
 #include <list>
 #include <memory>
@@ -9,7 +8,6 @@
 #include <algorithm>
 #include <map>
 #include <set>
-#include <tuple>
 #include <vector>
 #ifdef _DEBUG
 #include <iostream>

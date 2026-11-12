@@ -1,7 +1,5 @@
 #include "globals.h"
-#include "object.h"
 #include <string>
-#include <tuple>
 #include "defs.h"
 
 std::string inbuf;
@@ -16,15 +14,16 @@ namespace
 FlagBits flags = []()
     {
         FlagBits fl;
+        using enum FlagId;
         // Only have to init flags that are non-zero.
-        fl[FlagId::tell_flag] = true;
-        fl[FlagId::lucky] = true;
-        fl[FlagId::mr1] = true;
-        fl[FlagId::mr2] = true;
-        fl[FlagId::brief_flag] = true;
-        fl[FlagId::cage_top] = true;
-        fl[FlagId::buoy_flag] = true;
-        fl[FlagId::folflag] = true;
+        fl[tell_flag] = true;
+        fl[lucky] = true;
+        fl[mr1] = true;
+        fl[mr2] = true;
+        fl[brief_flag] = true;
+        fl[cage_top] = true;
+        fl[buoy_flag] = true;
+        fl[folflag] = true;
         return fl;
     }();
 
