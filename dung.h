@@ -1,17 +1,8 @@
 #pragma once
 #include <map>
-#include <vector>
-#include <array>
-#include <string>
-#include "defs.h"
 #include "makstr.h"
 #include "funcs.h"
-#include <memory>
-#include <string_view>
-#include <tuple>
-#include <type_traits>
-#include <utility>
-#include <variant>
+#include "ZorkException.h"
 
 using WordsPobl = std::map<std::string, WordP, std::less<>>;
 using DirectionsPobl = std::map<std::string_view, direction, std::less<>>;
