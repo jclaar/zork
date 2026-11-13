@@ -1,6 +1,6 @@
 #pragma once
 
-#include <assert.h>
+//#include <assert.h>
 #ifdef _MSC_VER
 #include <crtdbg.h>
 #endif

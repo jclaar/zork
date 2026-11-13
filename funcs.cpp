@@ -6,7 +6,9 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
+#ifdef MSC_VER
 #include <crtdbg.h>
+#endif
 #include <algorithm>
 #include <cctype>
 #include <cstdint>

@@ -3,7 +3,9 @@
 #include "dung.h"
 #include "makstr.h"
 #include "ZorkException.h"
+#ifdef MSC_VER
 #include <crtdbg.h>
+#endif
 #include <algorithm>
 #include <functional>
 #include <initializer_list>

@@ -11,7 +11,9 @@
 #include "act4.h"
 #include "objfns.h"
 #include "roomfns.h"
+#ifdef _MSC_VER
 #include <crtdbg.h>
+#endif
 #include <algorithm>
 #include <array>
 #include <memory>
