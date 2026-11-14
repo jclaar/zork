@@ -1393,7 +1393,6 @@ namespace room_funcs
             const VerbP &bug = find_verb("BUG");
             const VerbP &feature = find_verb("FEATU");
             Iterator<ParseContV> v;
-            ObjectP prso = ::prso();
             bool loop = true;
             while (loop)
             {
@@ -1402,7 +1401,7 @@ namespace room_funcs
                 if ((v = lex(SIterator(b, b.begin()), SIterator(b, b.end()))) &&
                     eparse(v, true) &&
                     (!is_empty(prsvec[0]) && prsa() == walk) &&
-                    !empty(prso) &&
+                    has_dir(prsvec[1]) &&
                     memq(as_dir(prsvec[1]), rm->rexits()))
                 {
                     apply_random(prsa()->vfcn());

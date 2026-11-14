@@ -251,6 +251,11 @@ inline OrphanSlotType as_ost(ParseVecVal pv)
         }, pv);
 }
 
+inline bool has_dir(const ParseVecVal& pv)
+{
+    return std::holds_alternative<direction>(pv);
+}
+
 inline direction as_dir(const ParseVecVal &a)
 {
     return std::get<direction>(a);
