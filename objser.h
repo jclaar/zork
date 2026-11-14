@@ -1,6 +1,4 @@
-#ifndef OBJSER_H
-#define OBJSER_H
-
+#pragma once
 // Serialization functions for Object are defined here so
 // that room.h can be included properly.
 // For serialization
@@ -17,7 +15,7 @@ void Object::save(archive &ar, const unsigned int version) const
     ar & _omatch;
     ar & _ostrength;
     std::list<std::string> conts;
-    std::transform(_ocontents.begin(), _ocontents.end(), std::back_inserter(conts), [](ObjectP o) { return o->oid(); });
+	std::ranges::transform(_ocontents, std::back_inserter(conts), &Object::oid, [](const ObjectP& o) { return *o; });
     ar & conts;
     ar & _odesc1;
     ar & _odesc2;
@@ -49,12 +47,6 @@ void Object::load(archive &ar, const unsigned int version)
     ar & _odesc1;
     ar & _odesc2;
     _ocontents.clear();
-    std::transform(conts.begin(), conts.end(), std::back_inserter(_ocontents), [](const std::string &s)
-    {
-        return sfind_obj(s);
-    });
+    std::ranges::transform(conts, std::back_inserter(_ocontents), sfind_obj);
 }
-
-
-#endif
 

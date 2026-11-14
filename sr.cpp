@@ -21,8 +21,8 @@
 #include "adv.h"
 #include "objser.h"
 
-typedef std::vector<int> SV;
-typedef SV::iterator SVI;
+using SV = std::vector<int>;
+using SVI = SV::iterator;
 
 namespace
 {
@@ -92,8 +92,9 @@ void dump_robber(archive &ar)
 {
     HackP robber = robber_demon;
     std::list<std::string> rob_objs;
-    std::transform(robber->hobjs_ob().begin(), robber->hobjs_ob().end(),
-        std::back_inserter(rob_objs), [](ObjectP o) { return o->oid(); });
+    std::ranges::transform(robber->hobjs_ob(), std::back_inserter(rob_objs),
+        &Object::oid,
+        [](const ObjectP& o) { return *o; });
     ar & rob_objs;
 
     // Save the head of the first room he's heading to.
@@ -112,8 +113,7 @@ void restore_robber(archive &ar)
     std::list<std::string> rob_objs;
     ar & rob_objs;
     ObjList robber_items;
-    std::transform(rob_objs.begin(), rob_objs.end(), std::back_inserter(robber_items),
-        [](const std::string &s) { return sfind_obj(s); });
+    std::ranges::transform(rob_objs, std::back_inserter(robber_items), sfind_obj);
     robber->hobjs(robber_items);
 
     std::string temp;

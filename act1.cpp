@@ -1451,7 +1451,7 @@ namespace room_funcs
                     printstring(b);
                     flags[FlagId::tell_flag] = true;
                     crlf();
-                    std::transform(b.begin(), b.end(), b.begin(), [](char c) { return (char)toupper(c); });
+                    std::ranges::transform(b, b.begin(), [](char c) { return (char)toupper(c); });
                     if (b.find("ECHO") != std::string::npos)
                     {
                         tell("The acoustics of the room change subtly.");

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "object.h"
 #include "rooms.h"
 #include "dung.h"
 #include "funcs.h"
