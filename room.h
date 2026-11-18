@@ -15,6 +15,7 @@
 #include <type_traits>
 #include <variant>
 #include <vector>
+#include <ranges>
 #include "defs.h"
 
 typedef std::variant<int, std::vector<Bits>> RPValue;
@@ -161,11 +162,10 @@ private:
     {
         ar & _room_bits;
         ar & _rval;
-        std::list<std::string> rob;
-        std::transform(robjs().begin(), robjs().end(), std::back_inserter(rob), [](ObjectP o)
-        {
-            return o->oid();
-        });
+        std::list<std::string> rob = robjs()
+            | std::views::transform([](const ObjectP& o) { return o->oid(); }) 
+            | std::ranges::to<std::list<std::string>>(); 
+
         ar & rob;
         ar & _desc1;
     }
@@ -178,11 +178,9 @@ private:
         std::list<std::string> rob;
         ar & rob;
         ar & _desc1;
-        robjs().clear();
-        std::transform(rob.begin(), rob.end(), std::back_inserter(robjs()), [](const std::string &oid)
-        {
-            return sfind_obj(oid);
-        });
+		robjs() = rob 
+            | std::views::transform([](const std::string& oid) { return sfind_obj(oid); })
+			| std::ranges::to<ObjList>();
     }
 
     BOOST_SERIALIZATION_SPLIT_MEMBER();

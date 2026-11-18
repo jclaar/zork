@@ -74,12 +74,12 @@ namespace
     GObjectArray load_gobjects()
     {
 #include "gobject.h"
-        GObjectArray o;
-        o.reserve(std::distance(std::begin(gobjects), std::end(gobjects)));
-        std::transform(std::begin(gobjects), std::end(gobjects), std::back_inserter(o), [](const GObjectDefinition& od)
-            {
-                return make_gobj(od.gbits, od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
-            });
+        GObjectArray o = gobjects
+            | std::views::transform([](const GObjectDefinition& od)
+                {
+                    return make_gobj(od.gbits, od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
+                })
+            | std::ranges::to<GObjectArray>();
         return o;
     }
 
@@ -99,12 +99,12 @@ namespace
     ObjectArray load_objects()
     {
 #include "objdefs.h"
-        ObjectArray o;
-        o.reserve(std::distance(std::begin(objects), std::end(objects)));
-        std::transform(std::begin(objects), std::end(objects), std::back_inserter(o), [](const ObjectDefinition& od)
-            {
-                return make_obj(od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
-            });
+        ObjectArray o = objects
+			| std::views::transform([](const ObjectDefinition& od)
+				{
+					return make_obj(od.syns, od.adj, od.desc, od.bits, od.obj_fun, od.contents, od.props);
+				})
+			| std::ranges::to<ObjectArray>();
 
         return o;
     }

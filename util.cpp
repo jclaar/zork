@@ -4,6 +4,7 @@
 #include "rooms.h"
 #include "dung.h"
 #include "memq.h"
+#include <ranges>
 
 using namespace std::string_view_literals;
 
@@ -20,11 +21,12 @@ const HackP &get_demon(const char *id)
 
 ObjList splice_out(const ObjectP &op, const ObjList &al)
 {
-    ObjList new_list;
-    std::copy_if(al.begin(), al.end(), std::back_inserter(new_list), [&op](const ObjectP& o)
-        {
-            return o != op;
-        });
+    ObjList new_list = al
+		| std::views::filter([&op](const ObjectP& o)
+			{
+				return o != op;
+			})
+		| std::ranges::to<ObjList>();
     return new_list;
 }
 
