@@ -50,7 +50,7 @@ void restore_objects(archive &oa)
     ObjectPobl rest_objs;
     oa & rest_objs;
     const ObjectPobl &old_objs = object_pobl();
-    for (auto rest : rest_objs)
+    for (const auto &rest : rest_objs)
     {
         auto old = old_objs.find(rest.first);
         _ASSERT(old != old_objs.end());
@@ -79,7 +79,7 @@ void restore_rooms(archive &ia)
     ia & rm_map;
     _ASSERT(rm_map.size() == room_map().size());
 
-    for (auto rm : rm_map)
+    for (const auto &rm : rm_map)
     {
         auto dest = room_map().find(rm.first);
         _ASSERT(dest != room_map().end());
@@ -148,7 +148,7 @@ void restore_clockers(archive &ia)
     // Iterate through the whole event list, and create a new
     // one with the actual events in it.
     EventList restored_list;
-    for (auto e : el)
+    for (const auto &e : el)
     {
         auto iter = std::find_if(ev.begin(), ev.end(), [e](CEventP ev)
         {
