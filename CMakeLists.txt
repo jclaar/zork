@@ -80,6 +80,7 @@ target_compile_features(zork PRIVATE cxx_std_23)
 target_compile_definitions(zork PRIVATE
     _CRT_SECURE_NO_WARNINGS
     BOOST_PROCESS_VERSION=2
+    _WIN32_WINNT=_WIN32_WINNT_WIN10
 )
 
 target_include_directories(zork PRIVATE
@@ -106,7 +107,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
         set(CPACK_GENERATOR "TGZ")
         set(CPACK_SYSTEM_NAME "linux")
     else()
-        target_compile_definitions(zork PRIVATE _WIN32_WINNT=0x0601)
         set(CPACK_BINARY_NSIS OFF)
         set(CPACK_SYSTEM_NAME "win64")
         set(CPACK_GENERATOR "ZIP")

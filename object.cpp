@@ -2,7 +2,6 @@
 #include "object.h"
 #include "globals.h"
 #include "cevent.h"
-#include "strings.h"
 #include "adv.h"
 #include "makstr.h"
 #include "dung.h"
@@ -10,7 +9,6 @@
 #include "zstring.h"
 
 #include <initializer_list>
-#include <iterator>
 #include <list>
 #include <memory>
 #include <string>
@@ -71,9 +69,9 @@ namespace
 
     // List of all global objects.
     using GObjectArray = std::vector<GObjectPtr>;
+#include "gobject.h"
     GObjectArray load_gobjects()
     {
-#include "gobject.h"
         GObjectArray o = gobjects
             | std::views::transform([](const GObjectDefinition& od)
                 {
@@ -96,9 +94,9 @@ namespace
 #pragma optimize("", off)
 #endif
     using ObjectArray = std::vector<ObjectP>;
+#include "objdefs.h"
     ObjectArray load_objects()
     {
-#include "objdefs.h"
         ObjectArray o = objects
 			| std::views::transform([](const ObjectDefinition& od)
 				{

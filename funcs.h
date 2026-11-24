@@ -4,7 +4,6 @@
 #include <ostream>
 #include <string_view>
 #include <random>
-#include <cassert>
 #include "ZorkException.h"
 #ifdef _MSC_VER
 #include <crtdbg.h>

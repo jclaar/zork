@@ -277,8 +277,8 @@ namespace
         // selection. To make it simpler, this just copies
         // the from list to the to list, does a shuffle, and
         // returns the required number of elements.
-        std::shuffle(from.begin(), from.end(), get_random_engine());
-        std::copy(from.begin(), from.begin() + to.size(), to.begin());
+        std::ranges::shuffle(from, get_random_engine());
+		std::ranges::copy(from | std::views::take(to.size()), to.begin());
     }
 
     bool n_s(int dir)
