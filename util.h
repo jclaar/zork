@@ -22,8 +22,20 @@ const typename T::value_type &pick_one(const T &items)
 }
 
 // Returns a new list with the specified object removed.
-ObjList splice_out(const ObjectP &op, const ObjList &al);
+template <typename Container>
+Container splice_out(const typename Container::value_type& op, const Container& al)
+{
+	Container new_list = al
+		| std::views::filter([&op](const typename Container::value_type& o)
+			{
+				return o != op;
+			})
+		| std::ranges::to<Container>();
+	return new_list;
+}
+
 ObjList &splice_out_in_place(const ObjectP& op, ObjList& al);
+
 bool remove_object(const ObjectP &obj, const AdvP &winner = *::winner);
 bool insert_object(const ObjectP &obj, const RoomP &room);
 void insert_into(const ObjectP &cnt, const ObjectP &obj);
@@ -43,3 +55,4 @@ bool perform(rapplic fcn, const VerbP &vb, const ObjectP &obj1 = ObjectP(), cons
 ObjList rob_adv(const AdvP &win, ObjList newlist);
 ObjList rob_room(const RoomP &rm, ObjList newlist, int prob);
 bool yes_no(bool no_is_bad = false);
+
